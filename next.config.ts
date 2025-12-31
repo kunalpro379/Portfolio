@@ -42,7 +42,6 @@ const nextConfig: NextConfig = {
       '@radix-ui/react-tabs',
       '@heroicons/react'
     ],
-    optimizeCss: true,
     webpackBuildWorker: true,
   },
 };
