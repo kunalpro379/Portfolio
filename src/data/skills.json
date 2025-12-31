@@ -1,0 +1,38 @@
+[
+  {
+    "category": "Frontend",
+    "items": [
+      { "name": "React", "icon": "⚛️", "level": 95 },
+      { "name": "Next.js", "icon": "▲", "level": 90 },
+      { "name": "TypeScript", "icon": "📘", "level": 88 },
+      { "name": "Tailwind", "icon": "🎨", "level": 92 }
+    ]
+  },
+  {
+    "category": "Backend",
+    "items": [
+      { "name": "Node.js", "icon": "🟢", "level": 90 },
+      { "name": "Python", "icon": "🐍", "level": 85 },
+      { "name": "Java", "icon": "☕", "level": 80 },
+      { "name": "GraphQL", "icon": "◈", "level": 75 }
+    ]
+  },
+  {
+    "category": "Database",
+    "items": [
+      { "name": "PostgreSQL", "icon": "🐘", "level": 85 },
+      { "name": "MongoDB", "icon": "🍃", "level": 88 },
+      { "name": "Redis", "icon": "🔴", "level": 80 },
+      { "name": "MySQL", "icon": "🐬", "level": 82 }
+    ]
+  },
+  {
+    "category": "DevOps & Cloud",
+    "items": [
+      { "name": "AWS", "icon": "☁️", "level": 85 },
+      { "name": "Docker", "icon": "🐳", "level": 90 },
+      { "name": "Kubernetes", "icon": "⎈", "level": 75 },
+      { "name": "CI/CD", "icon": "🔄", "level": 88 }
+    ]
+  }
+]
