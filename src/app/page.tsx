@@ -5,6 +5,7 @@ import { Home as HomeIcon, Instagram, Radio, Users, Trophy, MessageSquare, Shiel
 import { useEffect, useState } from "react";
 import ImageSlider from "@/components/ImageSlider";
 import TypewriterText from "@/components/TypewriterText";
+import { ProjectCard } from "@/components/ProjectCard";
 
 export default function Home() {
   const [isMounted, setIsMounted] = useState(false);
@@ -547,34 +548,61 @@ export default function Home() {
         </section> */}
 
         {/* Projects */}
-        <section className="relative bg-gradient-to-br from-sky-50 via-white to-blue-50 py-12 md:py-20">
+        <section className="relative bg-gradient-to-br from-[#050505] via-[#0a0a0a] to-[#050505] py-12 md:py-20">
           <div className="absolute inset-0 opacity-5 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')]" />
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(0,163,255,0.05)_0%,transparent_60%)]" />
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_bottom_left,rgba(0,163,255,0.05)_0%,transparent_60%)]" />
           <div className="max-w-7xl mx-auto px-6 md:px-12 h-full flex flex-col relative z-10">
-            <SectionHeader icon={Car} title="LUXURY GARAGE" subtitle="Premium Vehicle Collection" />
+            <SectionHeader icon={FolderKanban} title="PROJECT SHOWCASE" subtitle="PREMIUM WORK COLLECTION" />
+            
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-8 flex-1">
-              <div className="relative group overflow-hidden rounded-2xl md:rounded-3xl border border-zinc-200 aspect-video md:aspect-auto">
-                <img src="https://images.unsplash.com/photo-1544636331-e26879cd4d9b?auto=format&fit=crop&q=80" className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-1000" />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
-                <div className="absolute bottom-6 md:bottom-10 left-6 md:left-10">
-                  <h3 className="text-2xl md:text-4xl font-black uppercase tracking-tighter text-white">Diamond Series</h3>
-                  <p className="text-sky-400 font-bold text-[8px] md:text-xs uppercase tracking-widest mt-1 md:mt-2">Exclusive Import</p>
-                </div>
-              </div>
+              <ProjectCard 
+                size="big"
+                title="SanskritGPT"
+                tagline="Building a Sanskrit Language Model from scratch using Diffusion + Transformers"
+                badges={["Diffusion LLM", "Transformer Denoiser", "Low-Resource NLP", "Research Project"]}
+                footer="From-scratch generative model · Oct 2024"
+                description="A masked diffusion-based language model designed specifically for Sanskrit text generation, focusing on semantic denoising rather than next-token prediction."
+                highlights={["Masked Diffusion Training", "Token-Level Transformer Denoiser", "Sanskrit WordNet–tagged corpus", "Iterative Unmasking Generation"]}
+                techStack="Python · PyTorch · Transformers · Diffusion Models · NLP"
+                cta={[
+                  { label: "GitHub Repo", link: "https://github.com", icon: "github" },
+                  { label: "Read Research", link: "#", icon: "external" }
+                ]}
+                image="https://images.unsplash.com/photo-1544636331-e26879cd4d9b?auto=format&fit=crop&q=80"
+              />
+              
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 lg:grid-rows-2 gap-4 md:gap-8">
-                <div className="relative group overflow-hidden rounded-2xl md:rounded-3xl border border-zinc-200 aspect-video">
-                  <img src="https://images.unsplash.com/photo-1614162692292-7ac56d7f7f1e?auto=format&fit=crop&q=80" className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-1000" />
-                  <div className="absolute bottom-6 md:bottom-8 left-6 md:left-8">
-                    <h3 className="text-xl md:text-3xl font-black uppercase tracking-tighter text-white">Carbon Custom</h3>
-                  </div>
-                </div>
-                <div className="relative group overflow-hidden rounded-2xl md:rounded-3xl border border-zinc-200 aspect-video">
-                  <img src="https://images.unsplash.com/photo-1621135802920-133df287f89c?auto=format&fit=crop&q=80" className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-1000" />
-                  <div className="absolute bottom-6 md:bottom-8 left-6 md:left-8">
-                    <h3 className="text-xl md:text-3xl font-black uppercase tracking-tighter text-white">Urban Legend</h3>
-                  </div>
-                </div>
+                <ProjectCard 
+                  size="medium"
+                  title="Video Pipeline"
+                  tagline="DRM-Protected Adaptive Bitrate Streaming"
+                  badges={["AWS", "FFMPEG", "HLS", "DRM"]}
+                  footer="Scalable media backend · Jan 2025"
+                  description="An automated video pipeline that downloads raw videos, transcodes them into multiple resolutions, encrypts segments, and delivers them via HLS."
+                  highlights={["Adaptive Bitrate (360p-1080p)", "DRM Encryption", "AWS S3 + SQS Pipeline", "Dockerized FFMPEG workers"]}
+                  techStack="Node.js · Docker · AWS · FFMPEG · HLS · C++"
+                  cta={[
+                    { label: "GitHub (Pipeline)", link: "https://github.com", icon: "github" },
+                    { label: "Architecture", link: "#", icon: "external" }
+                  ]}
+                  image="https://images.unsplash.com/photo-1614162692292-7ac56d7f7f1e?auto=format&fit=crop&q=80"
+                />
+                
+                <ProjectCard 
+                  size="small"
+                  title="FINAgent"
+                  tagline="Agentic Financial Research & Trading System"
+                  badges={["LangGraph", "Multi-Agent AI", "Time Series"]}
+                  footer="AI agents · Dec 2024"
+                  description="A modular AI-driven financial analyst system that combines market data, agents, memory, and orchestration graphs."
+                  highlights={["Market & Sentiment Agents", "Risk & Strategy Managers", "Zerodha MCP integration", "Graph-based workflows"]}
+                  techStack="LSTM · ARIMA · Technical Indicators"
+                  cta={[
+                    { label: "GitHub Repo", link: "https://github.com", icon: "github" },
+                    { label: "Workflow Diagram", link: "#", icon: "external" }
+                  ]}
+                  image="https://images.unsplash.com/photo-1621135802920-133df287f89c?auto=format&fit=crop&q=80"
+                />
               </div>
             </div>
           </div>
