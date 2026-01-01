@@ -568,7 +568,7 @@ export default function Home() {
                   { label: "GitHub Repo", link: "https://github.com", icon: "github" },
                   { label: "Read Research", link: "#", icon: "external" }
                 ]}
-                image="https://images.unsplash.com/photo-1544636331-e26879cd4d9b?auto=format&fit=crop&q=80"
+                image="/LLMThumbnail.webp"
               />
               
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 lg:grid-rows-2 gap-4 md:gap-8">

@@ -33,24 +33,29 @@ export function ProjectCard({
 
   return (
     <div 
-      className={`relative w-full group perspective-1000 ${
+      className={`relative w-full group ${
         size === "big" ? "aspect-video md:aspect-auto h-full" : "aspect-video"
       }`}
+      style={{ perspective: "2000px" }}
       onMouseEnter={() => setIsFlipped(true)}
       onMouseLeave={() => setIsFlipped(false)}
     >
           <motion.div
-            className="relative w-full h-full preserve-3d"
+            className="relative w-full h-full"
+            style={{ transformStyle: "preserve-3d" }}
             animate={{ rotateY: isFlipped ? 180 : 0 }}
-            transition={{ type: "spring", stiffness: 60, damping: 15, mass: 1 }}
+            transition={{ type: "spring", stiffness: 50, damping: 20, mass: 1 }}
           >
           {/* FRONT SIDE */}
-          <div className="absolute inset-0 backface-hidden rounded-2xl md:rounded-3xl border border-zinc-200 overflow-hidden bg-white">
+          <div 
+            className="absolute inset-0 backface-hidden rounded-2xl md:rounded-3xl border border-zinc-200 overflow-hidden bg-white shadow-xl"
+            style={{ backfaceVisibility: "hidden" }}
+          >
             {image && (
               <img 
                 src={image} 
                 alt={title} 
-                className="absolute inset-0 w-full h-full object-cover opacity-60" 
+                className="absolute inset-0 w-full h-full object-cover opacity-80" 
               />
             )}
           <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
@@ -82,30 +87,36 @@ export function ProjectCard({
         </div>
 
         {/* BACK SIDE */}
-        <div className="absolute inset-0 backface-hidden rounded-2xl md:rounded-3xl border border-zinc-200 bg-zinc-900 overflow-hidden rotate-y-180 p-6 md:p-10 flex flex-col justify-between">
-          <div className="space-y-4">
-            <div>
-              <h4 className="text-sky-400 font-black text-[10px] md:text-xs uppercase tracking-widest mb-2">What it is</h4>
-              <p className="text-white text-sm md:text-base font-medium leading-relaxed">
+        <div 
+          className="absolute inset-0 backface-hidden rounded-2xl md:rounded-3xl border border-white/10 bg-black overflow-hidden p-6 md:p-10 flex flex-col justify-between"
+          style={{ 
+            backfaceVisibility: "hidden",
+            transform: "rotateY(180deg)"
+          }}
+        >
+          <div className="space-y-4 md:space-y-6">
+            <div className="space-y-2">
+              <h4 className="text-sky-400 font-black text-[10px] md:text-xs uppercase tracking-[0.2em]">Project Overview</h4>
+              <p className="text-white text-sm md:text-xl font-medium leading-relaxed">
                 {description}
               </p>
             </div>
             
-            <div>
-              <h4 className="text-sky-400 font-black text-[10px] md:text-xs uppercase tracking-widest mb-2">Key Highlights</h4>
-              <ul className="grid grid-cols-1 gap-1 md:gap-2">
+            <div className="space-y-2">
+              <h4 className="text-sky-400 font-black text-[10px] md:text-xs uppercase tracking-[0.2em]">Key Features</h4>
+              <ul className="grid grid-cols-1 gap-2">
                 {highlights.map((h, i) => (
-                  <li key={i} className="text-white/60 text-[10px] md:text-sm font-bold flex items-center gap-2 uppercase tracking-tight">
-                    <div className="w-1 h-1 bg-sky-500 rounded-full" />
+                  <li key={i} className="text-white/70 text-[10px] md:text-sm font-bold flex items-center gap-3 uppercase tracking-wider">
+                    <div className="w-1.5 h-1.5 bg-sky-500 rounded-full shadow-[0_0_8px_rgba(0,163,255,0.8)]" />
                     {h}
                   </li>
                 ))}
               </ul>
             </div>
 
-            <div>
-              <h4 className="text-sky-400 font-black text-[10px] md:text-xs uppercase tracking-widest mb-2">Tech Stack</h4>
-              <p className="text-white/40 text-[10px] md:text-xs font-black uppercase tracking-widest">
+            <div className="pt-2">
+              <h4 className="text-sky-400 font-black text-[10px] md:text-xs uppercase tracking-[0.2em] mb-1">Architecture</h4>
+              <p className="text-white/40 text-[10px] md:text-xs font-black uppercase tracking-[0.1em]">
                 {techStack}
               </p>
             </div>
@@ -118,7 +129,7 @@ export function ProjectCard({
                 href={item.link} 
                 target="_blank" 
                 rel="noopener noreferrer"
-                className="flex items-center gap-2 px-4 py-2 bg-white text-black rounded-lg font-black uppercase tracking-widest text-[10px] md:text-xs hover:bg-sky-500 hover:text-white transition-all"
+                className="flex items-center gap-2 px-5 py-2.5 bg-white text-black rounded-xl font-black uppercase tracking-widest text-[10px] md:text-xs hover:bg-sky-500 hover:text-white transition-all transform hover:scale-105 active:scale-95 shadow-lg"
               >
                 {item.icon === "github" ? <Github size={14} /> : <ExternalLink size={14} />}
                 {item.label}
