@@ -82,13 +82,13 @@ export function ProjectCard({
 
         {/* BACK SIDE */}
         <div 
-          className="absolute inset-0 backface-hidden rounded-2xl md:rounded-3xl border border-white/10 bg-black overflow-hidden p-6 md:p-10 flex flex-col justify-between"
+          className="absolute inset-0 backface-hidden rounded-2xl md:rounded-3xl border border-white/10 bg-black overflow-hidden p-6 md:p-10 flex flex-col justify-center items-center text-center"
           style={{ 
             backfaceVisibility: "hidden",
             transform: "rotateY(180deg)"
           }}
         >
-            <div className="space-y-4 md:space-y-6">
+            <div className="space-y-4 md:space-y-6 mb-8">
               <div className="space-y-2">
                 <h4 className="text-white font-black text-[10px] md:text-xs uppercase tracking-[0.2em]">Project Overview</h4>
                 <p className="text-white text-sm md:text-xl font-medium leading-relaxed">
@@ -104,7 +104,7 @@ export function ProjectCard({
                 </div>
             </div>
 
-          <div className="flex flex-wrap gap-3 md:gap-4 mt-4">
+          <div className="flex flex-wrap justify-center gap-3 md:gap-4">
             {cta.map((item, i) => (
                 <a 
                   key={i} 
