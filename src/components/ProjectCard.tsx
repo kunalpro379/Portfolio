@@ -142,47 +142,10 @@ export default function ProjectCard({
             transform: "rotateY(180deg)"
           }}
         >
-          <div className="space-y-5 flex-1 flex flex-col justify-center w-full">
-            <div>
-              <div className="flex items-center justify-start gap-2 mb-2">
-                <div className="h-[2px] w-8 bg-sky-400/30" />
-                <h4 className="text-sky-400 text-[10px] font-black uppercase tracking-widest">
-                  Overview
-                </h4>
-              </div>
-              <p className="text-white/70 text-sm leading-relaxed">
-                {description}
-              </p>
-            </div>
-
-            <div>
-              <div className="flex items-center justify-start gap-2 mb-2">
-                <div className="h-[2px] w-8 bg-sky-400/30" />
-                <h4 className="text-sky-400 text-[10px] font-black uppercase tracking-widest">
-                  Key Features
-                </h4>
-              </div>
-              <ul className="space-y-2">
-                {highlights.map((highlight, i) => (
-                  <li key={i} className="text-white/60 text-xs flex items-start justify-start gap-2 leading-relaxed">
-                    <span className="text-sky-400 text-sm">•</span>
-                    <span>{highlight}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
-
-            <div>
-              <div className="flex items-center justify-start gap-2 mb-2">
-                <div className="h-[2px] w-8 bg-sky-400/30" />
-                <h4 className="text-sky-400 text-[10px] font-black uppercase tracking-widest">
-                  Tech Stack
-                </h4>
-              </div>
-              <p className="text-white/60 text-xs leading-relaxed">
-                {techStack}
-              </p>
-            </div>
+          <div className="flex-1 flex flex-col justify-center w-full">
+            <p className="text-white/80 text-lg md:text-xl font-medium leading-relaxed">
+              {description}
+            </p>
           </div>
 
           {cta.length > 0 && (
