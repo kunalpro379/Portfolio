@@ -325,13 +325,7 @@ export default function Home() {
 
         {/* SECTION 2 - BEYOND THE CODE */}
         <section className="min-h-screen flex items-center justify-center p-2 md:p-3 overflow-hidden bg-[#0a0a0a]">
-          <div className="relative w-full h-full">
-
-            <div className="absolute inset-0">
-              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full bg-[radial-gradient(circle_at_center,rgba(56,189,248,0.03)_0%,transparent_70%)]" />
-            </div>
-
-            <div className="relative z-10 flex flex-col lg:grid lg:grid-cols-2 min-h-screen max-w-7xl mx-auto items-center gap-10 md:gap-20 p-6 md:p-20">
+            <div className="flex flex-col lg:grid lg:grid-cols-2 min-h-screen max-w-7xl mx-auto items-center gap-10 md:gap-20 p-6 md:p-20">
               <div className="space-y-6 md:space-y-10 order-2 lg:order-1">
                 <div className="space-y-3 md:space-y-4">
                   <div className="flex items-center gap-4">
@@ -372,7 +366,6 @@ export default function Home() {
                 </div>
               </div>
             </div>
-          </div>
         </section>
 
         {/* SECTION 3 - MY JOURNEY */}
