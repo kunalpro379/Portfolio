@@ -571,22 +571,24 @@ export default function Home() {
                 image="/LLMThumbnail.webp"
               />
               
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 lg:grid-rows-2 gap-4 md:gap-8">
-                <ProjectCard 
-                  size="medium"
-                  title="Video Pipeline"
-                  tagline="DRM-Protected Adaptive Bitrate Streaming"
-                  badges={["AWS", "FFMPEG", "HLS", "DRM"]}
-                  footer="Scalable media backend · Jan 2025"
-                  description="An automated video pipeline that downloads raw videos, transcodes them into multiple resolutions, encrypts segments, and delivers them via HLS."
-                  highlights={["Adaptive Bitrate (360p-1080p)", "DRM Encryption", "AWS S3 + SQS Pipeline", "Dockerized FFMPEG workers"]}
-                  techStack="Node.js · Docker · AWS · FFMPEG · HLS · C++"
-                  cta={[
-                    { label: "GitHub (Pipeline)", link: "https://github.com", icon: "github" },
-                    { label: "Architecture", link: "#", icon: "external" }
-                  ]}
-                  image="https://images.unsplash.com/photo-1614162692292-7ac56d7f7f1e?auto=format&fit=crop&q=80"
-                />
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 md:gap-8">
+                <div className="sm:col-span-2">
+                  <ProjectCard 
+                    size="medium"
+                    title="Video Pipeline"
+                    tagline="DRM-Protected Adaptive Bitrate Streaming"
+                    badges={["AWS", "FFMPEG", "HLS", "DRM"]}
+                    footer="Scalable media backend · Jan 2025"
+                    description="An automated video pipeline that downloads raw videos, transcodes them into multiple resolutions, encrypts segments, and delivers them via HLS."
+                    highlights={["Adaptive Bitrate (360p-1080p)", "DRM Encryption", "AWS S3 + SQS Pipeline", "Dockerized FFMPEG workers"]}
+                    techStack="Node.js · Docker · AWS · FFMPEG · HLS · C++"
+                    cta={[
+                      { label: "GitHub (Pipeline)", link: "https://github.com", icon: "github" },
+                      { label: "Architecture", link: "#", icon: "external" }
+                    ]}
+                    image="https://images.unsplash.com/photo-1614162692292-7ac56d7f7f1e?auto=format&fit=crop&q=80"
+                  />
+                </div>
                 
                 <ProjectCard 
                   size="small"
@@ -602,6 +604,22 @@ export default function Home() {
                     { label: "Workflow Diagram", link: "#", icon: "external" }
                   ]}
                   image="https://images.unsplash.com/photo-1621135802920-133df287f89c?auto=format&fit=crop&q=80"
+                />
+
+                <ProjectCard 
+                  size="small"
+                  title="Nexus AI"
+                  tagline="Autonomous Agent Swarm for Enterprise Workflow"
+                  badges={["AutoGPT", "Multi-Agent", "LangChain"]}
+                  footer="DevOps Automation · Feb 2025"
+                  description="A distributed swarm of AI agents that monitor system health, suggest optimizations, and autonomously deploy patches to infrastructure."
+                  highlights={["Self-Healing Infrastructure", "Autonomous Log Analysis", "Multi-Cloud Orchestration", "Predictive Scaling"]}
+                  techStack="Python · Go · Kubernetes · OpenAI · Terraform"
+                  cta={[
+                    { label: "GitHub Repo", link: "https://github.com", icon: "github" },
+                    { label: "Case Study", link: "#", icon: "external" }
+                  ]}
+                  image="https://images.unsplash.com/photo-1677442136019-21780ecad995?auto=format&fit=crop&q=80"
                 />
               </div>
             </div>
