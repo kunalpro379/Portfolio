@@ -136,20 +136,19 @@ export default function ProjectCard({
 
         {/* BACK SIDE */}
         <div
-          className="absolute inset-0 rounded-2xl md:rounded-3xl border border-sky-500/30 bg-gradient-to-br from-zinc-900 via-zinc-950 to-black p-6 md:p-8 flex flex-col justify-center items-center text-center overflow-y-auto"
+          className="absolute inset-0 rounded-2xl md:rounded-3xl border border-sky-500/30 bg-gradient-to-br from-zinc-900 via-zinc-950 to-black p-6 md:p-8 flex flex-col justify-center items-start text-left overflow-y-auto"
           style={{
             backfaceVisibility: "hidden",
             transform: "rotateY(180deg)"
           }}
         >
-          <div className="space-y-5 flex-1 flex flex-col justify-center">
+          <div className="space-y-5 flex-1 flex flex-col justify-center w-full">
             <div>
-              <div className="flex items-center justify-center gap-2 mb-2">
-                <div className="h-[2px] w-8 bg-sky-500" />
+              <div className="flex items-center justify-start gap-2 mb-2">
+                <div className="h-[2px] w-8 bg-sky-400/30" />
                 <h4 className="text-sky-400 text-[10px] font-black uppercase tracking-widest">
                   Overview
                 </h4>
-                <div className="h-[2px] w-8 bg-sky-500" />
               </div>
               <p className="text-white/70 text-sm leading-relaxed">
                 {description}
@@ -157,16 +156,15 @@ export default function ProjectCard({
             </div>
 
             <div>
-              <div className="flex items-center justify-center gap-2 mb-2">
-                <div className="h-[2px] w-8 bg-sky-500" />
+              <div className="flex items-center justify-start gap-2 mb-2">
+                <div className="h-[2px] w-8 bg-sky-400/30" />
                 <h4 className="text-sky-400 text-[10px] font-black uppercase tracking-widest">
                   Key Features
                 </h4>
-                <div className="h-[2px] w-8 bg-sky-500" />
               </div>
               <ul className="space-y-2">
                 {highlights.map((highlight, i) => (
-                  <li key={i} className="text-white/60 text-xs flex items-center justify-center gap-2 leading-relaxed">
+                  <li key={i} className="text-white/60 text-xs flex items-start justify-start gap-2 leading-relaxed">
                     <span className="text-sky-400 text-sm">•</span>
                     <span>{highlight}</span>
                   </li>
@@ -175,12 +173,11 @@ export default function ProjectCard({
             </div>
 
             <div>
-              <div className="flex items-center justify-center gap-2 mb-2">
-                <div className="h-[2px] w-8 bg-sky-500" />
+              <div className="flex items-center justify-start gap-2 mb-2">
+                <div className="h-[2px] w-8 bg-sky-400/30" />
                 <h4 className="text-sky-400 text-[10px] font-black uppercase tracking-widest">
                   Tech Stack
                 </h4>
-                <div className="h-[2px] w-8 bg-sky-500" />
               </div>
               <p className="text-white/60 text-xs leading-relaxed">
                 {techStack}
@@ -189,7 +186,7 @@ export default function ProjectCard({
           </div>
 
           {cta.length > 0 && (
-            <div className="flex flex-wrap justify-center gap-3 mt-6 pt-5 border-t border-white/10">
+            <div className="flex flex-wrap justify-start gap-3 mt-6 pt-5 border-t border-white/10 w-full">
               {cta.map((item, i) => (
                 <a
                   key={i}
