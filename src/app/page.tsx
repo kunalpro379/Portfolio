@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Home as HomeIcon, Instagram, Radio, Users, Trophy, MessageSquare, Shield, Zap, Crown, ChevronRight, Car, Briefcase, Sword, Folder } from "lucide-react";
+import { Home as HomeIcon, Instagram, Radio, Users, Trophy, MessageSquare, Shield, Zap, Crown, ChevronRight, Car, Briefcase, Sword, Folder, User, FolderKanban, Clock, Mail, BookOpen, Layers } from "lucide-react";
 import { useEffect, useState } from "react";
 import ImageSlider from "@/components/ImageSlider";
 
@@ -11,7 +11,9 @@ export default function Home() {
   const [bokehProps, setBokehProps] = useState<any[]>([]);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
-  const heroImages = ["/papa.png", "/kunal2.png", "/friends.png"];
+  const heroImages1 = ["/me.png"];
+  const heroImages2 = ["/papa.png", "/kunal2.png", "/friends.png"];
+
 
   useEffect(() => {
     setIsMounted(true);
@@ -33,8 +35,9 @@ export default function Home() {
     setBokehProps(bProps);
 
     const imageInterval = setInterval(() => {
-      setCurrentImageIndex((prev) => (prev + 1) % heroImages.length);
+      setCurrentImageIndex((prev) => (prev + 1) % heroImages2.length);
     }, 4000);
+
 
     return () => clearInterval(imageInterval);
   }, []);
@@ -64,7 +67,15 @@ export default function Home() {
 
   const duration = 20;
 
-  const navItems = ["About", "Stats", "Tiers", "Media"];
+  const navItems = ["About", "Projects", "Experience", "TechStack", "Contact", "Blogs", "Work"];
+  const mobileNavItems = [
+    { name: "About", icon: User },
+    { name: "Projects", icon: FolderKanban },
+    { name: "Experience", icon: Briefcase },
+    { name: "Contact", icon: Mail },
+    { name: "Blogs", icon: BookOpen },
+    { name: "Work", icon: Layers }
+  ];
 
   const SectionHeader = ({ icon: Icon, title, subtitle, dark = false }: { icon: any; title: string; subtitle: string; dark?: boolean; }) => {
     return (
@@ -86,20 +97,52 @@ export default function Home() {
   return (
     <div className="relative bg-[#050505] font-sans selection:bg-sky-500 selection:text-white text-white">
       {/* FIXED TAB BAR */}
-      <div className="fixed top-4 md:top-6 left-1/2 -translate-x-1/2 z-[1000] w-[95%] md:w-auto">
+      <div className="fixed top-4 md:top-6 left-1/2 -translate-x-1/2 z-[1000] w-auto max-w-[95%]">
         <div className="relative">
-          <div className="absolute -inset-[1px] bg-white/10 rounded-full blur-md z-[-1]" />
-          <div className="bg-black/80 backdrop-blur-xl border border-white/10 rounded-full px-4 md:px-8 py-2 md:py-3 flex items-center justify-between md:justify-start gap-2 md:gap-6 shadow-2xl">
-            <div className="w-8 h-8 md:w-10 md:h-10 rounded-full border border-white/20 flex items-center justify-center text-white hover:bg-sky-500 hover:border-sky-400 transition-all cursor-pointer group">
-              <HomeIcon size={16} className="group-hover:scale-110 transition-transform" />
+          {/* Glow Effect - Desktop Only */}
+          <div className="hidden md:block absolute -inset-[2px] bg-gradient-to-r from-sky-500/20 via-purple-500/20 to-sky-500/20 rounded-full blur-xl z-[-1]" />
+
+          {/* Main Navbar */}
+          <div className="bg-black border-2 border-white/30 md:border-white/20 md:bg-black/90 md:backdrop-blur-2xl rounded-full px-3 md:px-6 py-2.5 md:py-3.5 flex items-center gap-2 md:gap-4 shadow-lg md:shadow-[0_8px_32px_rgba(0,0,0,0.4)]">
+            {/* Home Icon - Desktop Only */}
+            <div className="hidden md:flex w-11 h-11 rounded-full bg-gradient-to-br from-sky-500 to-sky-600 items-center justify-center text-white hover:from-sky-400 hover:to-sky-500 transition-all cursor-pointer group shadow-lg hover:shadow-sky-500/50 hover:scale-110 active:scale-95">
+              <HomeIcon size={18} className="group-hover:scale-110 transition-transform" />
             </div>
-            <div className="flex gap-1 md:gap-2 overflow-x-auto no-scrollbar md:overflow-visible max-w-[70vw] md:max-w-none">
+
+            {/* Divider - Desktop Only */}
+            <div className="hidden md:block w-[1px] h-6 bg-white/10" />
+
+            {/* Nav Items - Mobile */}
+            <div className="flex md:hidden gap-1.5 items-center">
+              {mobileNavItems.map((item) => {
+                const Icon = item.icon;
+                return (
+                  <div
+                    key={item.name}
+                    className="flex items-center justify-center p-2.5 rounded-lg text-white/80 cursor-pointer hover:text-white hover:bg-white/10 transition-all active:scale-95"
+                  >
+                    <Icon size={20} className="relative z-10" />
+                  </div>
+                );
+              })}
+            </div>
+
+            {/* Nav Items - Desktop */}
+            <div className="hidden md:flex gap-2 overflow-x-auto no-scrollbar">
               {navItems.map((item) => (
                 <div
                   key={item}
-                  className="px-3 md:px-6 py-1.5 md:py-2 rounded-full text-white/60 font-bold text-[10px] md:text-xs cursor-pointer hover:bg-white/10 hover:text-white transition-all hover:scale-105 active:scale-95 border border-transparent hover:border-white/10 whitespace-nowrap"
+                  className="relative px-5 py-2 rounded-full text-white/70 font-bold text-sm cursor-pointer hover:text-white transition-all hover:scale-105 active:scale-95 whitespace-nowrap group"
                 >
-                  {item}
+                  {/* Hover Background */}
+                  <div className="absolute inset-0 bg-gradient-to-r from-sky-500/0 via-sky-500/10 to-sky-500/0 rounded-full opacity-0 group-hover:opacity-100 transition-opacity" />
+                  <div className="absolute inset-0 border border-white/0 group-hover:border-white/20 rounded-full transition-all" />
+
+                  {/* Text */}
+                  <span className="relative z-10">{item}</span>
+
+                  {/* Active Indicator Dot */}
+                  <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-1 h-1 bg-sky-400 rounded-full opacity-0 group-hover:opacity-100 transition-opacity" />
                 </div>
               ))}
             </div>
@@ -184,7 +227,52 @@ export default function Home() {
           <div className="flex flex-col">
             {/* First Screen - Hero Content */}
             <div className="min-h-[75vh] flex flex-col lg:flex-row items-center justify-between px-6 md:px-24 max-w-7xl mx-auto w-full gap-10 pt-20 pb-0">
-              <div className="flex flex-col items-start justify-center lg:w-3/5">
+              {/* Image First on Mobile, Second on Desktop */}
+              <div className="relative w-full lg:w-[45%] aspect-square select-none order-1 lg:order-2">
+                <div className="relative w-full h-full max-w-[500px] mx-auto">
+                  <div className="absolute inset-0 bg-sky-500/10 rounded-[2rem] md:rounded-[4rem] rotate-6 scale-95" />
+                  <div className="absolute inset-0 bg-white/5 rounded-[2rem] md:rounded-[4rem] -rotate-3 border border-white/10 backdrop-blur-sm" />
+                  <div className="absolute inset-0 rounded-[2rem] md:rounded-[4rem] overflow-hidden border border-white/20 bg-gradient-to-br from-white/10 to-transparent">
+                    <motion.img
+                      initial={{ opacity: 0, x: 100, scale: 0.95 }}
+                      animate={{ opacity: 1, x: 0, scale: 1 }}
+                      transition={{
+                        duration: 1,
+                        ease: "easeInOut"
+                      }}
+                      src="/me.png"
+                      alt="Hero Character"
+                      className="absolute top-1/2 left-1/2 
+             -translate-x-1/2 -translate-y-1/2 
+             w-[100%] h-[100%] 
+             md:w-[80%] md:h-[80%] 
+             object-contain md:object-cover 
+             grayscale rounded-2xl"
+                      style={{ imageRendering: "high-quality" }}
+                    />
+
+                  </div>
+
+                  <motion.div
+                    animate={{ y: [0, -10, 0] }}
+                    transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+                    className="absolute -top-3 -right-3 md:-top-6 md:-right-6 px-3 md:px-6 py-1.5 md:py-3 bg-black border border-white/10 rounded-xl md:rounded-2xl shadow-2xl"
+                  >
+                    <div className="text-[8px] md:text-xs font-black text-sky-400 whitespace-nowrap">NEXT.JS EXPERT</div>
+                  </motion.div>
+
+                  <motion.div
+                    animate={{ y: [0, 10, 0] }}
+                    transition={{ duration: 4, repeat: Infinity, ease: "easeInOut", delay: 1 }}
+                    className="absolute -bottom-3 -left-3 md:-bottom-6 md:-left-6 px-3 md:px-6 py-1.5 md:py-3 bg-black border border-white/10 rounded-xl md:rounded-2xl shadow-2xl"
+                  >
+                    <div className="text-[8px] md:text-xs font-black text-white whitespace-nowrap">AI ENGINEER</div>
+                  </motion.div>
+                </div>
+              </div>
+
+              {/* Text Content - Second on Mobile, First on Desktop */}
+              <div className="flex flex-col items-start justify-center lg:w-3/5 order-2 lg:order-1">
                 <motion.div
                   initial={{ opacity: 0, x: -20 }}
                   animate={{ opacity: 1, x: 0 }}
@@ -196,7 +284,7 @@ export default function Home() {
                   </span>
                 </motion.div>
                 <h1 className="text-6xl md:text-[10rem] font-black tracking-tighter leading-[0.8] mb-6 md:mb-8 select-none text-left">
-                  KUNAL<br />
+                  KUNAL'S<br />
                   <span className="text-transparent bg-clip-text bg-gradient-to-b from-white to-white/20">PORTFOLIO</span>
                 </h1>
                 <p className="max-w-xl text-white/40 font-medium text-sm md:text-lg tracking-wide uppercase text-left">
@@ -212,14 +300,17 @@ export default function Home() {
                   </div>
                 </div>
               </div>
+            </div>
 
-              {/* CHARACTER IMAGE CONTAINER - NOW NEXT TO THE TEXT */}
-              <div className="relative w-full lg:w-[45%] aspect-square select-none mt-6 lg:mt-0">
+            {/* Second Screen - About Content */}
+            <div className="pt-0 pb-10 flex flex-col lg:flex-row items-center px-6 md:px-24 max-w-7xl mx-auto w-full gap-10">
+              {/* Image First on Mobile, First on Desktop */}
+              <div className="relative w-full lg:w-[45%] aspect-square select-none order-1 lg:order-1">
                 <div className="relative w-full h-full max-w-[500px] mx-auto">
                   <div className="absolute inset-0 bg-sky-500/10 rounded-[2rem] md:rounded-[4rem] rotate-6 scale-95" />
                   <div className="absolute inset-0 bg-white/5 rounded-[2rem] md:rounded-[4rem] -rotate-3 border border-white/10 backdrop-blur-sm" />
                   <div className="absolute inset-0 rounded-[2rem] md:rounded-[4rem] overflow-hidden border border-white/20 bg-gradient-to-br from-white/10 to-transparent">
-                    {heroImages.map((img, index) => (
+                    {heroImages2.map((img, index) => (
                       <motion.img
                         key={img}
                         initial={{ opacity: index === 0 ? 1 : 0, x: index === 0 ? 0 : 100 }}
@@ -241,7 +332,7 @@ export default function Home() {
                   </div>
 
                   {/* Floating Badges */}
-                  <motion.div
+                  {/* <motion.div
                     animate={{ y: [0, -10, 0] }}
                     transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
                     className="absolute -top-3 -right-3 md:-top-6 md:-right-6 px-3 md:px-6 py-1.5 md:py-3 bg-black border border-white/10 rounded-xl md:rounded-2xl shadow-2xl"
@@ -255,14 +346,11 @@ export default function Home() {
                     className="absolute -bottom-3 -left-3 md:-bottom-6 md:-left-6 px-3 md:px-6 py-1.5 md:py-3 bg-black border border-white/10 rounded-xl md:rounded-2xl shadow-2xl"
                   >
                     <div className="text-[8px] md:text-xs font-black text-white whitespace-nowrap">AI ENGINEER</div>
-                  </motion.div>
+                  </motion.div> */}
                 </div>
               </div>
-            </div>
-
-            {/* Second Screen - About Content */}
-            <div className="pt-0 pb-10 flex items-center px-6 md:px-24 max-w-7xl mx-auto w-full">
-              <div className="space-y-6 md:space-y-10 w-full lg:w-1/2">
+              {/* Text Content - Second on Mobile, Second on Desktop */}
+              <div className="space-y-6 md:space-y-10 w-full lg:w-1/2 order-2 lg:order-2">
                 <div className="space-y-3 md:space-y-4">
                   <div className="flex items-center gap-4">
                     <div className="h-[1px] w-12 bg-sky-500" />
@@ -714,47 +802,7 @@ export default function Home() {
           </div>
         </section>
 
-        <section className="relative flex items-center justify-center p-2 md:p-3">
-          <div
-            className="relative w-full rounded-2xl md:rounded-3xl overflow-hidden bg-gradient-to-br from-white via-zinc-50 to-zinc-100 border border-zinc-200 shadow-2xl p-6 md:p-12">
 
-            {/* Video Background - GTAV */}
-            <div className="absolute inset-0 z-0 overflow-hidden rounded-2xl md:rounded-3xl">
-              <video
-                autoPlay
-                loop
-                muted
-                playsInline
-                preload="auto"
-                className="absolute inset-0 w-full h-full object-cover opacity-40"
-                style={{
-                  filter: 'blur(3px)',
-                  transform: 'scale(1.05) translateZ(0)',
-                  willChange: 'transform'
-                }}
-              >
-                <source src="/GTAV.mp4" type="video/mp4" />
-              </video>
-              <div className="absolute inset-0 bg-gradient-to-br from-white/70 via-zinc-50/80 to-zinc-100/70 backdrop-blur-sm" />
-            </div>
-
-            <div className="relative z-10 max-w-7xl mx-auto h-full flex flex-col">
-              <SectionHeader icon={Sword} title="FACTION WARFARE" subtitle="Territory & Influence" />
-              <div className="relative flex-1 rounded-2xl md:rounded-3xl overflow-hidden border border-zinc-200 group min-h-[400px]">
-                <img src="https://images.unsplash.com/photo-1542224566-6e85f2e6772f?auto=format&fit=crop&q=80" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-1000" />
-                <div className="absolute inset-x-0 bottom-0 p-6 md:p-16 flex flex-col lg:flex-row justify-between items-start lg:items-end gap-6">
-                  <div className="max-w-2xl">
-                    <h3 className="text-4xl md:text-7xl font-black uppercase tracking-tighter mb-3 md:mb-6 leading-none text-white lg:text-black">DOMINATE THE <span className="text-sky-400">STREETS</span></h3>
-                    <p className="text-white lg:text-zinc-700 text-sm md:text-xl font-medium">Join established families or start your own creed. Control distribution, manage turf, and rise as the ultimate power in Lucid City.</p>
-                  </div>
-                  <div className="w-full lg:w-auto px-8 md:px-16 py-4 md:py-8 bg-sky-500 text-white rounded-xl md:rounded-2xl font-black uppercase tracking-widest hover:scale-110 transition-all cursor-pointer shadow-[0_20px_60px_rgba(0,163,255,0.4)] text-center text-xs md:text-base">
-                    Claim Turf
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
 
         <section className="relative flex items-center justify-center p-2 md:p-3">
           <div

@@ -11,7 +11,7 @@ export const metadata: Metadata = {
   keywords: ["Full-Stack Developer", "AI Engineer", "Next.js", "React", "Portfolio"],
   authors: [{ name: "Kunal" }],
   openGraph: {
-    title: "Kunal Portfolio",
+    title: "Kunal's Portfolio",
     description: "Full-Stack Developer & AI Engineer",
     type: "website",
   },
