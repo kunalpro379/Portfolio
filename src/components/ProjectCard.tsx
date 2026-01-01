@@ -77,62 +77,62 @@ export default function ProjectCard({
           transform: isFlipped ? "rotateY(180deg)" : "rotateY(0deg)"
         }}
       >
-        {/* FRONT SIDE */}
-        <div
-          className="absolute inset-0 rounded-2xl md:rounded-3xl border border-zinc-700 bg-gradient-to-br from-zinc-900 via-black to-zinc-900 overflow-hidden group"
-          style={{ backfaceVisibility: "hidden" }}
-        >
-          {image && (
-            <div className="absolute inset-0">
-              <img 
-                src={image} 
-                alt={title}
-                className="w-full h-full object-cover opacity-30 group-hover:opacity-40 transition-opacity duration-500"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-black via-black/80 to-transparent" />
-            </div>
-          )}
-          
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(0,163,255,0.08)_0%,transparent_60%)] opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-          
-          <div className="relative z-10 h-full p-6 md:p-8 flex flex-col justify-between">
-            <div className="space-y-4">
-              <div>
-                <h3 className="text-2xl md:text-3xl font-black uppercase tracking-tight text-white leading-none mb-2">
-                  {title}
-                </h3>
-                <div className="h-[2px] w-12 bg-sky-500/60" />
+          {/* FRONT SIDE */}
+          <div
+            className="absolute inset-0 rounded-2xl md:rounded-3xl border border-zinc-700 bg-gradient-to-br from-zinc-900 via-black to-zinc-900 overflow-hidden group"
+            style={{ backfaceVisibility: "hidden" }}
+          >
+            {image && (
+              <div className="absolute inset-0">
+                <img 
+                  src={image} 
+                  alt={title}
+                  className="w-full h-full object-cover opacity-70 group-hover:opacity-80 transition-opacity duration-500"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent" />
               </div>
-              
-              <p className="text-white/50 text-xs md:text-sm font-medium leading-relaxed max-w-lg">
-                {tagline}
-              </p>
-              
-              <div className="flex flex-wrap gap-2">
-                {badges.map((badge, i) => (
-                  <span
-                    key={i}
-                    className="px-2.5 py-1 rounded-md bg-sky-500/10 border border-sky-500/30 text-sky-400 text-[9px] font-bold uppercase tracking-wide"
-                  >
-                    {badge}
-                  </span>
-                ))}
-              </div>
-            </div>
-
-            <div className="space-y-3">
-              <div className="h-[1px] w-full bg-white/10" />
-              <div className="flex items-center justify-between">
-                <p className="text-white/40 text-[10px] font-bold uppercase tracking-wider">
-                  {footer}
+            )}
+            
+            <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(0,163,255,0.08)_0%,transparent_60%)] opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+            
+            <div className="relative z-10 h-full p-6 md:p-8 flex flex-col justify-end">
+              <div className="space-y-4">
+                <div>
+                  <h3 className="text-2xl md:text-3xl font-black uppercase tracking-tight text-white leading-none mb-2">
+                    {title}
+                  </h3>
+                  <div className="h-[2px] w-12 bg-sky-500/60" />
+                </div>
+                
+                <p className="text-white/70 text-xs md:text-sm font-medium leading-relaxed max-w-lg">
+                  {tagline}
                 </p>
-                <span className="text-sky-400/50 text-[10px] font-bold uppercase tracking-wider opacity-0 group-hover:opacity-100 transition-opacity">
-                  Hover for details
-                </span>
+                
+                <div className="flex flex-wrap gap-2">
+                  {badges.map((badge, i) => (
+                    <span
+                      key={i}
+                      className="px-2.5 py-1 rounded-md bg-sky-500/10 border border-sky-500/30 text-sky-400 text-[9px] font-bold uppercase tracking-wide"
+                    >
+                      {badge}
+                    </span>
+                  ))}
+                </div>
+
+                <div className="space-y-3 pt-2">
+                  <div className="h-[1px] w-full bg-white/10" />
+                  <div className="flex items-center justify-between">
+                    <p className="text-white/40 text-[10px] font-bold uppercase tracking-wider">
+                      {footer}
+                    </p>
+                    <span className="text-sky-400/50 text-[10px] font-bold uppercase tracking-wider opacity-0 group-hover:opacity-100 transition-opacity">
+                      Hover for details
+                    </span>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
-        </div>
 
         {/* BACK SIDE */}
         <div
