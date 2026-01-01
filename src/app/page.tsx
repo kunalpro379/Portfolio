@@ -183,7 +183,7 @@ export default function Home() {
         <div className="relative z-[5]">
           <div className="flex flex-col">
             {/* First Screen - Hero Content */}
-            <div className="min-h-[85vh] flex flex-col lg:flex-row items-center justify-between px-6 md:px-24 max-w-7xl mx-auto w-full gap-10 pt-20 pb-0">
+            <div className="min-h-[75vh] flex flex-col lg:flex-row items-center justify-between px-6 md:px-24 max-w-7xl mx-auto w-full gap-10 pt-20 pb-0">
               <div className="flex flex-col items-start justify-center lg:w-3/5">
                 <motion.div
                   initial={{ opacity: 0, x: -20 }}
@@ -203,7 +203,7 @@ export default function Home() {
                   Crafting immersive digital experiences through <span className="text-white">Full-Stack Development</span> & <span className="text-white">Generative AI</span>.
                 </p>
 
-                <div className="mt-8 md:mt-12 flex flex-col sm:flex-row gap-4 md:gap-6 w-full sm:w-auto">
+                <div className="mt-6 md:mt-8 flex flex-col sm:flex-row gap-4 md:gap-6 w-full sm:w-auto">
                   <div className="px-8 md:px-10 py-4 md:py-5 bg-sky-500 text-white rounded-xl md:rounded-2xl font-black uppercase tracking-widest hover:scale-105 transition-all cursor-pointer shadow-[0_20px_50px_rgba(0,163,255,0.4)] text-center text-xs md:text-base">
                     Explore Work
                   </div>
@@ -214,7 +214,7 @@ export default function Home() {
               </div>
 
               {/* CHARACTER IMAGE CONTAINER - NOW NEXT TO THE TEXT */}
-              <div className="relative w-full lg:w-[45%] aspect-square select-none mt-10 lg:mt-0">
+              <div className="relative w-full lg:w-[45%] aspect-square select-none mt-6 lg:mt-0">
                 <div className="relative w-full h-full max-w-[500px] mx-auto">
                   <div className="absolute inset-0 bg-sky-500/10 rounded-[2rem] md:rounded-[4rem] rotate-6 scale-95" />
                   <div className="absolute inset-0 bg-white/5 rounded-[2rem] md:rounded-[4rem] -rotate-3 border border-white/10 backdrop-blur-sm" />
@@ -261,7 +261,7 @@ export default function Home() {
             </div>
 
             {/* Second Screen - About Content */}
-            <div className="pt-0 pb-20 flex items-center px-6 md:px-24 max-w-7xl mx-auto w-full">
+            <div className="pt-0 pb-10 flex items-center px-6 md:px-24 max-w-7xl mx-auto w-full">
               <div className="space-y-6 md:space-y-10 w-full lg:w-1/2">
                 <div className="space-y-3 md:space-y-4">
                   <div className="flex items-center gap-4">
