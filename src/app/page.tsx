@@ -548,11 +548,11 @@ export default function Home() {
         </section> */}
 
         {/* Projects */}
-        <section className="relative bg-gradient-to-br from-[#050505] via-[#0a0a0a] to-[#050505] py-12 md:py-20">
+        <section className="relative bg-gradient-to-br from-white via-blue-50 to-sky-50 py-12 md:py-20">
           <div className="absolute inset-0 opacity-5 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')]" />
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(0,163,255,0.05)_0%,transparent_60%)]" />
           <div className="max-w-7xl mx-auto px-6 md:px-12 h-full flex flex-col relative z-10">
-            <SectionHeader icon={FolderKanban} title="PROJECT SHOWCASE" subtitle="PREMIUM WORK COLLECTION" />
+            <SectionHeader icon={FolderKanban} title="PROJECT SHOWCASE" subtitle="PREMIUM WORK COLLECTION" dark={true} />
             
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-8 flex-1">
               <ProjectCard 

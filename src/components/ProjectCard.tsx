@@ -39,11 +39,11 @@ export function ProjectCard({
       onMouseEnter={() => setIsFlipped(true)}
       onMouseLeave={() => setIsFlipped(false)}
     >
-        <motion.div
-          className="relative w-full h-full preserve-3d"
-          animate={{ rotateY: isFlipped ? 180 : 0 }}
-          transition={{ duration: 0.6, type: "spring", stiffness: 260, damping: 20 }}
-        >
+          <motion.div
+            className="relative w-full h-full preserve-3d"
+            animate={{ rotateY: isFlipped ? 180 : 0 }}
+            transition={{ type: "spring", stiffness: 60, damping: 15, mass: 1 }}
+          >
           {/* FRONT SIDE */}
           <div className="absolute inset-0 backface-hidden rounded-2xl md:rounded-3xl border border-zinc-200 overflow-hidden bg-white">
             {image && (
