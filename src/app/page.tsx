@@ -371,32 +371,7 @@ export default function Home() {
                   </div>
                 </div>
               </div>
-
-              {/* <div className="relative aspect-[2/3] w-full max-w-[300px] md:max-w-none md:w-[95%] mx-auto order-1 lg:order-2">
-                <div className="absolute inset-0 bg-sky-500/10 rounded-[2rem] md:rounded-[4rem] rotate-6 scale-95" />
-                <div className="absolute inset-0 bg-white/5 rounded-[2rem] md:rounded-[4rem] -rotate-3 border border-white/10 backdrop-blur-sm" />
-                <div className="absolute inset-0 rounded-[2rem] md:rounded-[4rem] overflow-hidden border border-white/20 bg-gradient-to-br from-white/10 to-transparent">
-                  <ImageSlider />
-                </div>
-
-                <motion.div
-                  animate={{ y: [0, -10, 0] }}
-                  transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
-                  className="absolute -top-3 -right-3 md:-top-6 md:-right-6 px-3 md:px-6 py-1.5 md:py-3 bg-black border border-white/10 rounded-xl md:rounded-2xl shadow-2xl"
-                >
-                  <div className="text-[8px] md:text-xs font-black text-sky-400 whitespace-nowrap">NEXT.JS EXPERT</div>
-                </motion.div>
-
-                <motion.div
-                  animate={{ y: [0, 10, 0] }}
-                  transition={{ duration: 4, repeat: Infinity, ease: "easeInOut", delay: 1 }}
-                  className="absolute -bottom-3 -left-3 md:-bottom-6 md:-left-6 px-3 md:px-6 py-1.5 md:py-3 bg-black border border-white/10 rounded-xl md:rounded-2xl shadow-2xl"
-                >
-                  <div className="text-[8px] md:text-xs font-black text-white whitespace-nowrap">AI ENGINEER</div>
-                </motion.div>
-              </div> 
             </div>
-            */}
           </div>
         </section>
 
@@ -852,37 +827,8 @@ export default function Home() {
           </motion.div>
         </section>
 
-      </div> {/* End of scrollable content container */}
-
-      <style jsx global>{`
-        @keyframes scanline {
-          0% { bottom: 0; opacity: 0; }
-          50% { opacity: 0.5; }
-          100% { bottom: 100%; opacity: 0; }
-        }
-        .scanline {
-          position: absolute;
-          animation: scanline 2s linear infinite;
-        }
-        .custom-scrollbar::-webkit-scrollbar {
-          width: 2px;
-        }
-        .custom-scrollbar::-webkit-scrollbar-track {
-          background: rgba(0, 0, 0, 0.02);
-        }
-        .custom-scrollbar::-webkit-scrollbar-thumb {
-          background: rgba(0, 163, 255, 1);
-          border-radius: 10px;
-        }
-        .no-scrollbar::-webkit-scrollbar {
-          display: none;
-        }
-        .no-scrollbar {
-          -ms-overflow-style: none;
-          scrollbar-width: none;
-        }
-      `}</style>
-    </div >
+      </div>
+    </div>
   );
 
 }
