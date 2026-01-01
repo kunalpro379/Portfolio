@@ -9,7 +9,6 @@ const images = [
   { src: "/friends.png", alt: "Friends" },
   { src: "/papa.png", alt: "Papa" },
   { src: "/character.png", alt: "Character" },
-  { src: "/kunal.png", alt: "Kunal" }
 ];
 
 const ImageSlider = memo(() => {
