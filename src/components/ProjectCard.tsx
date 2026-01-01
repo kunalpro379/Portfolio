@@ -1,6 +1,5 @@
 "use client";
 
-import { motion } from "framer-motion";
 import { useState } from "react";
 import { Github, ExternalLink, ChevronRight } from "lucide-react";
 
@@ -39,17 +38,13 @@ export function ProjectCard({
       style={{ perspective: "2000px" }}
       onClick={() => setIsFlipped(!isFlipped)}
     >
-            <motion.div
-              className="relative w-full h-full"
-              style={{ transformStyle: "preserve-3d" }}
-              animate={{ rotateY: isFlipped ? 180 : 0 }}
-              transition={{ 
-                type: "spring", 
-                stiffness: 260, 
-                damping: 20, 
-                mass: 0.5 
-              }}
-            >
+      <div
+        className="relative w-full h-full transition-transform duration-700 ease-out"
+        style={{ 
+          transformStyle: "preserve-3d",
+          transform: isFlipped ? "rotateY(180deg)" : "rotateY(0deg)"
+        }}
+      >
           {/* FRONT SIDE */}
           <div 
             className="absolute inset-0 backface-hidden rounded-2xl md:rounded-3xl border border-zinc-200 overflow-hidden bg-white shadow-xl"
@@ -130,7 +125,7 @@ export function ProjectCard({
             ))}
           </div>
         </div>
-      </motion.div>
+      </div>
     </div>
   );
 }
