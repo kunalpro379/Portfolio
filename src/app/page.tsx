@@ -129,203 +129,18 @@ export default function Home() {
                 >
                   {item}
                 </div>
-              ))}
+                ))}
+              </div>
             </div>
           </div>
         </div>
       </div>
 
-      {/* SECTION 1 - HERO */}
-      <section className="relative min-h-screen flex items-center justify-center p-2 md:p-3 overflow-hidden">
-        <motion.div
-          className="relative w-full h-screen rounded-2xl md:rounded-3xl overflow-hidden bg-[#030303]">
-
-          <div className="absolute inset-0 z-[2] opacity-[0.04] pointer-events-none" style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")` }} />
-
-          <div className="absolute inset-0 z-0">
-            <motion.div
-              animate={{
-                scale: [1, 1.1, 1],
-                opacity: [0.1, 0.15, 0.1],
-              }}
-              transition={{ duration: 15, repeat: Infinity, ease: "easeInOut" }}
-              className="absolute top-[-20%] left-[-10%] w-[80%] h-[80%] bg-sky-500/5 rounded-full blur-[140px]" />
-            <motion.div
-              animate={{
-                scale: [1.1, 1, 1.1],
-                opacity: [0.05, 0.1, 0.05],
-              }}
-              transition={{ duration: 12, repeat: Infinity, ease: "easeInOut", delay: 2 }}
-              className="absolute bottom-[-10%] right-[-10%] w-[70%] h-[70%] bg-indigo-500/5 rounded-full blur-[140px]" />
-          </div>
-
-          {/* Light Beams/Rays */}
-          <div className="absolute inset-0 z-[1] overflow-hidden pointer-events-none">
-            <div className="absolute -top-[50%] -left-[50%] w-[200%] h-[200%] rotate-45 opacity-[0.05]" style={{
-              backgroundImage: 'repeating-linear-gradient(90deg, transparent, transparent 50px, rgba(255,255,255,0.1) 50px, rgba(255,255,255,0.1) 51px)',
-            }} />
-          </div>
-
-          {/* Refined Grid Overlay - Finer lines */}
-          <div className="absolute inset-0 z-[2] opacity-[0.1]" style={{
-            backgroundImage: `
-              linear-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px), 
-              linear-gradient(90deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px)
-            `,
-            backgroundSize: '100px 100px',
-            maskImage: 'radial-gradient(circle at center, black, transparent 90%)',
-            WebkitMaskImage: 'radial-gradient(circle at center, black, transparent 90%)'
-          }} />
-
-          {/* Floating Bokeh / Particles */}
-          <div className="absolute inset-0 z-[3] pointer-events-none">
-            {isMounted && bokehProps.map((props, i) => (
-              <motion.div
-                key={i}
-                initial={{ opacity: 0, scale: 0 }}
-                animate={{
-                  opacity: [0, 0.2, 0],
-                  scale: [0.5, 1, 0.5],
-                  y: [0, -100]
-                }}
-                transition={{
-                  duration: props.duration,
-                  repeat: Infinity,
-                  ease: "easeInOut",
-                  delay: props.delay
-                }}
-                className="absolute w-1 h-1 bg-sky-400 rounded-full blur-[1px]"
-                style={{
-                  top: props.top,
-                  left: props.left,
-                }} />
-            ))}
-          </div>
-
-          {/* Subtle Aura behind Text */}
-          <div className="absolute top-1/2 left-1/4 -translate-y-1/2 w-[40%] h-[40%] bg-sky-500/5 rounded-full blur-[180px] z-[4] pointer-events-none" />
-
-          {/* Vignette */}
-          <div className="absolute inset-0 z-[4] pointer-events-none bg-[radial-gradient(circle_at_center,transparent_0%,rgba(0,0,0,0.5)_100%)]" />
-
-          {/* CHARACTER IMAGE */}
-          <div className="absolute left-[2%] right-[2%] top-[10%] sm:right-[5%] sm:left-auto sm:top-[10%] md:right-[8%] md:top-[15%] lg:bottom-[20%] lg:top-auto z-[4] h-[40%] sm:h-[45%] md:h-[50%] lg:h-[65%] w-auto sm:w-[30%] md:w-[32%] lg:w-[30%] pointer-events-none select-none">
-            <div className="relative w-full h-full">
-              <div className="absolute inset-0 bg-sky-500/10 rounded-[2rem] md:rounded-[4rem] rotate-6 scale-95" />
-              <div className="absolute inset-0 bg-white/5 rounded-[2rem] md:rounded-[4rem] -rotate-3 border border-white/10 backdrop-blur-sm" />
-              <div className="absolute inset-0 rounded-[2rem] md:rounded-[4rem] overflow-hidden border border-white/20 bg-gradient-to-br from-white/10 to-transparent">
-                {heroImages.map((img, index) => (
-                  <motion.img
-                    key={img}
-                    initial={{ opacity: index === 0 ? 1 : 0, x: index === 0 ? 0 : 100 }}
-                    animate={{
-                      opacity: currentImageIndex === index ? 1 : 0,
-                      x: currentImageIndex === index ? 0 : 100,
-                      scale: 1
-                    }}
-                    transition={{
-                      opacity: { duration: 1, ease: "easeInOut" },
-                      x: { duration: 1, ease: "easeInOut" },
-                      scale: { duration: 1, ease: "easeInOut" }
-                    }}
-                    src={img}
-                    alt="Character"
-                    className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[100%] h-[100%] md:w-[80%] md:h-[80%] object-contain md:object-cover grayscale rounded-2xl"
-                    style={{ imageRendering: 'high-quality' }} />
-                ))}
-              </div>
-
-              {/* Floating Badges */}
-              <motion.div
-                animate={{ y: [0, -10, 0] }}
-                transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
-                className="absolute -top-3 -right-3 md:-top-6 md:-right-6 px-3 md:px-6 py-1.5 md:py-3 bg-black border border-white/10 rounded-xl md:rounded-2xl shadow-2xl"
-              >
-                <div className="text-[8px] md:text-xs font-black text-sky-400 whitespace-nowrap">NEXT.JS EXPERT</div>
-              </motion.div>
-
-              <motion.div
-                animate={{ y: [0, 10, 0] }}
-                transition={{ duration: 4, repeat: Infinity, ease: "easeInOut", delay: 1 }}
-                className="absolute -bottom-3 -left-3 md:-bottom-6 md:-left-6 px-3 md:px-6 py-1.5 md:py-3 bg-black border border-white/10 rounded-xl md:rounded-2xl shadow-2xl"
-              >
-                <div className="text-[8px] md:text-xs font-black text-white whitespace-nowrap">AI ENGINEER</div>
-              </motion.div>
-            </div>
-          </div>
-
-          <div className="absolute inset-0 flex flex-col items-start justify-center pt-48 md:pt-0 z-[5] px-6 md:px-24 max-w-7xl mx-auto">
-            <motion.div
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 1, ease: "easeOut" }}
-              className="mb-4 md:mb-6"
-            >
-              <span className="px-3 md:px-4 py-1 md:py-1.5 rounded-full border border-sky-500/30 bg-sky-500/10 text-sky-400 text-[8px] md:text-[10px] font-black uppercase tracking-[0.3em]">
-                Crafting Future Tech
-              </span>
-            </motion.div>
-            <h1 className="text-6xl md:text-[12rem] font-black tracking-tighter leading-[0.8] mb-6 md:mb-8 select-none text-left">
-              KUNAL<br />
-              <span className="text-transparent bg-clip-text bg-gradient-to-b from-white to-white/20">PORTFOLIO</span>
-            </h1>
-            <p className="max-w-xl text-white/40 font-medium text-sm md:text-lg tracking-wide uppercase text-left">
-              Crafting immersive digital experiences through <span className="text-white">Full-Stack Development</span> & <span className="text-white">Generative AI</span>.
-            </p>
-
-            <div className="mt-8 md:mt-12 flex flex-col sm:flex-row gap-4 md:gap-6 w-full sm:w-auto">
-              <div className="px-8 md:px-10 py-4 md:py-5 bg-sky-500 text-white rounded-xl md:rounded-2xl font-black uppercase tracking-widest hover:scale-105 transition-all cursor-pointer shadow-[0_20px_50px_rgba(0,163,255,0.4)] text-center text-xs md:text-base">
-                Explore Work
-              </div>
-              <div className="px-8 md:px-10 py-4 md:py-5 border border-white/10 bg-white/5 backdrop-blur-md text-white rounded-xl md:rounded-2xl font-black uppercase tracking-widest hover:bg-white/10 transition-all cursor-pointer text-center text-xs md:text-base">
-                Contact Me
-              </div>
-            </div>
-          </div>
-        </motion.div>
-
-        {/* IMPROVED CARDS ANIMATION */}
-        {isMounted && cardProps.length > 0 && (
-          <div className="absolute inset-0 z-[10] pointer-events-none overflow-hidden">
-            {cardProps.map((props, i) => <motion.div
-              key={i}
-              initial={{
-                x: props.x,
-                y: "110vh",
-                opacity: 0,
-                rotate: props.rotate,
-                scale: props.scale
-              }}
-              animate={{
-                y: "-20vh",
-                opacity: [0, 0.8, 0.8, 0],
-                rotate: [props.rotate, props.rotateEnd]
-              }}
-              transition={{
-                duration: props.duration,
-                repeat: Infinity,
-                ease: "linear",
-                delay: -(i * duration) / 15
-              }}
-              className="absolute w-20 h-20 md:w-32 md:h-32 backdrop-blur-md bg-white/5 border border-white/10 rounded-xl md:rounded-2xl flex flex-col items-center justify-center shadow-2xl p-2 md:p-4">
-              <img
-                src={technologies[i % technologies.length].logo}
-                alt={technologies[i % technologies.length].name}
-                className="w-6 h-6 md:w-10 md:h-10 mb-1 md:mb-2 filter drop-shadow-[0_0_8px_rgba(255,255,255,0.5)]" />
-              <span className="text-[6px] md:text-[8px] font-black uppercase tracking-tighter text-white/60">{technologies[i % technologies.length].name}</span>
-            </motion.div>
-            )}
-          </div>
-        )}
-
-      </section>
-
       {/* SCROLLABLE CONTENT CONTAINER */}
       <div className="relative z-10">
 
         {/* SECTION 2 - BEYOND THE CODE */}
-        <section className="min-h-screen flex items-center justify-center p-2 md:p-3 overflow-hidden bg-[#0a0a0a]">
-            <div className="flex flex-col lg:grid lg:grid-cols-2 min-h-screen max-w-7xl mx-auto items-center gap-10 md:gap-20 p-6 md:p-20">
+        <section className="min-h-screen flex flex-col lg:grid lg:grid-cols-2 items-center gap-10 md:gap-20 p-6 md:p-20">
               <div className="space-y-6 md:space-y-10 order-2 lg:order-1">
                 <div className="space-y-3 md:space-y-4">
                   <div className="flex items-center gap-4">
@@ -365,8 +180,7 @@ export default function Home() {
                   </div>
                 </div>
               </div>
-            </div>
-        </section>
+          </section>
 
         {/* SECTION 3 - MY JOURNEY */}
         <section className="min-h-screen flex items-center justify-center p-2 md:p-3 overflow-hidden pointer-events-none">
