@@ -108,7 +108,7 @@ export default function Home() {
       </div>
 
       {/* SECTION 1 - HERO */}
-      <section className="relative h-[200vh] p-2 md:p-3">
+      <section className="relative min-h-screen p-2 md:p-3">
 
         {/* Fixed Background Elements */}
         <div className="absolute inset-0 z-[2] opacity-[0.04] pointer-events-none" style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")` }} />
@@ -180,10 +180,10 @@ export default function Home() {
         <div className="absolute inset-0 z-[4] pointer-events-none bg-[radial-gradient(circle_at_center,transparent_0%,rgba(0,0,0,0.5)_100%)]" />
 
         {/* SCROLLABLE CONTENT */}
-        <div className="absolute inset-0 overflow-y-auto z-[5] scrollbar-hide">
-          <div className="min-h-[200vh] flex flex-col">
+        <div className="relative z-[5]">
+          <div className="flex flex-col">
             {/* First Screen - Hero Content */}
-            <div className="min-h-screen flex flex-col lg:flex-row items-center justify-between px-6 md:px-24 max-w-7xl mx-auto w-full gap-10">
+            <div className="min-h-[85vh] flex flex-col lg:flex-row items-center justify-between px-6 md:px-24 max-w-7xl mx-auto w-full gap-10 pt-20 pb-10">
               <div className="flex flex-col items-start justify-center lg:w-3/5">
                 <motion.div
                   initial={{ opacity: 0, x: -20 }}
