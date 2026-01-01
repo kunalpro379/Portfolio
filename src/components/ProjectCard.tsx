@@ -134,42 +134,42 @@ export default function ProjectCard({
             </div>
           </div>
 
-        {/* BACK SIDE */}
-        <div
-          className="absolute inset-0 rounded-2xl md:rounded-3xl border border-sky-500/30 bg-gradient-to-br from-zinc-900 via-zinc-950 to-black p-6 md:p-8 flex flex-col justify-center items-start text-left overflow-y-auto"
-          style={{
-            backfaceVisibility: "hidden",
-            transform: "rotateY(180deg)"
-          }}
-        >
-          <div className="flex-1 flex flex-col justify-center w-full">
-            <p className="text-white/80 text-lg md:text-xl font-medium leading-relaxed">
-              {description}
-            </p>
-          </div>
-
-          {cta.length > 0 && (
-            <div className="flex flex-wrap justify-start gap-3 mt-6 pt-5 border-t border-white/10 w-full">
-              {cta.map((item, i) => (
-                <a
-                  key={i}
-                  href={item.link}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  onClick={(e) => e.stopPropagation()}
-                  className={`flex items-center gap-2 px-4 py-2 rounded-lg text-xs font-bold uppercase tracking-wider transition-all ${
-                    i === 0
-                      ? "bg-sky-500 hover:bg-sky-600 text-white"
-                      : "bg-white/10 hover:bg-white/20 text-white border border-white/20"
-                  }`}
-                >
-                  {getIcon(item.icon)}
-                  {item.label}
-                </a>
-              ))}
+          {/* BACK SIDE */}
+          <div
+            className="absolute inset-0 rounded-2xl md:rounded-3xl border border-sky-500/30 bg-gradient-to-br from-zinc-900 via-zinc-950 to-black p-6 md:p-8 flex flex-col justify-between items-start text-left overflow-hidden"
+            style={{
+              backfaceVisibility: "hidden",
+              transform: "rotateY(180deg)"
+            }}
+          >
+            <div className="flex-1 flex flex-col justify-center w-full overflow-hidden">
+              <p className="text-white/80 text-sm md:text-base font-medium leading-relaxed line-clamp-[12]">
+                {description}
+              </p>
             </div>
-          )}
-        </div>
+
+            {cta.length > 0 && (
+              <div className="flex flex-wrap justify-start gap-3 pt-5 border-t border-white/10 w-full shrink-0">
+                {cta.map((item, i) => (
+                  <a
+                    key={i}
+                    href={item.link}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    onClick={(e) => e.stopPropagation()}
+                    className={`flex items-center gap-2 px-4 py-2 rounded-lg text-xs font-bold uppercase tracking-wider transition-all ${
+                      i === 0
+                        ? "bg-sky-500 hover:bg-sky-600 text-white"
+                        : "bg-white/10 hover:bg-white/20 text-white border border-white/20"
+                    }`}
+                  >
+                    {getIcon(item.icon)}
+                    {item.label}
+                  </a>
+                ))}
+              </div>
+            )}
+          </div>
       </div>
     </div>
   );
