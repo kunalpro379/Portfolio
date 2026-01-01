@@ -183,7 +183,7 @@ export default function Home() {
         <div className="relative z-[5]">
           <div className="flex flex-col">
             {/* First Screen - Hero Content */}
-            <div className="min-h-[85vh] flex flex-col lg:flex-row items-center justify-between px-6 md:px-24 max-w-7xl mx-auto w-full gap-10 pt-20 pb-10">
+            <div className="min-h-[85vh] flex flex-col lg:flex-row items-center justify-between px-6 md:px-24 max-w-7xl mx-auto w-full gap-10 pt-20 pb-0">
               <div className="flex flex-col items-start justify-center lg:w-3/5">
                 <motion.div
                   initial={{ opacity: 0, x: -20 }}
@@ -261,7 +261,7 @@ export default function Home() {
             </div>
 
             {/* Second Screen - About Content */}
-            <div className="min-h-screen flex items-center px-6 md:px-24 max-w-7xl mx-auto w-full">
+            <div className="pt-0 pb-20 flex items-center px-6 md:px-24 max-w-7xl mx-auto w-full">
               <div className="space-y-6 md:space-y-10 w-full lg:w-1/2">
                 <div className="space-y-3 md:space-y-4">
                   <div className="flex items-center gap-4">
