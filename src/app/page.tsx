@@ -548,13 +548,13 @@ export default function Home() {
         </section> */}
 
         {/* Projects */}
-        <section className="relative bg-gradient-to-br from-white via-blue-50 to-sky-50 py-12 md:py-20">
+        <section className="relative bg-[#fefce8] py-12 md:py-20">
           <div className="absolute inset-0 opacity-5 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')]" />
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(0,163,255,0.05)_0%,transparent_60%)]" />
-          <div className="max-w-7xl mx-auto px-6 md:px-12 relative z-10">
-            <SectionHeader icon={FolderKanban} title="PROJECT SHOWCASE" subtitle="PREMIUM WORK COLLECTION" dark={true} />
+          <div className="max-w-[1440px] mx-auto px-6 md:px-12 relative z-10">
+            <SectionHeader icon={FolderKanban} title="FEATURED PROJECTS" subtitle="PREMIUM WORK COLLECTION" dark={true} />
             
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-8">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-8 items-start">
               <ProjectCard 
                 size="big"
                 title="SanskritGPT"
@@ -571,25 +571,7 @@ export default function Home() {
                 image="/LLMThumbnail.webp"
               />
               
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 md:gap-8">
-                <div className="sm:col-span-2">
-                  <ProjectCard 
-                    size="medium"
-                    title="Video Pipeline"
-                    tagline="DRM-Protected Adaptive Bitrate Streaming"
-                    badges={["AWS", "FFMPEG", "HLS", "DRM"]}
-                    footer="Scalable media backend · Jan 2025"
-                    description="An automated video pipeline that downloads raw videos, transcodes them into multiple resolutions, encrypts segments, and delivers them via HLS."
-                    highlights={["Adaptive Bitrate (360p-1080p)", "DRM Encryption", "AWS S3 + SQS Pipeline", "Dockerized FFMPEG workers"]}
-                    techStack="Node.js · Docker · AWS · FFMPEG · HLS · C++"
-                    cta={[
-                      { label: "GitHub (Pipeline)", link: "https://github.com", icon: "github" },
-                      { label: "Architecture", link: "#", icon: "external" }
-                    ]}
-                    image="https://images.unsplash.com/photo-1614162692292-7ac56d7f7f1e?auto=format&fit=crop&q=80"
-                  />
-                </div>
-                
+              <div className="flex flex-col gap-4 md:gap-8">
                 <ProjectCard 
                   size="small"
                   title="FINAgent"
@@ -622,6 +604,22 @@ export default function Home() {
                   image="https://images.unsplash.com/photo-1677442136019-21780ecad995?auto=format&fit=crop&q=80"
                 />
               </div>
+
+              <ProjectCard 
+                size="big"
+                title="Video Pipeline"
+                tagline="DRM-Protected Adaptive Bitrate Streaming"
+                badges={["AWS", "FFMPEG", "HLS", "DRM"]}
+                footer="Scalable media backend · Jan 2025"
+                description="An automated video pipeline that downloads raw videos, transcodes them into multiple resolutions, encrypts segments, and delivers them via HLS."
+                highlights={["Adaptive Bitrate (360p-1080p)", "DRM Encryption", "AWS S3 + SQS Pipeline", "Dockerized FFMPEG workers"]}
+                techStack="Node.js · Docker · AWS · FFMPEG · HLS · C++"
+                cta={[
+                  { label: "GitHub (Pipeline)", link: "https://github.com", icon: "github" },
+                  { label: "Architecture", link: "#", icon: "external" }
+                ]}
+                image="https://images.unsplash.com/photo-1614162692292-7ac56d7f7f1e?auto=format&fit=crop&q=80"
+              />
             </div>
           </div>
         </section>
@@ -632,7 +630,7 @@ export default function Home() {
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(0,163,255,0.05)_0%,transparent_60%)]" />
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_bottom_left,rgba(0,163,255,0.05)_0%,transparent_60%)]" />
           <div className="max-w-7xl mx-auto px-6 md:px-12 relative z-10">
-            <SectionHeader icon={Trophy} title="CITY ARCHIVE" subtitle="Record of Excellence" dark={true} />
+            <SectionHeader icon={Trophy} title="Projects" subtitle="Record of Excellence" dark={true} />
 
             <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-4 flex-1">
               {[
