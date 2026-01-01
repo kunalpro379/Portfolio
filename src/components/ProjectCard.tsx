@@ -32,18 +32,13 @@ export function ProjectCard({
 
   return (
     <div 
-      className={`relative w-full group cursor-pointer ${
+      className={`relative w-full group cursor-pointer perspective-1000 ${
         size === "big" ? "aspect-video md:aspect-auto h-full" : "aspect-video"
       }`}
-      style={{ perspective: "2000px" }}
       onClick={() => setIsFlipped(!isFlipped)}
     >
       <div
-        className="relative w-full h-full transition-transform duration-700 ease-out"
-        style={{ 
-          transformStyle: "preserve-3d",
-          transform: isFlipped ? "rotateY(180deg)" : "rotateY(0deg)"
-        }}
+        className={`relative w-full h-full transition-transform duration-700 ease-out preserve-3d group-hover:rotate-y-180 ${isFlipped ? "rotate-y-180" : ""}`}
       >
           {/* FRONT SIDE */}
           <div 
