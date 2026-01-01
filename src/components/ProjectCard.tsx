@@ -33,12 +33,11 @@ export function ProjectCard({
 
   return (
     <div 
-      className={`relative w-full group ${
+      className={`relative w-full group cursor-pointer ${
         size === "big" ? "aspect-video md:aspect-auto h-full" : "aspect-video"
       }`}
       style={{ perspective: "2000px" }}
-      onMouseEnter={() => setIsFlipped(true)}
-      onMouseLeave={() => setIsFlipped(false)}
+      onClick={() => setIsFlipped(!isFlipped)}
     >
             <motion.div
               className="relative w-full h-full"
@@ -117,13 +116,14 @@ export function ProjectCard({
 
           <div className="flex flex-wrap gap-3 md:gap-4 mt-4">
             {cta.map((item, i) => (
-              <a 
-                key={i} 
-                href={item.link} 
-                target="_blank" 
-                rel="noopener noreferrer"
-                className="flex items-center gap-2 px-5 py-2.5 bg-white text-black rounded-xl font-black uppercase tracking-widest text-[10px] md:text-xs hover:bg-sky-500 hover:text-white transition-all transform hover:scale-105 active:scale-95 shadow-lg"
-              >
+                <a 
+                  key={i} 
+                  href={item.link} 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  onClick={(e) => e.stopPropagation()}
+                  className="flex items-center gap-2 px-5 py-2.5 bg-white text-black rounded-xl font-black uppercase tracking-widest text-[10px] md:text-xs hover:bg-sky-500 hover:text-white transition-all transform hover:scale-105 active:scale-95 shadow-lg"
+                >
                 {item.icon === "github" ? <Github size={14} /> : <ExternalLink size={14} />}
                 {item.label}
               </a>
