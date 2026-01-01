@@ -6,6 +6,8 @@ import { useEffect, useState } from "react";
 import ImageSlider from "@/components/ImageSlider";
 import TypewriterText from "@/components/TypewriterText";
 import ProjectCard from "@/components/ProjectCard";
+import ExperienceSection from "@/components/ExperienceSection";
+import EducationSection from "@/components/EducationSection";
 
 export default function Home() {
   const [isMounted, setIsMounted] = useState(false);
@@ -45,27 +47,43 @@ export default function Home() {
   }, []);
 
   const technologies = [
+    // Languages
+    { name: "C/C++", logo: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/c/c-original.svg" },
     { name: "Java", logo: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/java/java-original.svg" },
     { name: "Python", logo: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/python/python-original.svg" },
     { name: "JavaScript", logo: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/javascript/javascript-original.svg" },
-    { name: "C/C++", logo: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/c/c-original.svg" },
     { name: "SQL", logo: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/mysql/mysql-original.svg" },
-    { name: "Spring Boot", logo: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/spring/spring-original.svg" },
+
+    // Technologies & Tools
     { name: "AWS", logo: "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/amazonwebservices/amazonwebservices-plain-wordmark.svg" },
-    { name: "Docker", logo: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/docker/docker-original.svg" },
     { name: "Kubernetes", logo: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/kubernetes/kubernetes-plain.svg" },
-    { name: "CI/CD", logo: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/github/github-original.svg" },
+    { name: "Docker", logo: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/docker/docker-original.svg" },
+    { name: "Kafka", logo: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/apachekafka/apachekafka-original.svg" },
+    { name: "Spring Boot", logo: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/spring/spring-original.svg" },
+    { name: "React", logo: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/react/react-original.svg" },
     { name: "Azure", logo: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/azure/azure-original.svg" },
+    { name: "GitHub Actions", logo: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/github/github-original.svg" },
+    { name: "Linux", logo: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/linux/linux-original.svg" },
+
+    // Databases
     { name: "MySQL", logo: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/mysql/mysql-original.svg" },
     { name: "MongoDB", logo: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/mongodb/mongodb-original.svg" },
-    { name: "Redis", logo: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/redis/redis-original.svg" },
-    { name: "Supabase", logo: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/postgresql/postgresql-original.svg" },
     { name: "GraphQL", logo: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/graphql/graphql-plain.svg" },
-    { name: "Generative AI", logo: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/tensorflow/tensorflow-original.svg" },
+    { name: "Supabase", logo: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/supabase/supabase-original.svg" },
+    { name: "Redis", logo: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/redis/redis-original.svg" },
+
+    // AI/ML
+    { name: "Machine Learning", logo: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/tensorflow/tensorflow-original.svg" },
+    { name: "Deep Learning", logo: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/pytorch/pytorch-original.svg" },
+    { name: "Generative AI", logo: "https://upload.wikimedia.org/wikipedia/commons/0/04/ChatGPT_logo.svg" },
     { name: "AI Agents", logo: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/python/python-original.svg" },
-    { name: "Kafka", logo: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/apache/apache-original.svg" },
-    { name: "React", logo: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/react/react-original.svg" }
+    { name: "LLMs", logo: "https://upload.wikimedia.org/wikipedia/commons/0/04/ChatGPT_logo.svg" },
+    { name: "CrewAI", logo: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/python/python-original.svg" },
+    { name: "LangGraph", logo: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/python/python-original.svg" },
+    { name: "N8N", logo: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/nodejs/nodejs-original.svg" },
+    { name: "Data Analysis", logo: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/pandas/pandas-original.svg" }
   ];
+
 
   const duration = 20;
 
@@ -402,7 +420,7 @@ export default function Home() {
               { top: '12%', left: '45%', rotate: '-8deg' },
               { top: '35%', left: '82%', rotate: '12deg' },
               { top: '45%', left: '10%', rotate: '-15deg' },
-              { top: '35%', left: '92%', rotate: '12deg' }, // AWS - shifted right
+              { top: '35%', left: '92%', rotate: '12deg' },
               { top: '48%', left: '35%', rotate: '-10deg' },
               { top: '65%', left: '88%', rotate: '18deg' },
               { top: '70%', left: '20%', rotate: '-18deg' },
@@ -415,7 +433,16 @@ export default function Home() {
               { top: '60%', left: '5%', rotate: '16deg' },
               { top: '30%', left: '28%', rotate: '8deg' },
               { top: '52%', left: '85%', rotate: '-10deg' },
-              { top: '78%', left: '65%', rotate: '12deg' }
+              { top: '78%', left: '65%', rotate: '12deg' },
+              { top: '8%', left: '60%', rotate: '10deg' },
+              { top: '18%', left: '22%', rotate: '-16deg' },
+              { top: '42%', left: '68%', rotate: '14deg' },
+              { top: '55%', left: '18%', rotate: '-8deg' },
+              { top: '62%', left: '45%', rotate: '12deg' },
+              { top: '72%', left: '72%', rotate: '-14deg' },
+              { top: '90%', left: '55%', rotate: '8deg' },
+              { top: '28%', left: '62%', rotate: '-12deg' },
+              { top: '50%', left: '92%', rotate: '16deg' }
             ];
             const pos = positions[i];
             return (
@@ -497,11 +524,109 @@ export default function Home() {
                 />
               </div>
 
+
+              {/* Background Effects */}
+              <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(0,163,255,0.05)_0%,transparent_70%)]" />
+              <div className="absolute inset-0 opacity-[0.02]" style={{
+                backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")`
+              }} />
+
+              <div className="relative z-10 px-6 md:px-12 py-12 md:py-16 max-w-7xl mx-auto">
+
+                {/* Header */}
+                <div className="text-center mb-12 md:mb-16">
+
+
+                  <motion.h2
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.6, delay: 0.1 }}
+                    className="text-4xl md:text-7xl font-black uppercase tracking-tighter leading-none mb-4"
+                  >
+                    Skills
+                  </motion.h2>
+
+
+                </div>
+
+                {/* Skills Grid - 4 Parts */}
+                <div className="grid grid-cols-1 md:grid-cols-4 gap-8 md:gap-0">
+
+                  {/* Part 1 - Languages */}
+                  <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.6, delay: 0.2 }}
+                    className="space-y-4 md:pr-8 md:border-r md:border-dotted md:border-white/40"
+                  >
+                    <h3 className="text-2xl md:text-3xl font-black uppercase tracking-tight text-white mb-6">LANGUAGES</h3>
+                    <p className="text-white/80 leading-relaxed font-['Caveat'] text-xl md:text-2xl">
+                      C/C++, Java, Python, JavaScript, SQL
+                    </p>
+                  </motion.div>
+
+                  {/* Part 2 - Technologies & Tools */}
+                  <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.6, delay: 0.3 }}
+                    className="space-y-4 md:px-8 md:border-r md:border-dotted md:border-white/40"
+                  >
+                    <h3 className="text-2xl md:text-3xl font-black uppercase tracking-tight text-white mb-6">TECHNOLOGIES & TOOLS</h3>
+                    <p className="text-white/80 leading-relaxed font-['Caveat'] text-xl md:text-2xl">
+                      AWS, Kubernetes, Docker, Kafka, Spring Boot, React.JS, Azure, GitHub Actions, Linux
+                    </p>
+                  </motion.div>
+
+                  {/* Part 3 - Databases */}
+                  <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.6, delay: 0.4 }}
+                    className="space-y-4 md:px-8 md:border-r md:border-dotted md:border-white/40"
+                  >
+                    <h3 className="text-2xl md:text-3xl font-black uppercase tracking-tight text-white mb-6">DATABASES</h3>
+                    <p className="text-white/80 leading-relaxed font-['Caveat'] text-xl md:text-2xl">
+                      MySQL, MongoDB, GraphQL, Supabase, Redis
+                    </p>
+                  </motion.div>
+
+                  {/* Part 4 - AI/ML */}
+                  <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.6, delay: 0.5 }}
+                    className="space-y-4 md:pl-8"
+                  >
+                    <h3 className="text-2xl md:text-3xl font-black uppercase tracking-tight text-white mb-6">AI/ML</h3>
+                    <p className="text-white/80 leading-relaxed font-['Caveat'] text-xl md:text-2xl">
+                      Machine Learning, Data Analysis, Deep Learning, Generative AI, AI Agents
+                    </p>
+                  </motion.div>
+
+                </div>
+
+              </div>
             </div>
+
+
           </div>
+
         </section>
 
-        {/* SECTION 4 - SERVER STATS */}
+
+        {/* SECTION 5 - EXPERIENCE */}
+        <ExperienceSection />
+
+        {/* SECTION 6 - EDUCATION */}
+        <EducationSection />
+
+        {/* SECTION 7 - SERVER STATS */}
         {/* <section className="relative min-h-screen flex items-center justify-center p-2 md:p-3">
           <div
             className="relative w-full rounded-2xl md:rounded-3xl bg-gradient-to-br from-zinc-900 via-black to-zinc-900 border border-zinc-800 shadow-2xl p-6 md:p-12">
@@ -553,9 +678,9 @@ export default function Home() {
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(0,163,255,0.05)_0%,transparent_60%)]" />
           <div className="max-w-[1440px] mx-auto px-6 md:px-12 relative z-10">
             <SectionHeader icon={FolderKanban} title="FEATURED PROJECTS" subtitle="PREMIUM WORK COLLECTION" dark={true} />
-            
+
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-8 items-start">
-              <ProjectCard 
+              <ProjectCard
                 size="big"
                 title="SanskritGPT"
                 tagline="Building a Sanskrit Language Model from scratch using Diffusion + Transformers"
@@ -570,9 +695,9 @@ export default function Home() {
                 ]}
                 image="/LLMThumbnail.webp"
               />
-              
+
               <div className="flex flex-col gap-4 md:gap-8">
-                <ProjectCard 
+                <ProjectCard
                   size="small"
                   title="FINAgent"
                   tagline="Agentic Financial Research & Trading System"
@@ -588,7 +713,7 @@ export default function Home() {
                   image="https://images.unsplash.com/photo-1621135802920-133df287f89c?auto=format&fit=crop&q=80"
                 />
 
-                <ProjectCard 
+                <ProjectCard
                   size="small"
                   title="Nexus AI"
                   tagline="Autonomous Agent Swarm for Enterprise Workflow"
@@ -605,7 +730,7 @@ export default function Home() {
                 />
               </div>
 
-              <ProjectCard 
+              <ProjectCard
                 size="big"
                 title="Video Pipeline"
                 tagline="DRM-Protected Adaptive Bitrate Streaming"
@@ -717,35 +842,6 @@ export default function Home() {
         </section>
 
 
-        {/* SECTION 9 - MEDIA PARTNERS */}
-        <section className="relative bg-gradient-to-br from-white via-zinc-50 to-zinc-100 py-12 md:py-20">
-          <div className="absolute inset-0 opacity-5 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')]" />
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(0,163,255,0.05)_0%,transparent_60%)]" />
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_bottom_left,rgba(0,163,255,0.05)_0%,transparent_60%)]" />
-          <div className="max-w-7xl mx-auto px-6 md:px-12 h-full flex flex-col relative z-10">
-            <SectionHeader icon={Users} title="OFFICIAL PARTNERS" subtitle="Powering The Future" />
-            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-8 md:gap-12 flex-1 items-center">
-              {[
-                { src: "/next.svg", name: "Next.js" },
-                { src: "/vercel.svg", name: "Vercel" },
-                { src: "/file.svg", name: "Partner 3" },
-                { src: "/globe.svg", name: "Partner 4" },
-                { src: "/window.svg", name: "Partner 5" },
-                { src: "/next.svg", name: "Next.js" },
-                { src: "/vercel.svg", name: "Vercel" },
-                { src: "/file.svg", name: "Partner 3" },
-                { src: "/globe.svg", name: "Partner 4" },
-                { src: "/window.svg", name: "Partner 5" }
-              ].map((partner, index) => <div key={index} className="grayscale opacity-40 hover:grayscale-0 hover:opacity-100 transition-all cursor-pointer flex justify-center items-center p-4">
-                <img src={partner.src} alt={partner.name} className="h-8 md:h-12 w-auto object-contain" />
-              </div>
-              )}
-              <div className="col-span-full text-center mt-8 md:mt-12">
-                <p className="text-zinc-500 font-bold uppercase tracking-[0.3em] md:tracking-[0.5em] text-[10px] md:text-sm italic">Trusted by the biggest names in the industry</p>
-              </div>
-            </div>
-          </div>
-        </section>
 
 
 
