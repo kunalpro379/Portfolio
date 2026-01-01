@@ -5,7 +5,7 @@ import { Home as HomeIcon, Instagram, Radio, Users, Trophy, MessageSquare, Shiel
 import { useEffect, useState } from "react";
 import ImageSlider from "@/components/ImageSlider";
 import TypewriterText from "@/components/TypewriterText";
-import { ProjectCard } from "@/components/ProjectCard";
+import ProjectCard from "@/components/ProjectCard";
 
 export default function Home() {
   const [isMounted, setIsMounted] = useState(false);
