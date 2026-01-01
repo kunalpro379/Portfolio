@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import { Home as HomeIcon, Instagram, Radio, Users, Trophy, MessageSquare, Shield, Zap, Crown, ChevronRight, Car, Briefcase, Sword, Folder, User, FolderKanban, Clock, Mail, BookOpen, Layers } from "lucide-react";
 import { useEffect, useState } from "react";
 import ImageSlider from "@/components/ImageSlider";
+import TypewriterText from "@/components/TypewriterText";
 
 export default function Home() {
   const [isMounted, setIsMounted] = useState(false);
@@ -49,7 +50,7 @@ export default function Home() {
     { name: "C/C++", logo: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/c/c-original.svg" },
     { name: "SQL", logo: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/mysql/mysql-original.svg" },
     { name: "Spring Boot", logo: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/spring/spring-original.svg" },
-    { name: "AWS", logo: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/amazonwebservices/amazonwebservices-original.svg" },
+    { name: "AWS", logo: "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/amazonwebservices/amazonwebservices-plain-wordmark.svg" },
     { name: "Docker", logo: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/docker/docker-original.svg" },
     { name: "Kubernetes", logo: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/kubernetes/kubernetes-plain.svg" },
     { name: "CI/CD", logo: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/github/github-original.svg" },
@@ -258,16 +259,10 @@ export default function Home() {
                     transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
                     className="absolute -top-3 -right-3 md:-top-6 md:-right-6 px-3 md:px-6 py-1.5 md:py-3 bg-black border border-white/10 rounded-xl md:rounded-2xl shadow-2xl"
                   >
-                    <div className="text-[8px] md:text-xs font-black text-sky-400 whitespace-nowrap">NEXT.JS EXPERT</div>
+                    <div className="text-[8px] md:text-xs font-black text-sky-400 whitespace-nowrap">AI Engineer</div>
                   </motion.div>
 
-                  <motion.div
-                    animate={{ y: [0, 10, 0] }}
-                    transition={{ duration: 4, repeat: Infinity, ease: "easeInOut", delay: 1 }}
-                    className="absolute -bottom-3 -left-3 md:-bottom-6 md:-left-6 px-3 md:px-6 py-1.5 md:py-3 bg-black border border-white/10 rounded-xl md:rounded-2xl shadow-2xl"
-                  >
-                    <div className="text-[8px] md:text-xs font-black text-white whitespace-nowrap">AI ENGINEER</div>
-                  </motion.div>
+
                 </div>
               </div>
 
@@ -284,16 +279,19 @@ export default function Home() {
                   </span>
                 </motion.div>
                 <h1 className="text-6xl md:text-[10rem] font-black tracking-tighter leading-[0.8] mb-6 md:mb-8 select-none text-left">
-                  KUNAL'S<br />
-                  <span className="text-transparent bg-clip-text bg-gradient-to-b from-white to-white/20">PORTFOLIO</span>
+                  KUNAL<br />
+                  <span className="text-transparent bg-clip-text bg-gradient-to-b from-white to-white/20">PATIL</span>
                 </h1>
                 <p className="max-w-xl text-white/40 font-medium text-sm md:text-lg tracking-wide uppercase text-left">
-                  Crafting immersive digital experiences through <span className="text-white">Full-Stack Development</span> & <span className="text-white">Generative AI</span>.
+                  I build scalable backends, automate the cloud, and bring AI ideas to life.
                 </p>
 
                 <div className="mt-6 md:mt-8 flex flex-col sm:flex-row gap-4 md:gap-6 w-full sm:w-auto">
-                  <div className="px-8 md:px-10 py-4 md:py-5 bg-sky-500 text-white rounded-xl md:rounded-2xl font-black uppercase tracking-widest hover:scale-105 transition-all cursor-pointer shadow-[0_20px_50px_rgba(0,163,255,0.4)] text-center text-xs md:text-base">
+                  {/* <div className="px-8 md:px-10 py-4 md:py-5 bg-sky-500 text-white rounded-xl md:rounded-2xl font-black uppercase tracking-widest hover:scale-105 transition-all cursor-pointer shadow-[0_20px_50px_rgba(0,163,255,0.4)] text-center text-xs md:text-base">
                     Explore Work
+                  </div> */}
+                  <div className="inline-flex items-center gap-4 px-6 md:px-8 py-3 md:py-4 bg-white text-black rounded-full font-black uppercase tracking-widest hover:bg-sky-500 hover:text-white transition-all cursor-pointer group text-xs md:text-base">
+                    See my work <ChevronRight size={18} className="group-hover:translate-x-1 transition-transform" />
                   </div>
                   <div className="px-8 md:px-10 py-4 md:py-5 border border-white/10 bg-white/5 backdrop-blur-md text-white rounded-xl md:rounded-2xl font-black uppercase tracking-widest hover:bg-white/10 transition-all cursor-pointer text-center text-xs md:text-base">
                     Contact Me
@@ -304,8 +302,8 @@ export default function Home() {
 
             {/* Second Screen - About Content */}
             <div className="pt-0 pb-10 flex flex-col lg:flex-row items-center px-6 md:px-24 max-w-7xl mx-auto w-full gap-10">
-              {/* Image First on Mobile, First on Desktop */}
-              <div className="relative w-full lg:w-[45%] aspect-square select-none order-1 lg:order-1">
+              {/* Image First on Desktop, Second on Mobile */}
+              <div className="relative w-full lg:w-[45%] aspect-square select-none order-2 lg:order-1">
                 <div className="relative w-full h-full max-w-[500px] mx-auto">
                   <div className="absolute inset-0 bg-sky-500/10 rounded-[2rem] md:rounded-[4rem] rotate-6 scale-95" />
                   <div className="absolute inset-0 bg-white/5 rounded-[2rem] md:rounded-[4rem] -rotate-3 border border-white/10 backdrop-blur-sm" />
@@ -349,27 +347,26 @@ export default function Home() {
                   </motion.div> */}
                 </div>
               </div>
-              {/* Text Content - Second on Mobile, Second on Desktop */}
-              <div className="space-y-6 md:space-y-10 w-full lg:w-1/2 order-2 lg:order-2">
+              {/* Text Content - First on Mobile, Second on Desktop */}
+              <div className="space-y-6 md:space-y-10 w-full lg:w-1/2 order-1 lg:order-2">
                 <div className="space-y-3 md:space-y-4">
                   <div className="flex items-center gap-4">
                     <div className="h-[1px] w-12 bg-sky-500" />
                     <span className="text-sky-500 font-black uppercase tracking-[0.3em] text-[10px] md:text-xs">About My Craft</span>
                   </div>
                   <h2 className="text-4xl md:text-8xl font-black uppercase tracking-tighter leading-none">
-                    BEYOND<br />
-                    <span className="text-transparent" style={{ WebkitTextStroke: '1.5px white' }}>THE CODE</span>
+                    ENGINEERING<br />
+                    <span className="text-transparent" style={{ WebkitTextStroke: '1.5px white' }}>Vault VI</span>
                   </h2>
                 </div>
 
                 <div className="space-y-4 md:space-y-6">
                   <p className="text-lg md:text-2xl text-white/60 font-medium leading-relaxed">
-                    Passionate Full-Stack Developer with a focus on building <span className="text-white">high-performance</span>,
-                    user-centric applications. Specializing in bridging the gap between <span className="text-white">AI agents</span> and modern web architectures.
+                    I'm someone who enjoys going deep into problems, understanding how things really work, and finishing what I start.
                   </p>
                   <div className="flex flex-wrap gap-6 md:gap-10">
                     <div>
-                      <div className="text-2xl md:text-4xl font-black mb-1">05+</div>
+                      <div className="text-2xl md:text-4xl font-black mb-1">02+</div>
                       <div className="text-[8px] md:text-[10px] uppercase font-black tracking-widest text-white/40">Years Exp.</div>
                     </div>
                     <div>
@@ -384,48 +381,64 @@ export default function Home() {
                 </div>
 
                 <div className="pt-4 md:pt-6">
-                  <div className="inline-flex items-center gap-4 px-6 md:px-8 py-3 md:py-4 bg-white text-black rounded-full font-black uppercase tracking-widest hover:bg-sky-500 hover:text-white transition-all cursor-pointer group text-xs md:text-base">
+                  {/* <div className="inline-flex items-center gap-4 px-6 md:px-8 py-3 md:py-4 bg-white text-black rounded-full font-black uppercase tracking-widest hover:bg-sky-500 hover:text-white transition-all cursor-pointer group text-xs md:text-base">
                     See my work <ChevronRight size={18} className="group-hover:translate-x-1 transition-transform" />
-                  </div>
+                  </div> */}
+
                 </div>
               </div>
             </div>
           </div>
         </div>
 
-        {/* IMPROVED CARDS ANIMATION */}
-        {isMounted && cardProps.length > 0 && (
-          <div className="absolute inset-0 z-[10] pointer-events-none overflow-hidden">
-            {cardProps.map((props, i) => <motion.div
-              key={i}
-              initial={{
-                x: props.x,
-                y: "110vh",
-                opacity: 0,
-                rotate: props.rotate,
-                scale: props.scale
-              }}
-              animate={{
-                y: "-20vh",
-                opacity: [0, 0.8, 0.8, 0],
-                rotate: [props.rotate, props.rotateEnd]
-              }}
-              transition={{
-                duration: props.duration,
-                repeat: Infinity,
-                ease: "linear",
-                delay: -(i * duration) / 15
-              }}
-              className="absolute w-20 h-20 md:w-32 md:h-32 backdrop-blur-md bg-white/5 border border-white/10 rounded-xl md:rounded-2xl flex flex-col items-center justify-center shadow-2xl p-2 md:p-4">
-              <img
-                src={technologies[i % technologies.length].logo}
-                alt={technologies[i % technologies.length].name}
-                className="w-6 h-6 md:w-10 md:h-10 mb-1 md:mb-2 filter drop-shadow-[0_0_8px_rgba(255,255,255,0.5)]" />
-              <span className="text-[6px] md:text-[8px] font-black uppercase tracking-tighter text-white/60">{technologies[i % technologies.length].name}</span>
-            </motion.div>
-            )}
-          </div>
-        )}
+        {/* STATIC TECH STACK - RANDOMLY POSITIONED */}
+        <div className="absolute inset-0 z-[10] pointer-events-none overflow-hidden">
+          {technologies.map((tech, i) => {
+            const positions = [
+              { top: '5%', left: '8%', rotate: '-12deg' },
+              { top: '15%', left: '75%', rotate: '8deg' },
+              { top: '25%', left: '15%', rotate: '15deg' },
+              { top: '12%', left: '45%', rotate: '-8deg' },
+              { top: '35%', left: '82%', rotate: '12deg' },
+              { top: '45%', left: '10%', rotate: '-15deg' },
+              { top: '35%', left: '92%', rotate: '12deg' }, // AWS - shifted right
+              { top: '48%', left: '35%', rotate: '-10deg' },
+              { top: '65%', left: '88%', rotate: '18deg' },
+              { top: '70%', left: '20%', rotate: '-18deg' },
+              { top: '75%', left: '50%', rotate: '5deg' },
+              { top: '82%', left: '78%', rotate: '-12deg' },
+              { top: '88%', left: '12%', rotate: '14deg' },
+              { top: '85%', left: '42%', rotate: '-6deg' },
+              { top: '20%', left: '92%', rotate: '20deg' },
+              { top: '40%', left: '55%', rotate: '-14deg' },
+              { top: '60%', left: '5%', rotate: '16deg' },
+              { top: '30%', left: '28%', rotate: '8deg' },
+              { top: '52%', left: '85%', rotate: '-10deg' },
+              { top: '78%', left: '65%', rotate: '12deg' }
+            ];
+            const pos = positions[i];
+            return (
+              <div
+                key={i}
+                className="absolute w-14 h-14 md:w-20 md:h-20 backdrop-blur-[2px] bg-white/5 border border-white/10 rounded-lg md:rounded-xl flex flex-col items-center justify-center shadow-2xl p-1.5 md:p-2"
+                style={{
+                  top: pos.top,
+                  left: pos.left,
+                  transform: `rotate(${pos.rotate})`
+                }}
+              >
+                <img
+                  src={tech.logo}
+                  alt={tech.name}
+                  className="w-5 h-5 md:w-7 md:h-7 mb-0.5 md:mb-1 filter drop-shadow-[0_0_8px_rgba(255,255,255,0.5)]"
+                />
+                <span className="text-[5px] md:text-[7px] font-black uppercase tracking-tighter text-white/60 text-center">
+                  {tech.name}
+                </span>
+              </div>
+            );
+          })}
+        </div>
 
       </section>
 
@@ -435,103 +448,54 @@ export default function Home() {
 
         {/* SECTION 3 - MY JOURNEY */}
         <section className="flex items-center justify-center p-2 md:p-3 bg-[#0a0a0a]">
-          <div
-            className="relative w-full rounded-2xl md:rounded-3xl bg-[#0a0a0a] border border-white/5 shadow-2xl">
+          <div className="relative w-full rounded-2xl md:rounded-3xl bg-[#0a0a0a] border border-white/5 shadow-2xl overflow-hidden">
 
-            <div className="absolute inset-0">
-              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full bg-[radial-gradient(circle_at_center,rgba(56,189,248,0.03)_0%,transparent_70%)]" />
+            {/* Video Background */}
+            <div className="absolute inset-0 z-0">
+              <video
+                autoPlay
+                loop
+                muted
+                playsInline
+                className="w-full h-full object-cover"
+                style={{ objectFit: 'cover' }}
+              >
+                <source src="/GTAV.mp4" type="video/mp4" />
+              </video>
+              {/* Blur and transparency overlay */}
+              <div className="absolute inset-0 backdrop-blur-sm bg-black/60" />
+            </div>
+
+            {/* Warm gradient overlay */}
+            <div className="absolute inset-0 z-[1]">
+              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full bg-[radial-gradient(circle_at_center,rgba(251,146,60,0.08)_0%,transparent_70%)]" />
             </div>
 
             {/* BUILDING THE FUTURE CONTENT */}
-            <div className="relative z-10 flex flex-col lg:grid lg:grid-cols-2 h-screen max-w-7xl mx-auto items-center gap-10 md:gap-20 p-6 md:p-20">
-              <div className="relative aspect-[2/3] w-full max-w-[300px] md:max-w-none md:w-[95%] mx-auto order-1 lg:order-1">
-                <div className="absolute inset-0 bg-sky-500/10 rounded-[2rem] md:rounded-[4rem] rotate-6 scale-95" />
-                <div className="absolute inset-0 bg-white/5 rounded-[2rem] md:rounded-[4rem] -rotate-3 border border-white/10 backdrop-blur-sm" />
-                <div className="absolute inset-0 rounded-[2rem] md:rounded-[4rem] overflow-hidden border border-white/20 bg-gradient-to-br from-white/10 to-transparent">
-                  <img src="https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fit=crop&q=80" className="w-full h-full object-cover" alt="Coding Journey" />
-                </div>
+            <div className="relative z-4 flex flex-col min-h-[60vh] max-w-7xl mx-auto justify-center px-4 md:px-8 py-8 md:py-12">
 
-                {/* Floating Badges */}
-                <motion.div
-                  animate={{ y: [0, -10, 0] }}
-                  transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
-                  className="absolute -top-3 -right-3 md:-top-6 md:-right-6 px-3 md:px-6 py-1.5 md:py-3 bg-black border border-white/10 rounded-xl md:rounded-2xl shadow-2xl"
-                >
-                  <div className="text-[8px] md:text-xs font-black text-sky-400 whitespace-nowrap">PROBLEM SOLVER</div>
-                </motion.div>
-
-                <motion.div
-                  animate={{ y: [0, 10, 0] }}
-                  transition={{ duration: 4, repeat: Infinity, ease: "easeInOut", delay: 1 }}
-                  className="absolute -bottom-3 -left-3 md:-bottom-6 md:-left-6 px-3 md:px-6 py-1.5 md:py-3 bg-black border border-white/10 rounded-xl md:rounded-2xl shadow-2xl"
-                >
-                  <div className="text-[8px] md:text-xs font-black text-white whitespace-nowrap">INNOVATOR</div>
-                </motion.div>
+              {/* Typewriter Text Card */}
+              <div className="relative w-full space-y-4 md:space-y-12">
+                <TypewriterText
+                  text="I'm a backend-focused engineer who enjoys building systems that are reliable, scalable, and ready for real users. I spend most of my time designing APIs, real-time systems, and cloud-native backends using Node.js and AWS."
+                  delay={500}
+                  speed={40}
+                  className="text-white/80 text-base md:text-4xl leading-relaxed text-left"
+                />
+                <TypewriterText
+                  text="I care deeply about performance, clean architecture, and fault tolerance — not just making things work, but making them last. Alongside backend and DevOps, I work extensively with AI systems, including LLMs, generative models, and image generation workflows integrated into real applications."
+                  delay={4000}
+                  speed={40}
+                  className="text-white/80 text-base md:text-4xl leading-relaxed text-left"
+                />
+                <TypewriterText
+                  text="My focus is on making AI production-ready, not experimental. Currently, I'm exploring how generative AI, agents, and real-time infrastructure can come together to build practical, scalable, and high-impact systems."
+                  delay={8500}
+                  speed={40}
+                  className="text-white/80 text-base md:text-4xl leading-relaxed text-left"
+                />
               </div>
 
-              <div className="space-y-6 md:space-y-10 order-2 lg:order-2">
-                <div className="space-y-3 md:space-y-4">
-                  <div className="flex items-center gap-4">
-                    <div className="h-[1px] w-12 bg-sky-500" />
-                    <span className="text-sky-500 font-black uppercase tracking-[0.3em] text-[10px] md:text-xs">My Journey</span>
-                  </div>
-                  <h2 className="text-4xl md:text-8xl font-black uppercase tracking-tighter leading-none">
-                    BUILDING<br />
-                    <span className="text-transparent" style={{ WebkitTextStroke: '1.5px white' }}>THE FUTURE</span>
-                  </h2>
-                </div>
-
-                <div className="space-y-4 md:space-y-6">
-                  <p className="text-lg md:text-2xl text-white/60 font-medium leading-relaxed">
-                    From crafting <span className="text-white">scalable microservices</span> to building intelligent <span className="text-white">AI-powered solutions</span>,
-                    I transform complex challenges into elegant, production-ready applications.
-                  </p>
-                  <div className="flex flex-wrap gap-6 md:gap-10">
-                    <div>
-                      <div className="text-2xl md:text-4xl font-black mb-1">100%</div>
-                      <div className="text-[8px] md:text-[10px] uppercase font-black tracking-widest text-white/40">Success Rate</div>
-                    </div>
-                    <div>
-                      <div className="text-2xl md:text-4xl font-black mb-1">24/7</div>
-                      <div className="text-[8px] md:text-[10px] uppercase font-black tracking-widest text-white/40">Availability</div>
-                    </div>
-                    <div>
-                      <div className="text-2xl md:text-4xl font-black mb-1">∞</div>
-                      <div className="text-[8px] md:text-[10px] uppercase font-black tracking-widest text-white/40">Innovation</div>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="pt-4 md:pt-6">
-                  <div className="inline-flex items-center gap-4 px-6 md:px-8 py-3 md:py-4 bg-white text-black rounded-full font-black uppercase tracking-widest hover:bg-sky-500 hover:text-white transition-all cursor-pointer group text-xs md:text-base">
-                    View Projects <ChevronRight size={18} className="group-hover:translate-x-1 transition-transform" />
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* ALL REMAINING SECTIONS SCROLL INSIDE */}
-            <div className="relative z-10 space-y-8 p-6 md:p-12">
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 auto-rows-fr">
-                {[1, 2, 3, 4, 5, 6, 7, 8].map((i) => <div key={i} className="group relative bg-white rounded-2xl border border-zinc-200 overflow-hidden hover:border-sky-400/50 transition-all duration-500 shadow-xl flex flex-col">
-                  <div className="h-40 md:h-48 w-full overflow-hidden relative flex-shrink-0">
-                    <img src={`https://picsum.photos/seed/${i + 50}/600/400`} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
-                    <div className="absolute top-4 left-4 bg-red-600 px-3 py-1 rounded-full text-[8px] md:text-[10px] font-black uppercase tracking-widest flex items-center gap-2 text-white">
-                      <span className="w-1.5 h-1.5 bg-white rounded-full animate-pulse" /> LIVE
-                    </div>
-                  </div>
-                  <div className="p-4 md:p-6 flex items-center gap-4 flex-grow">
-                    <div className="w-10 h-10 md:w-14 md:h-14 rounded-xl md:rounded-2xl bg-sky-500 flex items-center justify-center overflow-hidden border-2 border-white/10 group-hover:rotate-12 transition-transform shrink-0">
-                      <img src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${i}`} className="w-full h-full" />
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <h4 className="font-black text-lg md:text-xl uppercase tracking-tighter text-black truncate">User_{i}</h4>
-                      <p className="text-zinc-500 font-bold text-[8px] md:text-xs uppercase tracking-widest group-hover:text-sky-400 transition-colors">Digital Creator</p>
-                    </div>
-                  </div>
-                </div>
-                )}
-              </div>
             </div>
           </div>
         </section>

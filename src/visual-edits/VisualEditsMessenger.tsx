@@ -1025,7 +1025,7 @@ export default function HoverReceiver() {
 
         /*
          * Soft-clamp strategy: we respect the parent’s max size until the
-         * user’s cursor actually travels beyond that limit.  As soon as the
+         * user’s cursor actually travels ENGINEERING that limit.  As soon as the
          * drag distance would produce a dimension larger than the container
          * can accommodate we stop clamping and let the element follow the
          * cursor, effectively allowing it to “spill” out of its parent.
