@@ -566,7 +566,7 @@ export default function Home() {
                 techStack="Python · PyTorch · Transformers · Diffusion Models · NLP"
                 cta={[
                   { label: "GitHub Repo", link: "https://github.com", icon: "github" },
-                  { label: "Read Research", link: "#", icon: "external" }
+                  { label: "Live Link", link: "#", icon: "external" }
                 ]}
                 image="/LLMThumbnail.webp"
               />
@@ -579,11 +579,10 @@ export default function Home() {
                   badges={["AWS", "FFMPEG", "HLS", "DRM"]}
                   footer="Scalable media backend · Jan 2025"
                   description="An automated video pipeline that downloads raw videos, transcodes them into multiple resolutions, encrypts segments, and delivers them via HLS."
-                  highlights={["Adaptive Bitrate (360p-1080p)", "DRM Encryption", "AWS S3 + SQS Pipeline", "Dockerized FFMPEG workers"]}
                   techStack="Node.js · Docker · AWS · FFMPEG · HLS · C++"
                   cta={[
-                    { label: "GitHub (Pipeline)", link: "https://github.com", icon: "github" },
-                    { label: "Architecture", link: "#", icon: "external" }
+                    { label: "GitHub Repo", link: "https://github.com", icon: "github" },
+                    { label: "Live Link", link: "#", icon: "external" }
                   ]}
                   image="https://images.unsplash.com/photo-1614162692292-7ac56d7f7f1e?auto=format&fit=crop&q=80"
                 />
@@ -595,11 +594,10 @@ export default function Home() {
                   badges={["LangGraph", "Multi-Agent AI", "Time Series"]}
                   footer="AI agents · Dec 2024"
                   description="A modular AI-driven financial analyst system that combines market data, agents, memory, and orchestration graphs."
-                  highlights={["Market & Sentiment Agents", "Risk & Strategy Managers", "Zerodha MCP integration", "Graph-based workflows"]}
                   techStack="LSTM · ARIMA · Technical Indicators"
                   cta={[
                     { label: "GitHub Repo", link: "https://github.com", icon: "github" },
-                    { label: "Workflow Diagram", link: "#", icon: "external" }
+                    { label: "Live Link", link: "#", icon: "external" }
                   ]}
                   image="https://images.unsplash.com/photo-1621135802920-133df287f89c?auto=format&fit=crop&q=80"
                 />

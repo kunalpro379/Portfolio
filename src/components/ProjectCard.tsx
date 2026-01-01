@@ -10,7 +10,7 @@ interface ProjectCardProps {
   badges: string[];
   footer: string;
   description: string;
-  highlights: string[];
+  highlights?: string[];
   techStack: string;
   cta: { label: string; link: string; icon?: any }[];
   size?: "big" | "medium" | "small";
@@ -23,7 +23,7 @@ export function ProjectCard({
   badges,
   footer,
   description,
-  highlights,
+  highlights = [],
   techStack,
   cta,
   size = "small",
@@ -33,31 +33,36 @@ export function ProjectCard({
 
   return (
     <div 
-      className={`relative w-full group ${
+      className={`relative w-full group cursor-pointer ${
         size === "big" ? "aspect-video md:aspect-auto h-full" : "aspect-video"
       }`}
       style={{ perspective: "2000px" }}
-      onMouseEnter={() => setIsFlipped(true)}
-      onMouseLeave={() => setIsFlipped(false)}
+      onClick={() => setIsFlipped(!isFlipped)}
     >
-          <motion.div
-            className="relative w-full h-full"
-            style={{ transformStyle: "preserve-3d" }}
-            animate={{ rotateY: isFlipped ? 180 : 0 }}
-            transition={{ type: "spring", stiffness: 50, damping: 20, mass: 1 }}
-          >
-          {/* FRONT SIDE */}
-          <div 
-            className="absolute inset-0 backface-hidden rounded-2xl md:rounded-3xl border border-zinc-200 overflow-hidden bg-white shadow-xl"
-            style={{ backfaceVisibility: "hidden" }}
-          >
-            {image && (
-              <img 
-                src={image} 
-                alt={title} 
-                className="absolute inset-0 w-full h-full object-cover opacity-80" 
-              />
-            )}
+      <motion.div
+        className="relative w-full h-full"
+        style={{ transformStyle: "preserve-3d" }}
+        animate={{ rotateY: isFlipped ? 180 : 0 }}
+        transition={{ 
+          type: "spring", 
+          stiffness: 40, 
+          damping: 20, 
+          mass: 1.2,
+          restDelta: 0.001
+        }}
+      >
+        {/* FRONT SIDE */}
+        <div 
+          className="absolute inset-0 backface-hidden rounded-2xl md:rounded-3xl border border-zinc-200 overflow-hidden bg-white shadow-xl"
+          style={{ backfaceVisibility: "hidden" }}
+        >
+          {image && (
+            <img 
+              src={image} 
+              alt={title} 
+              className="absolute inset-0 w-full h-full object-cover opacity-80 transition-transform duration-700 group-hover:scale-105" 
+            />
+          )}
           <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
           
           <div className="absolute inset-0 p-6 md:p-10 flex flex-col justify-end">
@@ -79,8 +84,11 @@ export function ProjectCard({
             
             <div className="mt-6 pt-4 border-t border-white/10 flex justify-between items-center">
               <span className="text-sky-400 font-bold text-[8px] md:text-xs uppercase tracking-widest">{footer}</span>
-              <div className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center text-white">
-                <ChevronRight size={16} />
+              <div className="flex items-center gap-2">
+                <span className="text-[8px] uppercase font-black text-white/40 tracking-widest">Click to Flip</span>
+                <div className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center text-white">
+                  <ChevronRight size={16} />
+                </div>
               </div>
             </div>
           </div>
@@ -97,22 +105,24 @@ export function ProjectCard({
           <div className="space-y-4 md:space-y-6">
             <div className="space-y-2">
               <h4 className="text-sky-400 font-black text-[10px] md:text-xs uppercase tracking-[0.2em]">Project Overview</h4>
-              <p className="text-white text-sm md:text-xl font-medium leading-relaxed">
+              <p className={`${size === "small" ? "text-xs md:text-sm" : "text-sm md:text-xl"} text-white font-medium leading-relaxed`}>
                 {description}
               </p>
             </div>
             
-            <div className="space-y-2">
-              <h4 className="text-sky-400 font-black text-[10px] md:text-xs uppercase tracking-[0.2em]">Key Features</h4>
-              <ul className="grid grid-cols-1 gap-2">
-                {highlights.map((h, i) => (
-                  <li key={i} className="text-white/70 text-[10px] md:text-sm font-bold flex items-center gap-3 uppercase tracking-wider">
-                    <div className="w-1.5 h-1.5 bg-sky-500 rounded-full shadow-[0_0_8px_rgba(0,163,255,0.8)]" />
-                    {h}
-                  </li>
-                ))}
-              </ul>
-            </div>
+            {highlights.length > 0 && (
+              <div className="space-y-2">
+                <h4 className="text-sky-400 font-black text-[10px] md:text-xs uppercase tracking-[0.2em]">Key Features</h4>
+                <ul className="grid grid-cols-1 gap-2">
+                  {highlights.map((h, i) => (
+                    <li key={i} className="text-white/70 text-[10px] md:text-sm font-bold flex items-center gap-3 uppercase tracking-wider">
+                      <div className="w-1.5 h-1.5 bg-sky-500 rounded-full shadow-[0_0_8px_rgba(0,163,255,0.8)]" />
+                      {h}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
 
             <div className="pt-2">
               <h4 className="text-sky-400 font-black text-[10px] md:text-xs uppercase tracking-[0.2em] mb-1">Architecture</h4>
@@ -129,6 +139,7 @@ export function ProjectCard({
                 href={item.link} 
                 target="_blank" 
                 rel="noopener noreferrer"
+                onClick={(e) => e.stopPropagation()}
                 className="flex items-center gap-2 px-5 py-2.5 bg-white text-black rounded-xl font-black uppercase tracking-widest text-[10px] md:text-xs hover:bg-sky-500 hover:text-white transition-all transform hover:scale-105 active:scale-95 shadow-lg"
               >
                 {item.icon === "github" ? <Github size={14} /> : <ExternalLink size={14} />}
