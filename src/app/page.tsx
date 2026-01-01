@@ -326,32 +326,6 @@ export default function Home() {
           </div>
         </motion.section>
 
-            {/* ALL REMAINING SECTIONS SCROLL INSIDE */}
-            <div className="relative z-10 space-y-8 p-6 md:p-12">
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 flex-1">
-                {[1, 2, 3, 4, 5, 6, 7, 8].map((i) => <div key={i} className="group relative bg-white rounded-2xl border border-zinc-200 overflow-hidden hover:border-sky-400/50 transition-all duration-500 shadow-xl h-fit">
-                  <div className="h-40 md:h-48 w-full overflow-hidden relative">
-                    <img src={`https://picsum.photos/seed/${i + 50}/600/400`} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
-                    <div className="absolute top-4 left-4 bg-red-600 px-3 py-1 rounded-full text-[8px] md:text-[10px] font-black uppercase tracking-widest flex items-center gap-2 text-white">
-                      <span className="w-1.5 h-1.5 bg-white rounded-full animate-pulse" /> LIVE
-                    </div>
-                  </div>
-                  <div className="p-4 md:p-6 flex items-center gap-4">
-                    <div className="w-10 h-10 md:w-14 md:h-14 rounded-xl md:rounded-2xl bg-sky-500 flex items-center justify-center overflow-hidden border-2 border-white/10 group-hover:rotate-12 transition-transform shrink-0">
-                      <img src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${i}`} className="w-full h-full" />
-                    </div>
-                    <div>
-                      <h4 className="font-black text-lg md:text-xl uppercase tracking-tighter text-black truncate">User_{i}</h4>
-                      <p className="text-zinc-500 font-bold text-[8px] md:text-xs uppercase tracking-widest group-hover:text-sky-400 transition-colors">Digital Creator</p>
-                    </div>
-                  </div>
-                </div>
-                )}
-              </div>
-            </div>
-          </motion.div>
-        </section>
-
         {/* SECTION 4 - SERVER STATS */}
         <motion.section
           style={{ opacity: section4Opacity }}
