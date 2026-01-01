@@ -172,6 +172,16 @@
     scrollbar-width: none;
   }
 
+  /* Hide scrollbar completely */
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
   /* Optimize text rendering */
   .optimize-text {
     text-rendering: optimizeLegibility;

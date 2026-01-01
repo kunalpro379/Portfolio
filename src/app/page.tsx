@@ -108,153 +108,202 @@ export default function Home() {
       </div>
 
       {/* SECTION 1 - HERO */}
-      <section className="relative min-h-screen flex items-center justify-center p-2 md:p-3 overflow-hidden">
-        <motion.div
-          className="relative w-full h-screen rounded-2xl md:rounded-3xl overflow-hidden bg-[#030303]">
+      <section className="relative h-[200vh] p-2 md:p-3">
 
-          <div className="absolute inset-0 z-[2] opacity-[0.04] pointer-events-none" style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")` }} />
+        {/* Fixed Background Elements */}
+        <div className="absolute inset-0 z-[2] opacity-[0.04] pointer-events-none" style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")` }} />
 
-          <div className="absolute inset-0 z-0">
-            <motion.div
-              animate={{
-                scale: [1, 1.1, 1],
-                opacity: [0.1, 0.15, 0.1],
-              }}
-              transition={{ duration: 15, repeat: Infinity, ease: "easeInOut" }}
-              className="absolute top-[-20%] left-[-10%] w-[80%] h-[80%] bg-sky-500/5 rounded-full blur-[140px]" />
-            <motion.div
-              animate={{
-                scale: [1.1, 1, 1.1],
-                opacity: [0.05, 0.1, 0.05],
-              }}
-              transition={{ duration: 12, repeat: Infinity, ease: "easeInOut", delay: 2 }}
-              className="absolute bottom-[-10%] right-[-10%] w-[70%] h-[70%] bg-indigo-500/5 rounded-full blur-[140px]" />
-          </div>
+        <div className="absolute inset-0 z-0">
+          <motion.div
+            animate={{
+              scale: [1, 1.1, 1],
+              opacity: [0.1, 0.15, 0.1],
+            }}
+            transition={{ duration: 15, repeat: Infinity, ease: "easeInOut" }}
+            className="absolute top-[-20%] left-[-10%] w-[80%] h-[80%] bg-sky-500/5 rounded-full blur-[140px]" />
+          <motion.div
+            animate={{
+              scale: [1.1, 1, 1.1],
+              opacity: [0.05, 0.1, 0.05],
+            }}
+            transition={{ duration: 12, repeat: Infinity, ease: "easeInOut", delay: 2 }}
+            className="absolute bottom-[-10%] right-[-10%] w-[70%] h-[70%] bg-indigo-500/5 rounded-full blur-[140px]" />
+        </div>
 
-          {/* Light Beams/Rays */}
-          <div className="absolute inset-0 z-[1] overflow-hidden pointer-events-none">
-            <div className="absolute -top-[50%] -left-[50%] w-[200%] h-[200%] rotate-45 opacity-[0.05]" style={{
-              backgroundImage: 'repeating-linear-gradient(90deg, transparent, transparent 50px, rgba(255,255,255,0.1) 50px, rgba(255,255,255,0.1) 51px)',
-            }} />
-          </div>
+        {/* Light Beams/Rays */}
+        <div className="absolute inset-0 z-[1] overflow-hidden pointer-events-none">
+          <div className="absolute -top-[50%] -left-[50%] w-[200%] h-[200%] rotate-45 opacity-[0.05]" style={{
+            backgroundImage: 'repeating-linear-gradient(90deg, transparent, transparent 50px, rgba(255,255,255,0.1) 50px, rgba(255,255,255,0.1) 51px)',
+          }} />
+        </div>
 
-          {/* Refined Grid Overlay - Finer lines */}
-          <div className="absolute inset-0 z-[2] opacity-[0.1]" style={{
-            backgroundImage: `
+        {/* Refined Grid Overlay */}
+        <div className="absolute inset-0 z-[2] opacity-[0.1]" style={{
+          backgroundImage: `
               linear-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px), 
               linear-gradient(90deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px)
             `,
-            backgroundSize: '100px 100px',
-            maskImage: 'radial-gradient(circle at center, black, transparent 90%)',
-            WebkitMaskImage: 'radial-gradient(circle at center, black, transparent 90%)'
-          }} />
+          backgroundSize: '100px 100px',
+          maskImage: 'radial-gradient(circle at center, black, transparent 90%)',
+          WebkitMaskImage: 'radial-gradient(circle at center, black, transparent 90%)'
+        }} />
 
-          {/* Floating Bokeh / Particles */}
-          <div className="absolute inset-0 z-[3] pointer-events-none">
-            {isMounted && bokehProps.map((props, i) => (
-              <motion.div
-                key={i}
-                initial={{ opacity: 0, scale: 0 }}
-                animate={{
-                  opacity: [0, 0.2, 0],
-                  scale: [0.5, 1, 0.5],
-                  y: [0, -100]
-                }}
-                transition={{
-                  duration: props.duration,
-                  repeat: Infinity,
-                  ease: "easeInOut",
-                  delay: props.delay
-                }}
-                className="absolute w-1 h-1 bg-sky-400 rounded-full blur-[1px]"
-                style={{
-                  top: props.top,
-                  left: props.left,
-                }} />
-            ))}
-          </div>
-
-          {/* Subtle Aura behind Text */}
-          <div className="absolute top-1/2 left-1/4 -translate-y-1/2 w-[40%] h-[40%] bg-sky-500/5 rounded-full blur-[180px] z-[4] pointer-events-none" />
-
-          {/* Vignette */}
-          <div className="absolute inset-0 z-[4] pointer-events-none bg-[radial-gradient(circle_at_center,transparent_0%,rgba(0,0,0,0.5)_100%)]" />
-
-          {/* CHARACTER IMAGE */}
-          <div className="absolute left-[2%] right-[2%] top-[10%] sm:right-[5%] sm:left-auto sm:top-[10%] md:right-[8%] md:top-[15%] lg:bottom-[20%] lg:top-auto z-[4] h-[40%] sm:h-[45%] md:h-[50%] lg:h-[65%] w-auto sm:w-[30%] md:w-[32%] lg:w-[30%] pointer-events-none select-none">
-            <div className="relative w-full h-full">
-              <div className="absolute inset-0 bg-sky-500/10 rounded-[2rem] md:rounded-[4rem] rotate-6 scale-95" />
-              <div className="absolute inset-0 bg-white/5 rounded-[2rem] md:rounded-[4rem] -rotate-3 border border-white/10 backdrop-blur-sm" />
-              <div className="absolute inset-0 rounded-[2rem] md:rounded-[4rem] overflow-hidden border border-white/20 bg-gradient-to-br from-white/10 to-transparent">
-                {heroImages.map((img, index) => (
-                  <motion.img
-                    key={img}
-                    initial={{ opacity: index === 0 ? 1 : 0, x: index === 0 ? 0 : 100 }}
-                    animate={{
-                      opacity: currentImageIndex === index ? 1 : 0,
-                      x: currentImageIndex === index ? 0 : 100,
-                      scale: 1
-                    }}
-                    transition={{
-                      opacity: { duration: 1, ease: "easeInOut" },
-                      x: { duration: 1, ease: "easeInOut" },
-                      scale: { duration: 1, ease: "easeInOut" }
-                    }}
-                    src={img}
-                    alt="Character"
-                    className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[100%] h-[100%] md:w-[80%] md:h-[80%] object-contain md:object-cover grayscale rounded-2xl"
-                    style={{ imageRendering: 'high-quality' }} />
-                ))}
-              </div>
-
-              {/* Floating Badges */}
-              <motion.div
-                animate={{ y: [0, -10, 0] }}
-                transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
-                className="absolute -top-3 -right-3 md:-top-6 md:-right-6 px-3 md:px-6 py-1.5 md:py-3 bg-black border border-white/10 rounded-xl md:rounded-2xl shadow-2xl"
-              >
-                <div className="text-[8px] md:text-xs font-black text-sky-400 whitespace-nowrap">NEXT.JS EXPERT</div>
-              </motion.div>
-
-              <motion.div
-                animate={{ y: [0, 10, 0] }}
-                transition={{ duration: 4, repeat: Infinity, ease: "easeInOut", delay: 1 }}
-                className="absolute -bottom-3 -left-3 md:-bottom-6 md:-left-6 px-3 md:px-6 py-1.5 md:py-3 bg-black border border-white/10 rounded-xl md:rounded-2xl shadow-2xl"
-              >
-                <div className="text-[8px] md:text-xs font-black text-white whitespace-nowrap">AI ENGINEER</div>
-              </motion.div>
-            </div>
-          </div>
-
-          <div className="absolute inset-0 flex flex-col items-start justify-center pt-48 md:pt-0 z-[5] px-6 md:px-24 max-w-7xl mx-auto">
+        {/* Floating Bokeh / Particles */}
+        <div className="absolute inset-0 z-[3] pointer-events-none">
+          {isMounted && bokehProps.map((props, i) => (
             <motion.div
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 1, ease: "easeOut" }}
-              className="mb-4 md:mb-6"
-            >
-              <span className="px-3 md:px-4 py-1 md:py-1.5 rounded-full border border-sky-500/30 bg-sky-500/10 text-sky-400 text-[8px] md:text-[10px] font-black uppercase tracking-[0.3em]">
-                Crafting Future Tech
-              </span>
-            </motion.div>
-            <h1 className="text-6xl md:text-[12rem] font-black tracking-tighter leading-[0.8] mb-6 md:mb-8 select-none text-left">
-              KUNAL<br />
-              <span className="text-transparent bg-clip-text bg-gradient-to-b from-white to-white/20">PORTFOLIO</span>
-            </h1>
-            <p className="max-w-xl text-white/40 font-medium text-sm md:text-lg tracking-wide uppercase text-left">
-              Crafting immersive digital experiences through <span className="text-white">Full-Stack Development</span> & <span className="text-white">Generative AI</span>.
-            </p>
+              key={i}
+              initial={{ opacity: 0, scale: 0 }}
+              animate={{
+                opacity: [0, 0.2, 0],
+                scale: [0.5, 1, 0.5],
+                y: [0, -100]
+              }}
+              transition={{
+                duration: props.duration,
+                repeat: Infinity,
+                ease: "easeInOut",
+                delay: props.delay
+              }}
+              className="absolute w-1 h-1 bg-sky-400 rounded-full blur-[1px]"
+              style={{
+                top: props.top,
+                left: props.left,
+              }} />
+          ))}
+        </div>
 
-            <div className="mt-8 md:mt-12 flex flex-col sm:flex-row gap-4 md:gap-6 w-full sm:w-auto">
-              <div className="px-8 md:px-10 py-4 md:py-5 bg-sky-500 text-white rounded-xl md:rounded-2xl font-black uppercase tracking-widest hover:scale-105 transition-all cursor-pointer shadow-[0_20px_50px_rgba(0,163,255,0.4)] text-center text-xs md:text-base">
-                Explore Work
+        {/* Subtle Aura behind Text */}
+        <div className="absolute top-1/2 left-1/4 -translate-y-1/2 w-[40%] h-[40%] bg-sky-500/5 rounded-full blur-[180px] z-[4] pointer-events-none" />
+
+        {/* Vignette */}
+        <div className="absolute inset-0 z-[4] pointer-events-none bg-[radial-gradient(circle_at_center,transparent_0%,rgba(0,0,0,0.5)_100%)]" />
+
+        {/* SCROLLABLE CONTENT */}
+        <div className="absolute inset-0 overflow-y-auto z-[5] scrollbar-hide">
+          <div className="min-h-[200vh] flex flex-col">
+            {/* First Screen - Hero Content */}
+            <div className="min-h-screen flex flex-col lg:flex-row items-center justify-between px-6 md:px-24 max-w-7xl mx-auto w-full gap-10">
+              <div className="flex flex-col items-start justify-center lg:w-3/5">
+                <motion.div
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ duration: 1, ease: "easeOut" }}
+                  className="mb-4 md:mb-6"
+                >
+                  <span className="px-3 md:px-4 py-1 md:py-1.5 rounded-full border border-sky-500/30 bg-sky-500/10 text-sky-400 text-[8px] md:text-[10px] font-black uppercase tracking-[0.3em]">
+                    Crafting Future Tech
+                  </span>
+                </motion.div>
+                <h1 className="text-6xl md:text-[10rem] font-black tracking-tighter leading-[0.8] mb-6 md:mb-8 select-none text-left">
+                  KUNAL<br />
+                  <span className="text-transparent bg-clip-text bg-gradient-to-b from-white to-white/20">PORTFOLIO</span>
+                </h1>
+                <p className="max-w-xl text-white/40 font-medium text-sm md:text-lg tracking-wide uppercase text-left">
+                  Crafting immersive digital experiences through <span className="text-white">Full-Stack Development</span> & <span className="text-white">Generative AI</span>.
+                </p>
+
+                <div className="mt-8 md:mt-12 flex flex-col sm:flex-row gap-4 md:gap-6 w-full sm:w-auto">
+                  <div className="px-8 md:px-10 py-4 md:py-5 bg-sky-500 text-white rounded-xl md:rounded-2xl font-black uppercase tracking-widest hover:scale-105 transition-all cursor-pointer shadow-[0_20px_50px_rgba(0,163,255,0.4)] text-center text-xs md:text-base">
+                    Explore Work
+                  </div>
+                  <div className="px-8 md:px-10 py-4 md:py-5 border border-white/10 bg-white/5 backdrop-blur-md text-white rounded-xl md:rounded-2xl font-black uppercase tracking-widest hover:bg-white/10 transition-all cursor-pointer text-center text-xs md:text-base">
+                    Contact Me
+                  </div>
+                </div>
               </div>
-              <div className="px-8 md:px-10 py-4 md:py-5 border border-white/10 bg-white/5 backdrop-blur-md text-white rounded-xl md:rounded-2xl font-black uppercase tracking-widest hover:bg-white/10 transition-all cursor-pointer text-center text-xs md:text-base">
-                Contact Me
+
+              {/* CHARACTER IMAGE CONTAINER - NOW NEXT TO THE TEXT */}
+              <div className="relative w-full lg:w-[45%] aspect-square select-none mt-10 lg:mt-0">
+                <div className="relative w-full h-full max-w-[500px] mx-auto">
+                  <div className="absolute inset-0 bg-sky-500/10 rounded-[2rem] md:rounded-[4rem] rotate-6 scale-95" />
+                  <div className="absolute inset-0 bg-white/5 rounded-[2rem] md:rounded-[4rem] -rotate-3 border border-white/10 backdrop-blur-sm" />
+                  <div className="absolute inset-0 rounded-[2rem] md:rounded-[4rem] overflow-hidden border border-white/20 bg-gradient-to-br from-white/10 to-transparent">
+                    {heroImages.map((img, index) => (
+                      <motion.img
+                        key={img}
+                        initial={{ opacity: index === 0 ? 1 : 0, x: index === 0 ? 0 : 100 }}
+                        animate={{
+                          opacity: currentImageIndex === index ? 1 : 0,
+                          x: currentImageIndex === index ? 0 : 100,
+                          scale: 1
+                        }}
+                        transition={{
+                          opacity: { duration: 1, ease: "easeInOut" },
+                          x: { duration: 1, ease: "easeInOut" },
+                          scale: { duration: 1, ease: "easeInOut" }
+                        }}
+                        src={img}
+                        alt="Character"
+                        className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[100%] h-[100%] md:w-[80%] md:h-[80%] object-contain md:object-cover grayscale rounded-2xl"
+                        style={{ imageRendering: 'high-quality' }} />
+                    ))}
+                  </div>
+
+                  {/* Floating Badges */}
+                  <motion.div
+                    animate={{ y: [0, -10, 0] }}
+                    transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+                    className="absolute -top-3 -right-3 md:-top-6 md:-right-6 px-3 md:px-6 py-1.5 md:py-3 bg-black border border-white/10 rounded-xl md:rounded-2xl shadow-2xl"
+                  >
+                    <div className="text-[8px] md:text-xs font-black text-sky-400 whitespace-nowrap">NEXT.JS EXPERT</div>
+                  </motion.div>
+
+                  <motion.div
+                    animate={{ y: [0, 10, 0] }}
+                    transition={{ duration: 4, repeat: Infinity, ease: "easeInOut", delay: 1 }}
+                    className="absolute -bottom-3 -left-3 md:-bottom-6 md:-left-6 px-3 md:px-6 py-1.5 md:py-3 bg-black border border-white/10 rounded-xl md:rounded-2xl shadow-2xl"
+                  >
+                    <div className="text-[8px] md:text-xs font-black text-white whitespace-nowrap">AI ENGINEER</div>
+                  </motion.div>
+                </div>
+              </div>
+            </div>
+
+            {/* Second Screen - About Content */}
+            <div className="min-h-screen flex items-center px-6 md:px-24 max-w-7xl mx-auto w-full">
+              <div className="space-y-6 md:space-y-10 w-full lg:w-1/2">
+                <div className="space-y-3 md:space-y-4">
+                  <div className="flex items-center gap-4">
+                    <div className="h-[1px] w-12 bg-sky-500" />
+                    <span className="text-sky-500 font-black uppercase tracking-[0.3em] text-[10px] md:text-xs">About My Craft</span>
+                  </div>
+                  <h2 className="text-4xl md:text-8xl font-black uppercase tracking-tighter leading-none">
+                    BEYOND<br />
+                    <span className="text-transparent" style={{ WebkitTextStroke: '1.5px white' }}>THE CODE</span>
+                  </h2>
+                </div>
+
+                <div className="space-y-4 md:space-y-6">
+                  <p className="text-lg md:text-2xl text-white/60 font-medium leading-relaxed">
+                    Passionate Full-Stack Developer with a focus on building <span className="text-white">high-performance</span>,
+                    user-centric applications. Specializing in bridging the gap between <span className="text-white">AI agents</span> and modern web architectures.
+                  </p>
+                  <div className="flex flex-wrap gap-6 md:gap-10">
+                    <div>
+                      <div className="text-2xl md:text-4xl font-black mb-1">05+</div>
+                      <div className="text-[8px] md:text-[10px] uppercase font-black tracking-widest text-white/40">Years Exp.</div>
+                    </div>
+                    <div>
+                      <div className="text-2xl md:text-4xl font-black mb-1">40+</div>
+                      <div className="text-[8px] md:text-[10px] uppercase font-black tracking-widest text-white/40">Projects</div>
+                    </div>
+                    <div>
+                      <div className="text-2xl md:text-4xl font-black mb-1">12k+</div>
+                      <div className="text-[8px] md:text-[10px] uppercase font-black tracking-widest text-white/40">Commits</div>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="pt-4 md:pt-6">
+                  <div className="inline-flex items-center gap-4 px-6 md:px-8 py-3 md:py-4 bg-white text-black rounded-full font-black uppercase tracking-widest hover:bg-sky-500 hover:text-white transition-all cursor-pointer group text-xs md:text-base">
+                    See my work <ChevronRight size={18} className="group-hover:translate-x-1 transition-transform" />
+                  </div>
+                </div>
               </div>
             </div>
           </div>
-        </motion.div>
+        </div>
 
         {/* IMPROVED CARDS ANIMATION */}
         {isMounted && cardProps.length > 0 && (
@@ -295,7 +344,6 @@ export default function Home() {
       {/* SCROLLABLE CONTENT CONTAINER */}
       <div className="relative z-10">
 
-        {/* SECTION 2 - BEYOND THE CODE */}
         <section className="min-h-screen flex items-center justify-center p-2 md:p-3 bg-[#0a0a0a]">
           <div className="relative w-full">
 
@@ -426,19 +474,19 @@ export default function Home() {
 
             {/* ALL REMAINING SECTIONS SCROLL INSIDE */}
             <div className="relative z-10 space-y-8 p-6 md:p-12">
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 flex-1">
-                {[1, 2, 3, 4, 5, 6, 7, 8].map((i) => <div key={i} className="group relative bg-white rounded-2xl border border-zinc-200 overflow-hidden hover:border-sky-400/50 transition-all duration-500 shadow-xl h-fit">
-                  <div className="h-40 md:h-48 w-full overflow-hidden relative">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 auto-rows-fr">
+                {[1, 2, 3, 4, 5, 6, 7, 8].map((i) => <div key={i} className="group relative bg-white rounded-2xl border border-zinc-200 overflow-hidden hover:border-sky-400/50 transition-all duration-500 shadow-xl flex flex-col">
+                  <div className="h-40 md:h-48 w-full overflow-hidden relative flex-shrink-0">
                     <img src={`https://picsum.photos/seed/${i + 50}/600/400`} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
                     <div className="absolute top-4 left-4 bg-red-600 px-3 py-1 rounded-full text-[8px] md:text-[10px] font-black uppercase tracking-widest flex items-center gap-2 text-white">
                       <span className="w-1.5 h-1.5 bg-white rounded-full animate-pulse" /> LIVE
                     </div>
                   </div>
-                  <div className="p-4 md:p-6 flex items-center gap-4">
+                  <div className="p-4 md:p-6 flex items-center gap-4 flex-grow">
                     <div className="w-10 h-10 md:w-14 md:h-14 rounded-xl md:rounded-2xl bg-sky-500 flex items-center justify-center overflow-hidden border-2 border-white/10 group-hover:rotate-12 transition-transform shrink-0">
                       <img src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${i}`} className="w-full h-full" />
                     </div>
-                    <div>
+                    <div className="flex-1 min-w-0">
                       <h4 className="font-black text-lg md:text-xl uppercase tracking-tighter text-black truncate">User_{i}</h4>
                       <p className="text-zinc-500 font-bold text-[8px] md:text-xs uppercase tracking-widest group-hover:text-sky-400 transition-colors">Digital Creator</p>
                     </div>
