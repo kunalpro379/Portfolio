@@ -1,12 +1,11 @@
 "use client";
 
-import { motion, useScroll, useTransform } from "framer-motion";
+import { motion } from "framer-motion";
 import { Home as HomeIcon, Instagram, Radio, Users, Trophy, MessageSquare, Shield, Zap, Crown, ChevronRight, Car, Briefcase, Sword, Folder } from "lucide-react";
-import { useRef, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import ImageSlider from "@/components/ImageSlider";
 
 export default function Home() {
-  const containerRef = useRef(null);
   const [isMounted, setIsMounted] = useState(false);
   const [cardProps, setCardProps] = useState<any[]>([]);
   const [bokehProps, setBokehProps] = useState<any[]>([]);
@@ -33,41 +32,12 @@ export default function Home() {
     }));
     setBokehProps(bProps);
 
-    // Cycle through images every 4 seconds
     const imageInterval = setInterval(() => {
       setCurrentImageIndex((prev) => (prev + 1) % heroImages.length);
     }, 4000);
 
     return () => clearInterval(imageInterval);
   }, []);
-
-  const { scrollYProgress } = useScroll({
-    target: containerRef,
-    offset: ["start start", "end end"]
-  });
-
-  // Section visibility transforms (updated for 14 sections)
-  const section1Opacity = useTransform(scrollYProgress, [0, 0.05, 0.07], [1, 0.3, 0]);
-  const section1Scale = useTransform(scrollYProgress, [0, 0.07], [1, 0.9]);
-  const section1Blur = useTransform(scrollYProgress, [0, 0.02, 0.05, 0.07], ["blur(0px)", "blur(8px)", "blur(30px)", "blur(100px)"]);
-
-  const section2Opacity = useTransform(scrollYProgress, [0.07, 0.1, 0.14, 0.17], [0, 1, 1, 0]);
-  const section2Scale = useTransform(scrollYProgress, [0.07, 0.1], [1.1, 1]);
-
-  const section3Opacity = useTransform(scrollYProgress, [0.14, 0.17, 0.21, 0.24], [0, 1, 1, 0]);
-  const section3Translate = useTransform(scrollYProgress, [0.14, 0.17], [100, 0]);
-
-  const section4Opacity = useTransform(scrollYProgress, [0.21, 0.24, 0.28, 0.31], [0, 1, 1, 0]);
-  const section5Opacity = useTransform(scrollYProgress, [0.28, 0.31, 0.35, 0.38], [0, 1, 1, 0]);
-  const section6Opacity = useTransform(scrollYProgress, [0.35, 0.38, 0.42, 0.45], [0, 1, 1, 0]);
-  const section7Opacity = useTransform(scrollYProgress, [0.42, 0.45, 0.49, 0.52], [0, 1, 1, 0]);
-  const section8Opacity = useTransform(scrollYProgress, [0.49, 0.52, 0.56, 0.59], [0, 1, 1, 0]);
-  const section9Opacity = useTransform(scrollYProgress, [0.56, 0.59, 0.63, 0.66], [0, 1, 1, 0]);
-  const section10Opacity = useTransform(scrollYProgress, [0.63, 0.66, 0.70, 0.73], [0, 1, 1, 0]);
-  const section11Opacity = useTransform(scrollYProgress, [0.70, 0.73, 0.77, 0.80], [0, 1, 1, 0]);
-  const section12Opacity = useTransform(scrollYProgress, [0.77, 0.80, 0.84, 0.87], [0, 1, 1, 0]);
-  const section13Opacity = useTransform(scrollYProgress, [0.84, 0.87, 0.91, 0.94], [0, 1, 1, 0]);
-  const section14Opacity = useTransform(scrollYProgress, [0.91, 0.94, 1.0, 1.0], [0, 1, 1, 1]);
 
   const technologies = [
     { name: "Java", logo: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/java/java-original.svg" },
@@ -96,23 +66,25 @@ export default function Home() {
 
   const navItems = ["About", "Stats", "Tiers", "Media"];
 
-  const SectionHeader = ({ icon: Icon, title, subtitle, dark = false }: { icon: any; title: string; subtitle: string; dark?: boolean; }) => (
-    <div className="flex flex-col md:flex-row items-start md:items-center gap-4 md:gap-6 mb-8 md:mb-12">
-      <div className="relative w-16 h-16 md:w-20 md:h-20 flex items-center justify-center">
-        <Icon className="relative z-10 text-sky-400" size={32} />
-      </div>
-      <div>
-        <h2 className={`text-3xl md:text-5xl font-black tracking-tighter uppercase leading-none drop-shadow-2xl ${dark ? 'text-black' : 'text-white'}`}>{title}</h2>
-        <div className="flex items-center gap-2 mt-2">
-          <div className="h-1 w-8 bg-sky-400 rounded-full" />
-          <p className="text-sky-400 font-bold tracking-[0.2em] text-[10px] md:text-sm uppercase">{subtitle}</p>
+  const SectionHeader = ({ icon: Icon, title, subtitle, dark = false }: { icon: any; title: string; subtitle: string; dark?: boolean; }) => {
+    return (
+      <div className="flex flex-col md:flex-row items-start md:items-center gap-4 md:gap-6 mb-8 md:mb-12">
+        <div className="relative w-16 h-16 md:w-20 md:h-20 flex items-center justify-center">
+          <Icon className="relative z-10 text-sky-400" size={32} />
+        </div>
+        <div>
+          <h2 className={`text-3xl md:text-5xl font-black tracking-tighter uppercase leading-none drop-shadow-2xl ${dark ? 'text-black' : 'text-white'}`}>{title}</h2>
+          <div className="flex items-center gap-2 mt-2">
+            <div className="h-1 w-8 bg-sky-400 rounded-full" />
+            <p className="text-sky-400 font-bold tracking-[0.2em] text-[10px] md:text-sm uppercase">{subtitle}</p>
+          </div>
         </div>
       </div>
-    </div>
-  );
+    );
+  };
 
   return (
-    <div ref={containerRef} className="relative bg-[#050505] font-sans selection:bg-sky-500 selection:text-white text-white">
+    <div className="relative bg-[#050505] font-sans selection:bg-sky-500 selection:text-white text-white">
       {/* FIXED TAB BAR */}
       <div className="fixed top-4 md:top-6 left-1/2 -translate-x-1/2 z-[1000] w-[95%] md:w-auto">
         <div className="relative">
@@ -136,9 +108,9 @@ export default function Home() {
       </div>
 
       {/* SECTION 1 - HERO */}
-      <section className="relative h-[200vh] overflow-visible">
-        <div className="sticky top-0 w-full h-screen overflow-hidden">
-
+      <section className="relative min-h-screen flex items-center justify-center p-2 md:p-3 overflow-hidden">
+        <motion.div
+          className="relative w-full h-screen rounded-2xl md:rounded-3xl overflow-hidden bg-[#030303]">
 
           <div className="absolute inset-0 z-[2] opacity-[0.04] pointer-events-none" style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")` }} />
 
@@ -208,136 +180,81 @@ export default function Home() {
           {/* Vignette */}
           <div className="absolute inset-0 z-[4] pointer-events-none bg-[radial-gradient(circle_at_center,transparent_0%,rgba(0,0,0,0.5)_100%)]" />
 
-          {/* MAIN HERO CONTENT */}
-          <motion.div
-            style={{ opacity: section1Opacity, scale: section1Scale, filter: section1Blur }}
-            className="absolute inset-0 z-[5]"
-          >
-            {/* CHARACTER IMAGE */}
-            <div className="absolute left-[2%] right-[2%] top-[10%] sm:right-[5%] sm:left-auto sm:top-[10%] md:right-[8%] md:top-[15%] lg:bottom-[20%] lg:top-auto z-[4] h-[40%] sm:h-[45%] md:h-[50%] lg:h-[65%] w-auto sm:w-[30%] md:w-[32%] lg:w-[30%] pointer-events-none select-none">
-              <div className="relative w-full h-full">
-                <div className="absolute inset-0 bg-sky-500/10 rounded-[2rem] md:rounded-[4rem] rotate-6 scale-95" />
-                <div className="absolute inset-0 bg-white/5 rounded-[2rem] md:rounded-[4rem] -rotate-3 border border-white/10 backdrop-blur-sm" />
-                <div className="absolute inset-0 rounded-[2rem] md:rounded-[4rem] overflow-hidden border border-white/20 bg-gradient-to-br from-white/10 to-transparent">
-                  {heroImages.map((img, index) => (
-                    <motion.img
-                      key={img}
-                      initial={{ opacity: index === 0 ? 1 : 0, x: index === 0 ? 0 : 100 }}
-                      animate={{
-                        opacity: currentImageIndex === index ? 1 : 0,
-                        x: currentImageIndex === index ? 0 : 100,
-                        scale: 1
-                      }}
-                      transition={{
-                        opacity: { duration: 1, ease: "easeInOut" },
-                        x: { duration: 1, ease: "easeInOut" },
-                        scale: { duration: 1, ease: "easeInOut" }
-                      }}
-                      src={img}
-                      alt="Character"
-                      className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[100%] h-[100%] md:w-[80%] md:h-[80%] object-contain md:object-cover grayscale rounded-2xl"
-                      style={{ imageRendering: 'high-quality' }} />
-                  ))}
-                </div>
-
-                {/* Floating Badges */}
-                <motion.div
-                  animate={{ y: [0, -10, 0] }}
-                  transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
-                  className="absolute -top-3 -right-3 md:-top-6 md:-right-6 px-3 md:px-6 py-1.5 md:py-3 bg-black border border-white/10 rounded-xl md:rounded-2xl shadow-2xl"
-                >
-                  <div className="text-[8px] md:text-xs font-black text-sky-400 whitespace-nowrap">NEXT.JS EXPERT</div>
-                </motion.div>
-
-                <motion.div
-                  animate={{ y: [0, 10, 0] }}
-                  transition={{ duration: 4, repeat: Infinity, ease: "easeInOut", delay: 1 }}
-                  className="absolute -bottom-3 -left-3 md:-bottom-6 md:-left-6 px-3 md:px-6 py-1.5 md:py-3 bg-black border border-white/10 rounded-xl md:rounded-2xl shadow-2xl"
-                >
-                  <div className="text-[8px] md:text-xs font-black text-white whitespace-nowrap">AI ENGINEER</div>
-                </motion.div>
+          {/* CHARACTER IMAGE */}
+          <div className="absolute left-[2%] right-[2%] top-[10%] sm:right-[5%] sm:left-auto sm:top-[10%] md:right-[8%] md:top-[15%] lg:bottom-[20%] lg:top-auto z-[4] h-[40%] sm:h-[45%] md:h-[50%] lg:h-[65%] w-auto sm:w-[30%] md:w-[32%] lg:w-[30%] pointer-events-none select-none">
+            <div className="relative w-full h-full">
+              <div className="absolute inset-0 bg-sky-500/10 rounded-[2rem] md:rounded-[4rem] rotate-6 scale-95" />
+              <div className="absolute inset-0 bg-white/5 rounded-[2rem] md:rounded-[4rem] -rotate-3 border border-white/10 backdrop-blur-sm" />
+              <div className="absolute inset-0 rounded-[2rem] md:rounded-[4rem] overflow-hidden border border-white/20 bg-gradient-to-br from-white/10 to-transparent">
+                {heroImages.map((img, index) => (
+                  <motion.img
+                    key={img}
+                    initial={{ opacity: index === 0 ? 1 : 0, x: index === 0 ? 0 : 100 }}
+                    animate={{
+                      opacity: currentImageIndex === index ? 1 : 0,
+                      x: currentImageIndex === index ? 0 : 100,
+                      scale: 1
+                    }}
+                    transition={{
+                      opacity: { duration: 1, ease: "easeInOut" },
+                      x: { duration: 1, ease: "easeInOut" },
+                      scale: { duration: 1, ease: "easeInOut" }
+                    }}
+                    src={img}
+                    alt="Character"
+                    className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[100%] h-[100%] md:w-[80%] md:h-[80%] object-contain md:object-cover grayscale rounded-2xl"
+                    style={{ imageRendering: 'high-quality' }} />
+                ))}
               </div>
-            </div>
 
-            <div className="absolute inset-0 flex flex-col items-start justify-center pt-48 md:pt-0 z-[5] px-6 md:px-24 max-w-7xl mx-auto">
+              {/* Floating Badges */}
               <motion.div
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ duration: 1, ease: "easeOut" }}
-                className="mb-4 md:mb-6"
+                animate={{ y: [0, -10, 0] }}
+                transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+                className="absolute -top-3 -right-3 md:-top-6 md:-right-6 px-3 md:px-6 py-1.5 md:py-3 bg-black border border-white/10 rounded-xl md:rounded-2xl shadow-2xl"
               >
-                <span className="px-3 md:px-4 py-1 md:py-1.5 rounded-full border border-sky-500/30 bg-sky-500/10 text-sky-400 text-[8px] md:text-[10px] font-black uppercase tracking-[0.3em]">
-                  Crafting Future Tech
-                </span>
+                <div className="text-[8px] md:text-xs font-black text-sky-400 whitespace-nowrap">NEXT.JS EXPERT</div>
               </motion.div>
-              <h1 className="text-6xl md:text-[12rem] font-black tracking-tighter leading-[0.8] mb-6 md:mb-8 select-none text-left">
-                KUNAL<br />
-                <span className="text-transparent bg-clip-text bg-gradient-to-b from-white to-white/20">PORTFOLIO</span>
-              </h1>
-              <p className="max-w-xl text-white/40 font-medium text-sm md:text-lg tracking-wide uppercase text-left">
-                Crafting immersive digital experiences through <span className="text-white">Full-Stack Development</span> & <span className="text-white">Generative AI</span>.
-              </p>
 
-              <div className="mt-8 md:mt-12 flex flex-col sm:flex-row gap-4 md:gap-6 w-full sm:w-auto">
-                <div className="px-8 md:px-10 py-4 md:py-5 bg-sky-500 text-white rounded-xl md:rounded-2xl font-black uppercase tracking-widest hover:scale-105 transition-all cursor-pointer shadow-[0_20px_50px_rgba(0,163,255,0.4)] text-center text-xs md:text-base">
-                  Explore Work
-                </div>
-                <div className="px-8 md:px-10 py-4 md:py-5 border border-white/10 bg-white/5 backdrop-blur-md text-white rounded-xl md:rounded-2xl font-black uppercase tracking-widest hover:bg-white/10 transition-all cursor-pointer text-center text-xs md:text-base">
-                  Contact Me
-                </div>
+              <motion.div
+                animate={{ y: [0, 10, 0] }}
+                transition={{ duration: 4, repeat: Infinity, ease: "easeInOut", delay: 1 }}
+                className="absolute -bottom-3 -left-3 md:-bottom-6 md:-left-6 px-3 md:px-6 py-1.5 md:py-3 bg-black border border-white/10 rounded-xl md:rounded-2xl shadow-2xl"
+              >
+                <div className="text-[8px] md:text-xs font-black text-white whitespace-nowrap">AI ENGINEER</div>
+              </motion.div>
+            </div>
+          </div>
+
+          <div className="absolute inset-0 flex flex-col items-start justify-center pt-48 md:pt-0 z-[5] px-6 md:px-24 max-w-7xl mx-auto">
+            <motion.div
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 1, ease: "easeOut" }}
+              className="mb-4 md:mb-6"
+            >
+              <span className="px-3 md:px-4 py-1 md:py-1.5 rounded-full border border-sky-500/30 bg-sky-500/10 text-sky-400 text-[8px] md:text-[10px] font-black uppercase tracking-[0.3em]">
+                Crafting Future Tech
+              </span>
+            </motion.div>
+            <h1 className="text-6xl md:text-[12rem] font-black tracking-tighter leading-[0.8] mb-6 md:mb-8 select-none text-left">
+              KUNAL<br />
+              <span className="text-transparent bg-clip-text bg-gradient-to-b from-white to-white/20">PORTFOLIO</span>
+            </h1>
+            <p className="max-w-xl text-white/40 font-medium text-sm md:text-lg tracking-wide uppercase text-left">
+              Crafting immersive digital experiences through <span className="text-white">Full-Stack Development</span> & <span className="text-white">Generative AI</span>.
+            </p>
+
+            <div className="mt-8 md:mt-12 flex flex-col sm:flex-row gap-4 md:gap-6 w-full sm:w-auto">
+              <div className="px-8 md:px-10 py-4 md:py-5 bg-sky-500 text-white rounded-xl md:rounded-2xl font-black uppercase tracking-widest hover:scale-105 transition-all cursor-pointer shadow-[0_20px_50px_rgba(0,163,255,0.4)] text-center text-xs md:text-base">
+                Explore Work
+              </div>
+              <div className="px-8 md:px-10 py-4 md:py-5 border border-white/10 bg-white/5 backdrop-blur-md text-white rounded-xl md:rounded-2xl font-black uppercase tracking-widest hover:bg-white/10 transition-all cursor-pointer text-center text-xs md:text-base">
+                Contact Me
               </div>
             </div>
-          </motion.div>
-
-          {/* BEYOND THE CODE CONTENT (Integrated into Hero) */}
-          <motion.div
-            style={{ opacity: section2Opacity, scale: section2Scale }}
-            className="absolute inset-0 z-[6] flex items-center justify-center p-6 md:p-20"
-          >
-            <div className="relative z-10 flex flex-col lg:grid lg:grid-cols-2 max-w-7xl mx-auto items-center gap-10 md:gap-20">
-              <div className="space-y-6 md:space-y-10 order-2 lg:order-1">
-                <div className="space-y-3 md:space-y-4">
-                  <div className="flex items-center gap-4">
-                    <div className="h-[1px] w-12 bg-sky-500" />
-                    <span className="text-sky-500 font-black uppercase tracking-[0.3em] text-[10px] md:text-xs">About My Craft</span>
-                  </div>
-                  <h2 className="text-4xl md:text-8xl font-black uppercase tracking-tighter leading-none">
-                    BEYOND<br />
-                    <span className="text-transparent" style={{ WebkitTextStroke: '1.5px white' }}>THE CODE</span>
-                  </h2>
-                </div>
-
-                <div className="space-y-4 md:space-y-6">
-                  <p className="text-lg md:text-2xl text-white/60 font-medium leading-relaxed">
-                    Passionate Full-Stack Developer with a focus on building <span className="text-white">high-performance</span>,
-                    user-centric applications. Specializing in bridging the gap between <span className="text-white">AI agents</span> and modern web architectures.
-                  </p>
-                  <div className="flex flex-wrap gap-6 md:gap-10">
-                    <div>
-                      <div className="text-2xl md:text-4xl font-black mb-1">05+</div>
-                      <div className="text-[8px] md:text-[10px] uppercase font-black tracking-widest text-white/40">Years Exp.</div>
-                    </div>
-                    <div>
-                      <div className="text-2xl md:text-4xl font-black mb-1">40+</div>
-                      <div className="text-[8px] md:text-[10px] uppercase font-black tracking-widest text-white/40">Projects</div>
-                    </div>
-                    <div>
-                      <div className="text-2xl md:text-4xl font-black mb-1">12k+</div>
-                      <div className="text-[8px] md:text-[10px] uppercase font-black tracking-widest text-white/40">Commits</div>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="pt-4 md:pt-6">
-                  <div className="inline-flex items-center gap-4 px-6 md:px-8 py-3 md:py-4 bg-white text-black rounded-full font-black uppercase tracking-widest hover:bg-sky-500 hover:text-white transition-all cursor-pointer group text-xs md:text-base">
-                    See my work <ChevronRight size={18} className="group-hover:translate-x-1 transition-transform" />
-                  </div>
-                </div>
-              </div>
-            </div>
-          </motion.div>
-
-        </div>
+          </div>
+        </motion.div>
 
         {/* IMPROVED CARDS ANIMATION */}
         {isMounted && cardProps.length > 0 && (
@@ -378,10 +295,62 @@ export default function Home() {
       {/* SCROLLABLE CONTENT CONTAINER */}
       <div className="relative z-10">
 
+        {/* SECTION 2 - BEYOND THE CODE */}
+        <section className="min-h-screen flex items-center justify-center p-2 md:p-3 bg-[#0a0a0a]">
+          <div className="relative w-full">
+
+            <div className="absolute inset-0">
+              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full bg-[radial-gradient(circle_at_center,rgba(56,189,248,0.03)_0%,transparent_70%)]" />
+            </div>
+
+            <div className="relative z-10 flex flex-col lg:grid lg:grid-cols-2 min-h-screen max-w-7xl mx-auto items-center gap-10 md:gap-20 p-6 md:p-20">
+              <div className="space-y-6 md:space-y-10 order-2 lg:order-1">
+                <div className="space-y-3 md:space-y-4">
+                  <div className="flex items-center gap-4">
+                    <div className="h-[1px] w-12 bg-sky-500" />
+                    <span className="text-sky-500 font-black uppercase tracking-[0.3em] text-[10px] md:text-xs">About My Craft</span>
+                  </div>
+                  <h2 className="text-4xl md:text-8xl font-black uppercase tracking-tighter leading-none">
+                    BEYOND<br />
+                    <span className="text-transparent" style={{ WebkitTextStroke: '1.5px white' }}>THE CODE</span>
+                  </h2>
+                </div>
+
+                <div className="space-y-4 md:space-y-6">
+                  <p className="text-lg md:text-2xl text-white/60 font-medium leading-relaxed">
+                    Passionate Full-Stack Developer with a focus on building <span className="text-white">high-performance</span>,
+                    user-centric applications. Specializing in bridging the gap between <span className="text-white">AI agents</span> and modern web architectures.
+                  </p>
+                  <div className="flex flex-wrap gap-6 md:gap-10">
+                    <div>
+                      <div className="text-2xl md:text-4xl font-black mb-1">05+</div>
+                      <div className="text-[8px] md:text-[10px] uppercase font-black tracking-widest text-white/40">Years Exp.</div>
+                    </div>
+                    <div>
+                      <div className="text-2xl md:text-4xl font-black mb-1">40+</div>
+                      <div className="text-[8px] md:text-[10px] uppercase font-black tracking-widest text-white/40">Projects</div>
+                    </div>
+                    <div>
+                      <div className="text-2xl md:text-4xl font-black mb-1">12k+</div>
+                      <div className="text-[8px] md:text-[10px] uppercase font-black tracking-widest text-white/40">Commits</div>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="pt-4 md:pt-6">
+                  <div className="inline-flex items-center gap-4 px-6 md:px-8 py-3 md:py-4 bg-white text-black rounded-full font-black uppercase tracking-widest hover:bg-sky-500 hover:text-white transition-all cursor-pointer group text-xs md:text-base">
+                    See my work <ChevronRight size={18} className="group-hover:translate-x-1 transition-transform" />
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
         {/* SECTION 3 - MY JOURNEY */}
-        <section className="min-h-screen flex items-center justify-center overflow-hidden pointer-events-none">
-          <motion.div
-            className="relative w-full h-full overflow-y-auto pointer-events-auto custom-scrollbar">
+        <section className="min-h-screen flex items-center justify-center p-2 md:p-3 bg-[#0a0a0a]">
+          <div
+            className="relative w-full rounded-2xl md:rounded-3xl bg-[#0a0a0a] border border-white/5 shadow-2xl">
 
             <div className="absolute inset-0">
               <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full bg-[radial-gradient(circle_at_center,rgba(56,189,248,0.03)_0%,transparent_70%)]" />
@@ -478,13 +447,13 @@ export default function Home() {
                 )}
               </div>
             </div>
-          </motion.div>
+          </div>
         </section>
 
         {/* SECTION 4 - SERVER STATS */}
-        <section className="relative h-screen flex items-center justify-center overflow-hidden pointer-events-none">
-          <motion.div
-            className="relative w-full h-full overflow-y-auto pointer-events-auto custom-scrollbar">
+        <section className="relative min-h-screen flex items-center justify-center p-2 md:p-3">
+          <div
+            className="relative w-full rounded-2xl md:rounded-3xl bg-gradient-to-br from-zinc-900 via-black to-zinc-900 border border-zinc-800 shadow-2xl p-6 md:p-12">
 
             <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(0,163,255,0.08)_0%,transparent_70%)]" />
 
@@ -524,13 +493,13 @@ export default function Home() {
                 </div>
               </div>
             </div>
-          </motion.div>
+          </div>
         </section>
 
         {/* SECTION 5 - MEMBERSHIP TIERS */}
-        <section className="relative h-screen flex items-center justify-center overflow-hidden pointer-events-none">
-          <motion.div
-            className="relative w-full h-full overflow-y-auto pointer-events-auto p-6 md:p-12 custom-scrollbar">
+        <section className="relative min-h-screen flex items-center justify-center p-2 md:p-3">
+          <div
+            className="relative w-full rounded-2xl md:rounded-3xl bg-gradient-to-br from-sky-50 via-white to-blue-50 border border-sky-200 shadow-2xl p-6 md:p-12">
 
             <div className="max-w-7xl mx-auto h-full flex flex-col">
               <SectionHeader icon={Crown} title="MEMBERSHIP TIERS" subtitle="Unlock Premium Features" dark={true} />
@@ -557,18 +526,18 @@ export default function Home() {
                   )}
               </div>
             </div>
-          </motion.div>
+          </div>
         </section>
 
         {/* SECTION 6 - GALLERY / RECENT EVENTS */}
-        <section className="relative h-screen flex items-center justify-center overflow-hidden pointer-events-none">
-          <motion.div
-            className="relative w-full h-full overflow-hidden pointer-events-auto p-6 md:p-12">
+        <section className="relative min-h-screen flex items-center justify-center p-2 md:p-3">
+          <div
+            className="relative w-full rounded-2xl md:rounded-3xl overflow-hidden bg-gradient-to-br from-zinc-50 via-white to-zinc-100 border border-zinc-200 shadow-2xl p-6 md:p-12">
 
             <div className="max-w-7xl mx-auto h-full flex flex-col">
               <SectionHeader icon={Trophy} title="CITY ARCHIVE" subtitle="Record of Excellence" />
 
-              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-4 flex-1 overflow-hidden">
+              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-4 flex-1">
                 {[
                   "https://images.unsplash.com/photo-1544620347-c4fd4a3d5957",
                   "https://images.unsplash.com/photo-1533473359331-0135ef1b58bf",
@@ -588,13 +557,13 @@ export default function Home() {
                   )}
               </div>
             </div>
-          </motion.div>
+          </div>
         </section>
 
         {/* SECTION 7 - LATEST NEWS */}
-        <section className="relative h-screen flex items-center justify-center overflow-hidden pointer-events-none">
-          <motion.div
-            className="relative w-full h-full overflow-y-auto pointer-events-auto p-6 md:p-12 custom-scrollbar">
+        <section className="relative min-h-screen flex items-center justify-center p-2 md:p-3">
+          <div
+            className="relative w-full rounded-2xl md:rounded-3xl bg-gradient-to-br from-white via-blue-50 to-sky-50 border border-sky-200 shadow-2xl p-6 md:p-12">
 
             <div className="max-w-7xl mx-auto h-full flex flex-col">
               <SectionHeader icon={Radio} title="LATEST NEWS" subtitle="City Updates" />
@@ -620,13 +589,13 @@ export default function Home() {
                   )}
               </div>
             </div>
-          </motion.div>
+          </div>
         </section>
 
         {/* SECTION 8 - HOW TO JOIN */}
-        <section className="relative h-screen flex items-center justify-center overflow-hidden pointer-events-none">
-          <motion.div
-            className="relative w-full h-full overflow-y-auto pointer-events-auto p-6 md:p-12 custom-scrollbar">
+        <section className="relative min-h-screen flex items-center justify-center p-2 md:p-3">
+          <div
+            className="relative w-full rounded-2xl md:rounded-3xl bg-gradient-to-br from-zinc-900 via-black to-zinc-900 border border-zinc-800 shadow-2xl p-6 md:p-12">
 
             <div className="max-w-7xl mx-auto h-full flex flex-col">
               <SectionHeader icon={Zap} title="HOW TO JOIN" subtitle="Start Your Story" />
@@ -650,13 +619,13 @@ export default function Home() {
                   )}
               </div>
             </div>
-          </motion.div>
+          </div>
         </section>
 
         {/* SECTION 9 - MEDIA PARTNERS */}
-        <section className="relative h-screen flex items-center justify-center overflow-hidden pointer-events-none">
-          <motion.div
-            className="relative w-full h-full overflow-y-auto pointer-events-auto p-6 md:p-12 custom-scrollbar">
+        <section className="relative min-h-screen flex items-center justify-center p-2 md:p-3">
+          <div
+            className="relative w-full rounded-2xl md:rounded-3xl bg-gradient-to-br from-white via-zinc-50 to-zinc-100 border border-zinc-200 shadow-2xl p-6 md:p-12">
 
             <div className="max-w-7xl mx-auto h-full flex flex-col">
               <SectionHeader icon={Users} title="OFFICIAL PARTNERS" subtitle="Powering The Future" />
@@ -681,13 +650,13 @@ export default function Home() {
                 </div>
               </div>
             </div>
-          </motion.div>
+          </div>
         </section>
 
         {/* SECTION 10 - LUXURY GARAGE (NEW) */}
-        <section className="relative h-screen flex items-center justify-center overflow-hidden pointer-events-none">
-          <motion.div
-            className="relative w-full h-full overflow-y-auto pointer-events-auto p-6 md:p-12 custom-scrollbar">
+        <section className="relative min-h-screen flex items-center justify-center p-2 md:p-3">
+          <div
+            className="relative w-full rounded-2xl md:rounded-3xl bg-gradient-to-br from-sky-50 via-white to-blue-50 border border-sky-200 shadow-2xl p-6 md:p-12">
 
             <div className="max-w-7xl mx-auto h-full flex flex-col">
               <SectionHeader icon={Car} title="LUXURY GARAGE" subtitle="Premium Vehicle Collection" />
@@ -716,13 +685,13 @@ export default function Home() {
                 </div>
               </div>
             </div>
-          </motion.div>
+          </div>
         </section>
 
         {/* SECTION 11 - CAREER PATHS (NEW) */}
-        <section className="relative h-screen flex items-center justify-center overflow-hidden pointer-events-none">
-          <motion.div
-            className="relative w-full h-full overflow-y-auto pointer-events-auto p-6 md:p-12 custom-scrollbar">
+        <section className="relative min-h-screen flex items-center justify-center p-2 md:p-3">
+          <div
+            className="relative w-full rounded-2xl md:rounded-3xl bg-gradient-to-br from-zinc-900 via-black to-zinc-900 border border-zinc-800 shadow-2xl p-6 md:p-12">
 
             <div className="max-w-7xl mx-auto h-full flex flex-col">
               <SectionHeader icon={Briefcase} title="CAREER PATHS" subtitle="Choose Your Destiny" />
@@ -744,12 +713,12 @@ export default function Home() {
                   )}
               </div>
             </div>
-          </motion.div>
+          </div>
         </section>
 
-        <section className="relative h-screen flex items-center justify-center overflow-hidden pointer-events-none">
-          <motion.div
-            className="relative w-full h-full overflow-y-auto pointer-events-auto p-6 md:p-12 custom-scrollbar">
+        <section className="relative min-h-screen flex items-center justify-center p-2 md:p-3">
+          <div
+            className="relative w-full rounded-2xl md:rounded-3xl overflow-hidden bg-gradient-to-br from-white via-zinc-50 to-zinc-100 border border-zinc-200 shadow-2xl p-6 md:p-12">
 
             {/* Video Background - GTAV */}
             <div className="absolute inset-0 z-0 overflow-hidden rounded-2xl md:rounded-3xl">
@@ -786,12 +755,12 @@ export default function Home() {
                 </div>
               </div>
             </div>
-          </motion.div>
+          </div>
         </section>
 
-        <section className="relative h-screen flex items-center justify-center p-2 md:p-3 overflow-hidden pointer-events-none">
-          <motion.div
-            className="relative w-full h-full rounded-2xl md:rounded-3xl overflow-y-auto bg-gradient-to-br from-sky-50 via-white to-blue-50 border border-sky-200 shadow-2xl pointer-events-auto custom-scrollbar">
+        <section className="relative min-h-screen flex items-center justify-center p-2 md:p-3">
+          <div
+            className="relative w-full rounded-2xl md:rounded-3xl bg-gradient-to-br from-sky-50 via-white to-blue-50 border border-sky-200 shadow-2xl p-6 md:p-12">
 
             <div className="absolute inset-0 opacity-5 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')]" />
             <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(0,163,255,0.05)_0%,transparent_60%)]" />
@@ -827,11 +796,10 @@ export default function Home() {
                 </div>
               </div>
             </div>
-          </motion.div>
+          </div>
         </section>
 
       </div>
     </div>
   );
-
 }
