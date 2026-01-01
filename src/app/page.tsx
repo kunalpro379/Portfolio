@@ -344,59 +344,9 @@ export default function Home() {
       {/* SCROLLABLE CONTENT CONTAINER */}
       <div className="relative z-10">
 
-        <section className="min-h-screen flex items-center justify-center p-2 md:p-3 bg-[#0a0a0a]">
-          <div className="relative w-full">
-
-            <div className="absolute inset-0">
-              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full bg-[radial-gradient(circle_at_center,rgba(56,189,248,0.03)_0%,transparent_70%)]" />
-            </div>
-
-            <div className="relative z-10 flex flex-col lg:grid lg:grid-cols-2 min-h-screen max-w-7xl mx-auto items-center gap-10 md:gap-20 p-6 md:p-20">
-              <div className="space-y-6 md:space-y-10 order-2 lg:order-1">
-                <div className="space-y-3 md:space-y-4">
-                  <div className="flex items-center gap-4">
-                    <div className="h-[1px] w-12 bg-sky-500" />
-                    <span className="text-sky-500 font-black uppercase tracking-[0.3em] text-[10px] md:text-xs">About My Craft</span>
-                  </div>
-                  <h2 className="text-4xl md:text-8xl font-black uppercase tracking-tighter leading-none">
-                    BEYOND<br />
-                    <span className="text-transparent" style={{ WebkitTextStroke: '1.5px white' }}>THE CODE</span>
-                  </h2>
-                </div>
-
-                <div className="space-y-4 md:space-y-6">
-                  <p className="text-lg md:text-2xl text-white/60 font-medium leading-relaxed">
-                    Passionate Full-Stack Developer with a focus on building <span className="text-white">high-performance</span>,
-                    user-centric applications. Specializing in bridging the gap between <span className="text-white">AI agents</span> and modern web architectures.
-                  </p>
-                  <div className="flex flex-wrap gap-6 md:gap-10">
-                    <div>
-                      <div className="text-2xl md:text-4xl font-black mb-1">05+</div>
-                      <div className="text-[8px] md:text-[10px] uppercase font-black tracking-widest text-white/40">Years Exp.</div>
-                    </div>
-                    <div>
-                      <div className="text-2xl md:text-4xl font-black mb-1">40+</div>
-                      <div className="text-[8px] md:text-[10px] uppercase font-black tracking-widest text-white/40">Projects</div>
-                    </div>
-                    <div>
-                      <div className="text-2xl md:text-4xl font-black mb-1">12k+</div>
-                      <div className="text-[8px] md:text-[10px] uppercase font-black tracking-widest text-white/40">Commits</div>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="pt-4 md:pt-6">
-                  <div className="inline-flex items-center gap-4 px-6 md:px-8 py-3 md:py-4 bg-white text-black rounded-full font-black uppercase tracking-widest hover:bg-sky-500 hover:text-white transition-all cursor-pointer group text-xs md:text-base">
-                    See my work <ChevronRight size={18} className="group-hover:translate-x-1 transition-transform" />
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
 
         {/* SECTION 3 - MY JOURNEY */}
-        <section className="min-h-screen flex items-center justify-center p-2 md:p-3 bg-[#0a0a0a]">
+        <section className="flex items-center justify-center p-2 md:p-3 bg-[#0a0a0a]">
           <div
             className="relative w-full rounded-2xl md:rounded-3xl bg-[#0a0a0a] border border-white/5 shadow-2xl">
 
@@ -499,7 +449,7 @@ export default function Home() {
         </section>
 
         {/* SECTION 4 - SERVER STATS */}
-        <section className="relative min-h-screen flex items-center justify-center p-2 md:p-3">
+        {/* <section className="relative min-h-screen flex items-center justify-center p-2 md:p-3">
           <div
             className="relative w-full rounded-2xl md:rounded-3xl bg-gradient-to-br from-zinc-900 via-black to-zinc-900 border border-zinc-800 shadow-2xl p-6 md:p-12">
 
@@ -542,10 +492,10 @@ export default function Home() {
               </div>
             </div>
           </div>
-        </section>
+        </section> */}
 
         {/* SECTION 5 - MEMBERSHIP TIERS */}
-        <section className="relative min-h-screen flex items-center justify-center p-2 md:p-3">
+        <section className="relative flex items-center justify-center p-2 md:p-3">
           <div
             className="relative w-full rounded-2xl md:rounded-3xl bg-gradient-to-br from-sky-50 via-white to-blue-50 border border-sky-200 shadow-2xl p-6 md:p-12">
 
@@ -578,7 +528,7 @@ export default function Home() {
         </section>
 
         {/* SECTION 6 - GALLERY / RECENT EVENTS */}
-        <section className="relative min-h-screen flex items-center justify-center p-2 md:p-3">
+        <section className="relative flex items-center justify-center p-2 md:p-3">
           <div
             className="relative w-full rounded-2xl md:rounded-3xl overflow-hidden bg-gradient-to-br from-zinc-50 via-white to-zinc-100 border border-zinc-200 shadow-2xl p-6 md:p-12">
 
@@ -609,7 +559,7 @@ export default function Home() {
         </section>
 
         {/* SECTION 7 - LATEST NEWS */}
-        <section className="relative min-h-screen flex items-center justify-center p-2 md:p-3">
+        <section className="relative flex items-center justify-center p-2 md:p-3">
           <div
             className="relative w-full rounded-2xl md:rounded-3xl bg-gradient-to-br from-white via-blue-50 to-sky-50 border border-sky-200 shadow-2xl p-6 md:p-12">
 
@@ -671,7 +621,7 @@ export default function Home() {
         </section>
 
         {/* SECTION 9 - MEDIA PARTNERS */}
-        <section className="relative min-h-screen flex items-center justify-center p-2 md:p-3">
+        <section className="relative flex items-center justify-center p-2 md:p-3">
           <div
             className="relative w-full rounded-2xl md:rounded-3xl bg-gradient-to-br from-white via-zinc-50 to-zinc-100 border border-zinc-200 shadow-2xl p-6 md:p-12">
 
@@ -702,7 +652,7 @@ export default function Home() {
         </section>
 
         {/* SECTION 10 - LUXURY GARAGE (NEW) */}
-        <section className="relative min-h-screen flex items-center justify-center p-2 md:p-3">
+        <section className="relative flex items-center justify-center p-2 md:p-3">
           <div
             className="relative w-full rounded-2xl md:rounded-3xl bg-gradient-to-br from-sky-50 via-white to-blue-50 border border-sky-200 shadow-2xl p-6 md:p-12">
 
@@ -737,7 +687,7 @@ export default function Home() {
         </section>
 
         {/* SECTION 11 - CAREER PATHS (NEW) */}
-        <section className="relative min-h-screen flex items-center justify-center p-2 md:p-3">
+        <section className="relative flex items-center justify-center p-2 md:p-3">
           <div
             className="relative w-full rounded-2xl md:rounded-3xl bg-gradient-to-br from-zinc-900 via-black to-zinc-900 border border-zinc-800 shadow-2xl p-6 md:p-12">
 
@@ -764,7 +714,7 @@ export default function Home() {
           </div>
         </section>
 
-        <section className="relative min-h-screen flex items-center justify-center p-2 md:p-3">
+        <section className="relative flex items-center justify-center p-2 md:p-3">
           <div
             className="relative w-full rounded-2xl md:rounded-3xl overflow-hidden bg-gradient-to-br from-white via-zinc-50 to-zinc-100 border border-zinc-200 shadow-2xl p-6 md:p-12">
 
@@ -806,7 +756,7 @@ export default function Home() {
           </div>
         </section>
 
-        <section className="relative min-h-screen flex items-center justify-center p-2 md:p-3">
+        <section className="relative flex items-center justify-center p-2 md:p-3">
           <div
             className="relative w-full rounded-2xl md:rounded-3xl bg-gradient-to-br from-sky-50 via-white to-blue-50 border border-sky-200 shadow-2xl p-6 md:p-12">
 
