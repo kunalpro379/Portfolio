@@ -228,8 +228,8 @@ export default function Home() {
           <div className="flex flex-col">
             {/* First Screen - Hero Content */}
             <div className="min-h-[75vh] flex flex-col lg:flex-row items-center justify-between px-6 md:px-24 max-w-7xl mx-auto w-full gap-10 pt-20 pb-0">
-              {/* Image First on Mobile, Second on Desktop */}
-              <div className="relative w-full lg:w-[45%] aspect-square select-none order-1 lg:order-2">
+              {/* Image Second on Mobile, Second on Desktop */}
+              <div className="relative w-full lg:w-[45%] aspect-square select-none order-2 lg:order-2">
                 <div className="relative w-full h-full max-w-[500px] mx-auto">
                   <div className="absolute inset-0 bg-sky-500/10 rounded-[2rem] md:rounded-[4rem] rotate-6 scale-95" />
                   <div className="absolute inset-0 bg-white/5 rounded-[2rem] md:rounded-[4rem] -rotate-3 border border-white/10 backdrop-blur-sm" />
@@ -266,8 +266,8 @@ export default function Home() {
                 </div>
               </div>
 
-              {/* Text Content - Second on Mobile, First on Desktop */}
-              <div className="flex flex-col items-start justify-center lg:w-3/5 order-2 lg:order-1">
+              {/* Text Content - First on Mobile, First on Desktop */}
+              <div className="flex flex-col items-start justify-center lg:w-3/5 order-1 lg:order-1">
                 <motion.div
                   initial={{ opacity: 0, x: -20 }}
                   animate={{ opacity: 1, x: 0 }}
@@ -351,8 +351,8 @@ export default function Home() {
               <div className="space-y-6 md:space-y-10 w-full lg:w-1/2 order-1 lg:order-2">
                 <div className="space-y-3 md:space-y-4">
                   <div className="flex items-center gap-4">
-                    <div className="h-[1px] w-12 bg-sky-500" />
-                    <span className="text-sky-500 font-black uppercase tracking-[0.3em] text-[10px] md:text-xs">About My Craft</span>
+                    {/* <div className="h-[1px] w-12 bg-sky-500" /> */}
+                    <span className="text-sky-500 font-black uppercase tracking-[0.3em] text-[10px] md:text-xs"></span>
                   </div>
                   <h2 className="text-4xl md:text-8xl font-black uppercase tracking-tighter leading-none">
                     ENGINEERING<br />
@@ -546,231 +546,193 @@ export default function Home() {
           </div>
         </section> */}
 
-        {/* SECTION 5 - MEMBERSHIP TIERS */}
-        <section className="relative flex items-center justify-center p-2 md:p-3">
-          <div
-            className="relative w-full rounded-2xl md:rounded-3xl bg-gradient-to-br from-sky-50 via-white to-blue-50 border border-sky-200 shadow-2xl p-6 md:p-12">
-
-            <div className="max-w-7xl mx-auto h-full flex flex-col">
-              <SectionHeader icon={Crown} title="MEMBERSHIP TIERS" subtitle="Unlock Premium Features" dark={true} />
-
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8 flex-1">
-                {[
-                  { name: "DIAMOND", price: "$49.99", icon: Zap, color: "text-sky-400", bg: "bg-sky-400/5", border: "border-sky-400/20", features: ["Priority Queue (Instant)", "Custom Character Slots", "Exclusive High-End Cars", "Admin Support Access"] },
-                  { name: "PLATINUM", price: "$29.99", icon: Shield, color: "text-zinc-600", bg: "bg-zinc-50", border: "border-zinc-200", features: ["Priority Queue (Fast)", "Extra Inventory Slots", "Custom License Plate", "Premium Discord Role"] },
-                  { name: "GOLD", price: "$14.99", icon: Trophy, color: "text-yellow-600", bg: "bg-yellow-500/5", border: "border-yellow-500/20", features: ["Faster Connection", "Starter Pack ($50k)", "Monthly Mystery Box", "Gold Badge in Chat"] }
-                ].
-                  map((tier, i) => <div key={i} className={`relative p-6 md:p-8 rounded-2xl md:rounded-3xl border ${tier.border} ${tier.bg} flex flex-col items-center text-center group transition-all duration-500 hover:scale-[1.02] md:hover:scale-105 shadow-xl overflow-hidden h-fit`}>
-                    <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-black/5 to-transparent" />
-                    <tier.icon className={`${tier.color} mb-4 md:mb-8`} size={48} md-size={64} />
-                    <h3 className="text-3xl md:text-5xl font-black uppercase tracking-tighter mb-2 md:mb-4 text-black">{tier.name}</h3>
-                    <div className="text-xl md:text-3xl font-bold mb-6 md:mb-10 opacity-70 italic text-black">{tier.price}<span className="text-xs md:text-sm uppercase not-italic">/mo</span></div>
-                    <ul className="space-y-2 md:space-y-4 mb-8 md:mb-12 flex-1">
-                      {tier.features.map((f, j) => <li key={j} className="text-zinc-500 font-bold uppercase text-[8px] md:text-xs tracking-widest">{f}</li>
-                      )}
-                    </ul>
-                    <div className={`w-full py-4 md:py-5 rounded-xl md:rounded-2xl font-black uppercase tracking-widest cursor-pointer transition-all text-xs md:text-sm ${i === 0 ? 'bg-sky-500 text-white shadow-[0_15px_30px_rgba(0,163,255,0.4)]' : 'bg-black text-white hover:bg-sky-400'}`}>
-                      Select Plan
-                    </div>
+        {/* Projects */}
+        <section className="relative bg-gradient-to-br from-sky-50 via-white to-blue-50 py-12 md:py-20">
+          <div className="absolute inset-0 opacity-5 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')]" />
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(0,163,255,0.05)_0%,transparent_60%)]" />
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_bottom_left,rgba(0,163,255,0.05)_0%,transparent_60%)]" />
+          <div className="max-w-7xl mx-auto px-6 md:px-12 h-full flex flex-col relative z-10">
+            <SectionHeader icon={Car} title="LUXURY GARAGE" subtitle="Premium Vehicle Collection" />
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-8 flex-1">
+              <div className="relative group overflow-hidden rounded-2xl md:rounded-3xl border border-zinc-200 aspect-video md:aspect-auto">
+                <img src="https://images.unsplash.com/photo-1544636331-e26879cd4d9b?auto=format&fit=crop&q=80" className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-1000" />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
+                <div className="absolute bottom-6 md:bottom-10 left-6 md:left-10">
+                  <h3 className="text-2xl md:text-4xl font-black uppercase tracking-tighter text-white">Diamond Series</h3>
+                  <p className="text-sky-400 font-bold text-[8px] md:text-xs uppercase tracking-widest mt-1 md:mt-2">Exclusive Import</p>
+                </div>
+              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 lg:grid-rows-2 gap-4 md:gap-8">
+                <div className="relative group overflow-hidden rounded-2xl md:rounded-3xl border border-zinc-200 aspect-video">
+                  <img src="https://images.unsplash.com/photo-1614162692292-7ac56d7f7f1e?auto=format&fit=crop&q=80" className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-1000" />
+                  <div className="absolute bottom-6 md:bottom-8 left-6 md:left-8">
+                    <h3 className="text-xl md:text-3xl font-black uppercase tracking-tighter text-white">Carbon Custom</h3>
                   </div>
-                  )}
+                </div>
+                <div className="relative group overflow-hidden rounded-2xl md:rounded-3xl border border-zinc-200 aspect-video">
+                  <img src="https://images.unsplash.com/photo-1621135802920-133df287f89c?auto=format&fit=crop&q=80" className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-1000" />
+                  <div className="absolute bottom-6 md:bottom-8 left-6 md:left-8">
+                    <h3 className="text-xl md:text-3xl font-black uppercase tracking-tighter text-white">Urban Legend</h3>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
         </section>
 
-        {/* SECTION 6 - GALLERY / RECENT EVENTS */}
-        <section className="relative flex items-center justify-center p-2 md:p-3">
-          <div
-            className="relative w-full rounded-2xl md:rounded-3xl overflow-hidden bg-gradient-to-br from-zinc-50 via-white to-zinc-100 border border-zinc-200 shadow-2xl p-6 md:p-12">
+        {/* PROJECTS */}
+        <section className="relative bg-gradient-to-br from-zinc-50 via-white to-zinc-100 py-12 md:py-20">
+          <div className="absolute inset-0 opacity-5 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')]" />
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(0,163,255,0.05)_0%,transparent_60%)]" />
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_bottom_left,rgba(0,163,255,0.05)_0%,transparent_60%)]" />
+          <div className="max-w-7xl mx-auto px-6 md:px-12 h-full flex flex-col relative z-10">
+            <SectionHeader icon={Trophy} title="CITY ARCHIVE" subtitle="Record of Excellence" />
 
-            <div className="max-w-7xl mx-auto h-full flex flex-col">
-              <SectionHeader icon={Trophy} title="CITY ARCHIVE" subtitle="Record of Excellence" />
-
-              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-4 flex-1">
-                {[
-                  "https://images.unsplash.com/photo-1544620347-c4fd4a3d5957",
-                  "https://images.unsplash.com/photo-1533473359331-0135ef1b58bf",
-                  "https://images.unsplash.com/photo-1511919884226-fd3cad34687c",
-                  "https://images.unsplash.com/photo-1542281286-9e0a16bb7366",
-                  "https://images.unsplash.com/photo-1614332287897-cdc485fa562d",
-                  "https://images.unsplash.com/photo-1503376780353-7e6692767b70",
-                  "https://images.unsplash.com/photo-1580273916550-e323be2ae537",
-                  "https://images.unsplash.com/photo-1605559424843-9e4c228bf1c2"
-                ].
-                  map((src, i) => <div key={i} className="relative rounded-xl md:rounded-2xl overflow-hidden border border-zinc-200 group cursor-pointer aspect-square">
-                    <img src={`${src}?auto=format&fit=crop&q=80`} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
-                    <div className="absolute inset-0 bg-sky-500/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                      <div className="px-3 md:px-4 py-1.5 md:py-2 bg-black text-white font-black uppercase text-[8px] md:text-xs rounded-full tracking-widest">View</div>
-                    </div>
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-4 flex-1">
+              {[
+                "https://images.unsplash.com/photo-1544620347-c4fd4a3d5957",
+                "https://images.unsplash.com/photo-1533473359331-0135ef1b58bf",
+                "https://images.unsplash.com/photo-1511919884226-fd3cad34687c",
+                "https://images.unsplash.com/photo-1542281286-9e0a16bb7366",
+                "https://images.unsplash.com/photo-1614332287897-cdc485fa562d",
+                "https://images.unsplash.com/photo-1503376780353-7e6692767b70",
+                "https://images.unsplash.com/photo-1580273916550-e323be2ae537",
+                "https://images.unsplash.com/photo-1605559424843-9e4c228bf1c2"
+              ].
+                map((src, i) => <div key={i} className="relative rounded-xl md:rounded-2xl overflow-hidden border border-zinc-200 group cursor-pointer aspect-square">
+                  <img src={`${src}?auto=format&fit=crop&q=80`} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
+                  <div className="absolute inset-0 bg-sky-500/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                    <div className="px-3 md:px-4 py-1.5 md:py-2 bg-black text-white font-black uppercase text-[8px] md:text-xs rounded-full tracking-widest">View</div>
                   </div>
-                  )}
-              </div>
+                </div>
+                )}
             </div>
           </div>
         </section>
 
         {/* SECTION 7 - LATEST NEWS */}
-        <section className="relative flex items-center justify-center p-2 md:p-3">
-          <div
-            className="relative w-full rounded-2xl md:rounded-3xl bg-gradient-to-br from-white via-blue-50 to-sky-50 border border-sky-200 shadow-2xl p-6 md:p-12">
-
-            <div className="max-w-7xl mx-auto h-full flex flex-col">
-              <SectionHeader icon={Radio} title="LATEST NEWS" subtitle="City Updates" />
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8 flex-1">
-                {[
-                  { date: "Oct 24", title: "New Diamond Casino Heist", desc: "Experience the most complex heist in city history.", img: "https://images.unsplash.com/photo-1593305841991-05c297ba4575" },
-                  { date: "Oct 22", title: "Updated Police Fleet", desc: "LSPD receives high-speed interceptors and new gear.", img: "https://images.unsplash.com/photo-1563200020-03a088373307" },
-                  { date: "Oct 20", title: "Autumn Season Pass", desc: "Exclusive rewards, new outfits, and seasonal events.", img: "https://images.unsplash.com/photo-1518770660439-4636190af475" }
-                ].
-                  map((news, i) => <div key={i} className="group relative bg-zinc-50 border border-zinc-200 rounded-2xl overflow-hidden hover:border-sky-400 transition-all h-fit">
-                    <div className="h-48 md:h-64 overflow-hidden">
-                      <img src={`${news.img}?auto=format&fit=crop&q=80`} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
-                    </div>
-                    <div className="p-6 md:p-10">
-                      <div className="text-sky-400 font-bold text-[10px] md:text-xs uppercase tracking-widest mb-2 md:mb-4">{news.date}</div>
-                      <h3 className="text-2xl md:text-3xl font-black uppercase tracking-tighter mb-2 md:mb-4 text-black leading-none">{news.title}</h3>
-                      <p className="text-zinc-600 font-medium text-sm md:text-base mb-6 md:mb-8">{news.desc}</p>
-                      <div className="text-black font-black uppercase tracking-widest text-[10px] md:text-sm flex items-center gap-2 group-hover:gap-4 transition-all cursor-pointer">
-                        Read More <ChevronRight size={16} md-size={18} />
-                      </div>
+        <section className="relative bg-gradient-to-br from-white via-blue-50 to-sky-50 py-12 md:py-20">
+          <div className="absolute inset-0 opacity-5 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')]" />
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(0,163,255,0.05)_0%,transparent_60%)]" />
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_bottom_left,rgba(0,163,255,0.05)_0%,transparent_60%)]" />
+          <div className="max-w-7xl mx-auto px-6 md:px-12 h-full flex flex-col relative z-10">
+            <SectionHeader icon={Radio} title="LATEST NEWS" subtitle="City Updates" />
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8 flex-1">
+              {[
+                { date: "Oct 24", title: "New Diamond Casino Heist", desc: "Experience the most complex heist in city history.", img: "https://images.unsplash.com/photo-1593305841991-05c297ba4575" },
+                { date: "Oct 22", title: "Updated Police Fleet", desc: "LSPD receives high-speed interceptors and new gear.", img: "https://images.unsplash.com/photo-1563200020-03a088373307" },
+                { date: "Oct 20", title: "Autumn Season Pass", desc: "Exclusive rewards, new outfits, and seasonal events.", img: "https://images.unsplash.com/photo-1518770660439-4636190af475" }
+              ].
+                map((news, i) => <div key={i} className="group relative bg-zinc-50 border border-zinc-200 rounded-2xl overflow-hidden hover:border-sky-400 transition-all h-fit">
+                  <div className="h-48 md:h-64 overflow-hidden">
+                    <img src={`${news.img}?auto=format&fit=crop&q=80`} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
+                  </div>
+                  <div className="p-6 md:p-10">
+                    <div className="text-sky-400 font-bold text-[10px] md:text-xs uppercase tracking-widest mb-2 md:mb-4">{news.date}</div>
+                    <h3 className="text-2xl md:text-3xl font-black uppercase tracking-tighter mb-2 md:mb-4 text-black leading-none">{news.title}</h3>
+                    <p className="text-zinc-600 font-medium text-sm md:text-base mb-6 md:mb-8">{news.desc}</p>
+                    <div className="text-black font-black uppercase tracking-widest text-[10px] md:text-sm flex items-center gap-2 group-hover:gap-4 transition-all cursor-pointer">
+                      Read More <ChevronRight size={16} md-size={18} />
                     </div>
                   </div>
-                  )}
-              </div>
-            </div>
-          </div>
-        </section>
-
-        {/* SECTION 8 - HOW TO JOIN */}
-        <section className="relative min-h-screen flex items-center justify-center p-2 md:p-3">
-          <div
-            className="relative w-full rounded-2xl md:rounded-3xl bg-gradient-to-br from-zinc-900 via-black to-zinc-900 border border-zinc-800 shadow-2xl p-6 md:p-12">
-
-            <div className="max-w-7xl mx-auto h-full flex flex-col">
-              <SectionHeader icon={Zap} title="HOW TO JOIN" subtitle="Start Your Story" />
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-8 flex-1">
-                {[
-                  { step: "01", title: "Discord", desc: "Join our vibrant community and get verified." },
-                  { step: "02", title: "Direct Link", desc: "Connect using our high-speed direct entry line." },
-                  { step: "03", title: "Character", desc: "Create your unique persona with custom tools." },
-                  { step: "04", title: "Play", desc: "Dive into the most immersive RP experience." }
-                ].
-                  map((step, i) => <div key={i} className="relative p-8 md:p-12 bg-zinc-50 border border-zinc-100 rounded-2xl md:rounded-3xl flex flex-col justify-between group hover:bg-zinc-100 transition-all h-fit min-h-[200px] md:min-h-[280px]">
-                    <div className="text-4xl md:text-6xl font-black text-black/5 italic group-hover:text-sky-400/20 transition-colors leading-none">{step.step}</div>
-                    <div className="mt-4">
-                      <h3 className="text-2xl md:text-4xl font-black uppercase tracking-tighter mb-2 md:mb-4 text-black leading-none">{step.title}</h3>
-                      <p className="text-zinc-500 font-bold uppercase text-[8px] md:text-[10px] tracking-[0.2em]">{step.desc}</p>
-                    </div>
-                    <div className="mt-6 md:mt-8 w-10 h-10 md:w-12 md:h-12 rounded-xl md:rounded-2xl bg-black/5 flex items-center justify-center group-hover:bg-sky-500 group-hover:text-white transition-colors">
-                      <ChevronRight size={20} md-size={24} />
-                    </div>
-                  </div>
-                  )}
-              </div>
-            </div>
-          </div>
-        </section>
-
-        {/* SECTION 9 - MEDIA PARTNERS */}
-        <section className="relative flex items-center justify-center p-2 md:p-3">
-          <div
-            className="relative w-full rounded-2xl md:rounded-3xl bg-gradient-to-br from-white via-zinc-50 to-zinc-100 border border-zinc-200 shadow-2xl p-6 md:p-12">
-
-            <div className="max-w-7xl mx-auto h-full flex flex-col">
-              <SectionHeader icon={Users} title="OFFICIAL PARTNERS" subtitle="Powering The Future" />
-              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-8 md:gap-12 flex-1 items-center">
-                {[
-                  { src: "/next.svg", name: "Next.js" },
-                  { src: "/vercel.svg", name: "Vercel" },
-                  { src: "/file.svg", name: "Partner 3" },
-                  { src: "/globe.svg", name: "Partner 4" },
-                  { src: "/window.svg", name: "Partner 5" },
-                  { src: "/next.svg", name: "Next.js" },
-                  { src: "/vercel.svg", name: "Vercel" },
-                  { src: "/file.svg", name: "Partner 3" },
-                  { src: "/globe.svg", name: "Partner 4" },
-                  { src: "/window.svg", name: "Partner 5" }
-                ].map((partner, index) => <div key={index} className="grayscale opacity-40 hover:grayscale-0 hover:opacity-100 transition-all cursor-pointer flex justify-center items-center p-4">
-                  <img src={partner.src} alt={partner.name} className="h-8 md:h-12 w-auto object-contain" />
                 </div>
                 )}
-                <div className="col-span-full text-center mt-8 md:mt-12">
-                  <p className="text-zinc-500 font-bold uppercase tracking-[0.3em] md:tracking-[0.5em] text-[10px] md:text-sm italic">Trusted by the biggest names in the industry</p>
+            </div>
+          </div>
+        </section>
+        {/*  Projects */}
+        <section className="relative bg-gradient-to-br from-sky-50 via-white to-blue-50 py-12 md:py-20">
+          <div className="absolute inset-0 opacity-5 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')]" />
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(0,163,255,0.05)_0%,transparent_60%)]" />
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_bottom_left,rgba(0,163,255,0.05)_0%,transparent_60%)]" />
+          <div className="max-w-7xl mx-auto px-6 md:px-12 h-full flex flex-col relative z-10">
+            <SectionHeader icon={Crown} title="MEMBERSHIP TIERS" subtitle="Unlock Premium Features" dark={true} />
+
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8 flex-1">
+              {[
+                { name: "DIAMOND", price: "$49.99", icon: Zap, color: "text-sky-400", bg: "bg-sky-400/5", border: "border-sky-400/20", features: ["Priority Queue (Instant)", "Custom Character Slots", "Exclusive High-End Cars", "Admin Support Access"] },
+                { name: "PLATINUM", price: "$29.99", icon: Shield, color: "text-zinc-600", bg: "bg-zinc-50", border: "border-zinc-200", features: ["Priority Queue (Fast)", "Extra Inventory Slots", "Custom License Plate", "Premium Discord Role"] },
+                { name: "GOLD", price: "$14.99", icon: Trophy, color: "text-yellow-600", bg: "bg-yellow-500/5", border: "border-yellow-500/20", features: ["Faster Connection", "Starter Pack ($50k)", "Monthly Mystery Box", "Gold Badge in Chat"] }
+              ].
+                map((tier, i) => <div key={i} className={`relative p-6 md:p-8 rounded-2xl md:rounded-3xl border ${tier.border} ${tier.bg} flex flex-col items-center text-center group transition-all duration-500 hover:scale-[1.02] md:hover:scale-105 shadow-xl overflow-hidden h-fit`}>
+                  <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-black/5 to-transparent" />
+                  <tier.icon className={`${tier.color} mb-4 md:mb-8`} size={48} md-size={64} />
+                  <h3 className="text-3xl md:text-5xl font-black uppercase tracking-tighter mb-2 md:mb-4 text-black">{tier.name}</h3>
+                  <div className="text-xl md:text-3xl font-bold mb-6 md:mb-10 opacity-70 italic text-black">{tier.price}<span className="text-xs md:text-sm uppercase not-italic">/mo</span></div>
+                  <ul className="space-y-2 md:space-y-4 mb-8 md:mb-12 flex-1">
+                    {tier.features.map((f, j) => <li key={j} className="text-zinc-500 font-bold uppercase text-[8px] md:text-xs tracking-widest">{f}</li>
+                    )}
+                  </ul>
+                  <div className={`w-full py-4 md:py-5 rounded-xl md:rounded-2xl font-black uppercase tracking-widest cursor-pointer transition-all text-xs md:text-sm ${i === 0 ? 'bg-sky-500 text-white shadow-[0_15px_30px_rgba(0,163,255,0.4)]' : 'bg-black text-white hover:bg-sky-400'}`}>
+                    Select Plan
+                  </div>
                 </div>
+                )}
+            </div>
+          </div>
+        </section>
+
+
+        {/* SECTION 9 - MEDIA PARTNERS */}
+        <section className="relative bg-gradient-to-br from-white via-zinc-50 to-zinc-100 py-12 md:py-20">
+          <div className="absolute inset-0 opacity-5 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')]" />
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(0,163,255,0.05)_0%,transparent_60%)]" />
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_bottom_left,rgba(0,163,255,0.05)_0%,transparent_60%)]" />
+          <div className="max-w-7xl mx-auto px-6 md:px-12 h-full flex flex-col relative z-10">
+            <SectionHeader icon={Users} title="OFFICIAL PARTNERS" subtitle="Powering The Future" />
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-8 md:gap-12 flex-1 items-center">
+              {[
+                { src: "/next.svg", name: "Next.js" },
+                { src: "/vercel.svg", name: "Vercel" },
+                { src: "/file.svg", name: "Partner 3" },
+                { src: "/globe.svg", name: "Partner 4" },
+                { src: "/window.svg", name: "Partner 5" },
+                { src: "/next.svg", name: "Next.js" },
+                { src: "/vercel.svg", name: "Vercel" },
+                { src: "/file.svg", name: "Partner 3" },
+                { src: "/globe.svg", name: "Partner 4" },
+                { src: "/window.svg", name: "Partner 5" }
+              ].map((partner, index) => <div key={index} className="grayscale opacity-40 hover:grayscale-0 hover:opacity-100 transition-all cursor-pointer flex justify-center items-center p-4">
+                <img src={partner.src} alt={partner.name} className="h-8 md:h-12 w-auto object-contain" />
+              </div>
+              )}
+              <div className="col-span-full text-center mt-8 md:mt-12">
+                <p className="text-zinc-500 font-bold uppercase tracking-[0.3em] md:tracking-[0.5em] text-[10px] md:text-sm italic">Trusted by the biggest names in the industry</p>
               </div>
             </div>
           </div>
         </section>
 
-        {/* SECTION 10 - LUXURY GARAGE (NEW) */}
-        <section className="relative flex items-center justify-center p-2 md:p-3">
-          <div
-            className="relative w-full rounded-2xl md:rounded-3xl bg-gradient-to-br from-sky-50 via-white to-blue-50 border border-sky-200 shadow-2xl p-6 md:p-12">
 
-            <div className="max-w-7xl mx-auto h-full flex flex-col">
-              <SectionHeader icon={Car} title="LUXURY GARAGE" subtitle="Premium Vehicle Collection" />
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-8 flex-1">
-                <div className="relative group overflow-hidden rounded-2xl md:rounded-3xl border border-zinc-200 aspect-video md:aspect-auto">
-                  <img src="https://images.unsplash.com/photo-1544636331-e26879cd4d9b?auto=format&fit=crop&q=80" className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-1000" />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
-                  <div className="absolute bottom-6 md:bottom-10 left-6 md:left-10">
-                    <h3 className="text-2xl md:text-4xl font-black uppercase tracking-tighter text-white">Diamond Series</h3>
-                    <p className="text-sky-400 font-bold text-[8px] md:text-xs uppercase tracking-widest mt-1 md:mt-2">Exclusive Import</p>
-                  </div>
-                </div>
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 lg:grid-rows-2 gap-4 md:gap-8">
-                  <div className="relative group overflow-hidden rounded-2xl md:rounded-3xl border border-zinc-200 aspect-video">
-                    <img src="https://images.unsplash.com/photo-1614162692292-7ac56d7f7f1e?auto=format&fit=crop&q=80" className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-1000" />
-                    <div className="absolute bottom-6 md:bottom-8 left-6 md:left-8">
-                      <h3 className="text-xl md:text-3xl font-black uppercase tracking-tighter text-white">Carbon Custom</h3>
-                    </div>
-                  </div>
-                  <div className="relative group overflow-hidden rounded-2xl md:rounded-3xl border border-zinc-200 aspect-video">
-                    <img src="https://images.unsplash.com/photo-1621135802920-133df287f89c?auto=format&fit=crop&q=80" className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-1000" />
-                    <div className="absolute bottom-6 md:bottom-8 left-6 md:left-8">
-                      <h3 className="text-xl md:text-3xl font-black uppercase tracking-tighter text-white">Urban Legend</h3>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
 
         {/* SECTION 11 - CAREER PATHS (NEW) */}
-        <section className="relative flex items-center justify-center p-2 md:p-3">
-          <div
-            className="relative w-full rounded-2xl md:rounded-3xl bg-gradient-to-br from-zinc-900 via-black to-zinc-900 border border-zinc-800 shadow-2xl p-6 md:p-12">
-
-            <div className="max-w-7xl mx-auto h-full flex flex-col">
-              <SectionHeader icon={Briefcase} title="CAREER PATHS" subtitle="Choose Your Destiny" />
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-8 flex-1">
-                {[
-                  { title: "LSPD", role: "Enforce Justice", img: "https://images.unsplash.com/photo-1579822396902-50341071018e" },
-                  { title: "EMS", role: "Save Lives", img: "https://images.unsplash.com/photo-1583946099379-f9c9cb8bc030" },
-                  { title: "MECHANIC", role: "Performance Pros", img: "https://images.unsplash.com/photo-1486262715619-67b85e0b08d3" },
-                  { title: "ENTREPRENEUR", role: "Build Empire", img: "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab" }
-                ].
-                  map((job, i) => <div key={i} className="relative rounded-xl md:rounded-2xl overflow-hidden border-2 border-zinc-200 group hover:border-sky-400 transition-all cursor-pointer aspect-square md:aspect-auto">
-                    <img src={`${job.img}?auto=format&fit=crop&q=80`} className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-700" />
-                    <div className="absolute inset-0 bg-black/20 group-hover:bg-transparent transition-all" />
-                    <div className="absolute inset-0 flex flex-col items-center justify-center text-center p-4 md:p-6">
-                      <h3 className="text-2xl md:text-4xl font-black uppercase tracking-tighter mb-1 md:mb-2 scale-90 group-hover:scale-100 transition-transform text-white leading-none">{job.title}</h3>
-                      <p className="text-sky-400 font-bold text-[8px] md:text-[10px] uppercase tracking-widest opacity-0 group-hover:opacity-100 transition-opacity">{job.role}</p>
-                    </div>
+        <section className="relative bg-gradient-to-br from-zinc-900 via-black to-zinc-900 py-12 md:py-20">
+          <div className="max-w-7xl mx-auto px-6 md:px-12 h-full flex flex-col">
+            <SectionHeader icon={Briefcase} title="CAREER PATHS" subtitle="Choose Your Destiny" />
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-8 flex-1">
+              {[
+                { title: "LSPD", role: "Enforce Justice", img: "https://images.unsplash.com/photo-1579822396902-50341071018e" },
+                { title: "EMS", role: "Save Lives", img: "https://images.unsplash.com/photo-1583946099379-f9c9cb8bc030" },
+                { title: "MECHANIC", role: "Performance Pros", img: "https://images.unsplash.com/photo-1486262715619-67b85e0b08d3" },
+                { title: "ENTREPRENEUR", role: "Build Empire", img: "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab" }
+              ].
+                map((job, i) => <div key={i} className="relative rounded-xl md:rounded-2xl overflow-hidden border-2 border-zinc-200 group hover:border-sky-400 transition-all cursor-pointer aspect-square md:aspect-auto">
+                  <img src={`${job.img}?auto=format&fit=crop&q=80`} className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-700" />
+                  <div className="absolute inset-0 bg-black/20 group-hover:bg-transparent transition-all" />
+                  <div className="absolute inset-0 flex flex-col items-center justify-center text-center p-4 md:p-6">
+                    <h3 className="text-2xl md:text-4xl font-black uppercase tracking-tighter mb-1 md:mb-2 scale-90 group-hover:scale-100 transition-transform text-white leading-none">{job.title}</h3>
+                    <p className="text-sky-400 font-bold text-[8px] md:text-[10px] uppercase tracking-widest opacity-0 group-hover:opacity-100 transition-opacity">{job.role}</p>
                   </div>
-                  )}
-              </div>
+                </div>
+                )}
             </div>
           </div>
         </section>
 
 
 
-        <section className="relative flex items-center justify-center p-2 md:p-3">
-          <div
-            className="relative w-full rounded-2xl md:rounded-3xl bg-gradient-to-br from-sky-50 via-white to-blue-50 border border-sky-200 shadow-2xl p-6 md:p-12">
+        <section className="relative bg-gradient-to-br from-sky-50 via-white to-blue-50 py-12 md:py-20">
+          <div className="max-w-7xl mx-auto px-6 md:px-12">
 
             <div className="absolute inset-0 opacity-5 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')]" />
             <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(0,163,255,0.05)_0%,transparent_60%)]" />
@@ -807,9 +769,11 @@ export default function Home() {
               </div>
             </div>
           </div>
+
         </section>
 
       </div>
+
     </div>
   );
 }
