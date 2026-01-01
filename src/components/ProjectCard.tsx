@@ -56,10 +56,17 @@ export default function ProjectCard({
     }
   };
 
-  return (
-    <div
-      className={`relative ${sizeClasses[size]} h-[450px] lg:h-auto cursor-pointer`}
-      style={{ perspective: "1000px" }}
+    const sizeHeight = {
+      big: "lg:h-[650px]",
+      large: "lg:h-[650px]",
+      medium: "lg:h-[310px]",
+      small: "lg:h-[310px]"
+    };
+
+    return (
+      <div
+        className={`relative ${sizeClasses[size]} ${sizeHeight[size]} h-[450px] cursor-pointer`}
+        style={{ perspective: "1000px" }}
       onMouseEnter={() => setIsFlipped(true)}
       onMouseLeave={() => setIsFlipped(false)}
     >
