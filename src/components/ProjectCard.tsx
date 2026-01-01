@@ -67,11 +67,11 @@ export function ProjectCard({
           <div className="absolute inset-0 p-6 md:p-10 flex flex-col justify-end">
             <div className="space-y-2 md:space-y-4">
               <div className="flex flex-wrap gap-2">
-                {badges.map((badge, i) => (
-                  <span key={i} className="px-2 py-0.5 rounded-full border border-sky-500/30 bg-sky-500/10 text-sky-400 text-[8px] md:text-[10px] font-black uppercase tracking-widest">
-                    {badge}
-                  </span>
-                ))}
+                  {badges.map((badge, i) => (
+                    <span key={i} className="px-2 py-0.5 rounded-full border border-white/30 bg-white/10 text-white text-[8px] md:text-[10px] font-black uppercase tracking-widest">
+                      {badge}
+                    </span>
+                  ))}
               </div>
               <h3 className={`${size === "big" ? "text-3xl md:text-5xl" : "text-xl md:text-3xl"} font-black uppercase tracking-tighter text-white leading-none`}>
                 {title}
@@ -81,12 +81,12 @@ export function ProjectCard({
               </p>
             </div>
             
-            <div className="mt-6 pt-4 border-t border-white/10 flex justify-between items-center">
-              <span className="text-sky-400 font-bold text-[8px] md:text-xs uppercase tracking-widest">{footer}</span>
-              <div className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center text-white">
-                <ChevronRight size={16} />
+              <div className="mt-6 pt-4 border-t border-white/10 flex justify-between items-center">
+                <span className="text-white font-bold text-[8px] md:text-xs uppercase tracking-widest">{footer}</span>
+                <div className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center text-white">
+                  <ChevronRight size={16} />
+                </div>
               </div>
-            </div>
           </div>
         </div>
 
@@ -98,21 +98,21 @@ export function ProjectCard({
             transform: "rotateY(180deg)"
           }}
         >
-          <div className="space-y-4 md:space-y-6">
-            <div className="space-y-2">
-              <h4 className="text-sky-400 font-black text-[10px] md:text-xs uppercase tracking-[0.2em]">Project Overview</h4>
-              <p className="text-white text-sm md:text-xl font-medium leading-relaxed">
-                {description}
-              </p>
-            </div>
-            
-              <div className="pt-2">
-                <h4 className="text-sky-400 font-black text-[10px] md:text-xs uppercase tracking-[0.2em] mb-1">Architecture</h4>
-                <p className="text-white/40 text-[10px] md:text-xs font-black uppercase tracking-[0.1em]">
-                  {techStack}
+            <div className="space-y-4 md:space-y-6">
+              <div className="space-y-2">
+                <h4 className="text-white font-black text-[10px] md:text-xs uppercase tracking-[0.2em]">Project Overview</h4>
+                <p className="text-white text-sm md:text-xl font-medium leading-relaxed">
+                  {description}
                 </p>
               </div>
-          </div>
+              
+                <div className="pt-2">
+                  <h4 className="text-white font-black text-[10px] md:text-xs uppercase tracking-[0.2em] mb-1">Architecture</h4>
+                  <p className="text-white/40 text-[10px] md:text-xs font-black uppercase tracking-[0.1em]">
+                    {techStack}
+                  </p>
+                </div>
+            </div>
 
           <div className="flex flex-wrap gap-3 md:gap-4 mt-4">
             {cta.map((item, i) => (
