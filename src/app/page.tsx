@@ -533,83 +533,89 @@ export default function Home() {
 
               <div className="relative z-10 px-6 md:px-12 py-12 md:py-16 max-w-7xl mx-auto">
 
-                {/* Header */}
-                <div className="text-center mb-12 md:mb-16">
-
-
+                {/* Header with Vertical Line */}
+                <div className="text-center mb-0 flex flex-col items-center">
                   <motion.h2
                     initial={{ opacity: 0, y: 20 }}
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true }}
                     transition={{ duration: 0.6, delay: 0.1 }}
-                    className="text-4xl md:text-7xl font-black uppercase tracking-tighter leading-none mb-4"
+                    className="text-4xl md:text-6xl font-black uppercase tracking-tight leading-none mb-6 text-white"
                   >
                     Skills
                   </motion.h2>
-
-
+                  
+                  {/* Vertical Line - Desktop only */}
+                  <div className="w-[2px] h-16 bg-white hidden md:block"></div>
                 </div>
 
-                {/* Skills Grid - 4 Parts */}
-                <div className="grid grid-cols-1 md:grid-cols-4 gap-8 md:gap-0">
+                {/* Skills Grid with Lines */}
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.6, delay: 0.2 }}
+                  className="relative max-w-6xl mx-auto"
+                >
+                  {/* Desktop: Horizontal Line */}
+                  <div className="absolute top-0 left-0 right-0 h-[2px] bg-white hidden md:block"></div>
+                  
+                  {/* Desktop: Vertical Lines - positioned between columns */}
+                  <div className="absolute top-0 h-32 left-1/4 w-[2px] bg-white hidden md:block"></div>
+                  <div className="absolute top-0 h-32 left-2/4 w-[2px] bg-white hidden md:block"></div>
+                  <div className="absolute top-0 h-32 left-3/4 w-[2px] bg-white hidden md:block"></div>
+                  
+                  {/* Mobile: Vertical Line */}
+                  <div className="absolute top-0 bottom-0 left-0 w-[2px] bg-white md:hidden"></div>
+                  
+                  <div className="grid grid-cols-1 md:grid-cols-4 gap-0 md:pt-8 md:pb-8">
 
-                  {/* Part 1 - Languages */}
-                  <motion.div
-                    initial={{ opacity: 0, y: 20 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ duration: 0.6, delay: 0.2 }}
-                    className="space-y-4 md:pr-8 md:border-r md:border-dotted md:border-white/40"
-                  >
-                    <h3 className="text-2xl md:text-3xl font-black uppercase tracking-tight text-white mb-6">LANGUAGES</h3>
-                    <p className="text-white/80 leading-relaxed font-['Caveat'] text-xl md:text-2xl">
-                      C/C++, Java, Python, JavaScript, SQL
-                    </p>
-                  </motion.div>
+                    {/* Part 1 - Languages */}
+                    <div className="relative space-y-4 md:pr-6 pb-12 md:pb-0 pl-16 md:pl-0">
+                      {/* Mobile: Horizontal branch line */}
+                      <div className="absolute left-0 top-2 w-16 h-[2px] bg-white md:hidden"></div>
+                      
+                      <h3 className="text-lg md:text-xl font-black uppercase tracking-tight text-white mb-4">LANGUAGES</h3>
+                      <p className="text-white/90 leading-relaxed text-sm md:text-base">
+                        C/C++, Java, Python, JavaScript, SQL
+                      </p>
+                    </div>
 
-                  {/* Part 2 - Technologies & Tools */}
-                  <motion.div
-                    initial={{ opacity: 0, y: 20 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ duration: 0.6, delay: 0.3 }}
-                    className="space-y-4 md:px-8 md:border-r md:border-dotted md:border-white/40"
-                  >
-                    <h3 className="text-2xl md:text-3xl font-black uppercase tracking-tight text-white mb-6">TECHNOLOGIES & TOOLS</h3>
-                    <p className="text-white/80 leading-relaxed font-['Caveat'] text-xl md:text-2xl">
-                      AWS, Kubernetes, Docker, Kafka, Spring Boot, React.JS, Azure, GitHub Actions, Linux
-                    </p>
-                  </motion.div>
+                    {/* Part 2 - Technologies & Tools */}
+                    <div className="relative space-y-4 md:px-6 pb-12 md:pb-0 pl-16 md:pl-0">
+                      {/* Mobile: Horizontal branch line */}
+                      <div className="absolute left-0 top-2 w-16 h-[2px] bg-white md:hidden"></div>
+                      
+                      <h3 className="text-lg md:text-xl font-black uppercase tracking-tight text-white mb-4">TECHNOLOGIES & TOOLS</h3>
+                      <p className="text-white/90 leading-relaxed text-sm md:text-base">
+                        AWS, Kubernetes, Docker, Kafka, Spring Boot, React.JS, Azure, GitHub Actions, Linux
+                      </p>
+                    </div>
 
-                  {/* Part 3 - Databases */}
-                  <motion.div
-                    initial={{ opacity: 0, y: 20 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ duration: 0.6, delay: 0.4 }}
-                    className="space-y-4 md:px-8 md:border-r md:border-dotted md:border-white/40"
-                  >
-                    <h3 className="text-2xl md:text-3xl font-black uppercase tracking-tight text-white mb-6">DATABASES</h3>
-                    <p className="text-white/80 leading-relaxed font-['Caveat'] text-xl md:text-2xl">
-                      MySQL, MongoDB, GraphQL, Supabase, Redis
-                    </p>
-                  </motion.div>
+                    {/* Part 3 - Databases */}
+                    <div className="relative space-y-4 md:px-6 pb-12 md:pb-0 pl-16 md:pl-0">
+                      {/* Mobile: Horizontal branch line */}
+                      <div className="absolute left-0 top-2 w-16 h-[2px] bg-white md:hidden"></div>
+                      
+                      <h3 className="text-lg md:text-xl font-black uppercase tracking-tight text-white mb-4">DATABASES</h3>
+                      <p className="text-white/90 leading-relaxed text-sm md:text-base">
+                        MySQL, MongoDB, GraphQL, Supabase, Redis
+                      </p>
+                    </div>
 
-                  {/* Part 4 - AI/ML */}
-                  <motion.div
-                    initial={{ opacity: 0, y: 20 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ duration: 0.6, delay: 0.5 }}
-                    className="space-y-4 md:pl-8"
-                  >
-                    <h3 className="text-2xl md:text-3xl font-black uppercase tracking-tight text-white mb-6">AI/ML</h3>
-                    <p className="text-white/80 leading-relaxed font-['Caveat'] text-xl md:text-2xl">
-                      Machine Learning, Data Analysis, Deep Learning, Generative AI, AI Agents
-                    </p>
-                  </motion.div>
+                    {/* Part 4 - AI/ML */}
+                    <div className="relative space-y-4 md:pl-6 pb-0 pl-16 md:pl-6">
+                      {/* Mobile: Horizontal branch line */}
+                      <div className="absolute left-0 top-2 w-16 h-[2px] bg-white md:hidden"></div>
+                      
+                      <h3 className="text-lg md:text-xl font-black uppercase tracking-tight text-white mb-4">AI/ML</h3>
+                      <p className="text-white/90 leading-relaxed text-sm md:text-base">
+                        Machine Learning, Data Analysis, Deep Learning, Generative AI, AI Agents
+                      </p>
+                    </div>
 
-                </div>
+                  </div>
+                </motion.div>
 
               </div>
             </div>

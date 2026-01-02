@@ -6,29 +6,27 @@ import { Briefcase } from "lucide-react";
 export default function ExperienceSection() {
   const experiences = [
 
-
     {
       "year": "2025",
-      "timeline": "Jan 2025",
-      "title": "Freelancing Project (Plasma)",
-      "company": "SignalMint",
-      "description": "Deployed the client’s production-ready v2.signalmint.in platform on AWS using ECS, EC2, and ECR. Configured autoscaling, task definitions, containerized services, and separate worker services for efficient scaling. Set up an Application Load Balancer (ALB) with secure GoDaddy DNS integration and implemented CI/CD pipelines using GitHub Actions for automated deployments and rollback support.",
+      "timeline": "Dec 2025 -Jan 2025",
+      "title": "Data & Full-Stack Intern",
+      "company": "ProSmart Concepts & Hydralite",
+      "description": "Collected and transformed raw product data from multiple sources into clean, structured datasets. Built n8n workflows to automate data extraction, cleaning, validation, and schema standardization. Designed and managed an admin dashboard for product handling and developed a client-facing website to dynamically display categorized products, ensuring seamless data consistency between admin and client systems.",
       "techStack": [
-        "AWS ECS",
-        "AWS EC2",
-        "AWS ECR",
-        "Docker",
-        "Application Load Balancer (ALB)",
-        "GitHub Actions",
-        "CI/CD",
-        "GoDaddy DNS"
+        "JavaScript",
+        "SQL",
+        "Node.js",
+        "n8n",
+        "Full-Stack Development",
+        "Admin Dashboard",
+        "Data Engineering"
       ]
     },
     {
       "year": "2025",
-      "timeline": "Feb 2025 – Mar 2025",
-      "title": "AQI Prediction System (ARIMA-LSTM)",
-      "company": "Panache Digilife Pvt. Ltd., VESIT, Mumbai",
+      "timeline": "Feb 2025 – Apr 2025",
+      "title": "AQI Prediction and Analytics",
+      "company": "Panache Digilife Pvt. Ltd.",
       "description": "Worked under the guidance of Dr. Kanchan Chavan on an AQI prediction system using time series analysis. Implemented an ARIMA-LSTM hybrid model for accurate air quality forecasting and deployed the solution using Firebase listeners to enable real-time data updates.",
       "techStack": [
         "Python",
@@ -41,21 +39,20 @@ export default function ExperienceSection() {
       ]
     },
     {
-      "year": "2025",
-      "timeline": "Dec 2025 – Present",
-      "title": "Data & Full-Stack Intern",
-      "company": "ProSmart Concepts",
-      "description": "Collected and transformed raw product data from multiple sources into clean, structured datasets. Built n8n workflows to automate data extraction, cleaning, validation, and schema standardization. Designed and managed an admin dashboard for product handling and developed a client-facing website to dynamically display categorized products, ensuring seamless data consistency between admin and client systems.",
+      "year": "2024",
+      "timeline": "December 2024",
+      "title": "Freelancing Project (Plasma)",
+      "company": "SignalMint",
+      "description": "Deployed the client’s production-ready v2.signalmint.in platform on AWS using ECS, EC2, and ECR. Configured autoscaling, task definitions, containerized services, and separate worker services for efficient scaling. Set up an Application Load Balancer (ALB) with secure GoDaddy DNS integration and implemented CI/CD pipelines using GitHub Actions for automated deployments and rollback support.",
       "techStack": [
-        "JavaScript",
-        "SQL",
-        "Node.js",
-        "n8n",
-        "Full-Stack Development",
-        "Admin Dashboard",
-        "Data Engineering"
+        "AWS Services",
+        "AWS EC2, ECS, EKS, ALB",
+        "Docker",
+        "CI/CD-GitHub Actions",
+        "DNS"
       ]
     }
+
 
   ];
 
