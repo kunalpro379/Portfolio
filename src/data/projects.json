@@ -1,0 +1,713 @@
+{
+    "featuredProjects": [
+        {
+            "size": "big",
+            "title": "SanskritGPT",
+            "tagline": "Building a Sanskrit Language Model from scratch using Diffusion + Transformers",
+            "badges": [
+                "Diffusion LLM",
+                "Transformer Denoiser",
+                "Low-Resource NLP",
+                "Research Project"
+            ],
+            "footer": "From-scratch generative model · Oct 2024",
+            "description": "A masked diffusion-based language model designed specifically for Sanskrit text generation, focusing on semantic denoising rather than next-token prediction.",
+            "highlights": [
+                "Masked Diffusion Training",
+                "Token-Level Transformer Denoiser",
+                "Sanskrit WordNet–tagged corpus",
+                "Iterative Unmasking Generation"
+            ],
+            "techStack": "Python · PyTorch · Transformers · Diffusion Models · NLP",
+            "cta": [
+                {
+                    "label": "GitHub Repo",
+                    "link": "https://github.com",
+                    "icon": "github"
+                },
+                {
+                    "label": "Read Research",
+                    "link": "#",
+                    "icon": "external"
+                }
+            ],
+            "image": "/LLMThumbnail.webp"
+        },
+        {
+            "size": "small",
+            "title": "FINAgent",
+            "tagline": "Agentic Financial Research & Trading System",
+            "badges": [
+                "LangGraph",
+                "Multi-Agent AI",
+                "Time Series"
+            ],
+            "footer": "AI agents · Dec 2024",
+            "description": "A modular AI-driven financial analyst system that combines market data, agents, memory, and orchestration graphs.",
+            "highlights": [
+                "Market & Sentiment Agents",
+                "Risk & Strategy Managers",
+                "Zerodha MCP integration",
+                "Graph-based workflows"
+            ],
+            "techStack": "LSTM · ARIMA · Technical Indicators",
+            "cta": [
+                {
+                    "label": "GitHub Repo",
+                    "link": "https://github.com",
+                    "icon": "github"
+                },
+                {
+                    "label": "Workflow Diagram",
+                    "link": "#",
+                    "icon": "external"
+                }
+            ],
+            "image": "/FinAgent.webp"
+        },
+        {
+            "size": "small",
+            "title": "Video Pipeline",
+            "tagline": "DRM-Protected Adaptive Bitrate Streaming",
+            "badges": [
+                "AWS",
+                "FFMPEG",
+                "HLS",
+                "DRM"
+            ],
+            "footer": "Scalable media backend · Jan 2025",
+            "description": "An automated video pipeline that downloads raw videos, transcodes them into multiple resolutions, encrypts segments, and delivers them via HLS.",
+            "highlights": [
+                "Adaptive Bitrate (360p-1080p)",
+                "DRM Encryption",
+                "AWS S3 + SQS Pipeline",
+                "Dockerized FFMPEG workers"
+            ],
+            "techStack": "Node.js · Docker · AWS · FFMPEG · HLS · C++",
+            "cta": [
+                {
+                    "label": "GitHub (Pipeline)",
+                    "link": "https://github.com",
+                    "icon": "github"
+                },
+                {
+                    "label": "Architecture",
+                    "link": "#",
+                    "icon": "external"
+                }
+            ],
+            "image": "/VideoTranscoding.webp"
+        },
+        {
+            "size": "big",
+            "title": "Remote Desktop & File Sharing System",
+            "tagline": "Secure multi-client remote desktop with real-time file sharing",
+            "badges": [
+                "Remote Desktop Protocol",
+                "Real-time Streaming",
+                "Redis Queues",
+                "Systems Engineering"
+            ],
+            "footer": "Multi-client architecture · Mar 2024",
+            "description": "A secure remote desktop application supporting multiple concurrent users with real-time screen sharing, file transfer, and chat. Optimized for low bandwidth environments using dirty rectangle streaming.",
+            "highlights": [
+                "RDP-based remote desktop architecture",
+                "XOR dirty-rectangle screen streaming",
+                "Bandwidth-optimized delta updates",
+                "Redis-backed multi-session queue locking",
+                "Real-time file sharing and chat"
+            ],
+            "techStack": "C++ · Networking · Redis · RDP · Systems Programming",
+            "cta": [
+                {
+                    "label": "GitHub Repo 1",
+                    "link": "https://github.com",
+                    "icon": "github"
+                },
+                {
+                    "label": "GitHub Repo 2",
+                    "link": "https://github.com",
+                    "icon": "github"
+                }
+            ],
+            "image": "/RemoteDesktop.webp"
+        },
+        {
+            "size": "small",
+            "title": "Hydralite.in",
+            "tagline": "Automated Product Data Platform with Admin & Client Systems",
+            "badges": [
+                "Internship Project",
+                "n8n Automation",
+                "Admin Dashboard",
+                "Data Pipelines"
+            ],
+            "footer": "Production system · Internship Project · 2025",
+            "description": "A production-grade product management and automation platform built during internship, focused on transforming raw product data into structured datasets and dynamically serving them to a client-facing website.",
+            "highlights": [
+                "Automated data extraction and cleaning using n8n workflows",
+                "Schema validation and product standardization pipelines",
+                "Admin dashboard for product, category, and asset management",
+                "Dynamic client website with real-time product rendering",
+                "Ensured consistency between admin and client systems"
+            ],
+            "techStack": "Node.js · MongoDB · n8n · REST APIs · Admin Dashboard · Automation",
+            "cta": [
+                {
+                    "label": "Live Website",
+                    "link": "https://hydralite.in",
+                    "icon": "external"
+                }
+            ],
+            "image": "/hydralite.png"
+        },
+        {
+            "size": "small",
+            "title": "ProSmart.in",
+            "tagline": "Scalable Product Data Management & Automation System",
+            "badges": [
+                "Internship Project",
+                "Backend Systems",
+                "Automation",
+                "Data Engineering"
+            ],
+            "footer": "Enterprise product platform · Internship Project · 2025",
+            "description": "A scalable backend-driven product platform developed during internship, enabling automated ingestion, cleaning, and structured presentation of large-scale product data through admin and client interfaces.",
+            "highlights": [
+                "Collected and transformed raw product data from multiple sources",
+                "Built n8n workflows for extraction, cleaning, and validation",
+                "Designed admin panel for centralized product control",
+                "Client-facing website with categorized dynamic products",
+                "Production-ready APIs ensuring data integrity and sync"
+            ],
+            "techStack": "Node.js · MongoDB · n8n · Express · Automation · System Design",
+            "cta": [
+                {
+                    "label": "Live Website",
+                    "link": "https://prosmart.in",
+                    "icon": "external"
+                }
+            ],
+            "image": "/prosmart.png"
+        },
+        {
+            "size": "small",
+            "title": "Reverse Proxy Web Server",
+            "tagline": "Custom reverse proxy with WebSocket routing and security filtering",
+            "badges": [
+                "Reverse Proxy",
+                "Spring Boot",
+                "WebSockets",
+                "Backend Infrastructure"
+            ],
+            "footer": "Traffic control & routing · Apr 2025",
+            "description": "A high-performance reverse proxy built using Spring Boot to forward HTTP and WebSocket traffic with advanced routing, logging, and security controls.",
+            "highlights": [
+                "HTTP and WebSocket request forwarding",
+                "Dynamic route-based load balancing",
+                "Path rewriting and header injection",
+                "Security filtering and request logging"
+            ],
+            "techStack": "Java · Spring Boot · WebSockets · Networking",
+            "cta": [
+                {
+                    "label": "GitHub Repo",
+                    "link": "https://github.com",
+                    "icon": "github"
+                }
+            ],
+            "image": "/nginx.webp"
+        },
+        {
+            "size": "small",
+            "title": "Sketch-to-Face GAN System",
+            "tagline": "Converting human sketches into photorealistic faces using GANs",
+            "badges": [
+                "GANs",
+                "Computer Vision",
+                "Autoencoders",
+                "Deep Learning"
+            ],
+            "footer": "Image generation system · Jul 2024",
+            "description": "A deep learning pipeline that transforms hand-drawn human face sketches into photorealistic images using GANs, enhanced with autoencoders for reconstruction quality.",
+            "highlights": [
+                "Sketch-to-image GAN architecture",
+                "Autoencoder-enhanced reconstruction",
+                "Training on 1000+ images for 100 epochs",
+                "PCA + SVM based face recognition",
+                "Deployed for real-time inference"
+            ],
+            "techStack": "Python · PyTorch · GANs · OpenCV · Hugging Face",
+            "cta": [
+                {
+                    "label": "GitHub Repo",
+                    "link": "https://github.com",
+                    "icon": "github"
+                },
+                {
+                    "label": "Live Demo",
+                    "link": "https://vercel.app",
+                    "icon": "external"
+                }
+            ],
+            "image": "/face.webp"
+        },
+        {
+            "size": "small",
+            "title": "Collaborative Cloud Code Editor",
+            "tagline": "Real-time multi-user coding with containerized cloud execution",
+            "badges": [
+                "Cloud IDE",
+                "CRDT Collaboration",
+                "AWS",
+                "DevOps"
+            ],
+            "footer": "Cloud-native system · Jan 2025",
+            "description": "A secure cloud-based IDE enabling real-time collaborative coding with isolated container environments, scalable compute provisioning, and live chat.",
+            "highlights": [
+                "Session-based containerized environments",
+                "AWS ECS, ECR, Lambda orchestration",
+                "NGINX load-balanced execution",
+                "Kubernetes pods with Ingress routing",
+                "CRDT-based real-time collaboration",
+                "Voice and text communication"
+            ],
+            "techStack": "AWS · Docker · Kubernetes · Node.js · WebSockets · CRDT",
+            "cta": [
+                {
+                    "label": "GitHub Repo 1",
+                    "link": "https://github.com",
+                    "icon": "github"
+                },
+                {
+                    "label": "GitHub Repo 2",
+                    "link": "https://github.com",
+                    "icon": "github"
+                }
+            ],
+            "image": "/cloudcode.webp"
+        },
+        {
+            "size": "small",
+            "title": "Sec-Auth NPM Package",
+            "tagline": "Production-ready authentication with MFA, OAuth, and RBAC",
+            "badges": [
+                "Authentication",
+                "Security",
+                "NPM Package",
+                "Backend"
+            ],
+            "footer": "Published package · Nov 2024",
+            "description": "A secure Node.js authentication library providing MFA, ZFA, OAuth, JWT authentication, and role-based access control with easy plug-and-play integration.",
+            "highlights": [
+                "Multi-factor and zero-factor authentication",
+                "OAuth integration (Google, GitHub)",
+                "JWT access & refresh token flows",
+                "Built-in RBAC authorization system",
+                "Production-ready security workflows"
+            ],
+            "techStack": "Node.js · TypeScript · JWT · OAuth · Security",
+            "cta": [
+                {
+                    "label": "NPM Package",
+                    "link": "https://npmjs.com",
+                    "icon": "external"
+                },
+                {
+                    "label": "GitHub Repo",
+                    "link": "https://github.com",
+                    "icon": "github"
+                }
+            ],
+            "image": "/Auth.webp"
+        },
+        {
+            "size": "small",
+            "title": "VPN From Scratch (Linux)",
+            "tagline": "Custom encrypted VPN built using TUN interfaces and OpenSSL",
+            "badges": [
+                "Systems Programming",
+                "Networking",
+                "Linux",
+                "Security"
+            ],
+            "footer": "Low-level networking · Oct 2024",
+            "description": "A custom-built VPN application for Linux developed from scratch, leveraging TUN virtual network interfaces and OpenSSL to establish a secure, encrypted tunnel for IP packet transmission.",
+            "highlights": [
+                "Implemented TUN-based virtual network interface for packet interception",
+                "Engineered bidirectional packet forwarding between virtual and physical interfaces",
+                "Built encrypted tunnel using OpenSSL for secure communication",
+                "Handled IP packet parsing, encapsulation, and routing logic",
+                "Designed for low-latency and secure point-to-point networking"
+            ],
+            "techStack": "C · Linux Networking · TUN/TAP · OpenSSL · TCP/IP · Systems Programming",
+            "cta": [
+                {
+                    "label": "GitHub Repo",
+                    "link": "https://github.com",
+                    "icon": "github"
+                }
+            ],
+            "image": "/VPN.webp"
+        },
+        {
+            "size": "medium",
+            "title": "RateLimiter System Design",
+            "tagline": "Design and implementation of scalable rate limiting algorithms",
+            "badges": [
+                "System Design",
+                "Backend Infrastructure",
+                "Rate Limiting",
+                "Distributed Systems"
+            ],
+            "footer": "System design project · 2024",
+            "description": "A system design–focused project implementing multiple rate limiting strategies with practical simulations and test servers to analyze behavior under load.",
+            "highlights": [
+                "Implemented core rate limiting algorithms in Java",
+                "Designed system-level flow for request throttling and fairness",
+                "Load testing using custom bombard and test servers",
+                "Clear architectural visualization using Excalidraw diagrams",
+                "Focus on scalability, correctness, and real-world usage"
+            ],
+            "techStack": "Java · JavaScript · System Design · Rate Limiting · Backend Architecture",
+            "cta": [
+                {
+                    "label": "GitHub Repo",
+                    "link": "https://github.com/kunalpro379/RateLimiter_SystemDesign",
+                    "icon": "github"
+                }
+            ],
+            "image": "/RateLimiter.webp"
+        },
+        {
+            "size": "small",
+            "title": "Build Git From Scratch",
+            "tagline": "Implementing core Git internals and object storage in Java",
+            "badges": [
+                "Systems Programming",
+                "Version Control Internals",
+                "File Systems",
+                "Backend Engineering"
+            ],
+            "footer": "Low-level systems project · Oct 2024",
+            "description": "A from-scratch implementation of a minimal Git client built as part of the CodeCrafters challenge, focusing on understanding Git internals, object storage, and repository operations.",
+            "highlights": [
+                "Implemented Git repository initialization and .git directory structure",
+                "Built core Git object types including blobs, trees, and commits",
+                "Handled content-addressable storage using SHA-1 hashing",
+                "Implemented basic clone and commit workflows",
+                "Explored Git transfer protocols and repository plumbing"
+            ],
+            "techStack": "Java · Git Internals · File Systems · SHA-1 · Shell Scripting",
+            "cta": [
+                {
+                    "label": "GitHub Repo",
+                    "link": "https://github.com/Caceresenzo/codecrafters--build-your-own-git--java",
+                    "icon": "github"
+                }
+            ],
+            "image": "/GIT.webp"
+        },
+        {
+            "size": "big",
+            "title": "Intelligent Grievance Redressal Agent",
+            "tagline": "Agentic AI system for automated grievance analysis and policy recommendations",
+            "badges": [
+                "Agentic AI",
+                "NLP",
+                "LLMs",
+                "Final Year Project"
+            ],
+            "footer": "AI-driven public grievance system · 2024",
+            "description": "An intelligent agent-based grievance redressal system designed to analyze citizen complaints, validate grievance proofs, and suggest relevant government policies using embeddings and multi-agent reasoning.",
+            "highlights": [
+                "Automated collection and preprocessing of grievance and department datasets",
+                "Embedding generation and semantic search using vector databases",
+                "Validation Agent and Grievance Proof Analysis Agent for complaint assessment",
+                "Policy Research Agent for mapping grievances to relevant government policies",
+                "End-to-end agentic workflow with visual system diagrams",
+                "Deployed frontend portal for grievance interaction and tracking"
+            ],
+            "techStack": "Python · LLMs · NLP · Vector Databases · Jupyter · JavaScript · HTML",
+            "cta": [
+                {
+                    "label": "GitHub Repo",
+                    "link": "https://github.com/kunalpro379/BEProject_Grivance_Redressal_Agent",
+                    "icon": "github"
+                },
+                {
+                    "label": "Live Demo",
+                    "link": "https://be-project-grivance-redressal-agent.vercel.app",
+                    "icon": "external"
+                }
+            ],
+            "image": "/IGRS.webp"
+        },
+        {
+            "size": "small",
+            "title": "LSTM–ARIMA Stock Price Prediction",
+            "tagline": "Hybrid time-series forecasting for financial market data",
+            "badges": [
+                "Time Series Analysis",
+                "Machine Learning",
+                "Finance",
+                "Forecasting"
+            ],
+            "footer": "Hybrid ML model · 2024",
+            "description": "A hybrid stock price prediction system combining classical ARIMA models with LSTM neural networks to capture both linear trends and non-linear temporal patterns in financial time-series data.",
+            "highlights": [
+                "Implemented ARIMA for trend and seasonality modeling",
+                "Used LSTM networks to capture long-term temporal dependencies",
+                "Hybrid modeling approach for improved forecasting accuracy",
+                "Preprocessing and normalization of historical stock data",
+                "Evaluation of predictions using error metrics and visual analysis"
+            ],
+            "techStack": "Python · LSTM · ARIMA · Time Series · NumPy · Pandas · Matplotlib",
+            "cta": [
+                {
+                    "label": "GitHub Repo",
+                    "link": "https://github.com/kunalpro379/LSTM-ARIMA-Stock-pricing-predictions",
+                    "icon": "github"
+                }
+            ],
+            "image": "/stock.webp"
+        },
+        {
+            "size": "big",
+            "title": "Concurrency Control Algorithms",
+            "tagline": "Implementations of CRDTs and concurrent event handling systems",
+            "badges": [
+                "Distributed Systems",
+                "Concurrency Control",
+                "CRDT",
+                "Backend Infrastructure"
+            ],
+            "footer": "Distributed systems project · 2024",
+            "description": "A collection of concurrency control and distributed consistency mechanisms, focusing on conflict-free data structures and concurrent event coordination.",
+            "highlights": [
+                "Implemented CRDT-based services for conflict-free state replication",
+                "Explored concurrency control strategies for distributed systems",
+                "Handled concurrent event ordering and resolution",
+                "Redis-backed coordination for concurrent workflows",
+                "Designed for eventual consistency and fault tolerance"
+            ],
+            "techStack": "Java · Redis · CRDT · Distributed Systems · Concurrency",
+            "cta": [
+                {
+                    "label": "GitHub Repo",
+                    "link": "https://github.com/kunalpro379/ConcurrancyControlAlgorithms",
+                    "icon": "github"
+                }
+            ],
+            "image": "CRDT.webp"
+        },
+        {
+            "size": "small",
+            "title": "TripPlanner.ai",
+            "tagline": "Agent-based AI system for intelligent travel planning",
+            "badges": [
+                "Agentic AI",
+                "LLMs",
+                "Automation",
+                "Travel Tech"
+            ],
+            "footer": "AI agents project · 2024",
+            "description": "An agentic AI-powered travel planning system that coordinates multiple specialized agents to generate personalized travel itineraries, accommodation suggestions, and trip recommendations.",
+            "highlights": [
+                "Designed travel planning agents for itinerary generation",
+                "Accommodation search agent for stay recommendations",
+                "Multi-agent coordination for end-to-end trip planning",
+                "LLM-driven reasoning for user preferences and constraints",
+                "Modular agent architecture for easy extensibility"
+            ],
+            "techStack": "Python · LLMs · Agent Frameworks · APIs · Automation",
+            "cta": [
+                {
+                    "label": "GitHub Repo",
+                    "link": "https://github.com/kunalpro379/TripPlanner.ai",
+                    "icon": "github"
+                }
+            ],
+            "image": "/trip.webp"
+        },
+        {
+            "size": "big",
+            "title": "SQL + RAG Analytics Agent",
+            "tagline": "Conversational AI agent for database querying, analysis, and visualization",
+            "badges": [
+                "Agentic AI",
+                "SQL",
+                "RAG",
+                "Data Analytics"
+            ],
+            "footer": "AI-powered data system · 2025",
+            "description": "An intelligent conversational analytics agent that connects directly to SQL databases, combines Retrieval-Augmented Generation (RAG) with structured queries, and enables users to chat with their data for insights, analysis, and visualizations.",
+            "highlights": [
+                "Natural language to SQL query generation",
+                "Secure live connection to relational databases",
+                "RAG layer for schema understanding and context retrieval",
+                "Automated data analysis and insight generation",
+                "Dynamic chart and visualization generation from query results",
+                "End-to-end conversational interface for data exploration"
+            ],
+            "techStack": "Python · SQL · LLMs · RAG · Vector Databases · Pandas · Data Visualization",
+            "cta": [
+                {
+                    "label": "GitHub Repo",
+                    "link": "https://github.com",
+                    "icon": "github"
+                }
+            ],
+            "image": "/SQL.webp"
+        },
+        {
+            "size": "small",
+            "title": "Resync",
+            "tagline": "AI-powered platform for research collaboration, discovery, and paper intelligence",
+            "badges": [
+                "Hackathon Project",
+                "Agentic AI",
+                "Full-Stack",
+                "Real-Time Collaboration"
+            ],
+            "footer": "Invictus Hackathon · AI research platform · 2025",
+            "description": "A modern research collaboration platform that unifies AI-driven paper analysis, intelligent discovery, and real-time collaboration to solve fragmentation in the research ecosystem.",
+            "highlights": [
+                "AI-powered paper analysis, summarization, and contextual chat",
+                "Centralized repository for research papers and datasets",
+                "Semantic search and intelligent research recommendations",
+                "Real-time collaboration with live updates and annotations",
+                "Interactive chat with research papers using LLMs",
+                "Research trend analysis and visualization dashboards",
+                "Cross-disciplinary researcher networking",
+                "Microservices-based architecture with secure authentication"
+            ],
+            "techStack": "React · TypeScript · Node.js · Express · MongoDB · Flask · LLMs · LangChain · WebSockets · AWS",
+            "cta": [
+                {
+                    "label": "GitHub Repo",
+                    "link": "https://github.com",
+                    "icon": "github"
+                }
+            ],
+            "image": "resync.webp"
+        },
+        {
+            "size": "small",
+            "title": "Multithreaded Proxy Web Server",
+            "tagline": "High-performance proxy server with multithreading and LRU caching",
+            "badges": [
+                "Systems Programming",
+                "Networking",
+                "Multithreading",
+                "Caching"
+            ],
+            "footer": "Low-level backend system · 2023",
+            "description": "A high-performance multithreaded proxy web server implemented in C++, designed to handle concurrent client requests efficiently with an in-memory LRU caching mechanism.",
+            "highlights": [
+                "Implemented HTTP proxy server for request forwarding",
+                "Multithreaded architecture for handling concurrent clients",
+                "LRU cache for efficient response caching and faster repeat access",
+                "Thread-safe cache access and request handling",
+                "Optimized for performance and reduced network latency"
+            ],
+            "techStack": "C++ · Multithreading · Networking · HTTP · LRU Cache · Systems Programming",
+            "cta": [
+                {
+                    "label": "GitHub Repo",
+                    "link": "https://github.com/kunalpro379/Multithreaded-Proxy-Webserver-with-LRU-cache",
+                    "icon": "github"
+                }
+            ],
+            "image": "webserver.webp"
+        },
+        {
+            "size": "small",
+            "title": "Parallel File Encryptor & Decryptor",
+            "tagline": "High-performance multithreaded file encryption using AES and OS primitives",
+            "badges": [
+                "Systems Programming",
+                "Multithreading",
+                "Security",
+                "Operating Systems"
+            ],
+            "footer": "Secure systems project · 2023",
+            "description": "A high-performance C++ application for parallel file encryption and decryption, leveraging multithreading, shared memory, semaphores, and AES encryption to securely process files at scale.",
+            "highlights": [
+                "Parallel encryption and decryption using thread pools",
+                "AES-based secure file processing with OpenSSL",
+                "Shared memory–based task queue for inter-process communication",
+                "Semaphore-controlled synchronization to prevent race conditions",
+                "Circular buffer task queue for efficient scheduling",
+                "Optimized for large file handling and scalability"
+            ],
+            "techStack": "C++ · Multithreading · OpenSSL · AES · Shared Memory · Semaphores · Thread Pool",
+            "cta": [
+                {
+                    "label": "GitHub Repo",
+                    "link": "https://github.com/kunalpro379/Parallel_File_Encryptor_Decryptor_In_Cpp",
+                    "icon": "github"
+                }
+            ],
+            "image": "/Encrypt.webp"
+        },
+        {
+            "size": "small",
+            "title": "OLDSOLD",
+            "tagline": "Frontend marketplace for selling and buying used products",
+            "badges": [
+                "Frontend Development",
+                "UI/UX",
+                "Web Application",
+                "Early Project"
+            ],
+            "footer": "Frontend project · 2023",
+            "description": "A frontend-focused web application for listing and browsing used products, built as an early project to explore modern UI development and responsive design.",
+            "highlights": [
+                "Designed homepage UI for a used-product marketplace",
+                "Responsive layouts using TailwindCSS",
+                "Component-based frontend structure",
+                "Modern build setup using Vite",
+                "Focus on clean UI and user-friendly browsing experience"
+            ],
+            "techStack": "JavaScript · HTML · CSS · TailwindCSS · Vite",
+            "cta": [
+                {
+                    "label": "GitHub Repo",
+                    "link": "https://github.com/kunalpro379/OLDSOLD___old-product_selling_website",
+                    "icon": "github"
+                }
+            ],
+            "image": "/OLDsold.webp"
+        },
+        {
+            "size": "small",
+            "title": "File Compression (Huffman Coding)",
+            "tagline": "Lossless file compression using Huffman encoding algorithm",
+            "badges": [
+                "Algorithms",
+                "Data Structures",
+                "Systems Programming",
+                "Compression"
+            ],
+            "footer": "Algorithmic systems project · 2022",
+            "description": "A C++ implementation of a lossless file compression tool based on Huffman Coding, focusing on efficient encoding, decoding, and file size reduction through optimal prefix codes.",
+            "highlights": [
+                "Implemented Huffman tree construction and encoding logic",
+                "Generated variable-length prefix codes based on symbol frequency",
+                "Performed lossless compression and decompression of files",
+                "Handled binary file input/output operations",
+                "Explored compression efficiency and trade-offs"
+            ],
+            "techStack": "C++ · Huffman Coding · Data Structures · File I/O · Algorithms",
+            "cta": [
+                {
+                    "label": "GitHub Repo",
+                    "link": "https://github.com/kunalpro379/File_Compression_Tool_Using_Huffman_Coding",
+                    "icon": "github"
+                }
+            ],
+            "image": "/compression.webp"
+        }
+    ]
+}

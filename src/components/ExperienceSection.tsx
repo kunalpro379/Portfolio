@@ -71,7 +71,7 @@ export default function ExperienceSection() {
             transition={{ duration: 0.6 }}
             className="inline-block mb-4"
           >
-            <span className="px-4 py-1.5 rounded-full border border-sky-500/30 bg-sky-500/10 text-sky-600 text-[10px] font-black uppercase tracking-[0.3em]">
+            <span className="px-4 py-1.5 rounded-full border border-black/30 bg-black/10 text-black text-[10px] font-black uppercase tracking-[0.3em]">
               Career Journey
             </span>
           </motion.div>
@@ -100,7 +100,7 @@ export default function ExperienceSection() {
         {/* Timeline */}
         <div className="relative">
           {/* Center Line */}
-          <div className="absolute left-1/2 top-0 bottom-0 w-[2px] bg-gradient-to-b from-sky-400/40 via-sky-400/20 to-transparent hidden lg:block" />
+          <div className="absolute left-1/2 top-0 bottom-0 w-[2px] bg-gradient-to-b from-black/40 via-black/20 to-transparent hidden lg:block" />
 
           {/* Timeline Items */}
           <div className="space-y-12 md:space-y-20">
@@ -133,9 +133,9 @@ export default function ExperienceSection() {
                       {/* Content - No Card */}
                       <div className="space-y-4">
                         {/* Year Badge */}
-                        <div className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-sky-50 border border-sky-200">
-                          <Briefcase size={16} className="text-sky-600" />
-                          <span className="text-sky-600 font-black text-sm uppercase tracking-wider">{exp.year}</span>
+                        <div className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-gray-100 border border-gray-300">
+                          <Briefcase size={16} className="text-black" />
+                          <span className="text-black font-black text-sm uppercase tracking-wider">{exp.year}</span>
                         </div>
 
                         {/* Title */}
@@ -144,7 +144,7 @@ export default function ExperienceSection() {
                         </h3>
 
                         {/* Company */}
-                        <p className="text-sky-600 font-bold text-sm md:text-base uppercase tracking-wide">
+                        <p className="text-black font-bold text-sm md:text-base uppercase tracking-wide">
                           {exp.company}
                         </p>
 
@@ -168,11 +168,11 @@ export default function ExperienceSection() {
                     </div>
 
                     {/* Center Dot */}
-                    <div className="hidden lg:flex absolute left-1/2 -translate-x-1/2 w-6 h-6 rounded-full bg-sky-500 border-4 border-white shadow-lg shadow-sky-500/30 z-10" />
+                    <div className="hidden lg:flex absolute left-1/2 -translate-x-1/2 w-6 h-6 rounded-full bg-black border-4 border-white shadow-lg shadow-black/30 z-10" />
 
                     {/* Description Side */}
                     <div className={`w-full lg:w-[calc(50%-2rem)]`}>
-                      <div className="bg-white border border-gray-200 rounded-xl md:rounded-2xl p-6 md:p-8 hover:border-sky-300 hover:shadow-lg transition-all duration-300 group h-full flex items-center">
+                      <div className="bg-white border border-gray-200 rounded-xl md:rounded-2xl p-6 md:p-8 hover:border-gray-400 hover:shadow-lg transition-all duration-300 group h-full flex items-center">
                         <div>
                           <h4 className="text-lg md:text-xl font-black uppercase tracking-tight text-gray-800 mb-4">
                             About the Role
@@ -183,7 +183,7 @@ export default function ExperienceSection() {
                         </div>
 
                         {/* Gradient Glow on Hover */}
-                        <div className="absolute inset-0 bg-gradient-to-br from-sky-500/0 to-sky-500/0 group-hover:from-sky-500/5 group-hover:to-transparent rounded-xl md:rounded-2xl transition-all duration-300 pointer-events-none" />
+                        <div className="absolute inset-0 bg-gradient-to-br from-black/0 to-black/0 group-hover:from-black/5 group-hover:to-transparent rounded-xl md:rounded-2xl transition-all duration-300 pointer-events-none" />
                       </div>
                     </div>
 

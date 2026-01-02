@@ -8,6 +8,22 @@ import TypewriterText from "@/components/TypewriterText";
 import ProjectCard from "@/components/ProjectCard";
 import ExperienceSection from "@/components/ExperienceSection";
 import EducationSection from "@/components/EducationSection";
+import projectsDataRaw from "@/data/projects.json";
+
+interface ProjectData {
+  size?: "big" | "small" | "large" | "medium";
+  title: string;
+  tagline: string;
+  badges: string[];
+  footer: string;
+  description: string;
+  highlights: string[];
+  techStack: string;
+  cta?: Array<{ label: string; link: string; icon?: string }>;
+  image?: string;
+}
+
+const projectsData = projectsDataRaw as { featuredProjects: ProjectData[] };
 
 export default function Home() {
   const [isMounted, setIsMounted] = useState(false);
@@ -52,7 +68,6 @@ export default function Home() {
     { name: "Java", logo: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/java/java-original.svg" },
     { name: "Python", logo: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/python/python-original.svg" },
     { name: "JavaScript", logo: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/javascript/javascript-original.svg" },
-    { name: "SQL", logo: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/mysql/mysql-original.svg" },
 
     // Technologies & Tools
     { name: "AWS", logo: "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/amazonwebservices/amazonwebservices-plain-wordmark.svg" },
@@ -60,9 +75,7 @@ export default function Home() {
     { name: "Docker", logo: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/docker/docker-original.svg" },
     { name: "Kafka", logo: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/apachekafka/apachekafka-original.svg" },
     { name: "Spring Boot", logo: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/spring/spring-original.svg" },
-    { name: "React", logo: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/react/react-original.svg" },
     { name: "Azure", logo: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/azure/azure-original.svg" },
-    { name: "GitHub Actions", logo: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/github/github-original.svg" },
     { name: "Linux", logo: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/linux/linux-original.svg" },
 
     // Databases
@@ -72,16 +85,6 @@ export default function Home() {
     { name: "Supabase", logo: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/supabase/supabase-original.svg" },
     { name: "Redis", logo: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/redis/redis-original.svg" },
 
-    // AI/ML
-    { name: "Machine Learning", logo: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/tensorflow/tensorflow-original.svg" },
-    { name: "Deep Learning", logo: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/pytorch/pytorch-original.svg" },
-    { name: "Generative AI", logo: "https://upload.wikimedia.org/wikipedia/commons/0/04/ChatGPT_logo.svg" },
-    { name: "AI Agents", logo: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/python/python-original.svg" },
-    { name: "LLMs", logo: "https://upload.wikimedia.org/wikipedia/commons/0/04/ChatGPT_logo.svg" },
-    { name: "CrewAI", logo: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/python/python-original.svg" },
-    { name: "LangGraph", logo: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/python/python-original.svg" },
-    { name: "N8N", logo: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/nodejs/nodejs-original.svg" },
-    { name: "Data Analysis", logo: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/pandas/pandas-original.svg" }
   ];
 
 
@@ -115,22 +118,22 @@ export default function Home() {
   };
 
   return (
-    <div className="relative bg-[#050505] font-sans selection:bg-sky-500 selection:text-white text-white">
+    <div className="relative bg-gradient-to-br from-white via-blue-50 to-sky-50 font-sans selection:bg-sky-500 selection:text-white text-black">
       {/* FIXED TAB BAR */}
       <div className="fixed top-4 md:top-6 left-1/2 -translate-x-1/2 z-[1000] w-auto max-w-[95%]">
         <div className="relative">
           {/* Glow Effect - Desktop Only */}
-          <div className="hidden md:block absolute -inset-[2px] bg-gradient-to-r from-sky-500/20 via-purple-500/20 to-sky-500/20 rounded-full blur-xl z-[-1]" />
+          <div className="hidden md:block absolute -inset-[2px] bg-gradient-to-r from-sky-400/30 via-blue-400/30 to-sky-400/30 rounded-full blur-xl z-[-1]" />
 
           {/* Main Navbar */}
-          <div className="bg-black border-2 border-white/30 md:border-white/20 md:bg-black/90 md:backdrop-blur-2xl rounded-full px-3 md:px-6 py-2.5 md:py-3.5 flex items-center gap-2 md:gap-4 shadow-lg md:shadow-[0_8px_32px_rgba(0,0,0,0.4)]">
+          <div className="bg-white/90 border-2 border-black/10 md:backdrop-blur-2xl rounded-full px-3 md:px-6 py-2.5 md:py-3.5 flex items-center gap-2 md:gap-4 shadow-lg md:shadow-[0_8px_32px_rgba(0,0,0,0.1)]">
             {/* Home Icon - Desktop Only */}
             <div className="hidden md:flex w-11 h-11 rounded-full bg-gradient-to-br from-sky-500 to-sky-600 items-center justify-center text-white hover:from-sky-400 hover:to-sky-500 transition-all cursor-pointer group shadow-lg hover:shadow-sky-500/50 hover:scale-110 active:scale-95">
               <HomeIcon size={18} className="group-hover:scale-110 transition-transform" />
             </div>
 
             {/* Divider - Desktop Only */}
-            <div className="hidden md:block w-[1px] h-6 bg-white/10" />
+            <div className="hidden md:block w-[1px] h-6 bg-black/10" />
 
             {/* Nav Items - Mobile */}
             <div className="flex md:hidden gap-1.5 items-center">
@@ -139,7 +142,7 @@ export default function Home() {
                 return (
                   <div
                     key={item.name}
-                    className="flex items-center justify-center p-2.5 rounded-lg text-white/80 cursor-pointer hover:text-white hover:bg-white/10 transition-all active:scale-95"
+                    className="flex items-center justify-center p-2.5 rounded-lg text-black/70 cursor-pointer hover:text-black hover:bg-black/5 transition-all active:scale-95"
                   >
                     <Icon size={20} className="relative z-10" />
                   </div>
@@ -152,17 +155,17 @@ export default function Home() {
               {navItems.map((item) => (
                 <div
                   key={item}
-                  className="relative px-5 py-2 rounded-full text-white/70 font-bold text-sm cursor-pointer hover:text-white transition-all hover:scale-105 active:scale-95 whitespace-nowrap group"
+                  className="relative px-5 py-2 rounded-full text-black/60 font-bold text-sm cursor-pointer hover:text-black transition-all hover:scale-105 active:scale-95 whitespace-nowrap group"
                 >
                   {/* Hover Background */}
                   <div className="absolute inset-0 bg-gradient-to-r from-sky-500/0 via-sky-500/10 to-sky-500/0 rounded-full opacity-0 group-hover:opacity-100 transition-opacity" />
-                  <div className="absolute inset-0 border border-white/0 group-hover:border-white/20 rounded-full transition-all" />
+                  <div className="absolute inset-0 border border-black/0 group-hover:border-black/10 rounded-full transition-all" />
 
                   {/* Text */}
                   <span className="relative z-10">{item}</span>
 
                   {/* Active Indicator Dot */}
-                  <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-1 h-1 bg-sky-400 rounded-full opacity-0 group-hover:opacity-100 transition-opacity" />
+                  <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-1 h-1 bg-sky-500 rounded-full opacity-0 group-hover:opacity-100 transition-opacity" />
                 </div>
               ))}
             </div>
@@ -174,37 +177,37 @@ export default function Home() {
       <section className="relative min-h-screen p-2 md:p-3">
 
         {/* Fixed Background Elements */}
-        <div className="absolute inset-0 z-[2] opacity-[0.04] pointer-events-none" style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")` }} />
+        <div className="absolute inset-0 z-[2] opacity-[0.03] pointer-events-none" style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")` }} />
 
         <div className="absolute inset-0 z-0">
           <motion.div
             animate={{
               scale: [1, 1.1, 1],
-              opacity: [0.1, 0.15, 0.1],
+              opacity: [0.15, 0.25, 0.15],
             }}
             transition={{ duration: 15, repeat: Infinity, ease: "easeInOut" }}
-            className="absolute top-[-20%] left-[-10%] w-[80%] h-[80%] bg-sky-500/5 rounded-full blur-[140px]" />
+            className="absolute top-[-20%] left-[-10%] w-[80%] h-[80%] bg-sky-400/20 rounded-full blur-[140px]" />
           <motion.div
             animate={{
               scale: [1.1, 1, 1.1],
-              opacity: [0.05, 0.1, 0.05],
+              opacity: [0.1, 0.2, 0.1],
             }}
             transition={{ duration: 12, repeat: Infinity, ease: "easeInOut", delay: 2 }}
-            className="absolute bottom-[-10%] right-[-10%] w-[70%] h-[70%] bg-indigo-500/5 rounded-full blur-[140px]" />
+            className="absolute bottom-[-10%] right-[-10%] w-[70%] h-[70%] bg-blue-400/20 rounded-full blur-[140px]" />
         </div>
 
         {/* Light Beams/Rays */}
         <div className="absolute inset-0 z-[1] overflow-hidden pointer-events-none">
-          <div className="absolute -top-[50%] -left-[50%] w-[200%] h-[200%] rotate-45 opacity-[0.05]" style={{
-            backgroundImage: 'repeating-linear-gradient(90deg, transparent, transparent 50px, rgba(255,255,255,0.1) 50px, rgba(255,255,255,0.1) 51px)',
+          <div className="absolute -top-[50%] -left-[50%] w-[200%] h-[200%] rotate-45 opacity-[0.03]" style={{
+            backgroundImage: 'repeating-linear-gradient(90deg, transparent, transparent 50px, rgba(0,0,0,0.05) 50px, rgba(0,0,0,0.05) 51px)',
           }} />
         </div>
 
         {/* Refined Grid Overlay */}
-        <div className="absolute inset-0 z-[2] opacity-[0.1]" style={{
+        <div className="absolute inset-0 z-[2] opacity-[0.05]" style={{
           backgroundImage: `
-              linear-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px), 
-              linear-gradient(90deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px)
+              linear-gradient(rgba(0, 0, 0, 0.05) 1px, transparent 1px), 
+              linear-gradient(90deg, rgba(0, 0, 0, 0.05) 1px, transparent 1px)
             `,
           backgroundSize: '100px 100px',
           maskImage: 'radial-gradient(circle at center, black, transparent 90%)',
@@ -218,7 +221,7 @@ export default function Home() {
               key={i}
               initial={{ opacity: 0, scale: 0 }}
               animate={{
-                opacity: [0, 0.2, 0],
+                opacity: [0, 0.3, 0],
                 scale: [0.5, 1, 0.5],
                 y: [0, -100]
               }}
@@ -228,7 +231,7 @@ export default function Home() {
                 ease: "easeInOut",
                 delay: props.delay
               }}
-              className="absolute w-1 h-1 bg-sky-400 rounded-full blur-[1px]"
+              className="absolute w-1 h-1 bg-sky-500 rounded-full blur-[1px]"
               style={{
                 top: props.top,
                 left: props.left,
@@ -237,10 +240,10 @@ export default function Home() {
         </div>
 
         {/* Subtle Aura behind Text */}
-        <div className="absolute top-1/2 left-1/4 -translate-y-1/2 w-[40%] h-[40%] bg-sky-500/5 rounded-full blur-[180px] z-[4] pointer-events-none" />
+        <div className="absolute top-1/2 left-1/4 -translate-y-1/2 w-[40%] h-[40%] bg-sky-400/10 rounded-full blur-[180px] z-[4] pointer-events-none" />
 
         {/* Vignette */}
-        <div className="absolute inset-0 z-[4] pointer-events-none bg-[radial-gradient(circle_at_center,transparent_0%,rgba(0,0,0,0.5)_100%)]" />
+        <div className="absolute inset-0 z-[4] pointer-events-none bg-[radial-gradient(circle_at_center,transparent_0%,rgba(255,255,255,0.3)_100%)]" />
 
         {/* SCROLLABLE CONTENT */}
         <div className="relative z-[5]">
@@ -250,9 +253,9 @@ export default function Home() {
               {/* Image Second on Mobile, Second on Desktop */}
               <div className="relative w-full lg:w-[45%] aspect-square select-none order-2 lg:order-2">
                 <div className="relative w-full h-full max-w-[500px] mx-auto">
-                  <div className="absolute inset-0 bg-sky-500/10 rounded-[2rem] md:rounded-[4rem] rotate-6 scale-95" />
-                  <div className="absolute inset-0 bg-white/5 rounded-[2rem] md:rounded-[4rem] -rotate-3 border border-white/10 backdrop-blur-sm" />
-                  <div className="absolute inset-0 rounded-[2rem] md:rounded-[4rem] overflow-hidden border border-white/20 bg-gradient-to-br from-white/10 to-transparent">
+                  <div className="absolute inset-0 bg-sky-400/20 rounded-[2rem] md:rounded-[4rem] rotate-6 scale-95" />
+                  <div className="absolute inset-0 bg-black/5 rounded-[2rem] md:rounded-[4rem] -rotate-3 border border-black/10 backdrop-blur-sm" />
+                  <div className="absolute inset-0 rounded-[2rem] md:rounded-[4rem] overflow-hidden border border-black/20 bg-gradient-to-br from-white/50 to-transparent">
                     <motion.img
                       initial={{ opacity: 0, x: 100, scale: 0.95 }}
                       animate={{ opacity: 1, x: 0, scale: 1 }}
@@ -276,9 +279,9 @@ export default function Home() {
                   <motion.div
                     animate={{ y: [0, -10, 0] }}
                     transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
-                    className="absolute -top-3 -right-3 md:-top-6 md:-right-6 px-3 md:px-6 py-1.5 md:py-3 bg-black border border-white/10 rounded-xl md:rounded-2xl shadow-2xl"
+                    className="absolute -top-3 -right-3 md:-top-6 md:-right-6 px-3 md:px-6 py-1.5 md:py-3 bg-white border border-black/10 rounded-xl md:rounded-2xl shadow-2xl"
                   >
-                    <div className="text-[8px] md:text-xs font-black text-sky-400 whitespace-nowrap">AI Engineer</div>
+                    <div className="text-[8px] md:text-xs font-black text-sky-500 whitespace-nowrap">AI Engineer</div>
                   </motion.div>
 
 
@@ -293,26 +296,23 @@ export default function Home() {
                   transition={{ duration: 1, ease: "easeOut" }}
                   className="mb-4 md:mb-6"
                 >
-                  <span className="px-3 md:px-4 py-1 md:py-1.5 rounded-full border border-sky-500/30 bg-sky-500/10 text-sky-400 text-[8px] md:text-[10px] font-black uppercase tracking-[0.3em]">
+                  <span className="px-3 md:px-4 py-1 md:py-1.5 rounded-full border border-sky-500/30 bg-sky-500/10 text-sky-600 text-[8px] md:text-[10px] font-black uppercase tracking-[0.3em]">
                     Crafting Future Tech
                   </span>
                 </motion.div>
-                <h1 className="text-6xl md:text-[10rem] font-black tracking-tighter leading-[0.8] mb-6 md:mb-8 select-none text-left">
+                <h1 className="text-6xl md:text-[10rem] font-black tracking-tighter leading-[0.8] mb-6 md:mb-8 select-none text-left text-black">
                   KUNAL<br />
-                  <span className="text-transparent bg-clip-text bg-gradient-to-b from-white to-white/20">PATIL</span>
+                  <span className="text-transparent bg-clip-text bg-gradient-to-b from-black to-black/40">PATIL</span>
                 </h1>
-                <p className="max-w-xl text-white/40 font-medium text-sm md:text-lg tracking-wide uppercase text-left">
+                <p className="max-w-xl text-black/60 font-medium text-sm md:text-lg tracking-wide uppercase text-left">
                   I build scalable backends, automate the cloud, and bring AI ideas to life.
                 </p>
 
                 <div className="mt-6 md:mt-8 flex flex-col sm:flex-row gap-4 md:gap-6 w-full sm:w-auto">
-                  {/* <div className="px-8 md:px-10 py-4 md:py-5 bg-sky-500 text-white rounded-xl md:rounded-2xl font-black uppercase tracking-widest hover:scale-105 transition-all cursor-pointer shadow-[0_20px_50px_rgba(0,163,255,0.4)] text-center text-xs md:text-base">
-                    Explore Work
-                  </div> */}
-                  <div className="inline-flex items-center gap-4 px-6 md:px-8 py-3 md:py-4 bg-white text-black rounded-full font-black uppercase tracking-widest hover:bg-sky-500 hover:text-white transition-all cursor-pointer group text-xs md:text-base">
+                  <div className="inline-flex items-center gap-4 px-6 md:px-8 py-3 md:py-4 bg-black text-white rounded-full font-black uppercase tracking-widest hover:bg-sky-500 hover:text-white transition-all cursor-pointer group text-xs md:text-base shadow-lg">
                     See my work <ChevronRight size={18} className="group-hover:translate-x-1 transition-transform" />
                   </div>
-                  <div className="px-8 md:px-10 py-4 md:py-5 border border-white/10 bg-white/5 backdrop-blur-md text-white rounded-xl md:rounded-2xl font-black uppercase tracking-widest hover:bg-white/10 transition-all cursor-pointer text-center text-xs md:text-base">
+                  <div className="px-8 md:px-10 py-4 md:py-5 border border-black/20 bg-white/50 backdrop-blur-md text-black rounded-xl md:rounded-2xl font-black uppercase tracking-widest hover:bg-white/80 transition-all cursor-pointer text-center text-xs md:text-base shadow-lg">
                     Contact Me
                   </div>
                 </div>
@@ -324,9 +324,9 @@ export default function Home() {
               {/* Image First on Desktop, Second on Mobile */}
               <div className="relative w-full lg:w-[45%] aspect-square select-none order-2 lg:order-1">
                 <div className="relative w-full h-full max-w-[500px] mx-auto">
-                  <div className="absolute inset-0 bg-sky-500/10 rounded-[2rem] md:rounded-[4rem] rotate-6 scale-95" />
-                  <div className="absolute inset-0 bg-white/5 rounded-[2rem] md:rounded-[4rem] -rotate-3 border border-white/10 backdrop-blur-sm" />
-                  <div className="absolute inset-0 rounded-[2rem] md:rounded-[4rem] overflow-hidden border border-white/20 bg-gradient-to-br from-white/10 to-transparent">
+                  <div className="absolute inset-0 rounded-[2rem] md:rounded-[4rem] rotate-6 scale-95" />
+                  <div className="absolute inset-0 bg-black/5 rounded-[2rem] md:rounded-[4rem] -rotate-3 border border-black/10 backdrop-blur-sm" />
+                  <div className="absolute inset-0 rounded-[2rem] md:rounded-[4rem] overflow-hidden border border-black/20 bg-gradiradient-to-br from-yellow-50/60 to-amber-100/40">
                     {heroImages2.map((img, index) => (
                       <motion.img
                         key={img}
@@ -347,63 +347,41 @@ export default function Home() {
                         style={{ imageRendering: 'high-quality' }} />
                     ))}
                   </div>
-
-                  {/* Floating Badges */}
-                  {/* <motion.div
-                    animate={{ y: [0, -10, 0] }}
-                    transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
-                    className="absolute -top-3 -right-3 md:-top-6 md:-right-6 px-3 md:px-6 py-1.5 md:py-3 bg-black border border-white/10 rounded-xl md:rounded-2xl shadow-2xl"
-                  >
-                    <div className="text-[8px] md:text-xs font-black text-sky-400 whitespace-nowrap">NEXT.JS EXPERT</div>
-                  </motion.div>
-
-                  <motion.div
-                    animate={{ y: [0, 10, 0] }}
-                    transition={{ duration: 4, repeat: Infinity, ease: "easeInOut", delay: 1 }}
-                    className="absolute -bottom-3 -left-3 md:-bottom-6 md:-left-6 px-3 md:px-6 py-1.5 md:py-3 bg-black border border-white/10 rounded-xl md:rounded-2xl shadow-2xl"
-                  >
-                    <div className="text-[8px] md:text-xs font-black text-white whitespace-nowrap">AI ENGINEER</div>
-                  </motion.div> */}
                 </div>
               </div>
               {/* Text Content - First on Mobile, Second on Desktop */}
               <div className="space-y-6 md:space-y-10 w-full lg:w-1/2 order-1 lg:order-2">
                 <div className="space-y-3 md:space-y-4">
                   <div className="flex items-center gap-4">
-                    {/* <div className="h-[1px] w-12 bg-sky-500" /> */}
                     <span className="text-sky-500 font-black uppercase tracking-[0.3em] text-[10px] md:text-xs"></span>
                   </div>
-                  <h2 className="text-4xl md:text-8xl font-black uppercase tracking-tighter leading-none">
+                  <h2 className="text-4xl md:text-8xl font-black uppercase tracking-tighter leading-none text-black">
                     ENGINEERING<br />
-                    <span className="text-transparent" style={{ WebkitTextStroke: '1.5px white' }}>Vault VI</span>
+                    <span className="text-transparent" style={{ WebkitTextStroke: '1.5px black' }}>Vault VI</span>
                   </h2>
                 </div>
 
                 <div className="space-y-4 md:space-y-6">
-                  <p className="text-lg md:text-2xl text-white/60 font-medium leading-relaxed">
+                  <p className="text-lg md:text-2xl text-black/70 font-medium leading-relaxed">
                     I'm someone who enjoys going deep into problems, understanding how things really work, and finishing what I start.
                   </p>
                   <div className="flex flex-wrap gap-6 md:gap-10">
                     <div>
-                      <div className="text-2xl md:text-4xl font-black mb-1">02+</div>
-                      <div className="text-[8px] md:text-[10px] uppercase font-black tracking-widest text-white/40">Years Exp.</div>
+                      <div className="text-2xl md:text-4xl font-black mb-1 text-black">02+</div>
+                      <div className="text-[8px] md:text-[10px] uppercase font-black tracking-widest text-black/50">Years Exp.</div>
                     </div>
                     <div>
-                      <div className="text-2xl md:text-4xl font-black mb-1">40+</div>
-                      <div className="text-[8px] md:text-[10px] uppercase font-black tracking-widest text-white/40">Projects</div>
+                      <div className="text-2xl md:text-4xl font-black mb-1 text-black">40+</div>
+                      <div className="text-[8px] md:text-[10px] uppercase font-black tracking-widest text-black/50">Projects</div>
                     </div>
                     <div>
-                      <div className="text-2xl md:text-4xl font-black mb-1">12k+</div>
-                      <div className="text-[8px] md:text-[10px] uppercase font-black tracking-widest text-white/40">Commits</div>
+                      <div className="text-2xl md:text-4xl font-black mb-1 text-black">12k+</div>
+                      <div className="text-[8px] md:text-[10px] uppercase font-black tracking-widest text-black/50">Commits</div>
                     </div>
                   </div>
                 </div>
 
                 <div className="pt-4 md:pt-6">
-                  {/* <div className="inline-flex items-center gap-4 px-6 md:px-8 py-3 md:py-4 bg-white text-black rounded-full font-black uppercase tracking-widest hover:bg-sky-500 hover:text-white transition-all cursor-pointer group text-xs md:text-base">
-                    See my work <ChevronRight size={18} className="group-hover:translate-x-1 transition-transform" />
-                  </div> */}
-
                 </div>
               </div>
             </div>
@@ -448,7 +426,7 @@ export default function Home() {
             return (
               <div
                 key={i}
-                className="absolute w-14 h-14 md:w-20 md:h-20 backdrop-blur-[2px] bg-white/5 border border-white/10 rounded-lg md:rounded-xl flex flex-col items-center justify-center shadow-2xl p-1.5 md:p-2"
+                className="absolute flex flex-col items-center justify-center"
                 style={{
                   top: pos.top,
                   left: pos.left,
@@ -458,9 +436,9 @@ export default function Home() {
                 <img
                   src={tech.logo}
                   alt={tech.name}
-                  className="w-5 h-5 md:w-7 md:h-7 mb-0.5 md:mb-1 filter drop-shadow-[0_0_8px_rgba(255,255,255,0.5)]"
+                  className="w-8 h-8 md:w-12 md:h-12 mb-1 md:mb-2 filter drop-shadow-[0_2px_8px_rgba(0,0,0,0.15)]"
                 />
-                <span className="text-[5px] md:text-[7px] font-black uppercase tracking-tighter text-white/60 text-center">
+                <span className="text-[7px] md:text-[9px] font-black uppercase tracking-tight text-black/80 text-center">
                   {tech.name}
                 </span>
               </div>
@@ -533,8 +511,7 @@ export default function Home() {
 
               <div className="relative z-10 px-6 md:px-12 py-12 md:py-16 max-w-7xl mx-auto">
 
-                {/* Skills Section with Clean Design */}
-                <div className="text-center mb-4 md:mb-16">
+                {/* <div className="text-center mb-4 md:mb-16">
                   <motion.h2
                     initial={{ opacity: 0, y: 20 }}
                     whileInView={{ opacity: 1, y: 0 }}
@@ -544,7 +521,7 @@ export default function Home() {
                   >
                     SKILLS
                   </motion.h2>
-                </div>
+                </div> */}
 
                 {/* Skills Single Card with Separations */}
                 <motion.div
@@ -554,10 +531,10 @@ export default function Home() {
                   transition={{ duration: 0.8, delay: 0.2 }}
                   className="max-w-6xl mx-auto"
                 >
-                  
+
                   {/* Single Card Container */}
                   <div className="bg-white/5 backdrop-blur-md border border-white/20 rounded-2xl overflow-hidden">
-                    <div 
+                    <div
                       className="absolute inset-0 opacity-10"
                       style={{
                         backgroundImage: "url('/outline.png')",
@@ -565,10 +542,10 @@ export default function Home() {
                         backgroundPosition: "center"
                       }}
                     />
-                    
+
                     {/* Grid Layout with Separations */}
                     <div className="relative z-10 grid grid-cols-1 md:grid-cols-4">
-                      
+
                       {/* Languages */}
                       <div className="p-6 md:p-8 border-r-0 md:border-r border-white/20">
                         <h3 className="text-sm md:text-base font-black uppercase tracking-tight text-white mb-4 md:mb-6">
@@ -676,278 +653,85 @@ export default function Home() {
           <div className="max-w-[1440px] mx-auto px-6 md:px-12 relative z-10">
             <SectionHeader icon={FolderKanban} title="FEATURED PROJECTS" subtitle="PREMIUM WORK COLLECTION" dark={true} />
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-8 items-start">
-              <ProjectCard
-                size="big"
-                title="SanskritGPT"
-                tagline="Building a Sanskrit Language Model from scratch using Diffusion + Transformers"
-                badges={["Diffusion LLM", "Transformer Denoiser", "Low-Resource NLP", "Research Project"]}
-                footer="From-scratch generative model · Oct 2024"
-                description="A masked diffusion-based language model designed specifically for Sanskrit text generation, focusing on semantic denoising rather than next-token prediction."
-                highlights={["Masked Diffusion Training", "Token-Level Transformer Denoiser", "Sanskrit WordNet–tagged corpus", "Iterative Unmasking Generation"]}
-                techStack="Python · PyTorch · Transformers · Diffusion Models · NLP"
-                cta={[
-                  { label: "GitHub Repo", link: "https://github.com", icon: "github" },
-                  { label: "Read Research", link: "#", icon: "external" }
-                ]}
-                image="/LLMThumbnail.webp"
-              />
-
-              <div className="flex flex-col gap-4 md:gap-8">
-                <ProjectCard
-                  size="small"
-                  title="FINAgent"
-                  tagline="Agentic Financial Research & Trading System"
-                  badges={["LangGraph", "Multi-Agent AI", "Time Series"]}
-                  footer="AI agents · Dec 2024"
-                  description="A modular AI-driven financial analyst system that combines market data, agents, memory, and orchestration graphs."
-                  highlights={["Market & Sentiment Agents", "Risk & Strategy Managers", "Zerodha MCP integration", "Graph-based workflows"]}
-                  techStack="LSTM · ARIMA · Technical Indicators"
-                  cta={[
-                    { label: "GitHub Repo", link: "https://github.com", icon: "github" },
-                    { label: "Workflow Diagram", link: "#", icon: "external" }
-                  ]}
-                  image="https://images.unsplash.com/photo-1621135802920-133df287f89c?auto=format&fit=crop&q=80"
-                />
-
-                <ProjectCard
-                  size="small"
-                  title="Nexus AI"
-                  tagline="Autonomous Agent Swarm for Enterprise Workflow"
-                  badges={["AutoGPT", "Multi-Agent", "LangChain"]}
-                  footer="DevOps Automation · Feb 2025"
-                  description="A distributed swarm of AI agents that monitor system health, suggest optimizations, and autonomously deploy patches to infrastructure."
-                  highlights={["Self-Healing Infrastructure", "Autonomous Log Analysis", "Multi-Cloud Orchestration", "Predictive Scaling"]}
-                  techStack="Python · Go · Kubernetes · OpenAI · Terraform"
-                  cta={[
-                    { label: "GitHub Repo", link: "https://github.com", icon: "github" },
-                    { label: "Case Study", link: "#", icon: "external" }
-                  ]}
-                  image="https://images.unsplash.com/photo-1677442136019-21780ecad995?auto=format&fit=crop&q=80"
-                />
+            {/* Row 1: 1 big, 2 small, 1 big */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-8 mt-8 items-stretch">
+              <div className="lg:col-span-1">
+                <ProjectCard {...projectsData.featuredProjects[0]} />
               </div>
 
-              <ProjectCard
-                size="big"
-                title="Video Pipeline"
-                tagline="DRM-Protected Adaptive Bitrate Streaming"
-                badges={["AWS", "FFMPEG", "HLS", "DRM"]}
-                footer="Scalable media backend · Jan 2025"
-                description="An automated video pipeline that downloads raw videos, transcodes them into multiple resolutions, encrypts segments, and delivers them via HLS."
-                highlights={["Adaptive Bitrate (360p-1080p)", "DRM Encryption", "AWS S3 + SQS Pipeline", "Dockerized FFMPEG workers"]}
-                techStack="Node.js · Docker · AWS · FFMPEG · HLS · C++"
-                cta={[
-                  { label: "GitHub (Pipeline)", link: "https://github.com", icon: "github" },
-                  { label: "Architecture", link: "#", icon: "external" }
-                ]}
-                image="https://images.unsplash.com/photo-1614162692292-7ac56d7f7f1e?auto=format&fit=crop&q=80"
-              />
-            </div>
-
-            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-4 mt-8">
-              <ProjectCard
-                size="small"
-                title="CloudSync"
-                tagline="Multi-Cloud Data Synchronization Platform"
-                badges={["AWS", "Azure", "GCP", "Real-time"]}
-                footer="Cloud Infrastructure · Nov 2024"
-                description="A unified platform that synchronizes data across multiple cloud providers with real-time conflict resolution and automated failover mechanisms."
-                highlights={["Multi-Cloud Support", "Real-time Sync", "Conflict Resolution", "Auto Failover"]}
-                techStack="Node.js · Kubernetes · Redis · PostgreSQL"
-                cta={[
-                  { label: "GitHub Repo", link: "https://github.com", icon: "github" },
-                  { label: "Live Demo", link: "#", icon: "external" }
-                ]}
-                image="https://images.unsplash.com/photo-1614332287897-cdc485fa562d?auto=format&fit=crop&q=80"
-              />
-
-              <ProjectCard
-                size="small"
-                title="DevOps Automation"
-                tagline="CI/CD Pipeline Orchestration System"
-                badges={["Docker", "Jenkins", "Terraform", "Monitoring"]}
-                footer="DevOps Tools · Sep 2024"
-                description="An intelligent CI/CD orchestration system that automatically optimizes deployment pipelines based on code complexity and resource usage patterns."
-                highlights={["Smart Pipeline Optimization", "Resource Monitoring", "Auto-scaling", "Cost Analytics"]}
-                techStack="Python · Docker · Terraform · Prometheus"
-                cta={[
-                  { label: "GitHub Repo", link: "https://github.com", icon: "github" },
-                  { label: "Documentation", link: "#", icon: "docs" }
-                ]}
-                image="https://images.unsplash.com/photo-1503376780353-7e6692767b70?auto=format&fit=crop&q=80"
-              />
-
-              <ProjectCard
-                size="small"
-                title="ML Model Hub"
-                tagline="Centralized Machine Learning Model Management"
-                badges={["MLOps", "TensorFlow", "PyTorch", "API"]}
-                footer="Machine Learning · Aug 2024"
-                description="A comprehensive platform for versioning, deploying, and monitoring machine learning models with automated A/B testing and performance tracking."
-                highlights={["Model Versioning", "A/B Testing", "Performance Monitoring", "Auto Deployment"]}
-                techStack="Python · FastAPI · MLflow · Kubernetes"
-                cta={[
-                  { label: "GitHub Repo", link: "https://github.com", icon: "github" },
-                  { label: "API Docs", link: "#", icon: "docs" }
-                ]}
-                image="https://images.unsplash.com/photo-1580273916550-e323be2ae537?auto=format&fit=crop&q=80"
-              />
-
-              <ProjectCard
-                size="small"
-                title="Real-time Analytics"
-                tagline="High-Performance Data Processing Engine"
-                badges={["Kafka", "Spark", "Elasticsearch", "Dashboard"]}
-                footer="Data Engineering · Jul 2024"
-                description="A scalable real-time analytics engine that processes millions of events per second with sub-second latency and interactive dashboards."
-                highlights={["Stream Processing", "Sub-second Latency", "Interactive Dashboards", "Scalable Architecture"]}
-                techStack="Apache Kafka · Spark · Elasticsearch · React"
-                cta={[
-                  { label: "GitHub Repo", link: "https://github.com", icon: "github" },
-                  { label: "Live Dashboard", link: "#", icon: "external" }
-                ]}
-                image="https://images.unsplash.com/photo-1605559424843-9e4c228bf1c2?auto=format&fit=crop&q=80"
-              />
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-8 items-start mt-8">
-              <ProjectCard
-                size="big"
-                title="Blockchain DeFi"
-                tagline="Decentralized Finance Protocol with Smart Contracts"
-                badges={["Solidity", "Web3", "DeFi", "Smart Contracts"]}
-                footer="Blockchain Development · Jun 2024"
-                description="A comprehensive DeFi protocol featuring automated market making, yield farming, and governance tokens with advanced security mechanisms."
-                highlights={["Automated Market Making", "Yield Farming", "Governance System", "Security Audited"]}
-                techStack="Solidity · Web3.js · React · Hardhat"
-                cta={[
-                  { label: "GitHub Repo", link: "https://github.com", icon: "github" },
-                  { label: "DApp", link: "#", icon: "external" }
-                ]}
-                image="https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?auto=format&fit=crop&q=80"
-              />
-
-              <div className="flex flex-col gap-4 md:gap-8">
-                <ProjectCard
-                  size="small"
-                  title="IoT Dashboard"
-                  tagline="Industrial IoT Monitoring & Control System"
-                  badges={["IoT", "MQTT", "Time Series", "Real-time"]}
-                  footer="IoT Platform · May 2024"
-                  description="An industrial-grade IoT platform for monitoring and controlling thousands of devices with predictive maintenance and anomaly detection."
-                  highlights={["Device Management", "Predictive Maintenance", "Anomaly Detection", "Real-time Control"]}
-                  techStack="Node.js · MQTT · InfluxDB · Grafana"
-                  cta={[
-                    { label: "GitHub Repo", link: "https://github.com", icon: "github" },
-                    { label: "Demo", link: "#", icon: "external" }
-                  ]}
-                  image="https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?auto=format&fit=crop&q=80"
-                />
-
-                <ProjectCard
-                  size="small"
-                  title="Microservices API"
-                  tagline="Scalable Microservices Architecture"
-                  badges={["Microservices", "API Gateway", "Service Mesh", "Observability"]}
-                  footer="Backend Architecture · Apr 2024"
-                  description="A production-ready microservices architecture with service mesh, distributed tracing, and comprehensive observability stack."
-                  highlights={["Service Mesh", "Distributed Tracing", "Auto-scaling", "Circuit Breakers"]}
-                  techStack="Go · Istio · Jaeger · Prometheus"
-                  cta={[
-                    { label: "GitHub Repo", link: "https://github.com", icon: "github" },
-                    { label: "Architecture", link: "#", icon: "docs" }
-                  ]}
-                  image="https://images.unsplash.com/photo-1511919884226-fd3cad34687c?auto=format&fit=crop&q=80"
-                />
+              <div className="lg:col-span-1 flex flex-col gap-4 md:gap-8">
+                <ProjectCard {...projectsData.featuredProjects[1]} />
+                <ProjectCard {...projectsData.featuredProjects[2]} />
               </div>
 
-              <ProjectCard
-                size="big"
-                title="AI Content Generator"
-                tagline="Multi-Modal AI Content Creation Platform"
-                badges={["GPT-4", "DALL-E", "Content AI", "Multi-Modal"]}
-                footer="AI Platform · Mar 2024"
-                description="An advanced AI platform that generates high-quality text, images, and videos using state-of-the-art models with custom fine-tuning capabilities."
-                highlights={["Multi-Modal Generation", "Custom Fine-tuning", "Brand Consistency", "Batch Processing"]}
-                techStack="Python · OpenAI API · Stable Diffusion · FastAPI"
-                cta={[
-                  { label: "GitHub Repo", link: "https://github.com", icon: "github" },
-                  { label: "Try Demo", link: "#", icon: "external" }
-                ]}
-                image="https://images.unsplash.com/photo-1542281286-9e0a16bb7366?auto=format&fit=crop&q=80"
-              />
+              <div className="lg:col-span-1">
+                <ProjectCard {...projectsData.featuredProjects[3]} />
+              </div>
+
+              <div className="lg:col-span-1 flex flex-col gap-4 md:gap-8">
+                <ProjectCard {...projectsData.featuredProjects[4]} />
+                <ProjectCard {...projectsData.featuredProjects[5]} />
+              </div>
             </div>
-                        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-4 mt-8">
-              <ProjectCard
-                size="small"
-                title="CloudSync"
-                tagline="Multi-Cloud Data Synchronization Platform"
-                badges={["AWS", "Azure", "GCP", "Real-time"]}
-                footer="Cloud Infrastructure · Nov 2024"
-                description="A unified platform that synchronizes data across multiple cloud providers with real-time conflict resolution and automated failover mechanisms."
-                highlights={["Multi-Cloud Support", "Real-time Sync", "Conflict Resolution", "Auto Failover"]}
-                techStack="Node.js · Kubernetes · Redis · PostgreSQL"
-                cta={[
-                  { label: "GitHub Repo", link: "https://github.com", icon: "github" },
-                  { label: "Live Demo", link: "#", icon: "external" }
-                ]}
-                image="https://images.unsplash.com/photo-1614332287897-cdc485fa562d?auto=format&fit=crop&q=80"
-              />
-
-              <ProjectCard
-                size="small"
-                title="DevOps Automation"
-                tagline="CI/CD Pipeline Orchestration System"
-                badges={["Docker", "Jenkins", "Terraform", "Monitoring"]}
-                footer="DevOps Tools · Sep 2024"
-                description="An intelligent CI/CD orchestration system that automatically optimizes deployment pipelines based on code complexity and resource usage patterns."
-                highlights={["Smart Pipeline Optimization", "Resource Monitoring", "Auto-scaling", "Cost Analytics"]}
-                techStack="Python · Docker · Terraform · Prometheus"
-                cta={[
-                  { label: "GitHub Repo", link: "https://github.com", icon: "github" },
-                  { label: "Documentation", link: "#", icon: "docs" }
-                ]}
-                image="https://images.unsplash.com/photo-1503376780353-7e6692767b70?auto=format&fit=crop&q=80"
-              />
-
-              <ProjectCard
-                size="small"
-                title="ML Model Hub"
-                tagline="Centralized Machine Learning Model Management"
-                badges={["MLOps", "TensorFlow", "PyTorch", "API"]}
-                footer="Machine Learning · Aug 2024"
-                description="A comprehensive platform for versioning, deploying, and monitoring machine learning models with automated A/B testing and performance tracking."
-                highlights={["Model Versioning", "A/B Testing", "Performance Monitoring", "Auto Deployment"]}
-                techStack="Python · FastAPI · MLflow · Kubernetes"
-                cta={[
-                  { label: "GitHub Repo", link: "https://github.com", icon: "github" },
-                  { label: "API Docs", link: "#", icon: "docs" }
-                ]}
-                image="https://images.unsplash.com/photo-1580273916550-e323be2ae537?auto=format&fit=crop&q=80"
-              />
-
-              <ProjectCard
-                size="small"
-                title="Real-time Analytics"
-                tagline="High-Performance Data Processing Engine"
-                badges={["Kafka", "Spark", "Elasticsearch", "Dashboard"]}
-                footer="Data Engineering · Jul 2024"
-                description="A scalable real-time analytics engine that processes millions of events per second with sub-second latency and interactive dashboards."
-                highlights={["Stream Processing", "Sub-second Latency", "Interactive Dashboards", "Scalable Architecture"]}
-                techStack="Apache Kafka · Spark · Elasticsearch · React"
-                cta={[
-                  { label: "GitHub Repo", link: "https://github.com", icon: "github" },
-                  { label: "Live Dashboard", link: "#", icon: "external" }
-                ]}
-                image="https://images.unsplash.com/photo-1605559424843-9e4c228bf1c2?auto=format&fit=crop&q=80"
-              />
+            {/* Row 2: 3 cards */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-8 mt-8">
+              <ProjectCard {...projectsData.featuredProjects[6]} />
+              <ProjectCard {...projectsData.featuredProjects[7]} />
+              <ProjectCard {...projectsData.featuredProjects[8]} />
             </div>
+            {/* Row 3: 4 small cards */}
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-8 mt-8">
+              <ProjectCard {...projectsData.featuredProjects[9]} />
+              <ProjectCard {...projectsData.featuredProjects[10]} />
+              <ProjectCard {...projectsData.featuredProjects[11]} />
+              <ProjectCard {...projectsData.featuredProjects[12]} />
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 md:gap-8 mt-8 items-start">
+              <ProjectCard {...projectsData.featuredProjects[13]} />
+              <ProjectCard {...projectsData.featuredProjects[14]} />
+              <ProjectCard {...projectsData.featuredProjects[15]} />
+              <ProjectCard {...projectsData.featuredProjects[16]} />
+
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-8 mt-8 items-stretch">
+              <div className="lg:col-span-1 h-full">
+                <ProjectCard {...projectsData.featuredProjects[17]} />
+              </div>
+
+              <div className="lg:col-span-1 flex flex-col gap-4 md:gap-8 h-full">
+                <div className="flex-1">
+                  <ProjectCard {...projectsData.featuredProjects[18]} />
+                </div>
+                <div className="flex-1">
+                  <ProjectCard {...projectsData.featuredProjects[19]} />
+                </div>
+              </div>
+
+              <div className="lg:col-span-1 flex flex-col gap-4 md:gap-8 h-full">
+                <div className="flex-1">
+                  <ProjectCard {...projectsData.featuredProjects[21]} />
+                </div>
+                <div className="flex-1">
+                  <ProjectCard {...projectsData.featuredProjects[22]} />
+                </div>
+              </div>
+
+              <div className="lg:col-span-1 h-full">
+                <ProjectCard {...projectsData.featuredProjects[20]} />
+              </div>
+            </div>
+
+
+
+
+
+
 
           </div>
         </section>
 
-
-{/* 
+        {/* 
         <section className="relative bg-gradient-to-br from-zinc-50 via-white to-zinc-100 py-12 md:py-20">
           <div className="absolute inset-0 opacity-5 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')]" />
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(0,163,255,0.05)_0%,transparent_60%)]" />
@@ -979,10 +763,8 @@ export default function Home() {
         */}
         <ExperienceSection />
 
-        {/* SECTION 6 - EDUCATION */}
         <EducationSection />
-
-        {/* SECTION 7 - LATEST NEWS */}
+{/* 
         <section className="relative bg-gradient-to-br from-white via-blue-50 to-sky-50 py-12 md:py-20">
           <div className="absolute inset-0 opacity-5 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')]" />
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(0,163,255,0.05)_0%,transparent_60%)]" />
@@ -1012,7 +794,6 @@ export default function Home() {
             </div>
           </div>
         </section>
-        {/*  Projects */}
         <section className="relative bg-gradient-to-br from-sky-50 via-white to-blue-50 py-12 md:py-20">
           <div className="absolute inset-0 opacity-5 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')]" />
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(0,163,255,0.05)_0%,transparent_60%)]" />
@@ -1048,7 +829,6 @@ export default function Home() {
 
 
 
-        {/* SECTION 11 - CAREER PATHS (NEW) */}
         <section className="relative bg-gradient-to-br from-zinc-900 via-black to-zinc-900 py-12 md:py-20">
           <div className="max-w-7xl mx-auto px-6 md:px-12 h-full flex flex-col">
             <SectionHeader icon={Briefcase} title="CAREER PATHS" subtitle="Choose Your Destiny" />
@@ -1114,6 +894,8 @@ export default function Home() {
           </div>
 
         </section>
+        
+         */}
 
       </div>
 
