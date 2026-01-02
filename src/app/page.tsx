@@ -533,104 +533,95 @@ export default function Home() {
 
               <div className="relative z-10 px-6 md:px-12 py-12 md:py-16 max-w-7xl mx-auto">
 
-                {/* Header with Vertical Line */}
-                <div className="text-center mb-0 flex flex-col items-center">
+                {/* Skills Section with Clean Design */}
+                <div className="text-center mb-4 md:mb-16">
                   <motion.h2
                     initial={{ opacity: 0, y: 20 }}
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true }}
                     transition={{ duration: 0.6, delay: 0.1 }}
-                    className="text-4xl md:text-6xl font-black uppercase tracking-tight leading-none mb-6 text-white"
+                    className="text-2xl md:text-5xl font-black uppercase tracking-tighter leading-none mb-6 text-white"
                   >
-                    Skills
+                    SKILLS
                   </motion.h2>
-                  
-                  {/* Vertical Line - Desktop only */}
-                  <div className="w-[2px] h-16 bg-white hidden md:block"></div>
                 </div>
 
-                {/* Skills Grid with Lines */}
+                {/* Skills Single Card with Separations */}
                 <motion.div
-                  initial={{ opacity: 0, y: 20 }}
+                  initial={{ opacity: 0, y: 30 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
-                  transition={{ duration: 0.6, delay: 0.2 }}
-                  className="relative max-w-6xl mx-auto"
+                  transition={{ duration: 0.8, delay: 0.2 }}
+                  className="max-w-6xl mx-auto"
                 >
-                  {/* Desktop: Horizontal Line */}
-                  <div className="absolute top-0 left-0 right-0 h-[2px] bg-white hidden md:block"></div>
                   
-                  {/* Desktop: Vertical Lines - positioned between columns */}
-                  <div className="absolute top-0 h-32 left-1/4 w-[2px] bg-white hidden md:block"></div>
-                  <div className="absolute top-0 h-32 left-2/4 w-[2px] bg-white hidden md:block"></div>
-                  <div className="absolute top-0 h-32 left-3/4 w-[2px] bg-white hidden md:block"></div>
-                  
-                  {/* Mobile: Vertical Line */}
-                  <div className="absolute top-0 bottom-0 left-0 w-[2px] bg-white md:hidden"></div>
-                  
-                  <div className="grid grid-cols-1 md:grid-cols-4 gap-0 md:pt-8 md:pb-8">
-
-                    {/* Part 1 - Languages */}
-                    <div className="relative space-y-4 md:pr-6 pb-12 md:pb-0 pl-16 md:pl-0">
-                      {/* Mobile: Horizontal branch line */}
-                      <div className="absolute left-0 top-2 w-16 h-[2px] bg-white md:hidden"></div>
+                  {/* Single Card Container */}
+                  <div className="bg-white/5 backdrop-blur-md border border-white/20 rounded-2xl overflow-hidden">
+                    <div 
+                      className="absolute inset-0 opacity-10"
+                      style={{
+                        backgroundImage: "url('/outline.png')",
+                        backgroundSize: "cover",
+                        backgroundPosition: "center"
+                      }}
+                    />
+                    
+                    {/* Grid Layout with Separations */}
+                    <div className="relative z-10 grid grid-cols-1 md:grid-cols-4">
                       
-                      <h3 className="text-lg md:text-xl font-black uppercase tracking-tight text-white mb-4">LANGUAGES</h3>
-                      <p className="text-white/90 leading-relaxed text-sm md:text-base">
-                        C/C++, Java, Python, JavaScript, SQL
-                      </p>
-                    </div>
+                      {/* Languages */}
+                      <div className="p-6 md:p-8 border-r-0 md:border-r border-white/20">
+                        <h3 className="text-sm md:text-base font-black uppercase tracking-tight text-white mb-4 md:mb-6">
+                          LANGUAGES
+                        </h3>
+                        <div className="text-white/80 text-sm md:text-base font-handwriting leading-relaxed">
+                          C/C++, Java, Python, JavaScript, SQL
+                        </div>
+                      </div>
 
-                    {/* Part 2 - Technologies & Tools */}
-                    <div className="relative space-y-4 md:px-6 pb-12 md:pb-0 pl-16 md:pl-0">
-                      {/* Mobile: Horizontal branch line */}
-                      <div className="absolute left-0 top-2 w-16 h-[2px] bg-white md:hidden"></div>
-                      
-                      <h3 className="text-lg md:text-xl font-black uppercase tracking-tight text-white mb-4">TECHNOLOGIES & TOOLS</h3>
-                      <p className="text-white/90 leading-relaxed text-sm md:text-base">
-                        AWS, Kubernetes, Docker, Kafka, Spring Boot, React.JS, Azure, GitHub Actions, Linux
-                      </p>
-                    </div>
+                      {/* Technologies & Tools */}
+                      <div className="p-6 md:p-8 border-r-0 md:border-r border-white/20 border-t md:border-t-0 border-white/20">
+                        <h3 className="text-sm md:text-base font-black uppercase tracking-tight text-white mb-4 md:mb-6">
+                          TECHNOLOGIES & TOOLS
+                        </h3>
+                        <div className="text-white/80 text-sm md:text-base font-handwriting leading-relaxed">
+                          AWS, Kubernetes, Docker, Kafka, Spring Boot, React.JS, Azure, GitHub Actions, Linux
+                        </div>
+                      </div>
 
-                    {/* Part 3 - Databases */}
-                    <div className="relative space-y-4 md:px-6 pb-12 md:pb-0 pl-16 md:pl-0">
-                      {/* Mobile: Horizontal branch line */}
-                      <div className="absolute left-0 top-2 w-16 h-[2px] bg-white md:hidden"></div>
-                      
-                      <h3 className="text-lg md:text-xl font-black uppercase tracking-tight text-white mb-4">DATABASES</h3>
-                      <p className="text-white/90 leading-relaxed text-sm md:text-base">
-                        MySQL, MongoDB, GraphQL, Supabase, Redis
-                      </p>
-                    </div>
+                      {/* Databases */}
+                      <div className="p-6 md:p-8 border-r-0 md:border-r border-white/20 border-t md:border-t-0 border-white/20">
+                        <h3 className="text-sm md:text-base font-black uppercase tracking-tight text-white mb-4 md:mb-6">
+                          DATABASES
+                        </h3>
+                        <div className="text-white/80 text-sm md:text-base font-handwriting leading-relaxed">
+                          MySQL, MongoDB, GraphQL, Supabase, Redis
+                        </div>
+                      </div>
 
-                    {/* Part 4 - AI/ML */}
-                    <div className="relative space-y-4 md:pl-6 pb-0 pl-16 md:pl-6">
-                      {/* Mobile: Horizontal branch line */}
-                      <div className="absolute left-0 top-2 w-16 h-[2px] bg-white md:hidden"></div>
-                      
-                      <h3 className="text-lg md:text-xl font-black uppercase tracking-tight text-white mb-4">AI/ML</h3>
-                      <p className="text-white/90 leading-relaxed text-sm md:text-base">
-                        Machine Learning, Data Analysis, Deep Learning, Generative AI, AI Agents
-                      </p>
-                    </div>
+                      {/* AI/ML */}
+                      <div className="p-6 md:p-8 border-t md:border-t-0 border-white/20">
+                        <h3 className="text-sm md:text-base font-black uppercase tracking-tight text-white mb-4 md:mb-6">
+                          AI/ML
+                        </h3>
+                        <div className="text-white/80 text-sm md:text-base font-handwriting leading-relaxed">
+                          Machine Learning, Data Analysis, Deep Learning, Generative AI, AI Agents
+                        </div>
+                      </div>
 
+                    </div>
                   </div>
+
                 </motion.div>
 
               </div>
             </div>
-
 
           </div>
 
         </section>
 
 
-        {/* SECTION 5 - EXPERIENCE */}
-        <ExperienceSection />
-
-        {/* SECTION 6 - EDUCATION */}
-        <EducationSection />
 
         {/* SECTION 7 - SERVER STATS */}
         {/* <section className="relative min-h-screen flex items-center justify-center p-2 md:p-3">
@@ -752,10 +743,211 @@ export default function Home() {
                 image="https://images.unsplash.com/photo-1614162692292-7ac56d7f7f1e?auto=format&fit=crop&q=80"
               />
             </div>
+
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-4 mt-8">
+              <ProjectCard
+                size="small"
+                title="CloudSync"
+                tagline="Multi-Cloud Data Synchronization Platform"
+                badges={["AWS", "Azure", "GCP", "Real-time"]}
+                footer="Cloud Infrastructure · Nov 2024"
+                description="A unified platform that synchronizes data across multiple cloud providers with real-time conflict resolution and automated failover mechanisms."
+                highlights={["Multi-Cloud Support", "Real-time Sync", "Conflict Resolution", "Auto Failover"]}
+                techStack="Node.js · Kubernetes · Redis · PostgreSQL"
+                cta={[
+                  { label: "GitHub Repo", link: "https://github.com", icon: "github" },
+                  { label: "Live Demo", link: "#", icon: "external" }
+                ]}
+                image="https://images.unsplash.com/photo-1614332287897-cdc485fa562d?auto=format&fit=crop&q=80"
+              />
+
+              <ProjectCard
+                size="small"
+                title="DevOps Automation"
+                tagline="CI/CD Pipeline Orchestration System"
+                badges={["Docker", "Jenkins", "Terraform", "Monitoring"]}
+                footer="DevOps Tools · Sep 2024"
+                description="An intelligent CI/CD orchestration system that automatically optimizes deployment pipelines based on code complexity and resource usage patterns."
+                highlights={["Smart Pipeline Optimization", "Resource Monitoring", "Auto-scaling", "Cost Analytics"]}
+                techStack="Python · Docker · Terraform · Prometheus"
+                cta={[
+                  { label: "GitHub Repo", link: "https://github.com", icon: "github" },
+                  { label: "Documentation", link: "#", icon: "docs" }
+                ]}
+                image="https://images.unsplash.com/photo-1503376780353-7e6692767b70?auto=format&fit=crop&q=80"
+              />
+
+              <ProjectCard
+                size="small"
+                title="ML Model Hub"
+                tagline="Centralized Machine Learning Model Management"
+                badges={["MLOps", "TensorFlow", "PyTorch", "API"]}
+                footer="Machine Learning · Aug 2024"
+                description="A comprehensive platform for versioning, deploying, and monitoring machine learning models with automated A/B testing and performance tracking."
+                highlights={["Model Versioning", "A/B Testing", "Performance Monitoring", "Auto Deployment"]}
+                techStack="Python · FastAPI · MLflow · Kubernetes"
+                cta={[
+                  { label: "GitHub Repo", link: "https://github.com", icon: "github" },
+                  { label: "API Docs", link: "#", icon: "docs" }
+                ]}
+                image="https://images.unsplash.com/photo-1580273916550-e323be2ae537?auto=format&fit=crop&q=80"
+              />
+
+              <ProjectCard
+                size="small"
+                title="Real-time Analytics"
+                tagline="High-Performance Data Processing Engine"
+                badges={["Kafka", "Spark", "Elasticsearch", "Dashboard"]}
+                footer="Data Engineering · Jul 2024"
+                description="A scalable real-time analytics engine that processes millions of events per second with sub-second latency and interactive dashboards."
+                highlights={["Stream Processing", "Sub-second Latency", "Interactive Dashboards", "Scalable Architecture"]}
+                techStack="Apache Kafka · Spark · Elasticsearch · React"
+                cta={[
+                  { label: "GitHub Repo", link: "https://github.com", icon: "github" },
+                  { label: "Live Dashboard", link: "#", icon: "external" }
+                ]}
+                image="https://images.unsplash.com/photo-1605559424843-9e4c228bf1c2?auto=format&fit=crop&q=80"
+              />
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-8 items-start mt-8">
+              <ProjectCard
+                size="big"
+                title="Blockchain DeFi"
+                tagline="Decentralized Finance Protocol with Smart Contracts"
+                badges={["Solidity", "Web3", "DeFi", "Smart Contracts"]}
+                footer="Blockchain Development · Jun 2024"
+                description="A comprehensive DeFi protocol featuring automated market making, yield farming, and governance tokens with advanced security mechanisms."
+                highlights={["Automated Market Making", "Yield Farming", "Governance System", "Security Audited"]}
+                techStack="Solidity · Web3.js · React · Hardhat"
+                cta={[
+                  { label: "GitHub Repo", link: "https://github.com", icon: "github" },
+                  { label: "DApp", link: "#", icon: "external" }
+                ]}
+                image="https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?auto=format&fit=crop&q=80"
+              />
+
+              <div className="flex flex-col gap-4 md:gap-8">
+                <ProjectCard
+                  size="small"
+                  title="IoT Dashboard"
+                  tagline="Industrial IoT Monitoring & Control System"
+                  badges={["IoT", "MQTT", "Time Series", "Real-time"]}
+                  footer="IoT Platform · May 2024"
+                  description="An industrial-grade IoT platform for monitoring and controlling thousands of devices with predictive maintenance and anomaly detection."
+                  highlights={["Device Management", "Predictive Maintenance", "Anomaly Detection", "Real-time Control"]}
+                  techStack="Node.js · MQTT · InfluxDB · Grafana"
+                  cta={[
+                    { label: "GitHub Repo", link: "https://github.com", icon: "github" },
+                    { label: "Demo", link: "#", icon: "external" }
+                  ]}
+                  image="https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?auto=format&fit=crop&q=80"
+                />
+
+                <ProjectCard
+                  size="small"
+                  title="Microservices API"
+                  tagline="Scalable Microservices Architecture"
+                  badges={["Microservices", "API Gateway", "Service Mesh", "Observability"]}
+                  footer="Backend Architecture · Apr 2024"
+                  description="A production-ready microservices architecture with service mesh, distributed tracing, and comprehensive observability stack."
+                  highlights={["Service Mesh", "Distributed Tracing", "Auto-scaling", "Circuit Breakers"]}
+                  techStack="Go · Istio · Jaeger · Prometheus"
+                  cta={[
+                    { label: "GitHub Repo", link: "https://github.com", icon: "github" },
+                    { label: "Architecture", link: "#", icon: "docs" }
+                  ]}
+                  image="https://images.unsplash.com/photo-1511919884226-fd3cad34687c?auto=format&fit=crop&q=80"
+                />
+              </div>
+
+              <ProjectCard
+                size="big"
+                title="AI Content Generator"
+                tagline="Multi-Modal AI Content Creation Platform"
+                badges={["GPT-4", "DALL-E", "Content AI", "Multi-Modal"]}
+                footer="AI Platform · Mar 2024"
+                description="An advanced AI platform that generates high-quality text, images, and videos using state-of-the-art models with custom fine-tuning capabilities."
+                highlights={["Multi-Modal Generation", "Custom Fine-tuning", "Brand Consistency", "Batch Processing"]}
+                techStack="Python · OpenAI API · Stable Diffusion · FastAPI"
+                cta={[
+                  { label: "GitHub Repo", link: "https://github.com", icon: "github" },
+                  { label: "Try Demo", link: "#", icon: "external" }
+                ]}
+                image="https://images.unsplash.com/photo-1542281286-9e0a16bb7366?auto=format&fit=crop&q=80"
+              />
+            </div>
+                        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-4 mt-8">
+              <ProjectCard
+                size="small"
+                title="CloudSync"
+                tagline="Multi-Cloud Data Synchronization Platform"
+                badges={["AWS", "Azure", "GCP", "Real-time"]}
+                footer="Cloud Infrastructure · Nov 2024"
+                description="A unified platform that synchronizes data across multiple cloud providers with real-time conflict resolution and automated failover mechanisms."
+                highlights={["Multi-Cloud Support", "Real-time Sync", "Conflict Resolution", "Auto Failover"]}
+                techStack="Node.js · Kubernetes · Redis · PostgreSQL"
+                cta={[
+                  { label: "GitHub Repo", link: "https://github.com", icon: "github" },
+                  { label: "Live Demo", link: "#", icon: "external" }
+                ]}
+                image="https://images.unsplash.com/photo-1614332287897-cdc485fa562d?auto=format&fit=crop&q=80"
+              />
+
+              <ProjectCard
+                size="small"
+                title="DevOps Automation"
+                tagline="CI/CD Pipeline Orchestration System"
+                badges={["Docker", "Jenkins", "Terraform", "Monitoring"]}
+                footer="DevOps Tools · Sep 2024"
+                description="An intelligent CI/CD orchestration system that automatically optimizes deployment pipelines based on code complexity and resource usage patterns."
+                highlights={["Smart Pipeline Optimization", "Resource Monitoring", "Auto-scaling", "Cost Analytics"]}
+                techStack="Python · Docker · Terraform · Prometheus"
+                cta={[
+                  { label: "GitHub Repo", link: "https://github.com", icon: "github" },
+                  { label: "Documentation", link: "#", icon: "docs" }
+                ]}
+                image="https://images.unsplash.com/photo-1503376780353-7e6692767b70?auto=format&fit=crop&q=80"
+              />
+
+              <ProjectCard
+                size="small"
+                title="ML Model Hub"
+                tagline="Centralized Machine Learning Model Management"
+                badges={["MLOps", "TensorFlow", "PyTorch", "API"]}
+                footer="Machine Learning · Aug 2024"
+                description="A comprehensive platform for versioning, deploying, and monitoring machine learning models with automated A/B testing and performance tracking."
+                highlights={["Model Versioning", "A/B Testing", "Performance Monitoring", "Auto Deployment"]}
+                techStack="Python · FastAPI · MLflow · Kubernetes"
+                cta={[
+                  { label: "GitHub Repo", link: "https://github.com", icon: "github" },
+                  { label: "API Docs", link: "#", icon: "docs" }
+                ]}
+                image="https://images.unsplash.com/photo-1580273916550-e323be2ae537?auto=format&fit=crop&q=80"
+              />
+
+              <ProjectCard
+                size="small"
+                title="Real-time Analytics"
+                tagline="High-Performance Data Processing Engine"
+                badges={["Kafka", "Spark", "Elasticsearch", "Dashboard"]}
+                footer="Data Engineering · Jul 2024"
+                description="A scalable real-time analytics engine that processes millions of events per second with sub-second latency and interactive dashboards."
+                highlights={["Stream Processing", "Sub-second Latency", "Interactive Dashboards", "Scalable Architecture"]}
+                techStack="Apache Kafka · Spark · Elasticsearch · React"
+                cta={[
+                  { label: "GitHub Repo", link: "https://github.com", icon: "github" },
+                  { label: "Live Dashboard", link: "#", icon: "external" }
+                ]}
+                image="https://images.unsplash.com/photo-1605559424843-9e4c228bf1c2?auto=format&fit=crop&q=80"
+              />
+            </div>
+
           </div>
         </section>
 
-        {/* PROJECTS */}
+
+{/* 
         <section className="relative bg-gradient-to-br from-zinc-50 via-white to-zinc-100 py-12 md:py-20">
           <div className="absolute inset-0 opacity-5 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')]" />
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(0,163,255,0.05)_0%,transparent_60%)]" />
@@ -783,7 +975,12 @@ export default function Home() {
                 )}
             </div>
           </div>
-        </section>
+        </section> 
+        */}
+        <ExperienceSection />
+
+        {/* SECTION 6 - EDUCATION */}
+        <EducationSection />
 
         {/* SECTION 7 - LATEST NEWS */}
         <section className="relative bg-gradient-to-br from-white via-blue-50 to-sky-50 py-12 md:py-20">

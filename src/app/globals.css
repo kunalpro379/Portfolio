@@ -5,6 +5,7 @@
 /* Updated: 2025-12-21T19:33:00.193Z */
 /* Updated: 2025-12-21T18:35:41.345Z */
 /* Updated: 2025-12-21T18:31:26.379Z */
+@import url('https://fonts.googleapis.com/css2?family=Kalam:wght@300;400;700&display=swap');
 @import "tailwindcss";
 @import "tw-animate-css";
 
@@ -191,6 +192,12 @@
     text-rendering: optimizeLegibility;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+  }
+
+  /* Handwritten font for skills */
+  .font-handwriting {
+    font-family: 'Kalam', 'Comic Sans MS', cursive;
+    font-weight: 400;
   }
 
   /* Reduce motion for accessibility */
