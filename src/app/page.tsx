@@ -244,17 +244,21 @@ export default function Home() {
 
         <div className="absolute inset-0 z-0">
           <motion.div
-            animate={{
+            initial={{ scale: 1, opacity: 0.15 }}
+            whileInView={{
               scale: [1, 1.1, 1],
               opacity: [0.15, 0.25, 0.15],
             }}
+            viewport={{ once: false, amount: 0.3 }}
             transition={{ duration: 15, repeat: Infinity, ease: "easeInOut" }}
             className="absolute top-[-20%] left-[-10%] w-[80%] h-[80%] bg-sky-400/20 rounded-full blur-[140px]" />
           <motion.div
-            animate={{
+            initial={{ scale: 1.1, opacity: 0.1 }}
+            whileInView={{
               scale: [1.1, 1, 1.1],
               opacity: [0.1, 0.2, 0.1],
             }}
+            viewport={{ once: false, amount: 0.3 }}
             transition={{ duration: 12, repeat: Infinity, ease: "easeInOut", delay: 2 }}
             className="absolute bottom-[-10%] right-[-10%] w-[70%] h-[70%] bg-blue-400/20 rounded-full blur-[140px]" />
         </div>
@@ -283,11 +287,12 @@ export default function Home() {
             <motion.div
               key={i}
               initial={{ opacity: 0, scale: 0 }}
-              animate={{
+              whileInView={{
                 opacity: [0, 0.3, 0],
                 scale: [0.5, 1, 0.5],
                 y: [0, -100]
               }}
+              viewport={{ once: false, amount: 0.1 }}
               transition={{
                 duration: props.duration,
                 repeat: Infinity,
@@ -348,7 +353,9 @@ export default function Home() {
                   </div>
 
                   <motion.div
-                    animate={{ y: [0, -10, 0] }}
+                    initial={{ y: 0 }}
+                    whileInView={{ y: [0, -10, 0] }}
+                    viewport={{ once: false, amount: 0.5 }}
                     transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
                     className="absolute -top-3 -right-3 md:-top-6 md:-right-6 px-3 md:px-6 py-1.5 md:py-3 bg-white border border-black/10 rounded-xl md:rounded-2xl shadow-2xl"
                   >
@@ -875,7 +882,7 @@ export default function Home() {
                   <div className="flex-1">
                     <ProjectCard {...projectsData.featuredProjects[14]} />
                   </div>
-                 
+
                 </div>
                 <div className="col-span-1 flex flex-col gap-6 h-[650px]">
                   <div className="flex-1">
@@ -914,13 +921,7 @@ export default function Home() {
                   <ProjectCard {...projectsData.featuredProjects[16]} />
                 </div>
               </div>
-
-
             </div>
-
-
-
-
           </div>
         </section>
 

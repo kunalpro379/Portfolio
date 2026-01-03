@@ -721,16 +721,7 @@
   ],
   "footer": "Personal Research Project · Twitter Slang LLM · 2024",
   "description": "SlangBot is a custom transformer-based language model trained on large-scale Twitter data to understand, generate, and contextualize slang, abbreviations, memes, and evolving internet language in real time.",
-  "highlights": [
-    "Custom transformer architecture trained from scratch",
-    "Large-scale Twitter slang and conversational dataset",
-    "Context-aware slang understanding and generation",
-    "Handles abbreviations, emojis, hashtags, and informal grammar",
-    "Temporal awareness of trending slang and phrases",
-    "Fine-tuned for conversational and short-text generation",
-    "Text normalization and slang-to-formal translation support",
-    "Evaluation on social-media-specific NLP benchmarks"
-  ],
+  
   "techStack": "Python · PyTorch · Transformers · NLP · Tokenization · Twitter Data · CUDA",
   "cta": [
     {
