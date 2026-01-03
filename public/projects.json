@@ -22,7 +22,7 @@
     },
 
     {
-      "size": "small",
+      "size": "big",
       "title": "FINAgent",
       "tagline": "Agentic Financial Research & Trading System",
       "badges": ["LangGraph", "Multi-Agent AI", "Time Series"],

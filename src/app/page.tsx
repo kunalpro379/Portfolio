@@ -154,29 +154,29 @@ export default function Home() {
         {/* Mobile Navbar - 3 Sections */}
         <div className="flex md:hidden gap-2 items-center">
           {/* Home */}
-          <div className="flex flex-col items-center justify-center p-3 bg-white/90 backdrop-blur-md border-2 border-black rounded-md shadow-lg cursor-pointer hover:bg-white transition-all active:scale-95">
+          <div className="flex flex-col items-center justify-center p-3 bg-white/90 backdrop-blur-md border-2 border-black rounded-md shadow-lg cursor-pointer active:scale-95">
             <HomeIcon size={18} className="mb-1" />
             <span className="text-[8px] font-bold uppercase">Home</span>
           </div>
 
           {/* Middle - Projects, Experience, Blogs */}
           <div className="flex gap-2 bg-white/90 backdrop-blur-md border-2 border-black rounded-md shadow-lg p-2">
-            <div className="flex flex-col items-center justify-center px-2 py-1 cursor-pointer hover:bg-black/5 rounded transition-all active:scale-95">
+            <div className="flex flex-col items-center justify-center px-2 py-1 cursor-pointer rounded active:scale-95 active:bg-black/5">
               <FolderKanban size={18} className="mb-1" />
               <span className="text-[8px] font-bold uppercase">Projects</span>
             </div>
-            <div className="flex flex-col items-center justify-center px-2 py-1 cursor-pointer hover:bg-black/5 rounded transition-all active:scale-95">
+            <div className="flex flex-col items-center justify-center px-2 py-1 cursor-pointer rounded active:scale-95 active:bg-black/5">
               <Briefcase size={18} className="mb-1" />
               <span className="text-[8px] font-bold uppercase">Experience</span>
             </div>
-            <div className="flex flex-col items-center justify-center px-2 py-1 cursor-pointer hover:bg-black/5 rounded transition-all active:scale-95">
+            <div className="flex flex-col items-center justify-center px-2 py-1 cursor-pointer rounded active:scale-95 active:bg-black/5">
               <BookOpen size={18} className="mb-1" />
               <span className="text-[8px] font-bold uppercase">Blogs</span>
             </div>
           </div>
 
           {/* Contact */}
-          <div className="flex flex-col items-center justify-center p-3 bg-white/90 backdrop-blur-md border-2 border-black rounded-md shadow-lg cursor-pointer hover:bg-white transition-all active:scale-95">
+          <div className="flex flex-col items-center justify-center p-3 bg-white/90 backdrop-blur-md border-2 border-black rounded-md shadow-lg cursor-pointer active:scale-95">
             <Mail size={18} className="mb-1" />
             <span className="text-[8px] font-bold uppercase">Contact</span>
           </div>
@@ -331,16 +331,19 @@ export default function Home() {
                         alt="Hero Character"
                         loading="eager"
                         fetchPriority="high"
+                        decoding="async"
+                        width={500}
+                        height={500}
                         className="absolute top-1/2 left-1/2 
              -translate-x-1/2 -translate-y-1/2 
              w-[100%] h-[100%] 
              md:w-[80%] md:h-[80%] 
              object-contain md:object-cover 
              grayscale rounded-2xl"
-                        style={{ imageRendering: "high-quality" }}
+                        style={{ imageRendering: "high-quality", contentVisibility: 'auto' }}
                       />
                     ) : (
-                      <div className="absolute inset-0 bg-gradient-to-br from-sky-100 to-sky-200 animate-pulse" />
+                      <div className="absolute inset-0 bg-gradient-to-br from-sky-100 to-sky-200" style={{ minHeight: '500px' }} />
                     )}
                   </div>
 
@@ -377,10 +380,10 @@ export default function Home() {
                 </p>
 
                 <div className="mt-6 md:mt-8 flex flex-col sm:flex-row gap-4 md:gap-6 w-full sm:w-auto">
-                  <div className="inline-flex items-center gap-4 px-6 md:px-8 py-3 md:py-4 bg-black text-white rounded-full font-black uppercase tracking-widest hover:bg-sky-500 hover:text-white transition-all cursor-pointer group text-xs md:text-base shadow-lg">
-                    See my work <ChevronRight size={18} className="group-hover:translate-x-1 transition-transform" />
+                  <div className="inline-flex items-center gap-4 px-6 md:px-8 py-3 md:py-4 bg-black text-white rounded-full font-black uppercase tracking-widest md:hover:bg-sky-500 md:hover:text-white transition-all cursor-pointer group text-xs md:text-base shadow-lg active:scale-95">
+                    See my work <ChevronRight size={18} className="md:group-hover:translate-x-1 transition-transform" />
                   </div>
-                  <div className="px-8 md:px-10 py-4 md:py-5 border border-black/20 bg-white/50 backdrop-blur-md text-black rounded-xl md:rounded-2xl font-black uppercase tracking-widest hover:bg-white/80 transition-all cursor-pointer text-center text-xs md:text-base shadow-lg">
+                  <div className="px-8 md:px-10 py-4 md:py-5 border border-black/20 bg-white/50 backdrop-blur-md text-black rounded-xl md:rounded-2xl font-black uppercase tracking-widest md:hover:bg-white/80 transition-all cursor-pointer text-center text-xs md:text-base shadow-lg active:scale-95">
                     Contact Me
                   </div>
                 </div>
@@ -421,13 +424,16 @@ export default function Home() {
                             src={img}
                             alt="Character"
                             loading={index === 0 ? "eager" : "lazy"}
+                            decoding="async"
+                            width={500}
+                            height={500}
                             className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[100%] h-[100%] md:w-[85%] md:h-[95%] object-contain md:object-cover grayscale rounded-2xl"
-                            style={{ imageRendering: 'high-quality' }}
+                            style={{ imageRendering: 'high-quality', contentVisibility: 'auto' }}
                           />
                         );
                       })
                     ) : (
-                      <div className="absolute inset-0 bg-gradient-to-br from-amber-100 to-amber-200 animate-pulse" />
+                      <div className="absolute inset-0 bg-gradient-to-br from-amber-100 to-amber-200" style={{ minHeight: '500px' }} />
                     )}
                   </div>
                 </div>
@@ -442,12 +448,18 @@ export default function Home() {
                     ENGINEERING<br />
                     <span className="text-transparent" style={{ WebkitTextStroke: '1.5px black' }}>Vault VI</span>
                   </h2> */}
-                  <img 
-                    src="/hero.png" 
-                    alt="Engineering Vault VI" 
-                    className="w-full max-w-md"
-                    loading="eager"
-                  />
+                  <div className="aspect-[2/1] w-full max-w-md">
+                    <img
+                      src="/hero.png"
+                      alt="Engineering Vault VI"
+                      width={448}
+                      height={224}
+                      loading="eager"
+                      decoding="async"
+                      className="w-full h-full object-contain"
+                      style={{ contentVisibility: 'auto' }}
+                    />
+                  </div>
                 </div>
 
                 <div className="space-y-4 md:space-y-6">
@@ -809,77 +821,102 @@ export default function Home() {
           <div className="max-w-[1440px] mx-auto px-6 md:px-12 relative z-10">
             <SectionHeader icon={FolderKanban} title="FEATURED PROJECTS" subtitle="PREMIUM WORK COLLECTION" dark={true} />
 
-            {/* Row 1: 1 big, 2 small, 1 big */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-8 mt-8 items-stretch">
-              <div className="lg:col-span-1">
-                <ProjectCard {...projectsData.featuredProjects[0]} />
-              </div>
-
-              <div className="lg:col-span-1 flex flex-col gap-4 md:gap-8">
-                <ProjectCard {...projectsData.featuredProjects[1]} />
-                <ProjectCard {...projectsData.featuredProjects[2]} />
-              </div>
-
-              <div className="lg:col-span-1">
-                <ProjectCard {...projectsData.featuredProjects[3]} />
-              </div>
-
-              <div className="lg:col-span-1 flex flex-col gap-4 md:gap-8">
-                <ProjectCard {...projectsData.featuredProjects[4]} />
-                <ProjectCard {...projectsData.featuredProjects[5]} />
-              </div>
-            </div>
-            {/* Row 2: 3 cards */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-8 mt-8">
-              <ProjectCard {...projectsData.featuredProjects[6]} />
-              <ProjectCard {...projectsData.featuredProjects[7]} />
-              <ProjectCard {...projectsData.featuredProjects[8]} />
-            </div>
-            {/* Row 3: 4 small cards */}
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-8 mt-8">
-              <ProjectCard {...projectsData.featuredProjects[9]} />
-              <ProjectCard {...projectsData.featuredProjects[10]} />
-              <ProjectCard {...projectsData.featuredProjects[11]} />
-              <ProjectCard {...projectsData.featuredProjects[12]} />
+            {/* Mobile Layout - Simple Vertical Stack */}
+            <div className="md:hidden space-y-4 mt-8">
+              {projectsData.featuredProjects.map((project, index) => (
+                <ProjectCard key={index} {...project} />
+              ))}
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 md:gap-8 mt-8 items-start">
-              <ProjectCard {...projectsData.featuredProjects[13]} />
-              <ProjectCard {...projectsData.featuredProjects[14]} />
-              <ProjectCard {...projectsData.featuredProjects[15]} />
-              <ProjectCard {...projectsData.featuredProjects[16]} />
-
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-8 mt-8 items-stretch">
-              <div className="lg:col-span-1 h-full">
-                <ProjectCard {...projectsData.featuredProjects[17]} />
-              </div>
-
-              <div className="lg:col-span-1 flex flex-col gap-4 md:gap-8 h-full">
-                <div className="flex-1">
-                  <ProjectCard {...projectsData.featuredProjects[18]} />
+            {/* Desktop Layout */}
+            <div className="hidden md:block">
+              {/* Row 1: big, 2 small, big, 2 small */}
+              <div className="grid grid-cols-4 gap-6 mt-8">
+                <div className="col-span-1 h-[650px]">
+                  <ProjectCard {...projectsData.featuredProjects[0]} />
                 </div>
-                <div className="flex-1">
-                  <ProjectCard {...projectsData.featuredProjects[19]} />
+
+                <div className="col-span-1 flex flex-col gap-6">
+                  <ProjectCard {...projectsData.featuredProjects[1]} />
+                  <ProjectCard {...projectsData.featuredProjects[2]} />
+                </div>
+
+                <div className="col-span-1 h-[650px]">
+                  <ProjectCard {...projectsData.featuredProjects[3]} />
+                </div>
+
+                <div className="col-span-1 flex flex-col gap-6">
+                  <ProjectCard {...projectsData.featuredProjects[4]} />
+                  <ProjectCard {...projectsData.featuredProjects[5]} />
                 </div>
               </div>
 
-              <div className="lg:col-span-1 flex flex-col gap-4 md:gap-8 h-full">
-                <div className="flex-1">
-                  <ProjectCard {...projectsData.featuredProjects[21]} />
+              {/* Row 2: 3 medium cards */}
+              <div className="grid grid-cols-3 gap-6 mt-6">
+                <ProjectCard {...projectsData.featuredProjects[6]} />
+                <ProjectCard {...projectsData.featuredProjects[7]} />
+                <ProjectCard {...projectsData.featuredProjects[8]} />
+              </div>
+
+              {/* Row 3: 4 small cards */}
+              <div className="grid grid-cols-4 gap-6 mt-6">
+                <ProjectCard {...projectsData.featuredProjects[9]} />
+                <ProjectCard {...projectsData.featuredProjects[10]} />
+                <ProjectCard {...projectsData.featuredProjects[11]} />
+                <ProjectCard {...projectsData.featuredProjects[12]} />
+              </div>
+
+              {/* Row 4: big card spanning 2 columns + 2 small */}
+              <div className="grid grid-cols-4 gap-6 mt-6">
+                <div className="col-span-2 h-[650px]">
+                  <ProjectCard {...projectsData.featuredProjects[13]} />
                 </div>
-                <div className="flex-1">
+                <div className="col-span-1 flex flex-col gap-6 h-[650px]">
+                  <div className="flex-1">
+                    <ProjectCard {...projectsData.featuredProjects[14]} />
+                  </div>
+                 
+                </div>
+                <div className="col-span-1 flex flex-col gap-6 h-[650px]">
+                  <div className="flex-1">
+                    <ProjectCard {...projectsData.featuredProjects[23]} />
+                  </div>
+                  <div className="flex-1">
+                    <ProjectCard {...projectsData.featuredProjects[21]} />
+                  </div>
+                </div>
+              </div>
+
+              {/* Row 5: big (SQL RAG), 2 medium stacked (Concurrency + Reverse Proxy), big (Parallel Encryptor) */}
+              <div className="grid grid-cols-4 gap-6 mt-6">
+                <div className="col-span-1 h-[650px]">
+                  <ProjectCard {...projectsData.featuredProjects[17]} />
+                </div>
+                <div className="col-span-2 flex flex-col gap-6">
+                  <div className="flex-1">
+                    <ProjectCard {...projectsData.featuredProjects[15]} />
+                  </div>
+                  <div className="flex-1">
+                    <ProjectCard {...projectsData.featuredProjects[6]} />
+                  </div>
+                </div>
+                <div className="col-span-1 h-[650px]">
+                  <ProjectCard {...projectsData.featuredProjects[20]} />
+                </div>
+              </div>
+
+              {/* Row 6: 2 big-width cards - full width, small height */}
+              <div className="grid grid-cols-2 gap-6 mt-6">
+                <div className="col-span-1">
                   <ProjectCard {...projectsData.featuredProjects[22]} />
                 </div>
+                <div className="col-span-1">
+                  <ProjectCard {...projectsData.featuredProjects[16]} />
+                </div>
               </div>
 
-              <div className="lg:col-span-1 h-full">
-                <ProjectCard {...projectsData.featuredProjects[20]} />
-              </div>
+
             </div>
-
-
-
 
 
 

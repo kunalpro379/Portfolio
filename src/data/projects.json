@@ -288,7 +288,7 @@
             "image": "/cloudcode.webp"
         },
         {
-            "size": "small",
+            "size": "medium",
             "title": "Sec-Auth NPM Package",
             "tagline": "Production-ready authentication with MFA, OAuth, and RBAC",
             "badges": [
@@ -322,7 +322,7 @@
             "image": "/Auth.webp"
         },
         {
-            "size": "small",
+            "size": "medium",
             "title": "VPN From Scratch (Linux)",
             "tagline": "Custom encrypted VPN built using TUN interfaces and OpenSSL",
             "badges": [
@@ -380,7 +380,7 @@
             "image": "/RateLimiter.webp"
         },
         {
-            "size": "small",
+            "size": "medium",
             "title": "Build Git From Scratch",
             "tagline": "Implementing core Git internals and object storage in Java",
             "badges": [
@@ -444,7 +444,7 @@
             "image": "/IGRS.webp"
         },
         {
-            "size": "small",
+            "size": "big",
             "title": "LSTM–ARIMA Stock Price Prediction",
             "tagline": "Hybrid time-series forecasting for financial market data",
             "badges": [
@@ -473,7 +473,7 @@
             "image": "/stock.webp"
         },
         {
-            "size": "big",
+            "size": "small-width",
             "title": "Concurrency Control Algorithms",
             "tagline": "Implementations of CRDTs and concurrent event handling systems",
             "badges": [
@@ -622,7 +622,7 @@
             "image": "webserver.webp"
         },
         {
-            "size": "small",
+            "size": "big",
             "title": "Parallel File Encryptor & Decryptor",
             "tagline": "High-performance multithreaded file encryption using AES and OS primitives",
             "badges": [
@@ -708,6 +708,39 @@
                 }
             ],
             "image": "/compression.webp"
-        }
+        },
+        {
+  "size": "small",
+  "title": "SlangBot",
+  "tagline": "Transformer-based language model trained on Twitter slang, trends, and internet culture",
+  "badges": [
+    "NLP Project",
+    "Transformer Model",
+    "Social Media AI",
+    "Language Modeling"
+  ],
+  "footer": "Personal Research Project · Twitter Slang LLM · 2024",
+  "description": "SlangBot is a custom transformer-based language model trained on large-scale Twitter data to understand, generate, and contextualize slang, abbreviations, memes, and evolving internet language in real time.",
+  "highlights": [
+    "Custom transformer architecture trained from scratch",
+    "Large-scale Twitter slang and conversational dataset",
+    "Context-aware slang understanding and generation",
+    "Handles abbreviations, emojis, hashtags, and informal grammar",
+    "Temporal awareness of trending slang and phrases",
+    "Fine-tuned for conversational and short-text generation",
+    "Text normalization and slang-to-formal translation support",
+    "Evaluation on social-media-specific NLP benchmarks"
+  ],
+  "techStack": "Python · PyTorch · Transformers · NLP · Tokenization · Twitter Data · CUDA",
+  "cta": [
+    {
+      "label": "GitHub Repo",
+      "link": "https://github.com",
+      "icon": "github"
+    }
+  ],
+  "image": "/slangbot.webp"
+}
+
     ]
 }
