@@ -3,6 +3,8 @@
         {
             "size": "big",
             "title": "SanskritGPT",
+            "titleColor": "white",
+            "descriptionColor": "white",
             "tagline": "Building a Sanskrit Language Model from scratch using Diffusion + Transformers",
             "badges": [
                 "Diffusion LLM",
@@ -36,6 +38,8 @@
         {
             "size": "small",
             "title": "FINAgent",
+            "titleColor": "black",
+            "descriptionColor": "white",
             "tagline": "Agentic Financial Research & Trading System",
             "badges": [
                 "LangGraph",
@@ -68,6 +72,8 @@
         {
             "size": "small",
             "title": "Video Pipeline",
+            "titleColor": "white",
+            "descriptionColor": "white",
             "tagline": "DRM-Protected Adaptive Bitrate Streaming",
             "badges": [
                 "AWS",
@@ -135,6 +141,8 @@
         {
             "size": "small",
             "title": "Hydralite.in",
+            "titleColor": "black",
+            "descriptionColor": "white",
             "tagline": "Automated Product Data Platform with Admin & Client Systems",
             "badges": [
                 "Internship Project",
@@ -159,11 +167,15 @@
                     "icon": "external"
                 }
             ],
-            "image": "/hydralite.png"
+            "image": "/hydralite.png",
+            "titleColor": "black",
+            "descriptionColor": "black"
         },
         {
             "size": "small",
             "title": "ProSmart.in",
+            "titleColor": "black",
+            "descriptionColor": "white",
             "tagline": "Scalable Product Data Management & Automation System",
             "badges": [
                 "Internship Project",
@@ -221,6 +233,8 @@
         {
             "size": "small",
             "title": "Sketch-to-Face GAN System",
+            "titleColor": "black",
+            "descriptionColor": "white",
             "tagline": "Converting human sketches into photorealistic faces using GANs",
             "badges": [
                 "GANs",
@@ -290,6 +304,8 @@
         {
             "size": "medium",
             "title": "Sec-Auth NPM Package",
+            "titleColor": "black",
+            "descriptionColor": "white",
             "tagline": "Production-ready authentication with MFA, OAuth, and RBAC",
             "badges": [
                 "Authentication",
@@ -353,6 +369,8 @@
         {
             "size": "medium",
             "title": "RateLimiter System Design",
+            "titleColor": "black",
+            "descriptionColor": "white",
             "tagline": "Design and implementation of scalable rate limiting algorithms",
             "badges": [
                 "System Design",
@@ -382,6 +400,8 @@
         {
             "size": "medium",
             "title": "Build Git From Scratch",
+            "titleColor": "black",
+            "descriptionColor": "white",
             "tagline": "Implementing core Git internals and object storage in Java",
             "badges": [
                 "Systems Programming",
@@ -410,6 +430,8 @@
         },
         {
             "size": "big",
+            "titleColor": "white",
+            "descriptionColor": "white",
             "title": "Intelligent Grievance Redressal Agent",
             "tagline": "Agentic AI system for automated grievance analysis and policy recommendations",
             "badges": [
@@ -474,6 +496,8 @@
         },
         {
             "size": "small-width",
+            "titleColor": "black",
+            "descriptionColor": "white",
             "title": "Concurrency Control Algorithms",
             "tagline": "Implementations of CRDTs and concurrent event handling systems",
             "badges": [
@@ -503,6 +527,8 @@
         },
         {
             "size": "small",
+            "titleColor": "black",
+            "descriptionColor": "white",
             "title": "TripPlanner.ai",
             "tagline": "Agent-based AI system for intelligent travel planning",
             "badges": [
@@ -532,6 +558,8 @@
         },
         {
             "size": "big",
+            "titleColor": "white",
+            "descriptionColor": "white",
             "title": "SQL + RAG Analytics Agent",
             "tagline": "Conversational AI agent for database querying, analysis, and visualization",
             "badges": [
@@ -563,6 +591,8 @@
         {
             "size": "small",
             "title": "Resync",
+            "titleColor": "black",
+            "descriptionColor": "white",
             "tagline": "AI-powered platform for research collaboration, discovery, and paper intelligence",
             "badges": [
                 "Hackathon Project",
@@ -594,6 +624,8 @@
         },
         {
             "size": "small",
+            "titleColor": "black",
+            "descriptionColor": "white",
             "title": "Multithreaded Proxy Web Server",
             "tagline": "High-performance proxy server with multithreading and LRU caching",
             "badges": [
@@ -654,6 +686,8 @@
         {
             "size": "small",
             "title": "OLDSOLD",
+            "titleColor": "black",
+            "descriptionColor": "white",
             "tagline": "Frontend marketplace for selling and buying used products",
             "badges": [
                 "Frontend Development",
@@ -683,6 +717,8 @@
         {
             "size": "small",
             "title": "File Compression (Huffman Coding)",
+            "titleColor": "black",
+            "descriptionColor": "white",
             "tagline": "Lossless file compression using Huffman encoding algorithm",
             "badges": [
                 "Algorithms",
@@ -710,28 +746,28 @@
             "image": "/compression.webp"
         },
         {
-  "size": "small",
-  "title": "SlangBot",
-  "tagline": "Transformer-based language model trained on Twitter slang, trends, and internet culture",
-  "badges": [
-    "NLP Project",
-    "Transformer Model",
-    "Social Media AI",
-    "Language Modeling"
-  ],
-  "footer": "Personal Research Project · Twitter Slang LLM · 2024",
-  "description": "SlangBot is a custom transformer-based language model trained on large-scale Twitter data to understand, generate, and contextualize slang, abbreviations, memes, and evolving internet language in real time.",
-  
-  "techStack": "Python · PyTorch · Transformers · NLP · Tokenization · Twitter Data · CUDA",
-  "cta": [
-    {
-      "label": "GitHub Repo",
-      "link": "https://github.com",
-      "icon": "github"
-    }
-  ],
-  "image": "/slangbot.webp"
-}
-
+            "size": "small",
+            "titleColor": "black",
+            "descriptionColor": "white",
+            "title": "SlangBot",
+            "tagline": "Transformer-based language model trained on Twitter slang, trends, and internet culture",
+            "badges": [
+                "NLP Project",
+                "Transformer Model",
+                "Social Media AI",
+                "Language Modeling"
+            ],
+            "footer": "Personal Research Project · Twitter Slang LLM · 2024",
+            "description": "SlangBot is a custom transformer-based language model trained on large-scale Twitter data to understand, generate, and contextualize slang, abbreviations, memes, and evolving internet language in real time.",
+            "techStack": "Python · PyTorch · Transformers · NLP · Tokenization · Twitter Data · CUDA",
+            "cta": [
+                {
+                    "label": "GitHub Repo",
+                    "link": "https://github.com",
+                    "icon": "github"
+                }
+            ],
+            "image": "/slangbot.webp"
+        }
     ]
 }

@@ -15,11 +15,12 @@ interface ProjectCardProps {
   badges: string[];
   footer: string;
   description: string;
-  highlights: string[];
   techStack: string;
   cta?: CTAItem[];
   image?: string;
   size?: "big" | "big-width" | "large" | "medium" | "small";
+  titleColor?: "white" | "black";
+  descriptionColor?: "white" | "black";
 }
 
 export default function ProjectCard({
@@ -28,11 +29,12 @@ export default function ProjectCard({
   badges,
   footer,
   description,
-  highlights,
   techStack,
   cta = [],
   image,
-  size = "medium"
+  size = "medium",
+  titleColor = "white",
+  descriptionColor = "white"
 }: ProjectCardProps) {
   const [isFlipped, setIsFlipped] = useState(false);
 
@@ -94,7 +96,7 @@ export default function ProjectCard({
                 className="w-full h-full object-cover opacity-100 md:opacity-70 md:group-hover:opacity-80 md:transition-opacity md:duration-500"
                 style={{ contentVisibility: 'auto' }}
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent" style={{ 
+              <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent" style={{
                 background: 'linear-gradient(to top, rgba(0,0,0,1) 0%, rgba(0,0,0,0.95) 10%, rgba(0,0,0,0.7) 20%, rgba(0,0,0,0.3) 30%, transparent 40%)'
               }} />
             </div>
@@ -105,13 +107,25 @@ export default function ProjectCard({
           <div className="relative z-10 h-full p-6 md:p-8 flex flex-col justify-end">
             <div className="space-y-4">
               <div>
-                <h3 className="text-2xl md:text-3xl font-black uppercase tracking-tight text-white leading-none mb-2">
+                <h3
+                  className={`text-2xl md:text-3xl font-black uppercase tracking-tight ${titleColor === "black" ? "text-black" : "text-white"} leading-none mb-2`}
+                  style={{
+                    WebkitTextStroke: titleColor === "black" ? "1.5px white" : "1.5px black",
+                    paintOrder: "stroke fill"
+                  }}
+                >
                   {title}
                 </h3>
                 <div className="h-[2px] w-12 bg-sky-500/60" />
               </div>
 
-              <p className="text-white/70 text-xs md:text-sm font-medium leading-relaxed max-w-lg">
+              <p
+                className={`${descriptionColor === "black" ? "text-black/70" : "text-white/70"} text-xs md:text-sm font-medium leading-relaxed max-w-lg`}
+                style={{
+                  WebkitTextStroke: descriptionColor === "black" ? "0.5px white" : "0.5px black",
+                  paintOrder: "stroke fill"
+                }}
+              >
                 {tagline}
               </p>
 
@@ -128,14 +142,9 @@ export default function ProjectCard({
 
               <div className="space-y-3 pt-2">
                 <div className="h-[1px] w-full bg-white/10" />
-                <div className="flex items-center justify-between">
-                  <p className="text-white/40 text-[10px] font-bold uppercase tracking-wider">
-                    {footer}
-                  </p>
-                  <span className="text-sky-400/50 text-[10px] font-bold uppercase tracking-wider opacity-0 group-hover:opacity-100 transition-opacity">
-                    Hover for details
-                  </span>
-                </div>
+                <p className="text-white/60 text-[10px] md:text-xs font-medium leading-relaxed line-clamp-2">
+                  {description}
+                </p>
               </div>
             </div>
           </div>
@@ -150,7 +159,7 @@ export default function ProjectCard({
           }}
         >
           <div className="flex-1 flex flex-col justify-center w-full overflow-hidden">
-            <p className="text-white/80 text-sm md:text-base font-medium leading-relaxed line-clamp-[12]">
+            <p className="text-white/90 text-base md:text-lg font-medium leading-relaxed">
               {description}
             </p>
           </div>
@@ -165,8 +174,8 @@ export default function ProjectCard({
                   rel="noopener noreferrer"
                   onClick={(e) => e.stopPropagation()}
                   className={`flex items-center gap-2 px-4 py-2 rounded-lg text-xs font-bold uppercase tracking-wider transition-all ${i === 0
-                      ? "bg-sky-500 hover:bg-sky-600 text-white"
-                      : "bg-white/10 hover:bg-white/20 text-white border border-white/20"
+                    ? "bg-sky-500 hover:bg-sky-600 text-white"
+                    : "bg-white/10 hover:bg-white/20 text-white border border-white/20"
                     }`}
                 >
                   {getIcon(item.icon)}
