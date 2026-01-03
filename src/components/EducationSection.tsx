@@ -1,9 +1,9 @@
-"use client";
-
 import { motion } from "framer-motion";
 import { GraduationCap, Award, BookOpen } from "lucide-react";
+import backgroundsData from "@/data/backgrounds.json";
 
 export default function EducationSection() {
+  const bgTexture = backgroundsData.sections.education;
   const education = [
     {
       year: "2022-2026",
@@ -32,9 +32,7 @@ export default function EducationSection() {
   ];
 
   return (
-    <section className="relative bg-[#fefce8] py-12 md:py-20">
-      <div className="absolute inset-0 opacity-5 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')]" />
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(0,163,255,0.05)_0%,transparent_60%)]" />
+    <section className="relative py-12 md:py-20">
       <div className="max-w-[1440px] mx-auto px-6 md:px-12 relative z-10">
 
         {/* Header */}
