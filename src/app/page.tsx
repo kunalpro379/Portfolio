@@ -34,8 +34,8 @@ export default function Home() {
   const [showAnimations, setShowAnimations] = useState(false);
 
   const heroImages1 = ["/me.png"];
-  // const heroImages2 = ["/papa.png", "/kunal2.png", "/friends.png", "/kunal.png", "/bhushan.png"];
-  const heroImages2 = ["/papa.png"];
+  const heroImages2 = ["/papa.png", "/kunal2.png", "/friends.png", "/kunal.png", "/bhushan.png"];
+  // const heroImages2 = ["/papa.png"];
 
 
 
