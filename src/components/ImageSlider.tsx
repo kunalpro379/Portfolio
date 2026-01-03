@@ -1,8 +1,5 @@
-"use client";
-
 import { motion, AnimatePresence } from "framer-motion";
 import { useState, useEffect, useMemo, useCallback, memo } from "react";
-import Image from "next/image";
 
 const images = [
   { src: "/kunal.png", alt: "Kunal" },

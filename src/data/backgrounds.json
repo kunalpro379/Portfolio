@@ -1,0 +1,39 @@
+{
+  "sections": {
+    "hero": {
+      "name": "Hero Section",
+      "texture": "/page2.png",
+      "opacity": 0.01
+    },
+    "about": {
+      "name": "About Section",
+      "texture": "/page3.png",
+      "opacity": 0.01
+    },
+    "projects": {
+      "name": "Projects Section",
+      "texture": "/page3.png",
+      "opacity": 0.01
+    },
+    "experience": {
+      "name": "Experience Section",
+      "texture": "/page5.png",
+      "opacity": 0.01
+    },
+    "education": {
+      "name": "Education Section",
+      "texture": "/page6.png",
+      "opacity": 0.01
+    },
+    "blogs": {
+      "name": "Blogs Section",
+      "texture": "/page7.png",
+      "opacity": 0.01
+    },
+    "contact": {
+      "name": "Contact Section",
+      "texture": "/page8.png",
+      "opacity": 0.01
+    }
+  }
+}

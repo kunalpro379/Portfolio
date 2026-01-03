@@ -1,135 +1,193 @@
-"use client";
-
 import { motion } from "framer-motion";
-import { BookOpen, ArrowRight } from "lucide-react";
+import { Link } from "react-router-dom";
+import { ChevronLeft, ChevronRight } from "lucide-react";
+import { useRef } from "react";
+import blogsData from "@/data/blogs.metadata.json";
+import backgroundsData from "@/data/backgrounds.json";
 
 export default function BlogsSection() {
-  const blogs = [
-    {
-      category: "Design",
-      title: "Top UI Design Trends You Should Know Today",
-      image: "https://images.unsplash.com/photo-1581291518633-83b4ebd1d83e?auto=format&fit=crop&q=80&w=800",
-      link: "#"
-    },
-    {
-      category: "Coding",
-      title: "Mastering JavaScript for Modern Web Projects",
-      image: "https://images.unsplash.com/photo-1587620962725-abab7fe55159?auto=format&fit=crop&q=80&w=800",
-      link: "#"
-    },
-    {
-      category: "Career",
-      title: "How I Started My Freelance Career Journey",
-      image: "https://images.unsplash.com/photo-1499750310107-5fef28a66643?auto=format&fit=crop&q=80&w=800",
-      link: "#"
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
+  const bgTexture = backgroundsData.sections.blogs;
+
+  const scroll = (direction: 'left' | 'right') => {
+    if (scrollContainerRef.current) {
+      const scrollAmount = 300;
+      const newScrollLeft = scrollContainerRef.current.scrollLeft + (direction === 'left' ? -scrollAmount : scrollAmount);
+      scrollContainerRef.current.scrollTo({
+        left: newScrollLeft,
+        behavior: 'smooth'
+      });
     }
-  ];
+  };
+
+  const blogs = blogsData.map((blog, idx) => {
+    const colors = [
+      "rgb(244, 114, 182)", // Pink
+      "rgb(251, 191, 36)",  // Amber
+      "rgb(167, 139, 250)", // Purple
+      "rgb(34, 197, 94)"    // Green
+    ];
+    return {
+      ...blog,
+      accentColor: colors[idx % colors.length]
+    };
+  });
 
   return (
-    <section className="relative bg-gradient-to-br from-white via-blue-50 to-sky-50 py-16 md:py-24">
-      <div className="absolute inset-0 opacity-5 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')]" />
-      
+    <section className="relative py-16 md:py-24">
       <div className="max-w-[1440px] mx-auto px-6 md:px-12 relative z-10">
-        
-        {/* Header */}
-        <div className="text-center mb-12 md:mb-16">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
-            className="inline-block mb-4"
-          >
-            <span className="px-4 py-1.5 rounded-full border border-sky-500/30 bg-sky-500/10 text-sky-600 text-[10px] font-black uppercase tracking-[0.3em]">
-              Insights & Thoughts
-            </span>
-          </motion.div>
 
+        {/* Header */}
+        <div className="mb-12 md:mb-16">
           <motion.h2
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            transition={{ duration: 0.6, delay: 0.1 }}
-            className="text-4xl md:text-7xl font-black uppercase tracking-tighter leading-none mb-4 text-black"
+            transition={{ duration: 0.6 }}
+            className="text-4xl md:text-6xl font-black tracking-tight leading-none text-black"
           >
-            Blogs & Notes
+            Documentation & Learnings
           </motion.h2>
+        </div>
 
-          <motion.p
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6, delay: 0.2 }}
-            className="text-black/60 text-sm md:text-base font-medium uppercase tracking-wider"
+        {/* Blog Cards Container with Navigation Arrows */}
+        <div className="relative">
+          {/* Left Arrow - Mobile Only */}
+          <button
+            onClick={() => scroll('left')}
+            className="md:hidden absolute left-0 top-1/2 -translate-y-1/2 z-20 bg-black text-white p-2 rounded-full shadow-lg"
+            aria-label="Scroll left"
           >
-            Sharing knowledge and experiences
-          </motion.p>
+            <ChevronLeft size={20} />
+          </button>
+
+          {/* Right Arrow - Mobile Only */}
+          <button
+            onClick={() => scroll('right')}
+            className="md:hidden absolute right-0 top-1/2 -translate-y-1/2 z-20 bg-black text-white p-2 rounded-full shadow-lg"
+            aria-label="Scroll right"
+          >
+            <ChevronRight size={20} />
+          </button>
+
+          {/* Blog Cards - Horizontal Scroll for Mobile, Grid for Desktop */}
+          <div 
+            ref={scrollContainerRef}
+            className="overflow-x-auto pt-4 pb-8 -mx-6 px-6 md:-mx-12 md:px-12 scrollbar-hide"
+          >
+            <div className="flex md:grid md:grid-cols-4 gap-4 md:gap-6 min-w-max md:min-w-0">
+              {blogs.map((blog, idx) => (
+                <motion.a
+                  key={idx}
+                  href={blog.blogUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  initial={{ opacity: 0, y: 50 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.6, delay: idx * 0.15 }}
+                  className="group relative block hover:scale-105 transition-all duration-300 w-[220px] md:w-auto flex-shrink-0"
+                >
+                  {/* Sketchy Border SVG Overlay */}
+                  <svg
+                    className="absolute inset-0 w-full h-full pointer-events-none z-10"
+                    style={{ filter: 'drop-shadow(2px 2px 1px rgba(0,0,0,0.1))' }}
+                  >
+                    <rect
+                      x="1"
+                      y="1"
+                      width="calc(100% - 2px)"
+                      height="calc(100% - 2px)"
+                      fill="none"
+                      stroke={blog.accentColor}
+                      strokeWidth="2.5"
+                      rx="6"
+                      strokeDasharray="5, 3"
+                      strokeLinecap="round"
+                    />
+                  </svg>
+
+                  {/* Card Container - Fixed Height with Flexbox */}
+                  <div
+                    className="relative bg-white overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 h-full flex flex-col"
+                    style={{
+                      borderRadius: '6px',
+                      border: `2px solid ${blog.accentColor}50`
+                    }}
+                  >
+
+                    {/* Subject/Category at Top */}
+                    <div className="p-3 md:p-4 flex-shrink-0">
+                      <div className="text-[10px] md:text-xs lg:text-sm font-bold text-black/70 font-handwriting">
+                        {blog.subject}
+                      </div>
+                    </div>
+
+                    {/* Image Section */}
+                    {blog.coverImage && (
+                      <div className="relative h-32 md:h-40 overflow-hidden bg-gray-50 flex-shrink-0">
+                        <img
+                          src={blog.coverImage}
+                          alt={blog.title}
+                          className="w-full h-full object-cover opacity-70 group-hover:opacity-90 group-hover:scale-110 transition-all duration-500 grayscale-[30%]"
+                        />
+                      </div>
+                    )}
+
+                    {/* Title and Description */}
+                    <div className="p-3 md:p-4 space-y-2 md:space-y-3 flex-grow">
+                      <h3 className="text-sm md:text-base lg:text-lg font-bold leading-tight text-black font-handwriting line-clamp-2">
+                        {blog.title}
+                      </h3>
+                      <p className="text-xs md:text-sm text-black/60 font-handwriting leading-relaxed line-clamp-2">
+                        {blog.shortDescription}
+                      </p>
+                    </div>
+
+                    {/* Date at Bottom */}
+                    <div className="px-3 md:px-4 pb-3 md:pb-4 flex-shrink-0">
+                      <div className="text-[10px] md:text-xs text-black/60 font-medium">
+                        {new Date(blog.dateUpdated).toLocaleDateString('en-US', { 
+                          month: 'short', 
+                          day: 'numeric', 
+                          year: 'numeric' 
+                        })} · {blog.readTime}
+                      </div>
+                    </div>
+                  </div>
+                </motion.a>
+              ))}
+            </div>
+          </div>
         </div>
 
-        {/* Blog Cards Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
-          {blogs.map((blog, idx) => (
-            <motion.a
-              key={idx}
-              href={blog.link}
-              initial={{ opacity: 0, y: 50 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.6, delay: idx * 0.2 }}
-              className="group relative bg-white rounded-2xl md:rounded-3xl overflow-hidden border-2 border-black/10 hover:border-sky-500 transition-all duration-300 hover:shadow-2xl"
-            >
-              {/* Image */}
-              <div className="relative h-64 overflow-hidden">
-                <img
-                  src={blog.image}
-                  alt={blog.title}
-                  className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
-                
-                {/* Category Badge */}
-                <div className="absolute top-4 left-4">
-                  <span className="px-3 py-1.5 rounded-full bg-white/90 backdrop-blur-sm text-black text-[10px] font-black uppercase tracking-wider">
-                    {blog.category}
-                  </span>
-                </div>
-              </div>
-
-              {/* Content */}
-              <div className="p-6 space-y-4">
-                <h3 className="text-xl md:text-2xl font-black uppercase tracking-tight text-black leading-tight group-hover:text-sky-500 transition-colors">
-                  {blog.title}
-                </h3>
-
-                {/* Read More Button */}
-                <div className="flex items-center gap-2 text-sky-500 font-black text-sm uppercase tracking-wide group-hover:gap-4 transition-all">
-                  Read More
-                  <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
-                </div>
-              </div>
-
-              {/* Hover Effect Overlay */}
-              <div className="absolute inset-0 bg-gradient-to-br from-sky-500/0 to-blue-500/0 group-hover:from-sky-500/5 group-hover:to-blue-500/5 transition-all duration-300 pointer-events-none" />
-            </motion.a>
-          ))}
-        </div>
-
-        {/* View All Button */}
+        {/* Show More Button */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          transition={{ duration: 0.6, delay: 0.6 }}
-          className="text-center mt-12"
+          transition={{ duration: 0.6, delay: 0.4 }}
+          className="text-center mt-8"
         >
-          <a
-            href="#"
-            className="inline-flex items-center gap-3 px-8 py-4 bg-black hover:bg-sky-500 text-white rounded-full font-black uppercase tracking-wider transition-all group"
+          <Link
+            to="/learnings"
+            className="inline-flex items-center gap-2 px-8 py-4 bg-black hover:bg-gray-800 text-white rounded-full font-bold uppercase tracking-wider transition-all text-sm md:text-base shadow-lg hover:shadow-xl"
           >
-            <BookOpen size={20} />
-            View All Blogs
-            <ArrowRight size={20} className="group-hover:translate-x-1 transition-transform" />
-          </a>
+            Show More
+            <svg 
+              className="w-4 h-4" 
+              fill="none" 
+              stroke="currentColor" 
+              viewBox="0 0 24 24"
+            >
+              <path 
+                strokeLinecap="round" 
+                strokeLinejoin="round" 
+                strokeWidth={2} 
+                d="M9 5l7 7-7 7" 
+              />
+            </svg>
+          </Link>
         </motion.div>
       </div>
     </section>

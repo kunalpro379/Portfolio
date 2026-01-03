@@ -1,10 +1,3 @@
-/* Updated: 2025-12-22T07:36:57.330Z */
-/* Updated: 2025-12-22T07:09:21.822Z */
-/* Updated: 2025-12-22T07:06:10.721Z */
-/* Updated: 2025-12-21T19:33:00.891Z */
-/* Updated: 2025-12-21T19:33:00.193Z */
-/* Updated: 2025-12-21T18:35:41.345Z */
-/* Updated: 2025-12-21T18:31:26.379Z */
 @import "tailwindcss";
 @import "tw-animate-css";
 
@@ -133,20 +126,19 @@
     @apply border-border outline-ring/50;
   }
   body {
-    @apply bg-background text-foreground;
+    @apply text-foreground;
     overflow-x: hidden;
+    background: transparent;
   }
   html {
     overflow-x: hidden;
   }
   
-  /* Prevent layout shift from images */
   img {
     max-width: 100%;
     height: auto;
   }
   
-  /* Ensure aspect ratios are maintained */
   [class*="aspect-"] {
     position: relative;
   }
@@ -161,21 +153,17 @@
   }
 }
 
-/* Performance Optimizations */
 @layer utilities {
-  /* GPU acceleration for animations */
   .gpu-accelerate {
     transform: translateZ(0);
     will-change: transform;
   }
 
-  /* Smooth scrolling with performance */
   .smooth-scroll {
     scroll-behavior: smooth;
     -webkit-overflow-scrolling: touch;
   }
 
-  /* Custom scrollbar for better UX */
   .custom-scrollbar::-webkit-scrollbar {
     width: 8px;
     height: 8px;
@@ -195,7 +183,6 @@
     background: rgba(56, 189, 248, 0.7);
   }
 
-  /* Hide scrollbar but keep functionality */
   .no-scrollbar::-webkit-scrollbar {
     display: none;
   }
@@ -205,7 +192,6 @@
     scrollbar-width: none;
   }
 
-  /* Hide scrollbar completely */
   .scrollbar-hide::-webkit-scrollbar {
     display: none;
   }
@@ -215,20 +201,17 @@
     scrollbar-width: none;
   }
 
-  /* Optimize text rendering */
   .optimize-text {
     text-rendering: optimizeLegibility;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
   }
 
-  /* Handwritten font for skills */
   .font-handwriting {
     font-family: 'Kalam', 'Comic Sans MS', cursive;
     font-weight: 400;
   }
 
-  /* Reduce motion for accessibility */
   @media (prefers-reduced-motion: reduce) {
     *,
     *::before,
@@ -239,18 +222,15 @@
     }
   }
 
-  /* Content visibility for better performance */
   .lazy-render {
     content-visibility: auto;
     contain-intrinsic-size: 500px;
   }
 
-  /* Optimize images */
   img {
     content-visibility: auto;
   }
 
-  /* Disable hover effects on mobile to save GPU */
   @media (hover: none) {
     .group:hover .group-hover\:opacity-80 {
       opacity: inherit;
@@ -269,7 +249,6 @@
     }
   }
 
-  /* Flip Card Utilities */
   .perspective-1000 {
     perspective: 1000px;
   }
@@ -288,7 +267,6 @@
   }
 }
 
-/* Reduce layout shifts */
 @layer base {
   html {
     scroll-behavior: smooth;
@@ -300,7 +278,6 @@
     -moz-osx-font-smoothing: grayscale;
   }
 
-  /* Prevent FOUC (Flash of Unstyled Content) */
   .loading {
     opacity: 0;
     transition: opacity 0.3s ease-in-out;
