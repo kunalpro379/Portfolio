@@ -30,6 +30,8 @@ export default function Home() {
   const [cardProps, setCardProps] = useState<any[]>([]);
   const [bokehProps, setBokehProps] = useState<any[]>([]);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [imagesLoaded, setImagesLoaded] = useState(false);
+  const [showAnimations, setShowAnimations] = useState(false);
 
   const heroImages1 = ["/me.png"];
   const heroImages2 = ["/papa.png", "/kunal2.png", "/friends.png", "/kunal.png", "/bhushan.png"];
@@ -37,7 +39,33 @@ export default function Home() {
 
   useEffect(() => {
     setIsMounted(true);
-    const props = Array.from({ length: 15 }).map(() => ({
+
+    // Preload critical images
+    const preloadImages = async () => {
+      const imagePromises = [...heroImages1, ...heroImages2].map((src) => {
+        return new Promise((resolve, reject) => {
+          const img = new Image();
+          img.src = src;
+          img.onload = resolve;
+          img.onerror = reject;
+        });
+      });
+
+      try {
+        await Promise.all(imagePromises);
+        setImagesLoaded(true);
+        // Delay animations until images are loaded
+        setTimeout(() => setShowAnimations(true), 100);
+      } catch (error) {
+        console.error("Error preloading images:", error);
+        setImagesLoaded(true); // Still show content even if some images fail
+        setShowAnimations(true);
+      }
+    };
+
+    preloadImages();
+
+    const props = Array.from({ length: 8 }).map(() => ({
       x: `${Math.random() * 100}vw`,
       rotate: Math.random() * 360,
       scale: 0.5 + Math.random() * 0.5,
@@ -46,7 +74,7 @@ export default function Home() {
     }));
     setCardProps(props);
 
-    const bProps = Array.from({ length: 15 }).map(() => ({
+    const bProps = Array.from({ length: 8 }).map(() => ({
       top: `${Math.random() * 100}%`,
       left: `${Math.random() * 100}%`,
       duration: 10 + Math.random() * 10,
@@ -251,7 +279,7 @@ export default function Home() {
 
         {/* Floating Bokeh / Particles */}
         <div className="absolute inset-0 z-[3] pointer-events-none">
-          {isMounted && bokehProps.map((props, i) => (
+          {showAnimations && bokehProps.map((props, i) => (
             <motion.div
               key={i}
               initial={{ opacity: 0, scale: 0 }}
@@ -291,24 +319,29 @@ export default function Home() {
                   <div className="absolute inset-0 bg-sky-400/20 rounded-[2rem] md:rounded-[4rem] rotate-6 scale-95" />
                   <div className="absolute inset-0 bg-black/5 rounded-[2rem] md:rounded-[4rem] -rotate-3 border border-black/10 backdrop-blur-sm" />
                   <div className="absolute inset-0 rounded-[2rem] md:rounded-[4rem] overflow-hidden border border-black/20 bg-gradient-to-br from-white/50 to-transparent">
-                    <motion.img
-                      initial={{ opacity: 0, x: 100, scale: 0.95 }}
-                      animate={{ opacity: 1, x: 0, scale: 1 }}
-                      transition={{
-                        duration: 1,
-                        ease: "easeInOut"
-                      }}
-                      src="/me.png"
-                      alt="Hero Character"
-                      className="absolute top-1/2 left-1/2 
+                    {imagesLoaded ? (
+                      <motion.img
+                        initial={{ opacity: 0, x: 100, scale: 0.95 }}
+                        animate={{ opacity: 1, x: 0, scale: 1 }}
+                        transition={{
+                          duration: 1,
+                          ease: "easeInOut"
+                        }}
+                        src="/me.png"
+                        alt="Hero Character"
+                        loading="eager"
+                        fetchPriority="high"
+                        className="absolute top-1/2 left-1/2 
              -translate-x-1/2 -translate-y-1/2 
              w-[100%] h-[100%] 
              md:w-[80%] md:h-[80%] 
              object-contain md:object-cover 
              grayscale rounded-2xl"
-                      style={{ imageRendering: "high-quality" }}
-                    />
-
+                        style={{ imageRendering: "high-quality" }}
+                      />
+                    ) : (
+                      <div className="absolute inset-0 bg-gradient-to-br from-sky-100 to-sky-200 animate-pulse" />
+                    )}
                   </div>
 
                   <motion.div
@@ -362,34 +395,40 @@ export default function Home() {
                   <div className="absolute inset-0 rounded-[2rem] md:rounded-[4rem] rotate-6 scale-95" />
                   <div className="absolute inset-0 bg-black/5 rounded-[2rem] md:rounded-[4rem] -rotate-3 border border-black/10 backdrop-blur-sm" />
                   <div className="absolute inset-0 rounded-[2rem] md:rounded-[4rem] overflow-hidden border border-black/20 bg-gradiradient-to-br from-yellow-50/60 to-amber-100/40">
-                    {heroImages2.map((img, index) => {
-                      const isActive = currentImageIndex === index;
-                      const isPrev = currentImageIndex === (index + 1) % heroImages2.length;
+                    {imagesLoaded ? (
+                      heroImages2.map((img, index) => {
+                        const isActive = currentImageIndex === index;
+                        const isPrev = currentImageIndex === (index + 1) % heroImages2.length;
 
-                      return (
-                        <motion.img
-                          key={img}
-                          initial={{
-                            imatecity: index === 0 ? 1 : 0,
-                            x: index === 0 ? 0 : 100,
-                            y: index === 0 ? 0 : -100
-                          }}
-                          animate={{
-                            opacity: isActive ? 1 : 0,
-                            x: isActive ? 0 : isPrev ? -100 : 100,
-                            y: isActive ? 0 : isPrev ? 100 : -100,
-                            scale: isActive ? 1 : 0.8
-                          }}
-                          transition={{
-                            duration: 1,
-                            ease: "easeInOut"
-                          }}
-                          src={img}
-                          alt="Character"
-                          className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[100%] h-[100%] md:w-[85%] md:h-[95%] object-contain md:object-cover grayscale rounded-2xl"
-                          style={{ imageRendering: 'high-quality' }} />
-                      );
-                    })}
+                        return (
+                          <motion.img
+                            key={img}
+                            initial={{
+                              opacity: index === 0 ? 1 : 0,
+                              x: index === 0 ? 0 : 100,
+                              y: index === 0 ? 0 : -100
+                            }}
+                            animate={{
+                              opacity: isActive ? 1 : 0,
+                              x: isActive ? 0 : isPrev ? -100 : 100,
+                              y: isActive ? 0 : isPrev ? 100 : -100,
+                              scale: isActive ? 1 : 0.8
+                            }}
+                            transition={{
+                              duration: 1,
+                              ease: "easeInOut"
+                            }}
+                            src={img}
+                            alt="Character"
+                            loading={index === 0 ? "eager" : "lazy"}
+                            className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[100%] h-[100%] md:w-[85%] md:h-[95%] object-contain md:object-cover grayscale rounded-2xl"
+                            style={{ imageRendering: 'high-quality' }}
+                          />
+                        );
+                      })
+                    ) : (
+                      <div className="absolute inset-0 bg-gradient-to-br from-amber-100 to-amber-200 animate-pulse" />
+                    )}
                   </div>
                 </div>
               </div>
@@ -399,10 +438,16 @@ export default function Home() {
                   <div className="flex items-center gap-4">
                     <span className="text-sky-500 font-black uppercase tracking-[0.3em] text-[10px] md:text-xs"></span>
                   </div>
-                  <h2 className="text-4xl md:text-8xl font-black uppercase tracking-tighter leading-none text-black">
+                  {/* <h2 className="text-4xl md:text-8xl font-black uppercase tracking-tighter leading-none text-black">
                     ENGINEERING<br />
                     <span className="text-transparent" style={{ WebkitTextStroke: '1.5px black' }}>Vault VI</span>
-                  </h2>
+                  </h2> */}
+                  <img 
+                    src="/hero.png" 
+                    alt="Engineering Vault VI" 
+                    className="w-full max-w-md"
+                    loading="eager"
+                  />
                 </div>
 
                 <div className="space-y-4 md:space-y-6">
@@ -437,6 +482,51 @@ export default function Home() {
                 <p>I'm a backend-focused engineer who enjoys building systems that are reliable, scalable, and ready for real users. I spend most of my time designing APIs, real-time systems, and cloud-native backends using Node.js and AWS.</p>
                 <p>I care deeply about performance, clean architecture, and fault tolerance — not just making things work, but making them last. Alongside backend and DevOps, I work extensively with AI systems, including LLMs, generative models, and image generation workflows integrated into real applications.</p>
                 <p>My focus is on making AI production-ready, not experimental. Currently, I'm exploring how generative AI, agents, and real-time infrastructure can come together to build practical, scalable, and high-impact systems.</p>
+              </div>
+
+              {/* Skills Table - Mobile Only */}
+              <div className="mt-8 bg-gray-100 border-2 border-black rounded-2xl overflow-hidden">
+                <div className="grid grid-cols-1 divide-y divide-black/20">
+                  {/* Languages */}
+                  <div className="p-6">
+                    <h3 className="text-black font-black uppercase tracking-wider text-sm mb-3">
+                      LANGUAGES
+                    </h3>
+                    <div className="text-black/70 text-sm font-handwriting leading-relaxed">
+                      C/C++, Java, Python, JavaScript, SQL
+                    </div>
+                  </div>
+
+                  {/* Technologies & Tools */}
+                  <div className="p-6">
+                    <h3 className="text-black font-black uppercase tracking-wider text-sm mb-3">
+                      TECHNOLOGIES & TOOLS
+                    </h3>
+                    <div className="text-black/70 text-sm font-handwriting leading-relaxed">
+                      AWS, Kubernetes, Docker, Kafka, Spring Boot, React.JS, Azure, GitHub Actions, Linux
+                    </div>
+                  </div>
+
+                  {/* Databases */}
+                  <div className="p-6">
+                    <h3 className="text-black font-black uppercase tracking-wider text-sm mb-3">
+                      DATABASES
+                    </h3>
+                    <div className="text-black/70 text-sm font-handwriting leading-relaxed">
+                      MySQL, MongoDB, GraphQL, Supabase, Redis
+                    </div>
+                  </div>
+
+                  {/* AI/ML */}
+                  <div className="p-6">
+                    <h3 className="text-black font-black uppercase tracking-wider text-sm mb-3">
+                      AI/ML
+                    </h3>
+                    <div className="text-black/70 text-sm font-handwriting leading-relaxed">
+                      Machine Learning, Data Analysis, Deep Learning, Generative AI, AI Agents
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
@@ -490,6 +580,8 @@ export default function Home() {
                 <img
                   src={tech.logo}
                   alt={tech.name}
+                  loading="lazy"
+                  decoding="async"
                   className="w-8 h-8 md:w-12 md:h-12 mb-1 md:mb-2 filter drop-shadow-[0_2px_8px_rgba(0,0,0,0.15)]"
                 />
                 <span className="text-[7px] md:text-[9px] font-black uppercase tracking-tight text-black/80 text-center">
