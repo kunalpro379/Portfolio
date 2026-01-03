@@ -10,6 +10,7 @@ export default function EducationSection() {
       degree: "Bachelor of Technology",
       field: "Artificial Intelligence and Data Science, Mumbai",
       institution: "Vivekanand Education Society Institute of Technology",
+      score: "CGPA: 8.1",
       image: "https://images.unsplash.com/photo-1541339907198-e08756dedf3f?auto=format&fit=crop&q=80"
     },
     {
@@ -17,6 +18,7 @@ export default function EducationSection() {
       degree: "Higher Secondary Certificate",
       field: "Science Stream (PCM)",
       institution: "Chandibai Himathmaal Mansukhani Collage, Ulhasnagar",
+      score: "89.67% | CET: 96.19 Percentile",
       image: "https://images.unsplash.com/photo-1541339907198-e08756dedf3f?auto=format&fit=crop&q=80"
     },
     {
@@ -24,6 +26,7 @@ export default function EducationSection() {
       degree: "Secondary School Certificate",
       field: "10th grade",
       institution: "Bhausaheb Paranjpe Vidyalaya, Ambernath,Thane",
+      score: "91%",
       image: "https://images.unsplash.com/photo-1541339907198-e08756dedf3f?auto=format&fit=crop&q=80"
     }
   ];
@@ -139,6 +142,13 @@ export default function EducationSection() {
                       </h3>
                       <p className="text-sky-600 font-bold text-sm uppercase tracking-wide">
                         {edu.field}
+                      </p>
+                    </div>
+
+                    {/* Score */}
+                    <div className="bg-white/80 backdrop-blur-sm px-3 py-1.5 rounded-lg inline-block">
+                      <p className="text-gray-900 font-black text-sm">
+                        {edu.score}
                       </p>
                     </div>
 

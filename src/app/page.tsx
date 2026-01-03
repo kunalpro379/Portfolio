@@ -8,6 +8,8 @@ import TypewriterText from "@/components/TypewriterText";
 import ProjectCard from "@/components/ProjectCard";
 import ExperienceSection from "@/components/ExperienceSection";
 import EducationSection from "@/components/EducationSection";
+import BlogsSection from "@/components/BlogsSection";
+import ContactSection from "@/components/ContactSection";
 import projectsDataRaw from "@/data/projects.json";
 
 interface ProjectData {
@@ -17,10 +19,11 @@ interface ProjectData {
   badges: string[];
   footer: string;
   description: string;
-  highlights: string[];
   techStack: string;
   cta?: Array<{ label: string; link: string; icon?: string }>;
   image?: string;
+  titleColor?: "white" | "black";
+  descriptionColor?: "white" | "black";
 }
 
 const projectsData = projectsDataRaw as { featuredProjects: ProjectData[] };
@@ -36,6 +39,13 @@ export default function Home() {
   const heroImages1 = ["/me.png"];
   const heroImages2 = ["/papa.png", "/kunal2.png", "/friends.png", "/kunal.png", "/bhushan.png"];
   // const heroImages2 = ["/papa.png"];
+
+  const scrollToSection = (sectionId: string) => {
+    const element = document.getElementById(sectionId);
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  };
 
 
 
@@ -156,29 +166,29 @@ export default function Home() {
         {/* Mobile Navbar - 3 Sections */}
         <div className="flex md:hidden gap-2 items-center">
           {/* Home */}
-          <div className="flex flex-col items-center justify-center p-3 bg-white/90 backdrop-blur-md border-2 border-black rounded-md shadow-lg cursor-pointer active:scale-95">
+          <div onClick={() => scrollToSection('home')} className="flex flex-col items-center justify-center p-3 bg-white/90 backdrop-blur-md border-2 border-black rounded-md shadow-lg cursor-pointer active:scale-95">
             <HomeIcon size={18} className="mb-1" />
             <span className="text-[8px] font-bold uppercase">Home</span>
           </div>
 
           {/* Middle - Projects, Experience, Blogs */}
           <div className="flex gap-2 bg-white/90 backdrop-blur-md border-2 border-black rounded-md shadow-lg p-2">
-            <div className="flex flex-col items-center justify-center px-2 py-1 cursor-pointer rounded active:scale-95 active:bg-black/5">
+            <div onClick={() => scrollToSection('projects')} className="flex flex-col items-center justify-center px-2 py-1 cursor-pointer rounded active:scale-95 active:bg-black/5">
               <FolderKanban size={18} className="mb-1" />
               <span className="text-[8px] font-bold uppercase">Projects</span>
             </div>
-            <div className="flex flex-col items-center justify-center px-2 py-1 cursor-pointer rounded active:scale-95 active:bg-black/5">
+            <div onClick={() => scrollToSection('experience')} className="flex flex-col items-center justify-center px-2 py-1 cursor-pointer rounded active:scale-95 active:bg-black/5">
               <Briefcase size={18} className="mb-1" />
               <span className="text-[8px] font-bold uppercase">Experience</span>
             </div>
-            <div className="flex flex-col items-center justify-center px-2 py-1 cursor-pointer rounded active:scale-95 active:bg-black/5">
+            <div onClick={() => scrollToSection('blogs')} className="flex flex-col items-center justify-center px-2 py-1 cursor-pointer rounded active:scale-95 active:bg-black/5">
               <BookOpen size={18} className="mb-1" />
               <span className="text-[8px] font-bold uppercase">Blogs</span>
             </div>
           </div>
 
           {/* Contact */}
-          <div className="flex flex-col items-center justify-center p-3 bg-white/90 backdrop-blur-md border-2 border-black rounded-md shadow-lg cursor-pointer active:scale-95">
+          <div onClick={() => scrollToSection('contact')} className="flex flex-col items-center justify-center p-3 bg-white/90 backdrop-blur-md border-2 border-black rounded-md shadow-lg cursor-pointer active:scale-95">
             <Mail size={18} className="mb-1" />
             <span className="text-[8px] font-bold uppercase">Contact</span>
           </div>
@@ -188,7 +198,7 @@ export default function Home() {
         <div className="hidden md:flex gap-4 items-center">
           {/* Home Section */}
           <div className="bg-white/90 backdrop-blur-2xl border-2 border-black rounded-lg shadow-lg px-6 py-4">
-            <div className="flex flex-col items-center justify-center cursor-pointer group">
+            <div onClick={() => scrollToSection('home')} className="flex flex-col items-center justify-center cursor-pointer group">
               <HomeIcon size={24} className="mb-2 text-black/70 group-hover:text-sky-500 transition-colors" />
               <span className="text-xs font-bold uppercase tracking-wider text-black/70 group-hover:text-black transition-colors">
                 {navItems.home}
@@ -199,25 +209,25 @@ export default function Home() {
           {/* Middle Section - About, Projects, Experience, Blogs */}
           <div className="bg-white/90 backdrop-blur-2xl border-2 border-black rounded-lg shadow-lg px-6 py-4">
             <div className="flex gap-8 items-center">
-              <div className="flex flex-col items-center justify-center cursor-pointer group">
+              <div onClick={() => scrollToSection('about')} className="flex flex-col items-center justify-center cursor-pointer group">
                 <User size={24} className="mb-2 text-black/70 group-hover:text-sky-500 transition-colors" />
                 <span className="text-xs font-bold uppercase tracking-wider text-black/70 group-hover:text-black transition-colors">
                   About
                 </span>
               </div>
-              <div className="flex flex-col items-center justify-center cursor-pointer group">
+              <div onClick={() => scrollToSection('projects')} className="flex flex-col items-center justify-center cursor-pointer group">
                 <FolderKanban size={24} className="mb-2 text-black/70 group-hover:text-sky-500 transition-colors" />
                 <span className="text-xs font-bold uppercase tracking-wider text-black/70 group-hover:text-black transition-colors">
                   Projects
                 </span>
               </div>
-              <div className="flex flex-col items-center justify-center cursor-pointer group">
+              <div onClick={() => scrollToSection('experience')} className="flex flex-col items-center justify-center cursor-pointer group">
                 <Briefcase size={24} className="mb-2 text-black/70 group-hover:text-sky-500 transition-colors" />
                 <span className="text-xs font-bold uppercase tracking-wider text-black/70 group-hover:text-black transition-colors">
                   Experience
                 </span>
               </div>
-              <div className="flex flex-col items-center justify-center cursor-pointer group">
+              <div onClick={() => scrollToSection('blogs')} className="flex flex-col items-center justify-center cursor-pointer group">
                 <BookOpen size={24} className="mb-2 text-black/70 group-hover:text-sky-500 transition-colors" />
                 <span className="text-xs font-bold uppercase tracking-wider text-black/70 group-hover:text-black transition-colors">
                   Blogs
@@ -228,7 +238,7 @@ export default function Home() {
 
           {/* Contact Section */}
           <div className="bg-white/90 backdrop-blur-2xl border-2 border-black rounded-lg shadow-lg px-6 py-4">
-            <div className="flex flex-col items-center justify-center cursor-pointer group">
+            <div onClick={() => scrollToSection('contact')} className="flex flex-col items-center justify-center cursor-pointer group">
               <Mail size={24} className="mb-2 text-black/70 group-hover:text-sky-500 transition-colors" />
               <span className="text-xs font-bold uppercase tracking-wider text-black/70 group-hover:text-black transition-colors">
                 {navItems.contact}
@@ -239,7 +249,7 @@ export default function Home() {
       </div>
 
       {/* SECTION 1 - HERO */}
-      <section className="relative min-h-screen p-2 md:p-3">
+      <section id="home" className="relative min-h-screen p-2 md:p-3">
 
         {/* Fixed Background Elements */}
         <div className="absolute inset-0 z-[2] opacity-[0.03] pointer-events-none" style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")` }} />
@@ -400,7 +410,7 @@ export default function Home() {
             </div>
 
             {/* Second Screen - About Content */}
-            <div className="pt-0 pb-10 flex flex-col lg:flex-row items-center px-6 md:px-24 max-w-7xl mx-auto w-full gap-10">
+            <div id="about" className="pt-0 pb-10 flex flex-col lg:flex-row items-center px-6 md:px-24 max-w-7xl mx-auto w-full gap-10">
               {/* Image First on Desktop, Second on Mobile */}
               <div className="relative w-full lg:w-[45%] aspect-square select-none order-2 lg:order-1">
                 <div className="relative w-full h-full max-w-[500px] mx-auto">
@@ -472,7 +482,7 @@ export default function Home() {
                 </div>
 
                 <div className="space-y-4 md:space-y-6">
-                  <p className="text-lg md:text-2xl text-black/70 font-medium leading-relaxed">
+                  <p className="text-lg md:text-2xl text-black/70 font-handwriting leading-relaxed">
                     I'm someone who enjoys going deep into problems, understanding how things really work, and finishing what I start.
                   </p>
 
@@ -498,14 +508,14 @@ export default function Home() {
             </div>
 
             {/* Mobile Only - Additional Text Below Image Section */}
-            <div className="md:hidden px-6 pb-10 max-w-7xl mx-auto w-full">
-              <div className="space-y-4 text-base text-black/70 font-handwriting leading-relaxed">
+            <div className="px-6 pb-10 max-w-7xl mx-auto w-full">
+              <div className="space-y-4 text-base md:text-2xl lg:text-3xl text-black/70 font-handwriting leading-relaxed">
                 <p>I'm a backend-focused engineer who enjoys building systems that are reliable, scalable, and ready for real users. I spend most of my time designing APIs, real-time systems, and cloud-native backends using Node.js and AWS.</p>
                 <p>I care deeply about performance, clean architecture, and fault tolerance — not just making things work, but making them last. Alongside backend and DevOps, I work extensively with AI systems, including LLMs, generative models, and image generation workflows integrated into real applications.</p>
                 <p>My focus is on making AI production-ready, not experimental. Currently, I'm exploring how generative AI, agents, and real-time infrastructure can come together to build practical, scalable, and high-impact systems.</p>
               </div>
 
-              {/* Skills Table - Mobile Only */}
+              {/* Skills Table */}
               <div className="mt-8 bg-gray-100 border-2 border-black rounded-2xl overflow-hidden">
                 <div className="grid grid-cols-1 divide-y divide-black/20">
                   {/* Languages */}
@@ -513,7 +523,7 @@ export default function Home() {
                     <h3 className="text-black font-black uppercase tracking-wider text-sm mb-3">
                       LANGUAGES
                     </h3>
-                    <div className="text-black/70 text-sm font-handwriting leading-relaxed">
+                    <div className="text-black/70 text-sm md:text-base font-handwriting leading-relaxed">
                       C/C++, Java, Python, JavaScript, SQL
                     </div>
                   </div>
@@ -523,7 +533,7 @@ export default function Home() {
                     <h3 className="text-black font-black uppercase tracking-wider text-sm mb-3">
                       TECHNOLOGIES & TOOLS
                     </h3>
-                    <div className="text-black/70 text-sm font-handwriting leading-relaxed">
+                    <div className="text-black/70 text-sm md:text-base font-handwriting leading-relaxed">
                       AWS, Kubernetes, Docker, Kafka, Spring Boot, React.JS, Azure, GitHub Actions, Linux
                     </div>
                   </div>
@@ -533,7 +543,7 @@ export default function Home() {
                     <h3 className="text-black font-black uppercase tracking-wider text-sm mb-3">
                       DATABASES
                     </h3>
-                    <div className="text-black/70 text-sm font-handwriting leading-relaxed">
+                    <div className="text-black/70 text-sm md:text-base font-handwriting leading-relaxed">
                       MySQL, MongoDB, GraphQL, Supabase, Redis
                     </div>
                   </div>
@@ -543,7 +553,7 @@ export default function Home() {
                     <h3 className="text-black font-black uppercase tracking-wider text-sm mb-3">
                       AI/ML
                     </h3>
-                    <div className="text-black/70 text-sm font-handwriting leading-relaxed">
+                    <div className="text-black/70 text-sm md:text-base font-handwriting leading-relaxed">
                       Machine Learning, Data Analysis, Deep Learning, Generative AI, AI Agents
                     </div>
                   </div>
@@ -619,164 +629,6 @@ export default function Home() {
       <div className="relative z-10">
 
 
-        {/* SECTION 3 - MY JOURNEY - Desktop Only */}
-        <section className="hidden md:flex items-center justify-center p-2 md:p-3 bg-[#0a0a0a]">
-          <div className="relative w-full rounded-2xl md:rounded-3xl bg-[#0a0a0a] border border-white/5 shadow-2xl overflow-hidden">
-
-            {/* Video Background */}
-            <div className="absolute inset-0 z-0">
-              <video
-                autoPlay
-                loop
-                muted
-                playsInline
-                className="w-full h-full object-cover"
-                style={{ objectFit: 'cover' }}
-              >
-                <source src="/GTAV.mp4" type="video/mp4" />
-              </video>
-              {/* Blur and transparency overlay */}
-              <div className="absolute inset-0 backdrop-blur-sm bg-black/60" />
-            </div>
-
-            {/* Warm gradient overlay */}
-            <div className="absolute inset-0 z-[1]">
-              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full bg-[radial-gradient(circle_at_center,rgba(251,146,60,0.08)_0%,transparent_70%)]" />
-            </div>
-
-            {/* BUILDING THE FUTURE CONTENT */}
-            <div className="relative z-4 flex flex-col min-h-[60vh] max-w-7xl mx-auto justify-center px-4 md:px-8 py-8 md:py-12">
-
-              {/* Typewriter Text Card */}
-              <div className="relative w-full space-y-4 md:space-y-12">
-                {/* Mobile - Static Text */}
-                <div className="md:hidden text-white/80 text-base leading-relaxed text-left space-y-4">
-                  <p>I'm a backend-focused engineer who enjoys building systems that are reliable, scalable, and ready for real users. I spend most of my time designing APIs, real-time systems, and cloud-native backends using Node.js and AWS.</p>
-                  <p>I care deeply about performance, clean architecture, and fault tolerance — not just making things work, but making them last. Alongside backend and DevOps, I work extensively with AI systems, including LLMs, generative models, and image generation workflows integrated into real applications.</p>
-                  <p>My focus is on making AI production-ready, not experimental. Currently, I'm exploring how generative AI, agents, and real-time infrastructure can come together to build practical, scalable, and high-impact systems.</p>
-                </div>
-
-                {/* Desktop - Typewriter Animation */}
-                <div className="hidden md:block space-y-12">
-                  <TypewriterText
-                    text="I'm a backend-focused engineer who enjoys building systems that are reliable, scalable, and ready for real users. I spend most of my time designing APIs, real-time systems, and cloud-native backends using Node.js and AWS."
-                    delay={500}
-                    speed={40}
-                    className="text-white/80 text-4xl leading-relaxed text-left"
-                  />
-                  <TypewriterText
-                    text="I care deeply about performance, clean architecture, and fault tolerance — not just making things work, but making them last. Alongside backend and DevOps, I work extensively with AI systems, including LLMs, generative models, and image generation workflows integrated into real applications."
-                    delay={4000}
-                    speed={40}
-                    className="text-white/80 text-4xl leading-relaxed text-left"
-                  />
-                  <TypewriterText
-                    text="My focus is on making AI production-ready, not experimental. Currently, I'm exploring how generative AI, agents, and real-time infrastructure can come together to build practical, scalable, and high-impact systems."
-                    delay={8500}
-                    speed={40}
-                    className="text-white/80 text-4xl leading-relaxed text-left"
-                  />
-                </div>
-              </div>
-
-
-              {/* Background Effects */}
-              <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(0,163,255,0.05)_0%,transparent_70%)]" />
-              <div className="absolute inset-0 opacity-[0.02]" style={{
-                backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")`
-              }} />
-
-              <div className="relative z-10 px-6 md:px-12 py-12 md:py-16 max-w-7xl mx-auto">
-
-                {/* <div className="text-center mb-4 md:mb-16">
-                  <motion.h2
-                    initial={{ opacity: 0, y: 20 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ duration: 0.6, delay: 0.1 }}
-                    className="text-2xl md:text-5xl font-black uppercase tracking-tighter leading-none mb-6 text-white"
-                  >
-                    SKILLS
-                  </motion.h2>
-                </div> */}
-
-                {/* Skills Single Card with Separations */}
-                <motion.div
-                  initial={{ opacity: 0, y: 30 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.8, delay: 0.2 }}
-                  className="max-w-6xl mx-auto"
-                >
-
-                  {/* Single Card Container */}
-                  <div className="bg-white/5 backdrop-blur-md border border-white/20 rounded-2xl overflow-hidden">
-                    <div
-                      className="absolute inset-0 opacity-10"
-                      style={{
-                        backgroundImage: "url('/outline.png')",
-                        backgroundSize: "cover",
-                        backgroundPosition: "center"
-                      }}
-                    />
-
-                    {/* Grid Layout with Separations */}
-                    <div className="relative z-10 grid grid-cols-1 md:grid-cols-4">
-
-                      {/* Languages */}
-                      <div className="p-6 md:p-8 border-r-0 md:border-r border-white/20">
-                        <h3 className="text-sm md:text-base font-black uppercase tracking-tight text-white mb-4 md:mb-6">
-                          LANGUAGES
-                        </h3>
-                        <div className="text-white/80 text-sm md:text-base font-handwriting leading-relaxed">
-                          C/C++, Java, Python, JavaScript, SQL
-                        </div>
-                      </div>
-
-                      {/* Technologies & Tools */}
-                      <div className="p-6 md:p-8 border-r-0 md:border-r border-white/20 border-t md:border-t-0 border-white/20">
-                        <h3 className="text-sm md:text-base font-black uppercase tracking-tight text-white mb-4 md:mb-6">
-                          TECHNOLOGIES & TOOLS
-                        </h3>
-                        <div className="text-white/80 text-sm md:text-base font-handwriting leading-relaxed">
-                          AWS, Kubernetes, Docker, Kafka, Spring Boot, React.JS, Azure, GitHub Actions, Linux
-                        </div>
-                      </div>
-
-                      {/* Databases */}
-                      <div className="p-6 md:p-8 border-r-0 md:border-r border-white/20 border-t md:border-t-0 border-white/20">
-                        <h3 className="text-sm md:text-base font-black uppercase tracking-tight text-white mb-4 md:mb-6">
-                          DATABASES
-                        </h3>
-                        <div className="text-white/80 text-sm md:text-base font-handwriting leading-relaxed">
-                          MySQL, MongoDB, GraphQL, Supabase, Redis
-                        </div>
-                      </div>
-
-                      {/* AI/ML */}
-                      <div className="p-6 md:p-8 border-t md:border-t-0 border-white/20">
-                        <h3 className="text-sm md:text-base font-black uppercase tracking-tight text-white mb-4 md:mb-6">
-                          AI/ML
-                        </h3>
-                        <div className="text-white/80 text-sm md:text-base font-handwriting leading-relaxed">
-                          Machine Learning, Data Analysis, Deep Learning, Generative AI, AI Agents
-                        </div>
-                      </div>
-
-                    </div>
-                  </div>
-
-                </motion.div>
-
-              </div>
-            </div>
-
-          </div>
-
-        </section>
-
-
-
         {/* SECTION 7 - SERVER STATS */}
         {/* <section className="relative min-h-screen flex items-center justify-center p-2 md:p-3">
           <div
@@ -824,7 +676,7 @@ export default function Home() {
         </section> */}
 
         {/* Projects */}
-        <section className="relative bg-[#fefce8] py-12 md:py-20">
+        <section id="projects" className="relative bg-[#fefce8] py-12 md:py-20">
           <div className="absolute inset-0 opacity-5 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')]" />
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(0,163,255,0.05)_0%,transparent_60%)]" />
           <div className="max-w-[1440px] mx-auto px-6 md:px-12 relative z-10">
@@ -957,9 +809,21 @@ export default function Home() {
           </div>
         </section> 
         */}
-        <ExperienceSection />
+        <div id="experience">
+          <ExperienceSection />
+        </div>
 
-        <EducationSection />
+        <div id="education">
+          <EducationSection />
+        </div>
+
+        <div id="blogs">
+          <BlogsSection />
+        </div>
+
+        <div id="contact">
+          <ContactSection />
+        </div>
         {/* 
         <section className="relative bg-gradient-to-br from-white via-blue-50 to-sky-50 py-12 md:py-20">
           <div className="absolute inset-0 opacity-5 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')]" />
