@@ -32,7 +32,7 @@ export default function Home() {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
   const heroImages1 = ["/me.png"];
-  const heroImages2 = ["/papa.png", "/kunal2.png", "/friends.png"];
+  const heroImages2 = ["/papa.png", "/kunal2.png", "/friends.png", "/kunal.png", "/bhushan.png"];
 
 
   useEffect(() => {
@@ -90,14 +90,16 @@ export default function Home() {
 
   const duration = 20;
 
-  const navItems = ["About", "Projects", "Experience", "TechStack", "Contact", "Blogs", "Work"];
+  const navItems = {
+    home: "Home",
+    middle: ["About", "Projects", "Experience"],
+    contact: "Contact Me"
+  };
   const mobileNavItems = [
-    { name: "About", icon: User },
+    { name: "Home", icon: HomeIcon },
     { name: "Projects", icon: FolderKanban },
     { name: "Experience", icon: Briefcase },
-    { name: "Contact", icon: Mail },
-    { name: "Blogs", icon: BookOpen },
-    { name: "Work", icon: Layers }
+    { name: "Blogs", icon: BookOpen }
   ];
 
   const SectionHeader = ({ icon: Icon, title, subtitle, dark = false }: { icon: any; title: string; subtitle: string; dark?: boolean; }) => {
@@ -121,53 +123,86 @@ export default function Home() {
     <div className="relative bg-gradient-to-br from-white via-blue-50 to-sky-50 font-sans selection:bg-sky-500 selection:text-white text-black">
       {/* FIXED TAB BAR */}
       <div className="fixed top-4 md:top-6 left-1/2 -translate-x-1/2 z-[1000] w-auto max-w-[95%]">
-        <div className="relative">
-          {/* Glow Effect - Desktop Only */}
-          <div className="hidden md:block absolute -inset-[2px] bg-gradient-to-r from-sky-400/30 via-blue-400/30 to-sky-400/30 rounded-full blur-xl z-[-1]" />
+        {/* Mobile Navbar - 3 Sections */}
+        <div className="flex md:hidden gap-2 items-center">
+          {/* Home */}
+          <div className="flex flex-col items-center justify-center p-3 bg-white/90 backdrop-blur-md border-2 border-black rounded-md shadow-lg cursor-pointer hover:bg-white transition-all active:scale-95">
+            <HomeIcon size={18} className="mb-1" />
+            <span className="text-[8px] font-bold uppercase">Home</span>
+          </div>
 
-          {/* Main Navbar */}
-          <div className="bg-white/90 border-2 border-black/10 md:backdrop-blur-2xl rounded-full px-3 md:px-6 py-2.5 md:py-3.5 flex items-center gap-2 md:gap-4 shadow-lg md:shadow-[0_8px_32px_rgba(0,0,0,0.1)]">
-            {/* Home Icon - Desktop Only */}
-            <div className="hidden md:flex w-11 h-11 rounded-full bg-gradient-to-br from-sky-500 to-sky-600 items-center justify-center text-white hover:from-sky-400 hover:to-sky-500 transition-all cursor-pointer group shadow-lg hover:shadow-sky-500/50 hover:scale-110 active:scale-95">
-              <HomeIcon size={18} className="group-hover:scale-110 transition-transform" />
+          {/* Middle - Projects, Experience, Blogs */}
+          <div className="flex gap-2 bg-white/90 backdrop-blur-md border-2 border-black rounded-md shadow-lg p-2">
+            <div className="flex flex-col items-center justify-center px-2 py-1 cursor-pointer hover:bg-black/5 rounded transition-all active:scale-95">
+              <FolderKanban size={18} className="mb-1" />
+              <span className="text-[8px] font-bold uppercase">Projects</span>
             </div>
-
-            {/* Divider - Desktop Only */}
-            <div className="hidden md:block w-[1px] h-6 bg-black/10" />
-
-            {/* Nav Items - Mobile */}
-            <div className="flex md:hidden gap-1.5 items-center">
-              {mobileNavItems.map((item) => {
-                const Icon = item.icon;
-                return (
-                  <div
-                    key={item.name}
-                    className="flex items-center justify-center p-2.5 rounded-lg text-black/70 cursor-pointer hover:text-black hover:bg-black/5 transition-all active:scale-95"
-                  >
-                    <Icon size={20} className="relative z-10" />
-                  </div>
-                );
-              })}
+            <div className="flex flex-col items-center justify-center px-2 py-1 cursor-pointer hover:bg-black/5 rounded transition-all active:scale-95">
+              <Briefcase size={18} className="mb-1" />
+              <span className="text-[8px] font-bold uppercase">Experience</span>
             </div>
+            <div className="flex flex-col items-center justify-center px-2 py-1 cursor-pointer hover:bg-black/5 rounded transition-all active:scale-95">
+              <BookOpen size={18} className="mb-1" />
+              <span className="text-[8px] font-bold uppercase">Blogs</span>
+            </div>
+          </div>
 
-            {/* Nav Items - Desktop */}
-            <div className="hidden md:flex gap-2 overflow-x-auto no-scrollbar">
-              {navItems.map((item) => (
-                <div
-                  key={item}
-                  className="relative px-5 py-2 rounded-full text-black/60 font-bold text-sm cursor-pointer hover:text-black transition-all hover:scale-105 active:scale-95 whitespace-nowrap group"
-                >
-                  {/* Hover Background */}
-                  <div className="absolute inset-0 bg-gradient-to-r from-sky-500/0 via-sky-500/10 to-sky-500/0 rounded-full opacity-0 group-hover:opacity-100 transition-opacity" />
-                  <div className="absolute inset-0 border border-black/0 group-hover:border-black/10 rounded-full transition-all" />
+          {/* Contact */}
+          <div className="flex flex-col items-center justify-center p-3 bg-white/90 backdrop-blur-md border-2 border-black rounded-md shadow-lg cursor-pointer hover:bg-white transition-all active:scale-95">
+            <Mail size={18} className="mb-1" />
+            <span className="text-[8px] font-bold uppercase">Contact</span>
+          </div>
+        </div>
 
-                  {/* Text */}
-                  <span className="relative z-10">{item}</span>
+        {/* Desktop Navbar - Three Separate Sections */}
+        <div className="hidden md:flex gap-4 items-center">
+          {/* Home Section */}
+          <div className="bg-white/90 backdrop-blur-2xl border-2 border-black rounded-lg shadow-lg px-6 py-4">
+            <div className="flex flex-col items-center justify-center cursor-pointer group">
+              <HomeIcon size={24} className="mb-2 text-black/70 group-hover:text-sky-500 transition-colors" />
+              <span className="text-xs font-bold uppercase tracking-wider text-black/70 group-hover:text-black transition-colors">
+                {navItems.home}
+              </span>
+            </div>
+          </div>
 
-                  {/* Active Indicator Dot */}
-                  <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-1 h-1 bg-sky-500 rounded-full opacity-0 group-hover:opacity-100 transition-opacity" />
-                </div>
-              ))}
+          {/* Middle Section - About, Projects, Experience, Blogs */}
+          <div className="bg-white/90 backdrop-blur-2xl border-2 border-black rounded-lg shadow-lg px-6 py-4">
+            <div className="flex gap-8 items-center">
+              <div className="flex flex-col items-center justify-center cursor-pointer group">
+                <User size={24} className="mb-2 text-black/70 group-hover:text-sky-500 transition-colors" />
+                <span className="text-xs font-bold uppercase tracking-wider text-black/70 group-hover:text-black transition-colors">
+                  About
+                </span>
+              </div>
+              <div className="flex flex-col items-center justify-center cursor-pointer group">
+                <FolderKanban size={24} className="mb-2 text-black/70 group-hover:text-sky-500 transition-colors" />
+                <span className="text-xs font-bold uppercase tracking-wider text-black/70 group-hover:text-black transition-colors">
+                  Projects
+                </span>
+              </div>
+              <div className="flex flex-col items-center justify-center cursor-pointer group">
+                <Briefcase size={24} className="mb-2 text-black/70 group-hover:text-sky-500 transition-colors" />
+                <span className="text-xs font-bold uppercase tracking-wider text-black/70 group-hover:text-black transition-colors">
+                  Experience
+                </span>
+              </div>
+              <div className="flex flex-col items-center justify-center cursor-pointer group">
+                <BookOpen size={24} className="mb-2 text-black/70 group-hover:text-sky-500 transition-colors" />
+                <span className="text-xs font-bold uppercase tracking-wider text-black/70 group-hover:text-black transition-colors">
+                  Blogs
+                </span>
+              </div>
+            </div>
+          </div>
+
+          {/* Contact Section */}
+          <div className="bg-white/90 backdrop-blur-2xl border-2 border-black rounded-lg shadow-lg px-6 py-4">
+            <div className="flex flex-col items-center justify-center cursor-pointer group">
+              <Mail size={24} className="mb-2 text-black/70 group-hover:text-sky-500 transition-colors" />
+              <span className="text-xs font-bold uppercase tracking-wider text-black/70 group-hover:text-black transition-colors">
+                {navItems.contact}
+              </span>
             </div>
           </div>
         </div>
@@ -327,25 +362,34 @@ export default function Home() {
                   <div className="absolute inset-0 rounded-[2rem] md:rounded-[4rem] rotate-6 scale-95" />
                   <div className="absolute inset-0 bg-black/5 rounded-[2rem] md:rounded-[4rem] -rotate-3 border border-black/10 backdrop-blur-sm" />
                   <div className="absolute inset-0 rounded-[2rem] md:rounded-[4rem] overflow-hidden border border-black/20 bg-gradiradient-to-br from-yellow-50/60 to-amber-100/40">
-                    {heroImages2.map((img, index) => (
-                      <motion.img
-                        key={img}
-                        initial={{ opacity: index === 0 ? 1 : 0, x: index === 0 ? 0 : 100 }}
-                        animate={{
-                          opacity: currentImageIndex === index ? 1 : 0,
-                          x: currentImageIndex === index ? 0 : 100,
-                          scale: 1
-                        }}
-                        transition={{
-                          opacity: { duration: 1, ease: "easeInOut" },
-                          x: { duration: 1, ease: "easeInOut" },
-                          scale: { duration: 1, ease: "easeInOut" }
-                        }}
-                        src={img}
-                        alt="Character"
-                        className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[100%] h-[100%] md:w-[80%] md:h-[80%] object-contain md:object-cover grayscale rounded-2xl"
-                        style={{ imageRendering: 'high-quality' }} />
-                    ))}
+                    {heroImages2.map((img, index) => {
+                      const isActive = currentImageIndex === index;
+                      const isPrev = currentImageIndex === (index + 1) % heroImages2.length;
+
+                      return (
+                        <motion.img
+                          key={img}
+                          initial={{
+                            imatecity: index === 0 ? 1 : 0,
+                            x: index === 0 ? 0 : 100,
+                            y: index === 0 ? 0 : -100
+                          }}
+                          animate={{
+                            opacity: isActive ? 1 : 0,
+                            x: isActive ? 0 : isPrev ? -100 : 100,
+                            y: isActive ? 0 : isPrev ? 100 : -100,
+                            scale: isActive ? 1 : 0.8
+                          }}
+                          transition={{
+                            duration: 1,
+                            ease: "easeInOut"
+                          }}
+                          src={img}
+                          alt="Character"
+                          className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[100%] h-[100%] md:w-[85%] md:h-[95%] object-contain md:object-cover grayscale rounded-2xl"
+                          style={{ imageRendering: 'high-quality' }} />
+                      );
+                    })}
                   </div>
                 </div>
               </div>
@@ -365,6 +409,7 @@ export default function Home() {
                   <p className="text-lg md:text-2xl text-black/70 font-medium leading-relaxed">
                     I'm someone who enjoys going deep into problems, understanding how things really work, and finishing what I start.
                   </p>
+
                   <div className="flex flex-wrap gap-6 md:gap-10">
                     <div>
                       <div className="text-2xl md:text-4xl font-black mb-1 text-black">02+</div>
@@ -383,6 +428,15 @@ export default function Home() {
 
                 <div className="pt-4 md:pt-6">
                 </div>
+              </div>
+            </div>
+
+            {/* Mobile Only - Additional Text Below Image Section */}
+            <div className="md:hidden px-6 pb-10 max-w-7xl mx-auto w-full">
+              <div className="space-y-4 text-base text-black/70 font-handwriting leading-relaxed">
+                <p>I'm a backend-focused engineer who enjoys building systems that are reliable, scalable, and ready for real users. I spend most of my time designing APIs, real-time systems, and cloud-native backends using Node.js and AWS.</p>
+                <p>I care deeply about performance, clean architecture, and fault tolerance — not just making things work, but making them last. Alongside backend and DevOps, I work extensively with AI systems, including LLMs, generative models, and image generation workflows integrated into real applications.</p>
+                <p>My focus is on making AI production-ready, not experimental. Currently, I'm exploring how generative AI, agents, and real-time infrastructure can come together to build practical, scalable, and high-impact systems.</p>
               </div>
             </div>
           </div>
@@ -452,8 +506,8 @@ export default function Home() {
       <div className="relative z-10">
 
 
-        {/* SECTION 3 - MY JOURNEY */}
-        <section className="flex items-center justify-center p-2 md:p-3 bg-[#0a0a0a]">
+        {/* SECTION 3 - MY JOURNEY - Desktop Only */}
+        <section className="hidden md:flex items-center justify-center p-2 md:p-3 bg-[#0a0a0a]">
           <div className="relative w-full rounded-2xl md:rounded-3xl bg-[#0a0a0a] border border-white/5 shadow-2xl overflow-hidden">
 
             {/* Video Background */}
@@ -482,24 +536,34 @@ export default function Home() {
 
               {/* Typewriter Text Card */}
               <div className="relative w-full space-y-4 md:space-y-12">
-                <TypewriterText
-                  text="I'm a backend-focused engineer who enjoys building systems that are reliable, scalable, and ready for real users. I spend most of my time designing APIs, real-time systems, and cloud-native backends using Node.js and AWS."
-                  delay={500}
-                  speed={40}
-                  className="text-white/80 text-base md:text-4xl leading-relaxed text-left"
-                />
-                <TypewriterText
-                  text="I care deeply about performance, clean architecture, and fault tolerance — not just making things work, but making them last. Alongside backend and DevOps, I work extensively with AI systems, including LLMs, generative models, and image generation workflows integrated into real applications."
-                  delay={4000}
-                  speed={40}
-                  className="text-white/80 text-base md:text-4xl leading-relaxed text-left"
-                />
-                <TypewriterText
-                  text="My focus is on making AI production-ready, not experimental. Currently, I'm exploring how generative AI, agents, and real-time infrastructure can come together to build practical, scalable, and high-impact systems."
-                  delay={8500}
-                  speed={40}
-                  className="text-white/80 text-base md:text-4xl leading-relaxed text-left"
-                />
+                {/* Mobile - Static Text */}
+                <div className="md:hidden text-white/80 text-base leading-relaxed text-left space-y-4">
+                  <p>I'm a backend-focused engineer who enjoys building systems that are reliable, scalable, and ready for real users. I spend most of my time designing APIs, real-time systems, and cloud-native backends using Node.js and AWS.</p>
+                  <p>I care deeply about performance, clean architecture, and fault tolerance — not just making things work, but making them last. Alongside backend and DevOps, I work extensively with AI systems, including LLMs, generative models, and image generation workflows integrated into real applications.</p>
+                  <p>My focus is on making AI production-ready, not experimental. Currently, I'm exploring how generative AI, agents, and real-time infrastructure can come together to build practical, scalable, and high-impact systems.</p>
+                </div>
+
+                {/* Desktop - Typewriter Animation */}
+                <div className="hidden md:block space-y-12">
+                  <TypewriterText
+                    text="I'm a backend-focused engineer who enjoys building systems that are reliable, scalable, and ready for real users. I spend most of my time designing APIs, real-time systems, and cloud-native backends using Node.js and AWS."
+                    delay={500}
+                    speed={40}
+                    className="text-white/80 text-4xl leading-relaxed text-left"
+                  />
+                  <TypewriterText
+                    text="I care deeply about performance, clean architecture, and fault tolerance — not just making things work, but making them last. Alongside backend and DevOps, I work extensively with AI systems, including LLMs, generative models, and image generation workflows integrated into real applications."
+                    delay={4000}
+                    speed={40}
+                    className="text-white/80 text-4xl leading-relaxed text-left"
+                  />
+                  <TypewriterText
+                    text="My focus is on making AI production-ready, not experimental. Currently, I'm exploring how generative AI, agents, and real-time infrastructure can come together to build practical, scalable, and high-impact systems."
+                    delay={8500}
+                    speed={40}
+                    className="text-white/80 text-4xl leading-relaxed text-left"
+                  />
+                </div>
               </div>
 
 
@@ -764,7 +828,7 @@ export default function Home() {
         <ExperienceSection />
 
         <EducationSection />
-{/* 
+        {/* 
         <section className="relative bg-gradient-to-br from-white via-blue-50 to-sky-50 py-12 md:py-20">
           <div className="absolute inset-0 opacity-5 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')]" />
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(0,163,255,0.05)_0%,transparent_60%)]" />
