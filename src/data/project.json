@@ -1,0 +1,29 @@
+{
+  "title": "Custom VPN Implementation from Scratch",
+  "tagline": "Building a secure VPN using TUN interfaces and OpenSSL in C++",
+  "description": "A lightweight, from-scratch VPN implementation in C++ that demonstrates secure tunneling using Linux TUN interfaces, OpenSSL encryption, routing, and NAT. Designed to understand how real VPNs work internally at the packet and system level.",
+  "githubLink": "https://github.com/kunalpro379/MY_VPN_From_scratch_CPP",
+  "topics": [
+    "vpn",
+    "networking",
+    "system-programming",
+    "linux",
+    "tun-tap",
+    "openssl",
+    "encryption",
+    "routing",
+    "iptables",
+    "nat",
+    "c-plus-plus"
+  ],
+  "tags": [
+    "C++",
+    "Low-Level Networking",
+    "Security",
+    "Linux Kernel",
+    "TUN Interface",
+    "SSL/TLS",
+    "Network Routing",
+    "Firewall Configuration"
+  ]
+}

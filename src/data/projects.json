@@ -6,12 +6,7 @@
             "titleColor": "white",
             "descriptionColor": "white",
             "tagline": "Building a Sanskrit Language Model from scratch using Diffusion + Transformers",
-            "badges": [
-                "Diffusion LLM",
-                "Transformer Denoiser",
-                "Low-Resource NLP",
-                "Research Project"
-            ],
+            
             "footer": "From-scratch generative model · Oct 2024",
             "description": "A masked diffusion-based language model designed specifically for Sanskrit text generation, focusing on semantic denoising rather than next-token prediction.",
             "highlights": [
@@ -41,11 +36,7 @@
             "titleColor": "black",
             "descriptionColor": "white",
             "tagline": "Agentic Financial Research & Trading System",
-            "badges": [
-                "LangGraph",
-                "Multi-Agent AI",
-                "Time Series"
-            ],
+            
             "footer": "AI agents · Dec 2024",
             "description": "A modular AI-driven financial analyst system that combines market data, agents, memory, and orchestration graphs.",
             "highlights": [
@@ -75,12 +66,7 @@
             "titleColor": "white",
             "descriptionColor": "white",
             "tagline": "DRM-Protected Adaptive Bitrate Streaming",
-            "badges": [
-                "AWS",
-                "FFMPEG",
-                "HLS",
-                "DRM"
-            ],
+            
             "footer": "Scalable media backend · Jan 2025",
             "description": "An automated video pipeline that downloads raw videos, transcodes them into multiple resolutions, encrypts segments, and delivers them via HLS.",
             "highlights": [
@@ -108,12 +94,7 @@
             "size": "big",
             "title": "Remote Desktop & File Sharing System",
             "tagline": "Secure multi-client remote desktop with real-time file sharing",
-            "badges": [
-                "Remote Desktop Protocol",
-                "Real-time Streaming",
-                "Redis Queues",
-                "Systems Engineering"
-            ],
+            
             "footer": "Multi-client architecture · Mar 2024",
             "description": "A secure remote desktop application supporting multiple concurrent users with real-time screen sharing, file transfer, and chat. Optimized for low bandwidth environments using dirty rectangle streaming.",
             "highlights": [
@@ -141,15 +122,10 @@
         {
             "size": "small",
             "title": "Hydralite.in",
-            "titleColor": "black",
+            "titleColor": "white",
             "descriptionColor": "white",
             "tagline": "Automated Product Data Platform with Admin & Client Systems",
-            "badges": [
-                "Internship Project",
-                "n8n Automation",
-                "Admin Dashboard",
-                "Data Pipelines"
-            ],
+            
             "footer": "Production system · Internship Project · 2025",
             "description": "A production-grade product management and automation platform built during internship, focused on transforming raw product data into structured datasets and dynamically serving them to a client-facing website.",
             "highlights": [
@@ -167,9 +143,7 @@
                     "icon": "external"
                 }
             ],
-            "image": "/hydralite.png",
-            "titleColor": "black",
-            "descriptionColor": "black"
+            "image": "/hydralite.png"
         },
         {
             "size": "small",
@@ -177,12 +151,7 @@
             "titleColor": "black",
             "descriptionColor": "white",
             "tagline": "Scalable Product Data Management & Automation System",
-            "badges": [
-                "Internship Project",
-                "Backend Systems",
-                "Automation",
-                "Data Engineering"
-            ],
+            
             "footer": "Enterprise product platform · Internship Project · 2025",
             "description": "A scalable backend-driven product platform developed during internship, enabling automated ingestion, cleaning, and structured presentation of large-scale product data through admin and client interfaces.",
             "highlights": [
@@ -206,12 +175,7 @@
             "size": "small",
             "title": "Reverse Proxy Web Server",
             "tagline": "Custom reverse proxy with WebSocket routing and security filtering",
-            "badges": [
-                "Reverse Proxy",
-                "Spring Boot",
-                "WebSockets",
-                "Backend Infrastructure"
-            ],
+            
             "footer": "Traffic control & routing · Apr 2025",
             "description": "A high-performance reverse proxy built using Spring Boot to forward HTTP and WebSocket traffic with advanced routing, logging, and security controls.",
             "highlights": [
@@ -236,12 +200,7 @@
             "titleColor": "black",
             "descriptionColor": "white",
             "tagline": "Converting human sketches into photorealistic faces using GANs",
-            "badges": [
-                "GANs",
-                "Computer Vision",
-                "Autoencoders",
-                "Deep Learning"
-            ],
+           
             "footer": "Image generation system · Jul 2024",
             "description": "A deep learning pipeline that transforms hand-drawn human face sketches into photorealistic images using GANs, enhanced with autoencoders for reconstruction quality.",
             "highlights": [
@@ -270,12 +229,7 @@
             "size": "small",
             "title": "Collaborative Cloud Code Editor",
             "tagline": "Real-time multi-user coding with containerized cloud execution",
-            "badges": [
-                "Cloud IDE",
-                "CRDT Collaboration",
-                "AWS",
-                "DevOps"
-            ],
+            
             "footer": "Cloud-native system · Jan 2025",
             "description": "A secure cloud-based IDE enabling real-time collaborative coding with isolated container environments, scalable compute provisioning, and live chat.",
             "highlights": [
@@ -307,12 +261,7 @@
             "titleColor": "black",
             "descriptionColor": "white",
             "tagline": "Production-ready authentication with MFA, OAuth, and RBAC",
-            "badges": [
-                "Authentication",
-                "Security",
-                "NPM Package",
-                "Backend"
-            ],
+            
             "footer": "Published package · Nov 2024",
             "description": "A secure Node.js authentication library providing MFA, ZFA, OAuth, JWT authentication, and role-based access control with easy plug-and-play integration.",
             "highlights": [
@@ -341,12 +290,7 @@
             "size": "medium",
             "title": "VPN From Scratch (Linux)",
             "tagline": "Custom encrypted VPN built using TUN interfaces and OpenSSL",
-            "badges": [
-                "Systems Programming",
-                "Networking",
-                "Linux",
-                "Security"
-            ],
+            
             "footer": "Low-level networking · Oct 2024",
             "description": "A custom-built VPN application for Linux developed from scratch, leveraging TUN virtual network interfaces and OpenSSL to establish a secure, encrypted tunnel for IP packet transmission.",
             "highlights": [
@@ -372,12 +316,7 @@
             "titleColor": "black",
             "descriptionColor": "white",
             "tagline": "Design and implementation of scalable rate limiting algorithms",
-            "badges": [
-                "System Design",
-                "Backend Infrastructure",
-                "Rate Limiting",
-                "Distributed Systems"
-            ],
+            
             "footer": "System design project · 2024",
             "description": "A system design–focused project implementing multiple rate limiting strategies with practical simulations and test servers to analyze behavior under load.",
             "highlights": [
@@ -403,12 +342,7 @@
             "titleColor": "black",
             "descriptionColor": "white",
             "tagline": "Implementing core Git internals and object storage in Java",
-            "badges": [
-                "Systems Programming",
-                "Version Control Internals",
-                "File Systems",
-                "Backend Engineering"
-            ],
+            
             "footer": "Low-level systems project · Oct 2024",
             "description": "A from-scratch implementation of a minimal Git client built as part of the CodeCrafters challenge, focusing on understanding Git internals, object storage, and repository operations.",
             "highlights": [
@@ -434,12 +368,7 @@
             "descriptionColor": "white",
             "title": "Intelligent Grievance Redressal Agent",
             "tagline": "Agentic AI system for automated grievance analysis and policy recommendations",
-            "badges": [
-                "Agentic AI",
-                "NLP",
-                "LLMs",
-                "Final Year Project"
-            ],
+            
             "footer": "AI-driven public grievance system · 2024",
             "description": "An intelligent agent-based grievance redressal system designed to analyze citizen complaints, validate grievance proofs, and suggest relevant government policies using embeddings and multi-agent reasoning.",
             "highlights": [
@@ -469,12 +398,7 @@
             "size": "big",
             "title": "LSTM–ARIMA Stock Price Prediction",
             "tagline": "Hybrid time-series forecasting for financial market data",
-            "badges": [
-                "Time Series Analysis",
-                "Machine Learning",
-                "Finance",
-                "Forecasting"
-            ],
+            
             "footer": "Hybrid ML model · 2024",
             "description": "A hybrid stock price prediction system combining classical ARIMA models with LSTM neural networks to capture both linear trends and non-linear temporal patterns in financial time-series data.",
             "highlights": [
@@ -500,12 +424,7 @@
             "descriptionColor": "white",
             "title": "Concurrency Control Algorithms",
             "tagline": "Implementations of CRDTs and concurrent event handling systems",
-            "badges": [
-                "Distributed Systems",
-                "Concurrency Control",
-                "CRDT",
-                "Backend Infrastructure"
-            ],
+           
             "footer": "Distributed systems project · 2024",
             "description": "A collection of concurrency control and distributed consistency mechanisms, focusing on conflict-free data structures and concurrent event coordination.",
             "highlights": [
@@ -531,12 +450,7 @@
             "descriptionColor": "white",
             "title": "TripPlanner.ai",
             "tagline": "Agent-based AI system for intelligent travel planning",
-            "badges": [
-                "Agentic AI",
-                "LLMs",
-                "Automation",
-                "Travel Tech"
-            ],
+           
             "footer": "AI agents project · 2024",
             "description": "An agentic AI-powered travel planning system that coordinates multiple specialized agents to generate personalized travel itineraries, accommodation suggestions, and trip recommendations.",
             "highlights": [
@@ -562,12 +476,7 @@
             "descriptionColor": "white",
             "title": "SQL + RAG Analytics Agent",
             "tagline": "Conversational AI agent for database querying, analysis, and visualization",
-            "badges": [
-                "Agentic AI",
-                "SQL",
-                "RAG",
-                "Data Analytics"
-            ],
+           
             "footer": "AI-powered data system · 2025",
             "description": "An intelligent conversational analytics agent that connects directly to SQL databases, combines Retrieval-Augmented Generation (RAG) with structured queries, and enables users to chat with their data for insights, analysis, and visualizations.",
             "highlights": [
@@ -594,12 +503,7 @@
             "titleColor": "black",
             "descriptionColor": "white",
             "tagline": "AI-powered platform for research collaboration, discovery, and paper intelligence",
-            "badges": [
-                "Hackathon Project",
-                "Agentic AI",
-                "Full-Stack",
-                "Real-Time Collaboration"
-            ],
+           
             "footer": "Invictus Hackathon · AI research platform · 2025",
             "description": "A modern research collaboration platform that unifies AI-driven paper analysis, intelligent discovery, and real-time collaboration to solve fragmentation in the research ecosystem.",
             "highlights": [
@@ -628,12 +532,7 @@
             "descriptionColor": "white",
             "title": "Multithreaded Proxy Web Server",
             "tagline": "High-performance proxy server with multithreading and LRU caching",
-            "badges": [
-                "Systems Programming",
-                "Networking",
-                "Multithreading",
-                "Caching"
-            ],
+           
             "footer": "Low-level backend system · 2023",
             "description": "A high-performance multithreaded proxy web server implemented in C++, designed to handle concurrent client requests efficiently with an in-memory LRU caching mechanism.",
             "highlights": [
@@ -657,12 +556,7 @@
             "size": "big",
             "title": "Parallel File Encryptor & Decryptor",
             "tagline": "High-performance multithreaded file encryption using AES and OS primitives",
-            "badges": [
-                "Systems Programming",
-                "Multithreading",
-                "Security",
-                "Operating Systems"
-            ],
+          
             "footer": "Secure systems project · 2023",
             "description": "A high-performance C++ application for parallel file encryption and decryption, leveraging multithreading, shared memory, semaphores, and AES encryption to securely process files at scale.",
             "highlights": [
@@ -689,12 +583,7 @@
             "titleColor": "black",
             "descriptionColor": "white",
             "tagline": "Frontend marketplace for selling and buying used products",
-            "badges": [
-                "Frontend Development",
-                "UI/UX",
-                "Web Application",
-                "Early Project"
-            ],
+          
             "footer": "Frontend project · 2023",
             "description": "A frontend-focused web application for listing and browsing used products, built as an early project to explore modern UI development and responsive design.",
             "highlights": [
@@ -720,12 +609,7 @@
             "titleColor": "black",
             "descriptionColor": "white",
             "tagline": "Lossless file compression using Huffman encoding algorithm",
-            "badges": [
-                "Algorithms",
-                "Data Structures",
-                "Systems Programming",
-                "Compression"
-            ],
+           
             "footer": "Algorithmic systems project · 2022",
             "description": "A C++ implementation of a lossless file compression tool based on Huffman Coding, focusing on efficient encoding, decoding, and file size reduction through optimal prefix codes.",
             "highlights": [
@@ -751,12 +635,7 @@
             "descriptionColor": "white",
             "title": "SlangBot",
             "tagline": "Transformer-based language model trained on Twitter slang, trends, and internet culture",
-            "badges": [
-                "NLP Project",
-                "Transformer Model",
-                "Social Media AI",
-                "Language Modeling"
-            ],
+           
             "footer": "Personal Research Project · Twitter Slang LLM · 2024",
             "description": "SlangBot is a custom transformer-based language model trained on large-scale Twitter data to understand, generate, and contextualize slang, abbreviations, memes, and evolving internet language in real time.",
             "techStack": "Python · PyTorch · Transformers · NLP · Tokenization · Twitter Data · CUDA",

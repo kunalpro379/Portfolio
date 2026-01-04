@@ -118,70 +118,86 @@ export default function ExperienceSection() {
 
                     {/* Image + Title + Timeline + Tech Stack Side */}
                     <div className={`w-full lg:w-[calc(50%-2rem)] space-y-6`}>
-                      {/* Image - No Card */}
-                      {/* <div className="relative overflow-hidden rounded-xl md:rounded-2xl group">
-                          <img
-                            src={exp.image}
-                            alt={exp.title}
-                            className="w-full h-48 md:h-56 object-cover group-hover:scale-105 transition-transform duration-500"
-                          />
-                          <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent" />
-                        </div> */}
+                      {/* Content Card with Artistic Border */}
+                      <div className="relative group">
+                        {/* Decorative corner elements */}
+                        <div className="absolute -top-2 -left-2 w-8 h-8 border-t-4 border-l-4 border-black rounded-tl-lg" />
+                        <div className="absolute -top-2 -right-2 w-8 h-8 border-t-4 border-r-4 border-black rounded-tr-lg" />
+                        <div className="absolute -bottom-2 -left-2 w-8 h-8 border-b-4 border-l-4 border-black rounded-bl-lg" />
+                        <div className="absolute -bottom-2 -right-2 w-8 h-8 border-b-4 border-r-4 border-black rounded-br-lg" />
+                        
+                        <div className="bg-gradient-to-br from-white via-gray-50/30 to-white border-2 border-black/20 rounded-2xl p-6 md:p-8 shadow-lg hover:shadow-2xl transition-all duration-300 space-y-4">
+                          {/* Year Badge */}
+                          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-black text-white shadow-md">
+                            <Briefcase size={16} />
+                            <span className="font-black text-sm uppercase tracking-wider">{exp.year}</span>
+                          </div>
 
-                      {/* Content - No Card */}
-                      <div className="space-y-4">
-                        {/* Year Badge */}
-                        <div className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-gray-100 border border-gray-300">
-                          <Briefcase size={16} className="text-black" />
-                          <span className="text-black font-black text-sm uppercase tracking-wider">{exp.year}</span>
-                        </div>
+                          {/* Title with underline accent */}
+                          <div>
+                            <h3 className="text-2xl md:text-3xl font-black uppercase tracking-tight text-gray-900 mb-2">
+                              {exp.title}
+                            </h3>
+                            <div className="h-1 w-20 bg-gradient-to-r from-black to-transparent rounded-full" />
+                          </div>
 
-                        {/* Title */}
-                        <h3 className="text-2xl md:text-3xl font-black uppercase tracking-tight text-gray-900">
-                          {exp.title}
-                        </h3>
+                          {/* Company */}
+                          <p className="text-black font-bold text-sm md:text-base uppercase tracking-wide">
+                            {exp.company}
+                          </p>
 
-                        {/* Company */}
-                        <p className="text-black font-bold text-sm md:text-base uppercase tracking-wide">
-                          {exp.company}
-                        </p>
+                          {/* Timeline */}
+                          <p className="text-gray-500 text-xs md:text-sm font-semibold uppercase tracking-wider flex items-center gap-2">
+                            <span className="w-2 h-2 bg-black rounded-full" />
+                            {exp.timeline}
+                          </p>
 
-                        {/* Timeline */}
-                        <p className="text-gray-500 text-xs md:text-sm font-medium uppercase tracking-wider">
-                          {exp.timeline}
-                        </p>
-
-                        {/* Tech Stack */}
-                        <div className="flex flex-wrap gap-2">
-                          {exp.techStack.map((tech, techIdx) => (
-                            <span
-                              key={techIdx}
-                              className="px-3 py-1.5 rounded-lg bg-gray-100 border border-gray-200 text-gray-700 text-xs font-bold uppercase tracking-wide hover:bg-gray-200 transition-colors"
-                            >
-                              {tech}
-                            </span>
-                          ))}
+                          {/* Tech Stack - Hidden on Mobile */}
+                          <div className="hidden md:flex flex-wrap gap-2 pt-2">
+                            {exp.techStack.map((tech, techIdx) => (
+                              <span
+                                key={techIdx}
+                                className="px-3 py-1.5 rounded-lg bg-gradient-to-r from-gray-100 to-gray-50 border-2 border-gray-300 text-gray-700 text-xs font-bold uppercase tracking-wide hover:border-black hover:text-black transition-all duration-200 shadow-sm"
+                              >
+                                {tech}
+                              </span>
+                            ))}
+                          </div>
                         </div>
                       </div>
                     </div>
 
-                    {/* Center Dot */}
-                    <div className="hidden lg:flex absolute left-1/2 -translate-x-1/2 w-6 h-6 rounded-full bg-black border-4 border-white shadow-lg shadow-black/30 z-10" />
+                    {/* Center Dot - More Artistic */}
+                    <div className="hidden lg:flex absolute left-1/2 -translate-x-1/2 w-8 h-8 rounded-full bg-black border-4 border-white shadow-xl z-10">
+                      <div className="w-full h-full rounded-full bg-white/20 animate-pulse" />
+                    </div>
 
-                    {/* Description Side */}
+                    {/* Description Side - Artistic Card */}
                     <div className={`w-full lg:w-[calc(50%-2rem)]`}>
-                      <div className="bg-white border border-gray-200 rounded-xl md:rounded-2xl p-6 md:p-8 hover:border-gray-400 hover:shadow-lg transition-all duration-300 group h-full flex items-center">
-                        <div>
-                          <h4 className="text-lg md:text-xl font-black uppercase tracking-tight text-gray-800 mb-4">
-                            About the Role
-                          </h4>
+                      <div className="relative bg-white border-2 border-black/20 rounded-2xl p-6 md:p-8 hover:border-black hover:shadow-2xl transition-all duration-300 group h-full overflow-hidden">
+                        {/* Decorative background pattern */}
+                        <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-gray-100/50 to-transparent rounded-full blur-3xl group-hover:scale-150 transition-transform duration-500" />
+                        <div className="absolute bottom-0 left-0 w-24 h-24 bg-gradient-to-tr from-gray-100/50 to-transparent rounded-full blur-2xl group-hover:scale-150 transition-transform duration-500" />
+                        
+                        <div className="relative z-10">
+                          <div className="flex items-center gap-3 mb-4">
+                            <div className="w-1 h-8 bg-black rounded-full" />
+                            <h4 className="text-lg md:text-xl font-black uppercase tracking-tight text-gray-900">
+                              About the Role
+                            </h4>
+                          </div>
                           <p className="text-gray-600 text-sm md:text-base leading-relaxed">
                             {exp.description}
                           </p>
                         </div>
 
-                        {/* Gradient Glow on Hover */}
-                        <div className="absolute inset-0 bg-gradient-to-br from-black/0 to-black/0 group-hover:from-black/5 group-hover:to-transparent rounded-xl md:rounded-2xl transition-all duration-300 pointer-events-none" />
+                        {/* Hover effect border */}
+                        <div className="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"
+                          style={{
+                            background: 'linear-gradient(45deg, transparent 48%, rgba(0, 0, 0, 0.05) 50%, transparent 52%)',
+                            backgroundSize: '20px 20px'
+                          }}
+                        />
                       </div>
                     </div>
 
