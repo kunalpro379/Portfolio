@@ -1,0 +1,214 @@
+{
+  "projects": [
+    {
+      "size": "big",
+      "title": "SanskritGPT",
+      "tagline": "Building a Sanskrit Language Model from scratch using Diffusion + Transformers",
+      "badges": ["Diffusion LLM", "Transformer Denoiser", "Low-Resource NLP", "Research Project"],
+      "footer": "From-scratch generative model · Oct 2024",
+      "description": "A masked diffusion-based language model designed specifically for Sanskrit text generation, focusing on semantic denoising rather than next-token prediction.",
+      "highlights": [
+        "Masked Diffusion Training",
+        "Token-Level Transformer Denoiser",
+        "Sanskrit WordNet–tagged corpus",
+        "Iterative Unmasking Generation"
+      ],
+      "techStack": "Python · PyTorch · Transformers · Diffusion Models · NLP",
+      "cta": [
+        { "label": "GitHub Repo", "link": "https://github.com", "icon": "github" },
+        { "label": "Read Research", "link": "#", "icon": "external" }
+      ],
+      "image": "/LLMThumbnail.webp"
+    },
+
+    {
+      "size": "big",
+      "title": "FINAgent",
+      "tagline": "Agentic Financial Research & Trading System",
+      "badges": ["LangGraph", "Multi-Agent AI", "Time Series"],
+      "footer": "AI agents · Dec 2024",
+      "description": "A modular AI-driven financial analyst system that combines market data, agents, memory, and orchestration graphs.",
+      "highlights": [
+        "Market & Sentiment Agents",
+        "Risk & Strategy Managers",
+        "Zerodha MCP integration",
+        "Graph-based workflows"
+      ],
+      "techStack": "LSTM · ARIMA · Technical Indicators",
+      "cta": [
+        { "label": "GitHub Repo", "link": "https://github.com", "icon": "github" },
+        { "label": "Workflow Diagram", "link": "#", "icon": "external" }
+      ],
+      "image": "https://images.unsplash.com/photo-1621135802920-133df287f89c?auto=format&fit=crop&q=80"
+    },
+    {
+      "size": "small",
+      "title": "Nexus AI",
+      "tagline": "Autonomous Agent Swarm for Enterprise Workflow",
+      "badges": ["AutoGPT", "Multi-Agent", "LangChain"],
+      "footer": "DevOps Automation · Feb 2025",
+      "description": "A distributed swarm of AI agents that monitor system health, suggest optimizations, and autonomously deploy patches to infrastructure.",
+      "highlights": [
+        "Self-Healing Infrastructure",
+        "Autonomous Log Analysis",
+        "Multi-Cloud Orchestration",
+        "Predictive Scaling"
+      ],
+      "techStack": "Python · Go · Kubernetes · OpenAI · Terraform",
+      "cta": [
+        { "label": "GitHub Repo", "link": "https://github.com", "icon": "github" },
+        { "label": "Case Study", "link": "#", "icon": "external" }
+      ],
+      "image": "https://images.unsplash.com/photo-1677442136019-21780ecad995?auto=format&fit=crop&q=80"
+    },
+
+    {
+      "size": "big",
+      "title": "Video Pipeline",
+      "tagline": "DRM-Protected Adaptive Bitrate Streaming",
+      "badges": ["AWS", "FFMPEG", "HLS", "DRM"],
+      "footer": "Scalable media backend · Jan 2025",
+      "description": "An automated video pipeline that downloads raw videos, transcodes them into multiple resolutions, encrypts segments, and delivers them via HLS.",
+      "highlights": [
+        "Adaptive Bitrate (360p-1080p)",
+        "DRM Encryption",
+        "AWS S3 + SQS Pipeline",
+        "Dockerized FFMPEG workers"
+      ],
+      "techStack": "Node.js · Docker · AWS · FFMPEG · HLS · C++",
+      "cta": [
+        { "label": "GitHub (Pipeline)", "link": "https://github.com", "icon": "github" },
+        { "label": "Architecture", "link": "#", "icon": "external" }
+      ],
+      "image": "https://images.unsplash.com/photo-1614162692292-7ac56d7f7f1e?auto=format&fit=crop&q=80"
+    },
+
+    {
+      "size": "big",
+      "title": "Remote Desktop & File Sharing System",
+      "tagline": "Secure multi-client remote desktop with real-time file sharing",
+      "badges": ["Remote Desktop Protocol", "Real-time Streaming", "Redis Queues", "Systems Engineering"],
+      "footer": "Multi-client architecture · Mar 2024",
+      "description": "A secure remote desktop application supporting multiple concurrent users with real-time screen sharing, file transfer, and chat.",
+      "highlights": [
+        "RDP-based remote desktop architecture",
+        "XOR dirty-rectangle screen streaming",
+        "Bandwidth-optimized delta updates",
+        "Redis-backed multi-session queue locking",
+        "Real-time file sharing and chat"
+      ],
+      "techStack": "C++ · Networking · Redis · RDP · Systems Programming",
+      "cta": [
+        { "label": "GitHub Repo 1", "link": "https://github.com", "icon": "github" },
+        { "label": "GitHub Repo 2", "link": "https://github.com", "icon": "github" }
+      ],
+      "image": "/RemoteDesktop.webp"
+    },
+
+    {
+      "size": "medium",
+      "title": "Reverse Proxy Web Server",
+      "tagline": "Custom reverse proxy with WebSocket routing and security filtering",
+      "badges": ["Reverse Proxy", "Spring Boot", "WebSockets", "Backend Infrastructure"],
+      "footer": "Traffic control & routing · Apr 2025",
+      "description": "A high-performance reverse proxy built using Spring Boot to forward HTTP and WebSocket traffic.",
+      "highlights": [
+        "HTTP and WebSocket request forwarding",
+        "Dynamic route-based load balancing",
+        "Path rewriting and header injection",
+        "Security filtering and request logging"
+      ],
+      "techStack": "Java · Spring Boot · WebSockets · Networking",
+      "cta": [
+        { "label": "GitHub Repo", "link": "https://github.com", "icon": "github" }
+      ],
+      "image": "/ReverseProxy.webp"
+    },
+
+    {
+      "size": "big",
+      "title": "Sketch-to-Face GAN System",
+      "tagline": "Converting human sketches into photorealistic faces using GANs",
+      "badges": ["GANs", "Computer Vision", "Autoencoders", "Deep Learning"],
+      "footer": "Image generation system · Jul 2024",
+      "description": "A deep learning pipeline that transforms hand-drawn sketches into photorealistic faces.",
+      "highlights": [
+        "Sketch-to-image GAN architecture",
+        "Autoencoder-enhanced reconstruction",
+        "Training on 1000+ images",
+        "PCA + SVM based face recognition",
+        "Real-time inference deployment"
+      ],
+      "techStack": "Python · PyTorch · GANs · OpenCV · Hugging Face",
+      "cta": [
+        { "label": "GitHub Repo", "link": "https://github.com", "icon": "github" },
+        { "label": "Live Demo", "link": "https://vercel.app", "icon": "external" }
+      ],
+      "image": "/SketchToFace.webp"
+    },
+
+    {
+      "size": "medium",
+      "title": "Sec-Auth NPM Package",
+      "tagline": "Production-ready authentication with MFA, OAuth, and RBAC",
+      "badges": ["Authentication", "Security", "NPM Package", "Backend"],
+      "footer": "Published package · Nov 2024",
+      "description": "A secure Node.js authentication library providing MFA, OAuth, JWT, and RBAC.",
+      "highlights": [
+        "Multi-factor and zero-factor authentication",
+        "OAuth integrations",
+        "JWT access & refresh tokens",
+        "RBAC authorization system"
+      ],
+      "techStack": "Node.js · TypeScript · JWT · OAuth · Security",
+      "cta": [
+        { "label": "NPM Package", "link": "https://npmjs.com", "icon": "external" },
+        { "label": "GitHub Repo", "link": "https://github.com", "icon": "github" }
+      ],
+      "image": "/SecAuth.webp"
+    },
+
+    {
+      "size": "big",
+      "title": "Collaborative Cloud Code Editor",
+      "tagline": "Real-time multi-user coding with containerized cloud execution",
+      "badges": ["Cloud IDE", "CRDT Collaboration", "AWS", "DevOps"],
+      "footer": "Cloud-native system · Jan 2025",
+      "description": "A secure cloud-based IDE enabling real-time collaborative coding with isolated containers.",
+      "highlights": [
+        "Session-based container environments",
+        "AWS ECS, ECR, Lambda orchestration",
+        "Kubernetes pods with ingress routing",
+        "CRDT-based collaboration",
+        "Voice and text chat"
+      ],
+      "techStack": "AWS · Docker · Kubernetes · Node.js · WebSockets · CRDT",
+      "cta": [
+        { "label": "GitHub Repo 1", "link": "https://github.com", "icon": "github" },
+        { "label": "GitHub Repo 2", "link": "https://github.com", "icon": "github" }
+      ],
+      "image": "/CloudIDE.webp"
+    },
+
+    {
+      "size": "big",
+      "title": "ChatSy – Scalable Real-Time Chat System",
+      "tagline": "Horizontally scalable chat application with Kafka and Redis",
+      "badges": ["Distributed Systems", "Real-time Messaging", "Kafka", "System Design"],
+      "footer": "Scalable backend architecture",
+      "description": "A production-grade real-time chat system designed for horizontal scaling.",
+      "highlights": [
+        "Socket.IO messaging",
+        "Redis Pub/Sub scaling",
+        "Kafka event streaming",
+        "JWT auth with refresh rotation",
+        "Presence and typing indicators"
+      ],
+      "techStack": "TypeScript · Node.js · Redis · Kafka · PostgreSQL · Docker",
+      "cta": [
+        { "label": "GitHub Repo", "link": "https://github.com", "icon": "github" }
+      ],
+      "image": "/ChatSy.webp"
+    }
+  ]
+}
