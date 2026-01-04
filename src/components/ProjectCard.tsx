@@ -1,5 +1,6 @@
-import { useState } from "react";
-import { Github, ExternalLink, FileText, BarChart } from "lucide-react";
+import { useState, memo } from "react";
+import { useNavigate } from "react-router-dom";
+import { Github, ExternalLink, FileText, BarChart, ArrowRight } from "lucide-react";
 
 interface CTAItem {
   label: string;
@@ -19,9 +20,10 @@ interface ProjectCardProps {
   size?: "big" | "big-width" | "large" | "medium" | "small";
   titleColor?: "white" | "black";
   descriptionColor?: "white" | "black";
+  id?: string;
 }
 
-export default function ProjectCard({
+const ProjectCard = memo(function ProjectCard({
   title,
   tagline,
   badges,
@@ -32,9 +34,18 @@ export default function ProjectCard({
   image,
   size = "medium",
   titleColor = "white",
-  descriptionColor = "white"
+  descriptionColor = "white",
+  id
 }: ProjectCardProps) {
   const [isFlipped, setIsFlipped] = useState(false);
+  const navigate = useNavigate();
+
+  // Generate a 10-character ID if not provided
+  const projectId = id || Math.random().toString(36).substring(2, 12);
+
+  const handleCardClick = () => {
+    navigate(`/projects/${projectId}`);
+  };
 
   const sizeClasses = {
     big: "lg:col-span-1 lg:row-span-2",
@@ -69,6 +80,7 @@ export default function ProjectCard({
     <div
       className={`relative ${sizeClasses[size]} h-[280px] ${sizeHeight[size]} cursor-pointer`}
       style={{ perspective: "1000px" }}
+      onClick={handleCardClick}
       onMouseEnter={() => setIsFlipped(true)}
       onMouseLeave={() => setIsFlipped(false)}
     >
@@ -91,8 +103,9 @@ export default function ProjectCard({
                 alt={title}
                 loading="lazy"
                 decoding="async"
+                width={600}
+                height={400}
                 className="w-full h-full object-cover opacity-100 md:opacity-70 md:group-hover:opacity-80 md:transition-opacity md:duration-500"
-                style={{ contentVisibility: 'auto' }}
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent" style={{
                 background: 'linear-gradient(to top, rgba(0,0,0,1) 0%, rgba(0,0,0,0.95) 10%, rgba(0,0,0,0.7) 20%, rgba(0,0,0,0.3) 30%, transparent 40%)'
@@ -102,47 +115,66 @@ export default function ProjectCard({
 
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(0,163,255,0.08)_0%,transparent_60%)] opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
 
-          <div className="relative z-10 h-full p-6 md:p-8 flex flex-col justify-end">
-            <div className="space-y-4">
-              <div>
-                <h3
-                  className={`text-2xl md:text-3xl font-black uppercase tracking-tight ${titleColor === "black" ? "text-black" : "text-white"} leading-none mb-2`}
-                  style={{
-                    WebkitTextStroke: titleColor === "black" ? "1.5px white" : "1.5px black",
-                    paintOrder: "stroke fill"
-                  }}
-                >
-                  {title}
-                </h3>
-                <div className="h-[2px] w-12 bg-sky-500/60" />
-              </div>
+          {/* Mobile Layout - Title at Bottom Center + Read More Button */}
+          <div className="md:hidden relative z-10 h-full flex flex-col justify-end p-4">
+            <h3 className="text-xl font-black uppercase tracking-tight text-white text-center leading-tight mb-3">
+              {title}
+            </h3>
+            <button 
+              onClick={handleCardClick}
+              className="ml-auto flex items-center gap-2 px-4 py-2 bg-white text-black rounded-lg text-xs font-bold uppercase tracking-wider hover:bg-gray-100 transition-all shadow-lg"
+            >
+              Read More
+              <ArrowRight size={14} />
+            </button>
+          </div>
 
-              <p
-                className={`${descriptionColor === "black" ? "text-black/70" : "text-white/70"} text-xs md:text-sm font-medium leading-relaxed max-w-lg`}
-                style={{
-                  WebkitTextStroke: descriptionColor === "black" ? "0.5px white" : "0.5px black",
-                  paintOrder: "stroke fill"
-                }}
-              >
-                {tagline}
-              </p>
-
-              <div className="flex flex-wrap gap-2">
-                {badges?.map((badge, i) => (
-                  <span
-                    key={i}
-                    className="px-2.5 py-1 rounded-md bg-sky-500/10 border border-sky-500/30 text-sky-400 text-[9px] font-bold uppercase tracking-wide"
+          {/* Desktop Layout - Full Content */}
+          <div className="hidden md:block relative z-10 h-full p-6 md:p-8">
+            <div className="h-full flex flex-col justify-between">
+              <div className="flex-1" />
+              
+              <div className="space-y-4">
+                <div>
+                  <h3
+                    className={`text-2xl md:text-3xl font-black uppercase tracking-tight ${titleColor === "black" ? "text-black" : "text-white"} leading-none mb-2`}
+                    style={{
+                      WebkitTextStroke: titleColor === "black" ? "1.5px white" : "1.5px black",
+                      paintOrder: "stroke fill"
+                    }}
                   >
-                    {badge}
-                  </span>
-                ))}
-              </div>
+                    {title}
+                  </h3>
+                  <div className="h-[2px] w-12 bg-sky-500/60" />
+                </div>
 
-              <div className="space-y-3 pt-2">
-                <div className="h-[1px] w-full bg-white/10" />
-                <p className="text-white/60 text-[10px] md:text-xs font-medium leading-relaxed line-clamp-2">
-                  {description}
+                <p
+                  className={`${descriptionColor === "black" ? "text-black/70" : "text-white/70"} text-xs md:text-sm font-medium leading-relaxed max-w-lg`}
+                >
+                  {tagline}
                 </p>
+
+                <div className="flex flex-wrap gap-2">
+                  {badges?.map((badge, i) => (
+                    <span
+                      key={i}
+                      className="px-2.5 py-1 rounded-md bg-sky-500/10 border border-sky-500/30 text-sky-400 text-[9px] font-bold uppercase tracking-wide"
+                    >
+                      {badge}
+                    </span>
+                  ))}
+                </div>
+              </div>
+              
+              {/* Read More Button - Desktop - Bottom Right */}
+              <div className="flex justify-end pt-4">
+                <button 
+                  onClick={handleCardClick}
+                  className="flex items-center gap-2 px-4 py-2 bg-white text-black rounded-lg text-xs font-bold uppercase tracking-wider hover:bg-gray-100 transition-all shadow-lg"
+                >
+                  Read More
+                  <ArrowRight size={14} />
+                </button>
               </div>
             </div>
           </div>
@@ -150,40 +182,35 @@ export default function ProjectCard({
 
         {/* BACK SIDE */}
         <div
-          className="absolute inset-0 rounded-2xl md:rounded-3xl border border-sky-500/30 bg-gradient-to-br from-zinc-900 via-zinc-950 to-black p-6 md:p-8 flex flex-col justify-between items-start text-left overflow-hidden"
+          className="absolute inset-0 rounded-2xl md:rounded-3xl border border-sky-500/30 bg-gradient-to-br from-zinc-900 via-zinc-950 to-black p-6 md:p-8 flex flex-col justify-between overflow-hidden"
           style={{
             backfaceVisibility: "hidden",
             transform: "rotateY(180deg)"
           }}
         >
-          <div className="flex-1 flex flex-col justify-center w-full overflow-hidden">
-            <p className="text-white/90 text-base md:text-lg font-medium leading-relaxed">
+          {/* Description - Large Text */}
+          <div className="flex-1 flex items-center justify-center">
+            <p className="text-white/90 text-sm md:text-base lg:text-lg font-medium leading-relaxed text-center">
               {description}
             </p>
           </div>
 
-          {cta && cta.length > 0 && (
-            <div className="flex flex-wrap justify-start gap-3 pt-5 border-t border-white/10 w-full shrink-0">
-              {cta.map((item, i) => (
-                <a
-                  key={i}
-                  href={item.link}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  onClick={(e) => e.stopPropagation()}
-                  className={`flex items-center gap-2 px-4 py-2 rounded-lg text-xs font-bold uppercase tracking-wider transition-all ${i === 0
-                    ? "bg-sky-500 hover:bg-sky-600 text-white"
-                    : "bg-white/10 hover:bg-white/20 text-white border border-white/20"
-                    }`}
-                >
-                  {getIcon(item.icon)}
-                  {item.label}
-                </a>
-              ))}
-            </div>
-          )}
+          {/* GitHub Icon - Bottom Left */}
+          <div className="flex justify-start">
+            <a
+              href={cta?.[0]?.link || "#"}
+              target="_blank"
+              rel="noopener noreferrer"
+              onClick={(e) => e.stopPropagation()}
+              className="text-white hover:text-gray-300 transition-colors"
+            >
+              <Github size={40} strokeWidth={1.5} />
+            </a>
+          </div>
         </div>
       </div>
     </div>
   );
-}
+});
+
+export default ProjectCard;

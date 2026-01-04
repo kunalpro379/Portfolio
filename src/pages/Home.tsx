@@ -1,3 +1,4 @@
+import { memo, useCallback } from "react";
 import Navbar from "@/components/Navbar";
 import HeroSection from "@/components/HeroSection";
 import AboutSection from "@/components/AboutSection";
@@ -8,13 +9,13 @@ import EducationSection from "@/components/EducationSection";
 import BlogsSection from "@/components/BlogsSection";
 import ContactSection from "@/components/ContactSection";
 
-export default function Home() {
-  const scrollToSection = (sectionId: string) => {
+const Home = memo(function Home() {
+  const scrollToSection = useCallback((sectionId: string) => {
     const element = document.getElementById(sectionId);
     if (element) {
       element.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
-  };
+  }, []);
 
   return (
     <div className="relative font-sans selection:bg-sky-500 selection:text-white text-black">
@@ -38,7 +39,6 @@ export default function Home() {
         <TechStackOverlay />
       </div>
 
-
       {/* Projects Section */}
       <ProjectsSection />
 
@@ -47,14 +47,15 @@ export default function Home() {
         <ExperienceSection />
       </div>
 
-      {/* Education Section */}
-      <div id="education">
-        <EducationSection />
-      </div>
+
 
       {/* Blogs Section */}
       <div id="blogs">
         <BlogsSection />
+      </div>
+        {/* Education Section */}
+      <div id="education">
+        <EducationSection />
       </div>
 
       {/* Contact Section */}
@@ -63,4 +64,6 @@ export default function Home() {
       </div>
     </div>
   );
-}
+});
+
+export default Home;

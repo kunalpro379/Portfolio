@@ -32,7 +32,7 @@ export default function ContactSection() {
             className="w-full lg:w-3/5 flex flex-col items-start justify-center p-8 md:p-16 lg:p-24 space-y-16"
           >
             <div>
-              <h2 className="text-5xl md:text-7xl lg:text-8xl xl:text-9xl font-black uppercase tracking-tighter leading-[0.85] text-black">
+              <h2 className="text-4xl md:text-6xl lg:text-7xl xl:text-8xl font-black uppercase tracking-tighter leading-[0.85] text-black">
                 LET'S<br />
                 COLLABORATE<br />
                 TOGETHER!

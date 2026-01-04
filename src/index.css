@@ -1,13 +1,14 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 
-/* Preload Kalam font with font-display: swap to prevent CLS */
+/* Preload Kalam font with font-display: optional for better performance */
 @font-face {
   font-family: 'Kalam';
   font-style: normal;
-  font-weight: 300 700;
-  font-display: swap;
-  src: url('https://fonts.googleapis.com/css2?family=Kalam:wght@300;400;700&display=swap');
+  font-weight: 400;
+  font-display: optional;
+  src: local('Kalam'), local('Comic Sans MS'), url('https://fonts.gstatic.com/s/kalam/v16/YA9Qr0Wd4kDdMtD6GgLLmCUItqGt.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
 }
 
 @custom-variant dark (&:is(.dark *));
@@ -132,15 +133,18 @@
   }
   html {
     overflow-x: hidden;
+    scroll-behavior: smooth;
   }
   
   img {
     max-width: 100%;
     height: auto;
+    content-visibility: auto;
   }
   
   [class*="aspect-"] {
     position: relative;
+    contain: layout style paint;
   }
   
   [class*="aspect-"] > img {
@@ -156,7 +160,7 @@
 @layer utilities {
   .gpu-accelerate {
     transform: translateZ(0);
-    will-change: transform;
+    will-change: auto;
   }
 
   .smooth-scroll {
@@ -202,7 +206,7 @@
   }
 
   .optimize-text {
-    text-rendering: optimizeLegibility;
+    text-rendering: optimizeSpeed;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
   }
@@ -225,10 +229,6 @@
   .lazy-render {
     content-visibility: auto;
     contain-intrinsic-size: 500px;
-  }
-
-  img {
-    content-visibility: auto;
   }
 
   @media (hover: none) {
@@ -265,15 +265,22 @@
   .rotate-y-180 {
     transform: rotateY(180deg);
   }
+  
+  /* Prevent layout shifts */
+  img, video, iframe {
+    max-width: 100%;
+    height: auto;
+  }
+  
+  /* Reserve space for images */
+  img[width][height] {
+    aspect-ratio: attr(width) / attr(height);
+  }
 }
 
 @layer base {
-  html {
-    scroll-behavior: smooth;
-  }
-
   body {
-    text-rendering: optimizeLegibility;
+    text-rendering: optimizeSpeed;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
   }
@@ -285,5 +292,15 @@
 
   .loaded {
     opacity: 1;
+  }
+  
+  /* Optimize rendering */
+  section {
+    contain: layout style;
+  }
+  
+  /* Reduce paint areas */
+  .absolute {
+    will-change: auto;
   }
 }

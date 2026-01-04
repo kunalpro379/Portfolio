@@ -71,7 +71,7 @@ export default function BlogsSection() {
           </button>
 
           {/* Blog Cards - Horizontal Scroll for Mobile, Grid for Desktop */}
-          <div 
+          <div
             ref={scrollContainerRef}
             className="overflow-x-auto pt-4 pb-8 -mx-6 px-6 md:-mx-12 md:px-12 scrollbar-hide"
           >
@@ -118,7 +118,7 @@ export default function BlogsSection() {
 
                     {/* Subject/Category at Top */}
                     <div className="p-3 md:p-4 flex-shrink-0">
-                      <div className="text-[10px] md:text-xs lg:text-sm font-bold text-black/70 font-handwriting">
+                      <div className="text-[10px] md:text-xs lg:text-sm font-semibold text-black/70">
                         {blog.subject}
                       </div>
                     </div>
@@ -129,6 +129,10 @@ export default function BlogsSection() {
                         <img
                           src={blog.coverImage}
                           alt={blog.title}
+                          width={300}
+                          height={160}
+                          loading="lazy"
+                          decoding="async"
                           className="w-full h-full object-cover opacity-70 group-hover:opacity-90 group-hover:scale-110 transition-all duration-500 grayscale-[30%]"
                         />
                       </div>
@@ -136,10 +140,10 @@ export default function BlogsSection() {
 
                     {/* Title and Description */}
                     <div className="p-3 md:p-4 space-y-2 md:space-y-3 flex-grow">
-                      <h3 className="text-sm md:text-base lg:text-lg font-bold leading-tight text-black font-handwriting line-clamp-2">
+                      <h3 className="text-sm md:text-base lg:text-lg font-bold leading-tight text-black line-clamp-2">
                         {blog.title}
                       </h3>
-                      <p className="text-xs md:text-sm text-black/60 font-handwriting leading-relaxed line-clamp-2">
+                      <p className="text-xs md:text-sm text-black/60 leading-relaxed line-clamp-2">
                         {blog.shortDescription}
                       </p>
                     </div>
@@ -147,10 +151,10 @@ export default function BlogsSection() {
                     {/* Date at Bottom */}
                     <div className="px-3 md:px-4 pb-3 md:pb-4 flex-shrink-0">
                       <div className="text-[10px] md:text-xs text-black/60 font-medium">
-                        {new Date(blog.dateUpdated).toLocaleDateString('en-US', { 
-                          month: 'short', 
-                          day: 'numeric', 
-                          year: 'numeric' 
+                        {new Date(blog.dateUpdated).toLocaleDateString('en-US', {
+                          month: 'short',
+                          day: 'numeric',
+                          year: 'numeric'
                         })} · {blog.readTime}
                       </div>
                     </div>
@@ -174,17 +178,17 @@ export default function BlogsSection() {
             className="inline-flex items-center gap-2 px-8 py-4 bg-black hover:bg-gray-800 text-white rounded-full font-bold uppercase tracking-wider transition-all text-sm md:text-base shadow-lg hover:shadow-xl"
           >
             Show More
-            <svg 
-              className="w-4 h-4" 
-              fill="none" 
-              stroke="currentColor" 
+            <svg
+              className="w-4 h-4"
+              fill="none"
+              stroke="currentColor"
               viewBox="0 0 24 24"
             >
-              <path 
-                strokeLinecap="round" 
-                strokeLinejoin="round" 
-                strokeWidth={2} 
-                d="M9 5l7 7-7 7" 
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M9 5l7 7-7 7"
               />
             </svg>
           </Link>

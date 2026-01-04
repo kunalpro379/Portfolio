@@ -70,10 +70,10 @@ export default function EducationSection() {
           </motion.p>
         </div>
 
-        {/* Horizontal Timeline */}
-        <div className="relative mb-16">
+        {/* Horizontal Timeline - Desktop Only */}
+        <div className="relative mb-16 hidden md:block">
           {/* Timeline Horizontal Line */}
-          <div className="absolute top-0 left-0 right-0 h-[2px] bg-black hidden md:block" />
+          <div className="absolute top-0 left-0 right-0 h-[2px] bg-black" />
 
           {/* Timeline Years with Vertical Lines */}
           <div className="flex justify-between items-start relative">
@@ -87,7 +87,7 @@ export default function EducationSection() {
                 className="flex flex-col items-center relative"
               >
                 {/* Vertical Line */}
-                <div className="w-[2px] h-16 bg-black mb-4 hidden md:block" />
+                <div className="w-[2px] h-16 bg-black mb-4" />
 
                 {/* Year Badge */}
                 <div className="px-4 py-2 rounded-lg bg-white border border-gray-300">
@@ -127,6 +127,10 @@ export default function EducationSection() {
                   <img
                     src={edu.image}
                     alt={edu.degree}
+                    width={600}
+                    height={256}
+                    loading="lazy"
+                    decoding="async"
                     className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
                   />
                   <div className="absolute inset-0 bg-gradient-to-b from-transparent via-[#fefce8]/60 to-[#fefce8]" />
