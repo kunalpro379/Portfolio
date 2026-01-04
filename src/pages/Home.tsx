@@ -28,7 +28,7 @@ const Home = memo(function Home() {
       />
 
       {/* Background Texture Pattern on Top */}
-      <div className="fixed inset-0 -z-[8] opacity-40 mix-blend-multiply" style={{ backgroundImage: 'url(/page7.png)', backgroundRepeat: 'repeat', filter: 'grayscale(100%) brightness(0)' }} />
+      <div className="fixed inset-0 -z-[8] opacity-20 mix-blend-multiply" style={{ backgroundImage: 'url(/page7.png)', backgroundRepeat: 'repeat', filter: 'grayscale(100%) brightness(0)' }} />
 
       {/* Fixed Navigation Bar */}
       <Navbar scrollToSection={scrollToSection} />
