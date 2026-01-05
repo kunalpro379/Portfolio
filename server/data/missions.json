@@ -1,0 +1,38 @@
+[
+  {
+    "title": "AI Portfolio Game",
+    "category": "Web Development",
+    "status": "Active",
+    "description": "Interactive 3D portfolio built with Three.js and React. Features GTA-style navigation and immersive user experience.",
+    "techStack": ["React", "Three.js", "TypeScript", "Tailwind CSS"],
+    "github": "https://github.com",
+    "demo": "https://demo.com"
+  },
+  {
+    "title": "E-Commerce Platform",
+    "category": "Full-Stack",
+    "status": "Completed",
+    "description": "Scalable e-commerce solution with real-time inventory management and payment integration.",
+    "techStack": ["Next.js", "Node.js", "PostgreSQL", "Stripe"],
+    "github": "https://github.com",
+    "demo": "https://demo.com"
+  },
+  {
+    "title": "AI Chat Assistant",
+    "category": "AI/ML",
+    "status": "Active",
+    "description": "Intelligent chatbot powered by GPT-4 with custom training on domain-specific data.",
+    "techStack": ["Python", "OpenAI", "FastAPI", "React"],
+    "github": "https://github.com",
+    "demo": "https://demo.com"
+  },
+  {
+    "title": "Real-Time Analytics Dashboard",
+    "category": "Data Visualization",
+    "status": "Completed",
+    "description": "Live data visualization platform with WebSocket integration and interactive charts.",
+    "techStack": ["React", "D3.js", "WebSocket", "MongoDB"],
+    "github": "https://github.com",
+    "demo": "https://demo.com"
+  }
+]

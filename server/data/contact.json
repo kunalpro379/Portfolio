@@ -1,0 +1,48 @@
+{
+  "phone": "+91 9892885090",
+  "email": "kunaldp379@gmail.com",
+  "location": "Mumbai, Maharashtra, India",
+  "availability": {
+    "days": "Monday - Sunday",
+    "hours": "10:00 AM - 10:00 PM"
+  },
+  "resumeUrl": "https://drive.google.com/file/d/10a3sEllDMujH2KrFT6WdoQRalakojdWV",
+  "socialLinks": [
+    {
+      "name": "GitHub",
+      "icon": "github",
+      "url": "https://github.com/kunalpatil26",
+      "color": "hover:text-gray-400"
+    },
+    {
+      "name": "Instagram",
+      "icon": "instagram",
+      "url": "https://www.instagram.com/kunal_patil379/",
+      "color": "hover:text-pink-500"
+    },
+    {
+      "name": "LinkedIn",
+      "icon": "linkedin",
+      "url": "https://www.linkedin.com/in/kunal-patil-0357a5259//",
+      "color": "hover:text-blue-600"
+    },
+    {
+      "name": "Twitter",
+      "icon": "twitter",
+      "url": "https://x.com/KunalPa40651307",
+      "color": "hover:text-sky-400"
+    },
+    {
+      "name": "Threads",
+      "icon": "threads",
+      "url": "https://www.threads.net/@kunal_patil379",
+      "color": "hover:text-white"
+    },
+    {
+      "name": "Medium",
+      "icon": "medium",
+      "url": "https://medium.com/@kunaldp379",
+      "color": "hover:text-white"
+    }
+  ]
+}
