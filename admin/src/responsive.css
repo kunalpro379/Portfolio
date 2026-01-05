@@ -1,0 +1,261 @@
+/* Mobile Responsive Styles for Admin Portal */
+
+/* Make all form inputs responsive */
+@media (max-width: 768px) {
+  /* Fix header positioning */
+  header {
+    position: sticky !important;
+    top: 0 !important;
+    z-index: 30 !important;
+    width: 100% !important;
+  }
+  
+  /* Ensure header items don't wrap */
+  header > * {
+    flex-shrink: 0 !important;
+  }
+  
+  /* Add top padding to main content to prevent overlap */
+  main {
+    padding-top: 0 !important;
+  }
+  
+  /* Reduce padding on mobile */
+  .p-8 {
+    padding: 1rem !important;
+  }
+  
+  .p-6 {
+    padding: 1rem !important;
+  }
+  
+  .p-4 {
+    padding: 0.75rem !important;
+  }
+  
+  /* Make text smaller on mobile */
+  .text-4xl {
+    font-size: 1.5rem !important;
+  }
+  
+  .text-3xl {
+    font-size: 1.25rem !important;
+  }
+  
+  .text-2xl {
+    font-size: 1.125rem !important;
+  }
+  
+  /* Stack split layouts */
+  .flex-row {
+    flex-direction: column !important;
+  }
+  
+  /* Make editor full width on mobile */
+  .w-\[400px\] {
+    width: 100% !important;
+  }
+  
+  /* Reduce gaps */
+  .gap-6 {
+    gap: 0.75rem !important;
+  }
+  
+  .gap-4 {
+    gap: 0.5rem !important;
+  }
+  
+  /* Reduce shadow on mobile */
+  .shadow-\[8px_8px_0px_0px_rgba\(0\,0\,0\,1\)\] {
+    box-shadow: 4px 4px 0px 0px rgba(0,0,0,1) !important;
+  }
+  
+  .shadow-\[6px_6px_0px_0px_rgba\(0\,0\,0\,1\)\] {
+    box-shadow: 3px 3px 0px 0px rgba(0,0,0,1) !important;
+  }
+  
+  /* Fix blog/doc create/edit pages */
+  .max-w-\[1400px\],
+  .max-w-\[1200px\],
+  .max-w-\[1800px\],
+  .max-w-7xl {
+    max-width: 100% !important;
+    padding-left: 0.5rem !important;
+    padding-right: 0.5rem !important;
+  }
+  
+  /* CRITICAL: Make 12-column grid layouts stack on mobile */
+  .grid-cols-12,
+  .lg\:grid-cols-12 {
+    grid-template-columns: repeat(1, minmax(0, 1fr)) !important;
+  }
+  
+  .col-span-9,
+  .lg\:col-span-9,
+  .col-span-3,
+  .lg\:col-span-3 {
+    grid-column: span 1 / span 1 !important;
+  }
+  
+  /* Make grid layouts stack on mobile */
+  .grid-cols-2,
+  .grid-cols-3,
+  .grid-cols-4 {
+    grid-template-columns: repeat(1, minmax(0, 1fr)) !important;
+  }
+  
+  /* Fix tab buttons - don't make them full width */
+  .flex.gap-2 button,
+  .flex.gap-3 button {
+    font-size: 0.75rem !important;
+    padding: 0.5rem 0.75rem !important;
+  }
+  
+  /* Fix form inputs */
+  input[type="text"],
+  input[type="email"],
+  input[type="password"],
+  input[type="date"],
+  input[type="time"],
+  input[type="url"],
+  textarea,
+  select {
+    font-size: 16px !important; /* Prevents zoom on iOS */
+  }
+  
+  /* Fix modal dialogs */
+  .fixed.inset-0 > div {
+    max-width: 90% !important;
+    margin: 1rem !important;
+  }
+  
+  /* Fix cover image preview */
+  .h-\[400px\],
+  .h-\[500px\],
+  .h-\[600px\] {
+    height: 200px !important;
+  }
+  
+  .h-40 {
+    height: 120px !important;
+  }
+  
+  /* Make markdown editor responsive */
+  .w-md-editor {
+    min-height: 300px !important;
+  }
+  
+  /* Fix header buttons container - BUT NOT THE MAIN HEADER */
+  .flex.items-center.justify-between:not(header),
+  .flex.items-start.justify-between:not(header),
+  .sm\:flex-row {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 0.75rem !important;
+  }
+  
+  /* Keep header in row layout */
+  header.flex.items-center.justify-between {
+    flex-direction: row !important;
+    align-items: center !important;
+  }
+  
+  /* Make action buttons in header flex properly */
+  .flex.gap-2,
+  .flex.gap-3 {
+    display: flex !important;
+    flex-direction: row !important;
+    width: 100% !important;
+  }
+  
+  .flex.gap-2 > button,
+  .flex.gap-3 > button {
+    flex: 1 !important;
+    min-width: 0 !important;
+  }
+  
+  /* Fix specific button groups that should stay horizontal */
+  .flex.items-center.gap-2,
+  .flex.items-center.gap-3 {
+    flex-direction: row !important;
+  }
+  
+  /* Fix blog links grid */
+  .flex.gap-3.items-start .grid.grid-cols-2 {
+    grid-template-columns: repeat(1, minmax(0, 1fr)) !important;
+  }
+  
+  /* Ensure proper spacing */
+  .space-y-6 > * + * {
+    margin-top: 1rem !important;
+  }
+  
+  .space-y-5 > * + * {
+    margin-top: 0.75rem !important;
+  }
+  
+  .space-y-4 > * + * {
+    margin-top: 0.5rem !important;
+  }
+  
+  /* Fix overflow on mobile */
+  body {
+    overflow-x: hidden !important;
+  }
+  
+  /* Ensure cards don't overflow */
+  .rounded-2xl,
+  .rounded-xl {
+    max-width: 100% !important;
+  }
+}
+
+/* Tablet adjustments */
+@media (min-width: 769px) and (max-width: 1024px) {
+  .w-\[400px\] {
+    width: 300px !important;
+  }
+  
+  .max-w-\[1400px\],
+  .max-w-\[1200px\],
+  .max-w-\[1800px\] {
+    max-width: 100% !important;
+    padding-left: 1.5rem !important;
+    padding-right: 1.5rem !important;
+  }
+}
+
+/* Small mobile devices */
+@media (max-width: 480px) {
+  .text-xl {
+    font-size: 1rem !important;
+  }
+  
+  .text-lg {
+    font-size: 0.95rem !important;
+  }
+  
+  .px-6 {
+    padding-left: 0.75rem !important;
+    padding-right: 0.75rem !important;
+  }
+  
+  .py-6 {
+    padding-top: 0.75rem !important;
+    padding-bottom: 0.75rem !important;
+  }
+  
+  /* Make all cards full width */
+  .rounded-2xl {
+    border-radius: 1rem !important;
+  }
+  
+  .border-4 {
+    border-width: 3px !important;
+  }
+  
+  /* Smaller buttons on very small screens */
+  button {
+    font-size: 0.875rem !important;
+  }
+}

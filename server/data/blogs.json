@@ -1,0 +1,22 @@
+{
+  "blogs": [
+    {
+      "title": "How Traffic Really Flows Inside an AWS VPC",
+      "tagline": "",
+      "subject": "DevOps",
+      "shortDescription": "A clear, practical explanation of how internet traffic enters an AWS VPC, flows through ALB, private subnets, security groups, NACLs, and safely reaches backend workloads using real-world production architecture.",
+      "tags": ["AWS", "VPC", "DevOps", "Networking"],
+      "datetime": "2026-01-03",
+      "assets": [],
+      "mdFiles": [],
+      "coverImage": "",
+      "footer": "",
+      "blogLinks": [
+        {
+          "platform": "Medium",
+          "url": "https://medium.com/@example/aws-vpc-traffic"
+        }
+      ]
+    }
+  ]
+}

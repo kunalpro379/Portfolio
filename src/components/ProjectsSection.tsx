@@ -51,7 +51,7 @@ export default function ProjectsSection() {
 
         {/* Desktop Layout */}
         <div className="hidden md:block">
-          {/* Row 1 */}
+          {/* Row 1 - 4 columns with mixed heights */}
           <div className="grid grid-cols-4 gap-6 mt-8">
             <div className="col-span-1 h-[650px]">
               <ProjectCard {...projectsData.featuredProjects[0]} />
@@ -69,14 +69,14 @@ export default function ProjectsSection() {
             </div>
           </div>
 
-          {/* Row 2 */}
+          {/* Row 2 - 3 equal columns */}
           <div className="grid grid-cols-3 gap-6 mt-6">
             <ProjectCard {...projectsData.featuredProjects[6]} />
             <ProjectCard {...projectsData.featuredProjects[7]} />
             <ProjectCard {...projectsData.featuredProjects[8]} />
           </div>
 
-          {/* Row 3 */}
+          {/* Row 3 - 4 equal columns */}
           <div className="grid grid-cols-4 gap-6 mt-6">
             <ProjectCard {...projectsData.featuredProjects[9]} />
             <ProjectCard {...projectsData.featuredProjects[10]} />
@@ -84,52 +84,43 @@ export default function ProjectsSection() {
             <ProjectCard {...projectsData.featuredProjects[12]} />
           </div>
 
-          {/* Row 4 */}
+          {/* Row 4 - 2 large + 2 stacked */}
           <div className="grid grid-cols-4 gap-6 mt-6">
             <div className="col-span-2 h-[650px]">
               <ProjectCard {...projectsData.featuredProjects[13]} />
             </div>
-            <div className="col-span-1 flex flex-col gap-6 h-[650px]">
-              <div className="flex-1">
-                <ProjectCard {...projectsData.featuredProjects[14]} />
-              </div>
-            </div>
-            <div className="col-span-1 flex flex-col gap-6 h-[650px]">
-              <div className="flex-1">
-                <ProjectCard {...projectsData.featuredProjects[23]} />
-              </div>
-              <div className="flex-1">
-                <ProjectCard {...projectsData.featuredProjects[21]} />
-              </div>
-            </div>
-          </div>
-
-          {/* Row 5 */}
-          <div className="grid grid-cols-4 gap-6 mt-6">
             <div className="col-span-1 h-[650px]">
-              <ProjectCard {...projectsData.featuredProjects[17]} />
+              <ProjectCard {...projectsData.featuredProjects[14]} />
             </div>
-            <div className="col-span-2 flex flex-col gap-6">
+            <div className="col-span-1 flex flex-col gap-6 h-[650px]">
               <div className="flex-1">
                 <ProjectCard {...projectsData.featuredProjects[15]} />
               </div>
               <div className="flex-1">
-                <ProjectCard {...projectsData.featuredProjects[6]} />
+                <ProjectCard {...projectsData.featuredProjects[16]} />
               </div>
-            </div>
-            <div className="col-span-1 h-[650px]">
-              <ProjectCard {...projectsData.featuredProjects[20]} />
             </div>
           </div>
 
-          {/* Row 6 */}
-          <div className="grid grid-cols-2 gap-6 mt-6">
-            <div className="col-span-1">
-              <ProjectCard {...projectsData.featuredProjects[22]} />
+          {/* Row 5 - Mixed layout */}
+          <div className="grid grid-cols-4 gap-6 mt-6">
+            <div className="col-span-1 h-[650px]">
+              <ProjectCard {...projectsData.featuredProjects[17]} />
             </div>
-            <div className="col-span-1">
-              <ProjectCard {...projectsData.featuredProjects[16]} />
+            <div className="col-span-2 h-[650px]">
+              <ProjectCard {...projectsData.featuredProjects[18]} />
             </div>
+            <div className="col-span-1 h-[650px]">
+              <ProjectCard {...projectsData.featuredProjects[19]} />
+            </div>
+          </div>
+
+          {/* Row 6 - 4 equal columns */}
+          <div className="grid grid-cols-4 gap-6 mt-6">
+            <ProjectCard {...projectsData.featuredProjects[20]} />
+            <ProjectCard {...projectsData.featuredProjects[21]} />
+            <ProjectCard {...projectsData.featuredProjects[22]} />
+            <ProjectCard {...projectsData.featuredProjects[23]} />
           </div>
         </div>
       </div>
