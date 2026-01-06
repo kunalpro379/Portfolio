@@ -5,6 +5,7 @@ import Dashboard from './pages/Dashboard';
 import Projects from './pages/Projects';
 import CreateProject from './pages/CreateProject';
 import EditProject from './pages/EditProject';
+import ReorderProjects from './pages/ReorderProjects';
 import Blogs from './pages/Blogs';
 import CreateBlog from './pages/CreateBlog';
 import EditBlog from './pages/EditBlog';
@@ -55,6 +56,14 @@ function App() {
             element={
               <PrivateRoute>
                 <Projects />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/reorder-projects"
+            element={
+              <PrivateRoute>
+                <ReorderProjects />
               </PrivateRoute>
             }
           />

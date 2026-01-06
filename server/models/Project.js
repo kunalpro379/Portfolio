@@ -33,6 +33,10 @@ const projectSchema = new mongoose.Schema({
     type: Boolean,
     default: false
   },
+  priority: {
+    type: Number,
+    default: 0
+  },
   created_at: {
     type: Date,
     default: Date.now

@@ -129,12 +129,10 @@ const ProjectCard = memo(function ProjectCard({
             </button>
           </div>
 
-          {/* Desktop Layout - Full Content */}
+          {/* Desktop Layout - Title at Bottom */}
           <div className="hidden md:block relative z-10 h-full p-6 md:p-8">
-            <div className="h-full flex flex-col justify-between">
-              <div className="flex-1" />
-              
-              <div className="space-y-4">
+            <div className="h-full flex flex-col justify-end">
+              <div className="space-y-3">
                 <div>
                   <h3
                     className={`text-2xl md:text-3xl font-black uppercase tracking-tight ${titleColor === "black" ? "text-black" : "text-white"} leading-none mb-2`}
@@ -153,17 +151,6 @@ const ProjectCard = memo(function ProjectCard({
                 >
                   {tagline}
                 </p>
-
-                <div className="flex flex-wrap gap-2">
-                  {badges?.map((badge, i) => (
-                    <span
-                      key={i}
-                      className="px-2.5 py-1 rounded-md bg-sky-500/10 border border-sky-500/30 text-sky-400 text-[9px] font-bold uppercase tracking-wide"
-                    >
-                      {badge}
-                    </span>
-                  ))}
-                </div>
               </div>
               
               {/* Read More Button - Desktop - Bottom Right */}
