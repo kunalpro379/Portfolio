@@ -322,4 +322,247 @@ router.delete('/asset/:docId/:assetName', async (req, res) => {
   }
 });
 
+// Get files for a documentation
+router.get('/:docId/files', async (req, res) => {
+  try {
+    const { docId } = req.params;
+    
+    console.log('Fetching files for docId:', docId);
+    
+    const doc = await Documentation.findOne({ docId }).lean();
+    if (!doc) {
+      console.log('Document not found:', docId);
+      return res.status(404).json({ message: 'Documentation not found' });
+    }
+    
+    console.log('Found document with files:', doc.files?.length || 0);
+    res.json({ files: doc.files || [] });
+  } catch (error) {
+    console.error('Get files error:', error);
+    res.status(500).json({ message: 'Server error', error: error.message });
+  }
+});
+
+// Create a new file
+router.post('/:docId/files', async (req, res) => {
+  try {
+    const { docId } = req.params;
+    const { name, type, content } = req.body;
+
+    console.log('Creating file:', { docId, name, type });
+
+    if (!name || !type) {
+      console.log('Missing name or type');
+      return res.status(400).json({ message: 'Name and type are required' });
+    }
+
+    const doc = await Documentation.findOne({ docId });
+    if (!doc) {
+      console.log('Document not found for file creation:', docId);
+      return res.status(404).json({ message: 'Documentation not found' });
+    }
+
+    // Check if file already exists (check both with and without extension)
+    const cleanName = name.replace(/\.(md|excalidraw)$/, '');
+    const existingFile = doc.files?.find(f => {
+      const fName = f.name.replace(/\.(md|excalidraw)$/, '');
+      return fName === cleanName && f.type === type;
+    });
+    
+    if (existingFile) {
+      console.log('File already exists:', cleanName, type);
+      return res.status(200).json({ message: 'File already exists', file: existingFile });
+    }
+
+    const fileId = generateId();
+    const fileExtension = type === 'markdown' ? 'md' : (type === 'diagram' ? 'excalidraw' : 'txt');
+    const blobPath = `documentation/${docId}/files/${fileId}.${fileExtension}`;
+    
+    console.log('Uploading to Azure:', blobPath);
+    
+    // Upload to Azure
+    const containerClient = blobServiceClient.getContainerClient(containerName);
+    const blockBlobClient = containerClient.getBlockBlobClient(blobPath);
+    
+    const fileContent = content || (type === 'markdown' ? '# New Document\n\nStart writing...' : '{"type":"excalidraw","version":2,"source":"","elements":[],"appState":{"gridSize":null,"viewBackgroundColor":"#ffffff"}}');
+    
+    await blockBlobClient.upload(fileContent, fileContent.length, {
+      blobHTTPHeaders: { blobContentType: type === 'markdown' ? 'text/markdown' : 'application/json' },
+      overwrite: true
+    });
+
+    const newFile = {
+      fileId,
+      name: cleanName,
+      type,
+      azurePath: blobPath,
+      azureUrl: blockBlobClient.url,
+      createdAt: new Date()
+    };
+
+    if (!doc.files) {
+      doc.files = [];
+    }
+    doc.files.push(newFile);
+    await doc.save();
+
+    console.log('File created successfully:', fileId);
+    res.status(201).json({ message: 'File created successfully', file: newFile });
+  } catch (error) {
+    console.error('Create file error:', error);
+    console.error('Error stack:', error.stack);
+    res.status(500).json({ message: 'Server error', error: error.message });
+  }
+});
+
+// Get specific file content
+router.get('/:docId/files/:fileId', async (req, res) => {
+  try {
+    const { docId, fileId } = req.params;
+    
+    console.log('Fetching file:', { docId, fileId });
+    
+    const doc = await Documentation.findOne({ docId }).lean();
+    if (!doc) {
+      console.log('Document not found:', docId);
+      return res.status(404).json({ message: 'Documentation not found' });
+    }
+
+    const file = doc.files?.find(f => f.fileId === fileId);
+    if (!file) {
+      console.log('File not found in document:', fileId);
+      console.log('Available files:', doc.files?.map(f => ({ fileId: f.fileId, name: f.name })));
+      return res.status(404).json({ message: 'File not found' });
+    }
+
+    console.log('Found file:', { fileId: file.fileId, name: file.name, azurePath: file.azurePath });
+
+    // Get file content from Azure
+    try {
+      const containerClient = blobServiceClient.getContainerClient(containerName);
+      const blockBlobClient = containerClient.getBlockBlobClient(file.azurePath);
+      
+      // Check if blob exists
+      const exists = await blockBlobClient.exists();
+      if (!exists) {
+        console.log('Blob does not exist in Azure:', file.azurePath);
+        // Create default content based on file type
+        const defaultContent = file.type === 'markdown' 
+          ? '# New Document\n\nStart writing...' 
+          : '{"type":"excalidraw","version":2,"source":"","elements":[],"appState":{"gridSize":null,"viewBackgroundColor":"#ffffff"}}';
+        
+        // Upload default content
+        await blockBlobClient.upload(defaultContent, defaultContent.length, {
+          blobHTTPHeaders: { blobContentType: file.type === 'markdown' ? 'text/markdown' : 'application/json' },
+          overwrite: true
+        });
+        
+        console.log('Created default content for blob:', file.azurePath);
+        
+        return res.json({ 
+          file: {
+            ...file,
+            content: defaultContent
+          }
+        });
+      }
+      
+      const downloadResponse = await blockBlobClient.download(0);
+      const content = await streamToString(downloadResponse.readableStreamBody);
+      
+      console.log('Successfully downloaded file content, length:', content.length);
+      
+      res.json({ 
+        file: {
+          ...file,
+          content
+        }
+      });
+    } catch (azureError) {
+      console.error('Error downloading file from Azure:', azureError);
+      res.status(500).json({ message: 'Error downloading file content', error: azureError.message });
+    }
+  } catch (error) {
+    console.error('Get file error:', error);
+    res.status(500).json({ message: 'Server error', error: error.message });
+  }
+});
+
+// Update file content
+router.put('/:docId/files/:fileId', async (req, res) => {
+  try {
+    const { docId, fileId } = req.params;
+    const { content, name } = req.body;
+
+    const doc = await Documentation.findOne({ docId });
+    if (!doc) {
+      return res.status(404).json({ message: 'Documentation not found' });
+    }
+
+    const file = doc.files?.find(f => f.fileId === fileId);
+    if (!file) {
+      return res.status(404).json({ message: 'File not found' });
+    }
+
+    // Update content in Azure if provided
+    if (content !== undefined) {
+      const containerClient = blobServiceClient.getContainerClient(containerName);
+      const blockBlobClient = containerClient.getBlockBlobClient(file.azurePath);
+      
+      await blockBlobClient.upload(content, content.length, {
+        blobHTTPHeaders: { blobContentType: file.type === 'markdown' ? 'text/markdown' : 'application/json' },
+        overwrite: true
+      });
+    }
+
+    // Update name if provided
+    if (name) {
+      file.name = name;
+    }
+
+    await doc.save();
+
+    res.json({ message: 'File updated successfully', file });
+  } catch (error) {
+    console.error('Update file error:', error);
+    res.status(500).json({ message: 'Server error', error: error.message });
+  }
+});
+
+// Delete file
+router.delete('/:docId/files/:fileId', async (req, res) => {
+  try {
+    const { docId, fileId } = req.params;
+
+    const doc = await Documentation.findOne({ docId });
+    if (!doc) {
+      return res.status(404).json({ message: 'Documentation not found' });
+    }
+
+    const fileIndex = doc.files?.findIndex(f => f.fileId === fileId);
+    if (fileIndex === -1 || fileIndex === undefined) {
+      return res.status(404).json({ message: 'File not found' });
+    }
+
+    const file = doc.files[fileIndex];
+
+    // Delete from Azure
+    try {
+      const containerClient = blobServiceClient.getContainerClient(containerName);
+      const blockBlobClient = containerClient.getBlockBlobClient(file.azurePath);
+      await blockBlobClient.deleteIfExists();
+    } catch (azureError) {
+      console.error('Error deleting file from Azure:', azureError);
+    }
+
+    doc.files.splice(fileIndex, 1);
+    await doc.save();
+
+    res.json({ message: 'File deleted successfully' });
+  } catch (error) {
+    console.error('Delete file error:', error);
+    res.status(500).json({ message: 'Server error' });
+  }
+});
+
 export default router;

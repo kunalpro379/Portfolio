@@ -41,7 +41,15 @@ export default function BlogDetail() {
         const response = await fetch(`${API_ENDPOINTS.blogs}/${id}`);
         if (!response.ok) throw new Error('Failed to fetch blog');
         const data = await response.json();
-        setBlog(data.blog);
+        
+        // Fetch markdown content separately
+        const contentResponse = await fetch(`${API_ENDPOINTS.blogs}/${id}/md-content`);
+        if (contentResponse.ok) {
+          const contentData = await contentResponse.json();
+          setBlog({ ...data.blog, content: contentData.content || '' });
+        } else {
+          setBlog({ ...data.blog, content: '' });
+        }
       } catch (err) {
         console.error('Error fetching blog:', err);
         setError(err instanceof Error ? err.message : 'Failed to load blog');
@@ -242,7 +250,7 @@ export default function BlogDetail() {
                       className="flex items-center gap-2 p-3 bg-blue-100 border-2 border-black rounded-lg hover:bg-blue-200 transition-all"
                     >
                       <ExternalLink size={16} strokeWidth={2.5} />
-                      <span className="text-sm font-bold truncate flex-1">{link.name}</span>
+                      <span className="text-sm font-bold truncate flex-1">{link.platform || link.name || 'External Link'}</span>
                     </a>
                   ))}
                 </div>
@@ -253,20 +261,9 @@ export default function BlogDetail() {
 
         {/* Main Content */}
         <div className="flex-1 overflow-y-auto bg-gray-50">
-          <div className="max-w-4xl mx-auto px-8 py-8">
-            {/* Cover Image */}
-            {blog.coverImage && (
-              <div className="mb-8 rounded-2xl overflow-hidden border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
-                <img
-                  src={blog.coverImage}
-                  alt={blog.title}
-                  className="w-full h-[400px] object-cover"
-                />
-              </div>
-            )}
-
+          <div className="max-w-7xl mx-auto px-8 py-8">
             {/* Content */}
-            <article className="bg-white border-4 border-black rounded-2xl p-8 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
+            <article className="bg-white rounded-2xl p-8">
               <ReactMarkdown 
                 remarkPlugins={[remarkGfm]}
                 components={components}

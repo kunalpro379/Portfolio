@@ -48,6 +48,22 @@ const documentationSchema = new mongoose.Schema({
     of: String,
     default: {}
   },
+  files: [{
+    fileId: String,
+    name: String,
+    type: String,
+    azurePath: String,
+    azureUrl: String,
+    createdAt: Date
+  }],
+  diagramPath: {
+    type: String,
+    default: ''
+  },
+  diagramUrl: {
+    type: String,
+    default: ''
+  },
   isPublic: {
     type: Boolean,
     default: false
