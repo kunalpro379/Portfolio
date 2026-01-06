@@ -112,6 +112,35 @@ router.get('/folders/tree', async (req, res) => {
   }
 });
 
+// Get specific folder with files and subfolders
+router.get('/folders/:folderId', async (req, res) => {
+  try {
+    const { folderId } = req.params;
+    
+    const folder = await Folder.findOne({ folderId });
+    if (!folder) {
+      return res.status(404).json({ message: 'Folder not found' });
+    }
+
+    // Get files in this folder
+    const files = await File.find({ folderPath: folder.path }).sort({ uploadedAt: -1 });
+    
+    // Get direct subfolders
+    const subfolders = await Folder.find({ parentPath: folder.path }).sort({ name: 1 });
+
+    res.json({ 
+      folder: {
+        ...folder.toObject(),
+        files,
+        subfolders
+      }
+    });
+  } catch (error) {
+    console.error('Get folder error:', error);
+    res.status(500).json({ message: 'Server error' });
+  }
+});
+
 // Upload files to folder
 router.post('/files/upload', upload.array('files', 10), async (req, res) => {
   try {
@@ -186,6 +215,50 @@ router.get('/files/all', async (req, res) => {
     res.json({ files });
   } catch (error) {
     console.error('Get all files error:', error);
+    res.status(500).json({ message: 'Server error' });
+  }
+});
+
+// Get specific file with content
+router.get('/files/:fileId', async (req, res) => {
+  try {
+    const { fileId } = req.params;
+    
+    const file = await File.findOne({ fileId });
+    if (!file) {
+      return res.status(404).json({ message: 'File not found' });
+    }
+
+    // For text files, try to get content from Azure
+    const textExtensions = ['txt', 'md', 'java', 'cpp', 'c', 'py', 'js', 'ts', 'jsx', 'tsx', 'html', 'css', 'json', 'xml', 'yaml', 'yml', 'sh', 'bash'];
+    const fileExtension = file.filename.split('.').pop()?.toLowerCase() || '';
+    
+    let content = null;
+    if (textExtensions.includes(fileExtension)) {
+      try {
+        const containerClient = blobServiceClient.getContainerClient(containerName);
+        const blockBlobClient = containerClient.getBlockBlobClient(file.cloudinaryPath);
+        
+        const downloadResponse = await blockBlobClient.download(0);
+        const chunks = [];
+        for await (const chunk of downloadResponse.readableStreamBody) {
+          chunks.push(chunk);
+        }
+        content = Buffer.concat(chunks).toString('utf-8');
+      } catch (azureError) {
+        console.error('Error downloading file content from Azure:', azureError);
+        // Content will remain null if download fails
+      }
+    }
+
+    res.json({ 
+      file: {
+        ...file.toObject(),
+        content
+      }
+    });
+  } catch (error) {
+    console.error('Get file error:', error);
     res.status(500).json({ message: 'Server error' });
   }
 });

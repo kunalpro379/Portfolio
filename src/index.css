@@ -1,5 +1,9 @@
-@import "tailwindcss";
-@import "tw-animate-css";
+/* @import "tailwindcss";
+@import "tw-animate-css"; */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
 
 /* Preload Kalam font with font-display: optional for better performance */
 @font-face {
@@ -123,11 +127,8 @@
 }
 
 @layer base {
-  * {
-    @apply border-border outline-ring/50;
-  }
   body {
-    @apply text-foreground;
+    color: oklch(var(--foreground));
     overflow-x: hidden;
     background: transparent;
   }

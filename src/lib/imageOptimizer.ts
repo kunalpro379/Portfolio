@@ -3,7 +3,7 @@ export const getOptimizedImageProps = (src: string, priority: boolean = false) =
   return {
     loading: priority ? ('eager' as const) : ('lazy' as const),
     decoding: 'async' as const,
-    fetchpriority: priority ? ('high' as const) : ('auto' as const),
+    fetchPriority: priority ? ('high' as const) : ('auto' as const),
   };
 };
 

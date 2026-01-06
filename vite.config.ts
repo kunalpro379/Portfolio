@@ -9,6 +9,9 @@ export default defineConfig({
       '@': path.resolve(__dirname, './src'),
     },
   },
+  optimizeDeps: {
+    include: ['@excalidraw/excalidraw'],
+  },
   build: {
     rollupOptions: {
       output: {
@@ -16,6 +19,7 @@ export default defineConfig({
           'react-vendor': ['react', 'react-dom', 'react-router-dom'],
           'framer-motion': ['framer-motion'],
           'lucide': ['lucide-react'],
+          'excalidraw': ['@excalidraw/excalidraw'],
           'radix-ui': [
             '@radix-ui/react-accordion',
             '@radix-ui/react-dialog',
