@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { FileText, FolderOpen, Eye, BookOpen, StickyNote, Plus, Edit, FileEdit, Clock } from 'lucide-react';
+import { FileText, FolderOpen, Eye, BookOpen, StickyNote, Plus, Edit, FileEdit } from 'lucide-react';
 
 export default function Dashboard() {
   const { user } = useAuth();
@@ -13,11 +13,9 @@ export default function Dashboard() {
     notes: 0,
     views: 0
   });
-  const [recentItems, setRecentItems] = useState<any[]>([]);
 
   useEffect(() => {
     fetchStats();
-    fetchRecentItems();
   }, []);
 
   const fetchStats = async () => {
@@ -59,74 +57,6 @@ export default function Dashboard() {
     }
   };
 
-  const fetchRecentItems = async () => {
-    try {
-      const [projectsRes, blogsRes, docsRes] = await Promise.all([
-        fetch('http://localhost:5000/api/projects'),
-        fetch('http://localhost:5000/api/blogs'),
-        fetch('http://localhost:5000/api/documentation')
-      ]);
-
-      const [projectsData, blogsData, docsData] = await Promise.all([
-        projectsRes.json(),
-        blogsRes.json(),
-        docsRes.json()
-      ]);
-
-      const allItems = [
-        ...(projectsData.projects || []).map((p: any) => ({ ...p, type: 'project', date: p.updatedAt || p.createdAt })),
-        ...(blogsData.blogs || []).map((b: any) => ({ ...b, type: 'blog', date: b.updatedAt || b.createdAt })),
-        ...(docsData.docs || []).map((d: any) => ({ ...d, type: 'documentation', date: d.updatedAt || d.createdAt }))
-      ];
-
-      // Sort by date and take top 5
-      const sorted = allItems.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()).slice(0, 5);
-      setRecentItems(sorted);
-    } catch (error) {
-      console.error('Error fetching recent items:', error);
-    }
-  };
-
-  const getItemIcon = (type: string) => {
-    switch (type) {
-      case 'project': return <FolderOpen className="w-4 h-4" strokeWidth={2.5} />;
-      case 'blog': return <FileText className="w-4 h-4" strokeWidth={2.5} />;
-      case 'documentation': return <BookOpen className="w-4 h-4" strokeWidth={2.5} />;
-      case 'note': return <StickyNote className="w-4 h-4" strokeWidth={2.5} />;
-      default: return <FileText className="w-4 h-4" strokeWidth={2.5} />;
-    }
-  };
-
-  const getItemColor = (type: string) => {
-    switch (type) {
-      case 'project': return 'bg-yellow-200';
-      case 'blog': return 'bg-blue-200';
-      case 'documentation': return 'bg-green-200';
-      case 'note': return 'bg-purple-200';
-      default: return 'bg-gray-200';
-    }
-  };
-
-  const formatDate = (date: string) => {
-    if (!date) return 'No date';
-    
-    const d = new Date(date);
-    
-    // Check if date is valid
-    if (isNaN(d.getTime())) return 'No date';
-    
-    const now = new Date();
-    const diff = now.getTime() - d.getTime();
-    const minutes = Math.floor(diff / 60000);
-    const hours = Math.floor(diff / 3600000);
-    const days = Math.floor(diff / 86400000);
-
-    if (minutes < 1) return 'Just now';
-    if (minutes < 60) return `${minutes}m ago`;
-    if (hours < 24) return `${hours}h ago`;
-    if (days < 7) return `${days}d ago`;
-    return d.toLocaleDateString();
-  };
 
   return (
     <div className="p-4 md:p-8">
@@ -147,35 +77,6 @@ export default function Dashboard() {
             <path d="M0 4 Q 50 2, 100 4 T 200 4" stroke="black" fill="none" strokeWidth="2" opacity="0.2"/>
           </svg>
         </div>
-
-        {/* Recently Updated */}
-        {recentItems.length > 0 && (
-          <div className="bg-white border-4 border-black rounded-2xl p-4 md:p-6 mb-4 md:mb-8 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
-            <div className="flex items-center gap-2 mb-4">
-              <Clock className="w-4 h-4 md:w-5 md:h-5" strokeWidth={2.5} />
-              <h3 className="text-lg md:text-2xl font-black text-black" style={{ fontFamily: 'Comic Sans MS, cursive' }}>
-                Recently Updated
-              </h3>
-            </div>
-            <div className="space-y-2">
-              {recentItems.map((item, index) => (
-                <div
-                  key={index}
-                  className="flex items-center gap-2 md:gap-3 p-2 md:p-3 border-2 border-black rounded-lg hover:bg-gray-50 transition"
-                >
-                  <div className={`w-6 h-6 md:w-8 md:h-8 border-2 border-black rounded-lg flex items-center justify-center ${getItemColor(item.type)}`}>
-                    {getItemIcon(item.type)}
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <p className="font-bold text-black truncate text-sm md:text-base">{item.title}</p>
-                    <p className="text-xs text-gray-600 font-medium capitalize">{item.type}</p>
-                  </div>
-                  <span className="text-xs text-gray-500 font-medium whitespace-nowrap">{formatDate(item.date)}</span>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
 
         {/* Stats Grid */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-6 mb-4 md:mb-8">

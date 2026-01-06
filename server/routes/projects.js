@@ -43,11 +43,39 @@ const uploadToAzure = async (buffer, folder, filename, fileType) => {
 // Get all projects
 router.get('/', async (req, res) => {
     try {
-        const projects = await Project.find().sort({ created_at: -1 });
+        const projects = await Project.find().sort({ priority: 1, created_at: -1 });
         res.json({ projects });
     } catch (error) {
         console.error('Get projects error:', error);
         res.status(500).json({ message: 'Server error' });
+    }
+});
+
+// Reorder projects
+router.post('/reorder', async (req, res) => {
+    try {
+        const { projectIds } = req.body; // Array of projectIds in new order
+
+        if (!Array.isArray(projectIds)) {
+            return res.status(400).json({ message: 'projectIds must be an array' });
+        }
+
+        // Update priority for each project
+        const updatePromises = projectIds.map((projectId, index) => 
+            Project.findOneAndUpdate(
+                { projectId },
+                { priority: index, updated_at: new Date() },
+                { new: true }
+            )
+        );
+
+        await Promise.all(updatePromises);
+
+        const projects = await Project.find().sort({ priority: 1, created_at: -1 });
+        res.json({ message: 'Projects reordered successfully', projects });
+    } catch (error) {
+        console.error('Reorder projects error:', error);
+        res.status(500).json({ message: 'Server error', error: error.message });
     }
 });
 

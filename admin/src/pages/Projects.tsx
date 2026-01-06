@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
-import { Plus, Edit, Trash2, ExternalLink } from 'lucide-react';
+import { Plus, Edit, Trash2, ExternalLink, ArrowUpDown, GripVertical, Save, X } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { DragDropContext, Droppable, Draggable, DropResult } from '@hello-pangea/dnd';
 
 interface Project {
   _id: string;
@@ -18,6 +19,8 @@ export default function Projects() {
   const navigate = useNavigate();
   const [projects, setProjects] = useState<Project[]>([]);
   const [loading, setLoading] = useState(true);
+  const [isReorderMode, setIsReorderMode] = useState(false);
+  const [saving, setSaving] = useState(false);
 
   useEffect(() => {
     fetchProjects();
@@ -69,6 +72,44 @@ export default function Projects() {
     }
   };
 
+  const handleDragEnd = (result: DropResult) => {
+    if (!result.destination) return;
+
+    const items = Array.from(projects);
+    const [reorderedItem] = items.splice(result.source.index, 1);
+    items.splice(result.destination.index, 0, reorderedItem);
+
+    setProjects(items);
+  };
+
+  const handleSaveOrder = async () => {
+    setSaving(true);
+    try {
+      const projectIds = projects.map(p => p.projectId);
+      
+      const response = await fetch('http://localhost:5000/api/projects/reorder', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ projectIds }),
+      });
+
+      if (response.ok) {
+        alert('Projects reordered successfully!');
+        setIsReorderMode(false);
+        fetchProjects();
+      } else {
+        alert('Failed to reorder projects');
+      }
+    } catch (error) {
+      console.error('Error saving order:', error);
+      alert('Error saving order');
+    } finally {
+      setSaving(false);
+    }
+  };
+
   if (loading) {
     return (
       <div className="p-4 sm:p-6 lg:p-8">
@@ -86,19 +127,49 @@ export default function Projects() {
         <div className="flex items-center justify-between mb-8">
           <div>
             <h1 className="text-4xl font-black text-black mb-2" style={{ fontFamily: 'Comic Sans MS, cursive' }}>
-              Projects
+              {isReorderMode ? 'Reorder Projects' : 'Projects'}
             </h1>
-            <p className="text-gray-600 font-medium">Manage your portfolio projects</p>
+            <p className="text-gray-600 font-medium">
+              {isReorderMode ? 'Drag and drop to reorder your projects' : 'Manage your portfolio projects'}
+            </p>
           </div>
-          <button 
-            onClick={handleCreateProject}
-            className="flex items-center gap-2 px-6 py-3 bg-black text-white rounded-xl border-3 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[-2px] hover:translate-y-[-2px] transition-all font-bold">
-            <Plus className="w-5 h-5" strokeWidth={2.5} />
-            New Project
-          </button>
+          <div className="flex gap-3">
+            {isReorderMode ? (
+              <>
+                <button 
+                  onClick={() => setIsReorderMode(false)}
+                  className="flex items-center gap-2 px-6 py-3 bg-gray-200 text-black rounded-xl border-3 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[-2px] hover:translate-y-[-2px] transition-all font-bold">
+                  <X className="w-5 h-5" strokeWidth={2.5} />
+                  Cancel
+                </button>
+                <button 
+                  onClick={handleSaveOrder}
+                  disabled={saving}
+                  className="flex items-center gap-2 px-6 py-3 bg-green-500 text-white rounded-xl border-3 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[-2px] hover:translate-y-[-2px] transition-all font-bold disabled:opacity-50 disabled:cursor-not-allowed">
+                  <Save className="w-5 h-5" strokeWidth={2.5} />
+                  {saving ? 'Saving...' : 'Save Order'}
+                </button>
+              </>
+            ) : (
+              <>
+                <button 
+                  onClick={() => setIsReorderMode(true)}
+                  className="flex items-center gap-2 px-6 py-3 bg-purple-500 text-white rounded-xl border-3 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[-2px] hover:translate-y-[-2px] transition-all font-bold">
+                  <ArrowUpDown className="w-5 h-5" strokeWidth={2.5} />
+                  Reorder
+                </button>
+                <button 
+                  onClick={handleCreateProject}
+                  className="flex items-center gap-2 px-6 py-3 bg-black text-white rounded-xl border-3 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[-2px] hover:translate-y-[-2px] transition-all font-bold">
+                  <Plus className="w-5 h-5" strokeWidth={2.5} />
+                  New Project
+                </button>
+              </>
+            )}
+          </div>
         </div>
 
-        {/* Projects Grid */}
+        {/* Projects Grid or Reorder List */}
         {projects.length === 0 ? (
           <div className="bg-white border-4 border-black rounded-2xl p-12 text-center shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
             <div className="w-20 h-20 border-3 border-black rounded-full flex items-center justify-center bg-blue-200 mx-auto mb-4 transform rotate-3">
@@ -112,7 +183,76 @@ export default function Projects() {
               Create Project
             </button>
           </div>
+        ) : isReorderMode ? (
+          /* Reorder Mode - Drag and Drop List */
+          <DragDropContext onDragEnd={handleDragEnd}>
+            <Droppable droppableId="projects">
+              {(provided) => (
+                <div
+                  {...provided.droppableProps}
+                  ref={provided.innerRef}
+                  className="space-y-4"
+                >
+                  {projects.map((project, index) => (
+                    <Draggable
+                      key={project.projectId}
+                      draggableId={project.projectId}
+                      index={index}
+                    >
+                      {(provided, snapshot) => (
+                        <div
+                          ref={provided.innerRef}
+                          {...provided.draggableProps}
+                          className={`bg-white border-4 border-black rounded-2xl p-4 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all ${
+                            snapshot.isDragging ? 'shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] rotate-2' : ''
+                          }`}
+                        >
+                          <div className="flex items-center gap-4">
+                            {/* Drag Handle */}
+                            <div
+                              {...provided.dragHandleProps}
+                              className="cursor-grab active:cursor-grabbing p-2 hover:bg-gray-100 rounded-lg transition"
+                            >
+                              <GripVertical className="w-6 h-6 text-gray-400" strokeWidth={2.5} />
+                            </div>
+
+                            {/* Order Number */}
+                            <div className="flex-shrink-0 w-12 h-12 bg-yellow-200 border-3 border-black rounded-full flex items-center justify-center font-black text-xl">
+                              {index + 1}
+                            </div>
+
+                            {/* Project Image */}
+                            {project.cardasset && project.cardasset.length > 0 ? (
+                              <img
+                                src={project.cardasset[0]}
+                                alt={project.title}
+                                className="w-16 h-16 object-cover rounded-lg border-3 border-black"
+                              />
+                            ) : (
+                              <div className="w-16 h-16 bg-gradient-to-br from-blue-200 to-purple-200 rounded-lg border-3 border-black" />
+                            )}
+
+                            {/* Project Info */}
+                            <div className="flex-1 min-w-0">
+                              <h3 className="text-lg font-black text-black truncate">
+                                {project.title}
+                              </h3>
+                              <p className="text-sm text-gray-600 font-medium truncate">
+                                {project.tagline || project.slug}
+                              </p>
+                            </div>
+                          </div>
+                        </div>
+                      )}
+                    </Draggable>
+                  ))}
+                  {provided.placeholder}
+                </div>
+              )}
+            </Droppable>
+          </DragDropContext>
         ) : (
+          /* Normal Grid View */
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {projects.map((project) => (
               <div

@@ -1,7 +1,25 @@
 import { FolderKanban } from "lucide-react";
 import ProjectCard from "./ProjectCard";
 import projectsDataRaw from "@/data/projects.json";
-import backgroundsData from "@/data/backgrounds.json";
+
+interface RawProjectData {
+  _id: string;
+  projectId: string;
+  title: string;
+  slug: string;
+  tagline: string;
+  footer: string;
+  description: string;
+  tags: string[];
+  links: Array<{ name: string; url: string; _id?: string }>;
+  mdFiles: string[];
+  assets: any[];
+  cardasset: any[];
+  created_at: string;
+  updated_at: string;
+  featured: boolean;
+  __v?: number;
+}
 
 interface ProjectData {
   size?: "big" | "small" | "large" | "medium";
@@ -15,9 +33,41 @@ interface ProjectData {
   image?: string;
   titleColor?: "white" | "black";
   descriptionColor?: "white" | "black";
+  id?: string;
 }
 
-const projectsData = projectsDataRaw as { featuredProjects: ProjectData[] };
+const rawData = projectsDataRaw as { projects: RawProjectData[] };
+
+// Transform the new JSON structure to match ProjectCard props
+const transformedProjects: ProjectData[] = rawData.projects
+  .filter(project => project.featured)
+  .map((project, index) => {
+    // Define sizes for specific positions
+    let size: "big" | "small" | "large" | "medium" = "medium";
+
+    // First row layout: tall, medium, medium, tall, medium, medium
+    if (index === 0 || index === 3) size = "big"; // SlangBot and Parallel File Encryptor
+    else if (index === 1 || index === 2 || index === 4 || index === 5) size = "medium";
+
+    return {
+      title: project.title,
+      tagline: project.tagline,
+      footer: project.footer,
+      description: project.description,
+      badges: project.tags,
+      techStack: project.tags.join(" · "),
+      cta: project.links.map(link => ({
+        label: link.name,
+        link: link.url,
+        icon: link.name.toLowerCase().includes("github") ? "github" :
+          link.name.toLowerCase().includes("demo") || link.name.toLowerCase().includes("live") || link.name.toLowerCase().includes("website") ? "external" :
+            "docs"
+      })),
+      image: project.cardasset?.[0] || `/projects/${project.slug}.webp`,
+      id: project.projectId,
+      size
+    };
+  });
 
 const SectionHeader = ({ icon: Icon, title, subtitle }: { icon: any; title: string; subtitle: string }) => {
   return (
@@ -44,83 +94,120 @@ export default function ProjectsSection() {
 
         {/* Mobile Layout - Simple Vertical Stack */}
         <div className="md:hidden space-y-4 mt-8">
-          {projectsData.featuredProjects.map((project, index) => (
+          {transformedProjects.map((project, index) => (
             <ProjectCard key={index} {...project} />
           ))}
         </div>
 
         {/* Desktop Layout */}
         <div className="hidden md:block">
-          {/* Row 1 - 4 columns with mixed heights */}
+          {/* Row 1 - Layout: Tall | Medium+Medium | Tall | Medium+Medium */}
           <div className="grid grid-cols-4 gap-6 mt-8">
-            <div className="col-span-1 h-[650px]">
-              <ProjectCard {...projectsData.featuredProjects[0]} />
+            <div className="col-span-1">
+              <ProjectCard {...transformedProjects[0]} size="big" />
             </div>
             <div className="col-span-1 flex flex-col gap-6">
-              <ProjectCard {...projectsData.featuredProjects[1]} />
-              <ProjectCard {...projectsData.featuredProjects[2]} />
-            </div>
-            <div className="col-span-1 h-[650px]">
-              <ProjectCard {...projectsData.featuredProjects[3]} />
-            </div>
-            <div className="col-span-1 flex flex-col gap-6">
-              <ProjectCard {...projectsData.featuredProjects[4]} />
-              <ProjectCard {...projectsData.featuredProjects[5]} />
-            </div>
-          </div>
-
-          {/* Row 2 - 3 equal columns */}
-          <div className="grid grid-cols-3 gap-6 mt-6">
-            <ProjectCard {...projectsData.featuredProjects[6]} />
-            <ProjectCard {...projectsData.featuredProjects[7]} />
-            <ProjectCard {...projectsData.featuredProjects[8]} />
-          </div>
-
-          {/* Row 3 - 4 equal columns */}
-          <div className="grid grid-cols-4 gap-6 mt-6">
-            <ProjectCard {...projectsData.featuredProjects[9]} />
-            <ProjectCard {...projectsData.featuredProjects[10]} />
-            <ProjectCard {...projectsData.featuredProjects[11]} />
-            <ProjectCard {...projectsData.featuredProjects[12]} />
-          </div>
-
-          {/* Row 4 - 2 large + 2 stacked */}
-          <div className="grid grid-cols-4 gap-6 mt-6">
-            <div className="col-span-2 h-[650px]">
-              <ProjectCard {...projectsData.featuredProjects[13]} />
-            </div>
-            <div className="col-span-1 h-[650px]">
-              <ProjectCard {...projectsData.featuredProjects[14]} />
-            </div>
-            <div className="col-span-1 flex flex-col gap-6 h-[650px]">
-              <div className="flex-1">
-                <ProjectCard {...projectsData.featuredProjects[15]} />
+              <div className="h-[313px]">
+                <ProjectCard {...transformedProjects[1]} size="small" />
               </div>
-              <div className="flex-1">
-                <ProjectCard {...projectsData.featuredProjects[16]} />
+              <div className="h-[313px]">
+                <ProjectCard {...transformedProjects[2]} size="small" />
+              </div>
+            </div>
+            {/* Parallel File Encryptor - Tall */}
+            <div className="col-span-1">
+              <ProjectCard {...transformedProjects[3]} size="big" />
+            </div>
+            {/* Multithreaded Proxy + Resync - Stacked Medium */}
+            <div className="col-span-1 flex flex-col gap-6">
+              <div className="h-[313px]">
+                <ProjectCard {...transformedProjects[4]} size="small" />
+              </div>
+              <div className="h-[313px]">
+                <ProjectCard {...transformedProjects[5]} size="small" />
               </div>
             </div>
           </div>
 
-          {/* Row 5 - Mixed layout */}
+          {/* Row 2 - Reverse Proxy | Sketch-to-Face (wide) | Hydralite */}
           <div className="grid grid-cols-4 gap-6 mt-6">
-            <div className="col-span-1 h-[650px]">
-              <ProjectCard {...projectsData.featuredProjects[17]} />
+            {/* Reverse Proxy Web Server */}
+            <div className="col-span-1">
+              <ProjectCard {...transformedProjects[6]} size="medium" />
             </div>
-            <div className="col-span-2 h-[650px]">
-              <ProjectCard {...projectsData.featuredProjects[18]} />
+            {/* Sketch-to-Face GAN System - Wide */}
+            <div className="col-span-2">
+              <ProjectCard {...transformedProjects[7]} size="big-width" />
             </div>
-            <div className="col-span-1 h-[650px]">
-              <ProjectCard {...projectsData.featuredProjects[19]} />
+            {/* Hydralite.in */}
+            <div className="col-span-1">
+              <ProjectCard {...transformedProjects[8]} size="medium" />
             </div>
           </div>
 
-          {/* Row 6 - 4 equal columns */}
+          {/* Row 3 - ProSmart | Hydralite+Remote Desktop (stacked) | Video Pipeline */}
+          <div className="grid grid-cols-12 gap-6 mt-6">
+            {/* ProSmart.in - Left */}
+            <div className="col-span-4">
+              <ProjectCard {...transformedProjects[9]} size="big" />
+            </div>
+            {/* Hydralite + Remote Desktop - Stacked in middle (narrower) */}
+            <div className="col-span-3 flex flex-col gap-6">
+              <div className="h-[313px]">
+                <ProjectCard {...transformedProjects[10]} size="small" />
+              </div>
+              <div className="h-[313px]">
+                <ProjectCard {...transformedProjects[11]} size="small" />
+              </div>
+            </div>
+            {/* Video Pipeline - Right */}
+            <div className="col-span-5">
+              <ProjectCard {...transformedProjects[12]} size="big" />
+            </div>
+          </div>
+
+          {/* Row 4 - Remaining cards in standard grid */}
           <div className="grid grid-cols-4 gap-6 mt-6">
-            <ProjectCard {...projectsData.featuredProjects[20]} />
-            <ProjectCard {...projectsData.featuredProjects[21]} />
-            <ProjectCard {...projectsData.featuredProjects[22]} />
-            <ProjectCard {...projectsData.featuredProjects[23]} />
+            <ProjectCard {...transformedProjects[13]} size="medium" />
+            <ProjectCard {...transformedProjects[14]} size="medium" />
+            <ProjectCard {...transformedProjects[15]} size="medium" />
+            <ProjectCard {...transformedProjects[16]} size="medium" />
+          </div>
+
+          {/* Row 5 - Tall | 2 Stacked | Extra Large (Reduced Heights) */}
+          <div className="grid grid-cols-4 gap-6 mt-6">
+            {/* Tall card - reduced height */}
+            <div className="col-span-1 h-[500px]">
+              <ProjectCard {...transformedProjects[17]} size="big" />
+            </div>
+            {/* 2 Stacked medium cards - reduced heights */}
+            <div className="col-span-1 flex flex-col gap-6">
+              <div className="h-[313px]">
+                <ProjectCard {...transformedProjects[18]} size="small" />
+              </div>
+              <div className="h-[313px]">
+                <ProjectCard {...transformedProjects[19]} size="small" />
+              </div>
+            </div>
+            {/* Extra Large card - 2 columns wide, reduced height */}
+            <div className="col-span-2 h-[500px]">
+              <ProjectCard {...transformedProjects[20]} size="big" />
+            </div>
+          </div>
+
+          {/* Row 6 - Tall | 2 Stacked | Extra Large */}
+          <div className="grid grid-cols-4 gap-6 mt-6">
+            {/* Tall card */}
+            <div className="col-span-2">
+              <ProjectCard {...transformedProjects[21]} size="small" />
+            </div>
+              <div className="col-span-1">
+                <ProjectCard {...transformedProjects[22]} size="small" />
+              </div>
+                <div className="col-span-1">
+                  <ProjectCard {...transformedProjects[23]} size="small" />
+                </div>
+            
           </div>
         </div>
       </div>
