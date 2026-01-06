@@ -1,16 +1,54 @@
 import { useParams, useNavigate } from 'react-router-dom';
 import { useCallback, useState, useEffect } from 'react';
-import { Clock, Calendar, ArrowLeft } from 'lucide-react';
+import { Clock, Calendar, ArrowLeft, FileText, Download, ExternalLink } from 'lucide-react';
 import Navbar from '@/components/Navbar';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
-import blogsMetadata from '@/data/blogs.metadata.json';
+import { API_ENDPOINTS } from '@/config/api';
+
+interface Blog {
+  blogId: string;
+  title: string;
+  subject: string;
+  tagline: string;
+  content: string;
+  datetime: string;
+  tags: string[];
+  coverImage: string;
+  blogLinks: Array<{ name: string; url: string }>;
+}
+
+interface Documentation {
+  docId: string;
+  title: string;
+  subject: string;
+  description: string;
+  content: string;
+  tags: string[];
+  date: string;
+  time: string;
+}
+
+interface NoteFile {
+  fileId: string;
+  name: string;
+  content: string;
+  createdAt: string;
+}
+
+interface Folder {
+  folderId: string;
+  name: string;
+  files: NoteFile[];
+}
 
 export default function LearningDetail() {
   const { id } = useParams();
   const navigate = useNavigate();
-  const [markdownContent, setMarkdownContent] = useState('');
-  const [article, setArticle] = useState<any>(null);
+  const [content, setContent] = useState<any>(null);
+  const [type, setType] = useState<'blog' | 'documentation' | 'notes' | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [selectedFile, setSelectedFile] = useState<NoteFile | null>(null);
 
   const scrollToSection = useCallback((sectionId: string) => {
     navigate('/');
@@ -23,152 +61,247 @@ export default function LearningDetail() {
   }, [navigate]);
 
   useEffect(() => {
-    // Find article by ID or use first one
-    const foundArticle = blogsMetadata[0]; // You can match by ID later
-    setArticle(foundArticle);
+    const fetchContent = async () => {
+      try {
+        setLoading(true);
+        
+        // Try blog first
+        try {
+          const blogRes = await fetch(`${API_ENDPOINTS.blogs}/${id}`);
+          if (blogRes.ok) {
+            const data = await blogRes.json();
+            setContent(data.blog);
+            setType('blog');
+            setLoading(false);
+            return;
+          }
+        } catch (e) {}
 
-    // Fetch markdown content
-    fetch('/src/data/blog.md')
-      .then(res => res.text())
-      .then(text => setMarkdownContent(text))
-      .catch(err => console.error('Error loading markdown:', err));
+        // Try documentation
+        try {
+          const docRes = await fetch(`${API_ENDPOINTS.documentation}/${id}`);
+          if (docRes.ok) {
+            const data = await docRes.json();
+            setContent(data.doc);
+            setType('documentation');
+            setLoading(false);
+            return;
+          }
+        } catch (e) {}
+
+        // Try notes
+        try {
+          const notesRes = await fetch(`${API_ENDPOINTS.notes}/folders/${id}`);
+          if (notesRes.ok) {
+            const data = await notesRes.json();
+            setContent(data.folder);
+            setType('notes');
+            if (data.folder.files && data.folder.files.length > 0) {
+              setSelectedFile(data.folder.files[0]);
+            }
+            setLoading(false);
+            return;
+          }
+        } catch (e) {}
+
+        // If nothing found
+        setLoading(false);
+      } catch (err) {
+        console.error('Error fetching content:', err);
+        setLoading(false);
+      }
+    };
+
+    if (id) fetchContent();
   }, [id]);
 
-  if (!article) {
-    return <div>Loading...</div>;
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-white flex items-center justify-center">
+        <div className="text-2xl font-bold">Loading...</div>
+      </div>
+    );
   }
 
-  // Extract sections from markdown for navigation
-  const sections = markdownContent
-    .split('\n')
-    .filter(line => line.startsWith('## '))
-    .map(line => line.replace('## ', ''));
+  if (!content || !type) {
+    return (
+      <div className="min-h-screen bg-white flex items-center justify-center">
+        <div className="text-center">
+          <p className="text-red-600 text-xl mb-4">Content not found</p>
+          <button
+            onClick={() => navigate('/learnings')}
+            className="px-6 py-3 bg-black text-white rounded-lg hover:bg-gray-800"
+          >
+            Back to Learnings
+          </button>
+        </div>
+      </div>
+    );
+  }
 
+  // Render based on type
+  if (type === 'notes') {
+    const folder = content as Folder;
+    return (
+      <div className="min-h-screen bg-white flex flex-col">
+        <Navbar scrollToSection={scrollToSection} />
+        
+        <div className="flex-1 flex pt-20">
+          {/* Sidebar */}
+          <div className="w-64 border-r-2 border-gray-200 p-4 overflow-y-auto">
+            <button
+              onClick={() => navigate('/learnings?tab=notes')}
+              className="flex items-center gap-2 text-gray-600 hover:text-black mb-6 font-bold text-sm"
+            >
+              <ArrowLeft size={16} />
+              Back
+            </button>
+
+            <h2 className="text-lg font-black mb-4">{folder.name}</h2>
+
+            <div className="space-y-2">
+              {folder.files?.map((file) => (
+                <button
+                  key={file.fileId}
+                  onClick={() => setSelectedFile(file)}
+                  className={`w-full text-left px-3 py-2 rounded-lg transition ${
+                    selectedFile?.fileId === file.fileId
+                      ? 'bg-blue-100 border-2 border-black'
+                      : 'hover:bg-gray-100'
+                  }`}
+                >
+                  <div className="flex items-center gap-2">
+                    <FileText size={16} />
+                    <span className="text-sm font-medium truncate">{file.name}</span>
+                  </div>
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Content */}
+          <div className="flex-1 overflow-y-auto">
+            {selectedFile ? (
+              <div className="max-w-4xl mx-auto px-8 py-12">
+                <header className="mb-8">
+                  <h1 className="text-3xl font-black mb-2">{selectedFile.name}</h1>
+                  <p className="text-sm text-gray-500">
+                    {new Date(selectedFile.createdAt).toLocaleDateString()}
+                  </p>
+                </header>
+                <article className="prose prose-lg max-w-none">
+                  <ReactMarkdown remarkPlugins={[remarkGfm]}>{selectedFile.content}</ReactMarkdown>
+                </article>
+              </div>
+            ) : (
+              <div className="flex items-center justify-center h-full">
+                <p className="text-gray-400">Select a file</p>
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (type === 'blog') {
+    const blog = content as Blog;
+    return (
+      <div className="min-h-screen bg-white">
+        <Navbar scrollToSection={scrollToSection} />
+        
+        <button
+          onClick={() => navigate('/learnings?tab=blogs')}
+          className="hidden md:flex fixed left-6 top-6 z-[1001] items-center gap-2 px-4 py-2 bg-white/90 backdrop-blur-md border-2 border-black rounded-full shadow-lg hover:bg-black hover:text-white transition-all group"
+        >
+          <ArrowLeft size={20} />
+          <span className="font-bold text-sm">Back</span>
+        </button>
+
+        <main className="max-w-4xl mx-auto px-6 py-24">
+          {blog.coverImage && (
+            <img src={blog.coverImage} alt={blog.title} className="w-full h-[400px] object-cover rounded-2xl mb-8" />
+          )}
+
+          <span className="inline-block px-3 py-1 text-sm font-semibold rounded-full bg-purple-100 text-purple-600 mb-4">
+            {blog.subject}
+          </span>
+
+          <h1 className="text-4xl md:text-5xl font-black mb-4">{blog.title}</h1>
+          {blog.tagline && <p className="text-xl text-gray-600 mb-6">{blog.tagline}</p>}
+
+          <div className="flex items-center gap-4 text-sm text-gray-500 mb-6">
+            <div className="flex items-center gap-1">
+              <Calendar size={16} />
+              <span>{new Date(blog.datetime).toLocaleDateString()}</span>
+            </div>
+          </div>
+
+          {blog.blogLinks && blog.blogLinks.length > 0 && (
+            <div className="flex gap-3 mb-8">
+              {blog.blogLinks.map((link, i) => (
+                <a
+                  key={i}
+                  href={link.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-2 px-4 py-2 bg-black text-white rounded-lg hover:bg-gray-800"
+                >
+                  {link.name}
+                  <ExternalLink size={16} />
+                </a>
+              ))}
+            </div>
+          )}
+
+          <article className="prose prose-lg max-w-none">
+            <ReactMarkdown remarkPlugins={[remarkGfm]}>{blog.content}</ReactMarkdown>
+          </article>
+        </main>
+      </div>
+    );
+  }
+
+  // Documentation
+  const doc = content as Documentation;
   return (
     <div className="min-h-screen bg-white">
-      {/* Fixed Navbar */}
-      <div className="fixed top-0 left-0 right-0 z-[1000]">
-        <Navbar scrollToSection={scrollToSection} />
-      </div>
-
-      {/* Floating Back Button - Left (same line as navbar) */}
+      <Navbar scrollToSection={scrollToSection} />
+      
       <button
-        onClick={() => navigate('/learnings')}
-        className="hidden md:flex fixed left-6 top-4 md:top-6 z-[1001] items-center gap-2 px-4 py-2 bg-white/90 backdrop-blur-md border-2 border-black rounded-full shadow-lg hover:bg-black hover:text-white transition-all group"
+        onClick={() => navigate('/learnings?tab=documentation')}
+        className="hidden md:flex fixed left-6 top-6 z-[1001] items-center gap-2 px-4 py-2 bg-white/90 backdrop-blur-md border-2 border-black rounded-full shadow-lg hover:bg-black hover:text-white transition-all group"
       >
-        <ArrowLeft size={20} className="group-hover:-translate-x-1 transition-transform" />
+        <ArrowLeft size={20} />
         <span className="font-bold text-sm">Back</span>
       </button>
 
-      {/* Floating Avatar - Right (same line as navbar) */}
-      <div className="hidden md:flex fixed right-6 top-4 md:top-6 z-[1001] items-center gap-3 px-4 py-2 bg-white/90 backdrop-blur-md border-2 border-black rounded-full shadow-lg">
-        <img
-          src="/me.png"
-          alt="Kunal Patil"
-          className="w-10 h-10 rounded-full object-cover grayscale"
-        />
-        <span className="font-bold text-sm">Kunal Patil</span>
-      </div>
+      <main className="max-w-4xl mx-auto px-6 py-24">
+        <span className="inline-block px-3 py-1 text-sm font-semibold rounded-full bg-blue-100 text-blue-600 mb-4">
+          {doc.subject}
+        </span>
 
-      {/* Main Content - Add padding for fixed navbar */}
-      <main className="max-w-7xl mx-auto px-6 py-12 pt-[120px] md:pt-[140px]">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
-          {/* Sidebar - Article Info - Fixed Position */}
-          <aside className="hidden lg:block lg:col-span-3">
-            <div className="fixed top-[140px] w-[calc((100vw-1280px)/2+256px)] max-w-[256px] space-y-6 overflow-y-auto max-h-[calc(100vh-160px)] custom-scrollbar pr-4">
-              <div>
-                <h3 className="text-sm font-bold text-gray-900 mb-4 uppercase tracking-wider">Category</h3>
-                <span className="inline-block px-3 py-1 bg-gray-100 text-gray-700 text-xs font-semibold rounded">
-                  {article.subject}
-                </span>
-              </div>
+        <h1 className="text-4xl md:text-5xl font-black mb-4">{doc.title}</h1>
+        {doc.description && <p className="text-xl text-gray-600 mb-6">{doc.description}</p>}
 
-              <div>
-                <h3 className="text-sm font-bold text-gray-900 mb-4 uppercase tracking-wider">Navigation</h3>
-                <nav className="space-y-2">
-                  {sections.map((section, idx) => (
-                    <a
-                      key={idx}
-                      href={`#${section.toLowerCase().replace(/\s+/g, '-')}`}
-                      className="block text-sm text-gray-600 hover:text-black py-1 border-l-2 border-transparent hover:border-black pl-3 transition-colors"
-                    >
-                      {section}
-                    </a>
-                  ))}
-                </nav>
-              </div>
+        <div className="flex items-center gap-4 text-sm text-gray-500 mb-8">
+          {doc.date && (
+            <div className="flex items-center gap-1">
+              <Calendar size={16} />
+              <span>{doc.date}</span>
             </div>
-          </aside>
-
-          {/* Article Content - Scrollable */}
-          <article className="lg:col-span-9">
-            {/* Category Badge */}
-            <div className="mb-4">
-              <span className="inline-block px-3 py-1 bg-gray-100 text-gray-700 text-xs font-semibold rounded">
-                {article.subject}
-              </span>
+          )}
+          {doc.time && (
+            <div className="flex items-center gap-1">
+              <Clock size={16} />
+              <span>{doc.time}</span>
             </div>
-
-            {/* Title */}
-            <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6 leading-tight">
-              {article.title}
-            </h1>
-
-            {/* Meta Info */}
-            <div className="flex items-center gap-6 text-sm text-gray-500 mb-8">
-              <div className="flex items-center gap-2">
-                <Calendar size={16} />
-                <span>{new Date(article.dateUpdated).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <Clock size={16} />
-                <span>{article.readTime}</span>
-              </div>
-              <span>•</span>
-              <span>{article.author}</span>
-            </div>
-
-            {/* Markdown Content */}
-            <div className="markdown-content">
-              <ReactMarkdown 
-                remarkPlugins={[remarkGfm]}
-                components={{
-                  h1: ({node, children, ...props}) => {
-                    const text = children?.toString() || '';
-                    const id = text.toLowerCase().replace(/\s+/g, '-').replace(/[^\w-]/g, '');
-                    return <h1 id={id} className="text-4xl font-bold text-gray-900 mt-8 mb-6 scroll-mt-24" {...props}>{children}</h1>;
-                  },
-                  h2: ({node, children, ...props}) => {
-                    const text = children?.toString() || '';
-                    const id = text.toLowerCase().replace(/\s+/g, '-').replace(/[^\w-]/g, '');
-                    return <h2 id={id} className="text-3xl font-bold text-gray-900 mt-12 mb-6 pb-3 border-b border-gray-200 scroll-mt-24" {...props}>{children}</h2>;
-                  },
-                  h3: ({node, children, ...props}) => {
-                    const text = children?.toString() || '';
-                    const id = text.toLowerCase().replace(/\s+/g, '-').replace(/[^\w-]/g, '');
-                    return <h3 id={id} className="text-2xl font-bold text-gray-900 mt-8 mb-4 scroll-mt-24" {...props}>{children}</h3>;
-                  },
-                  p: ({node, ...props}) => <p className="text-gray-700 text-lg leading-relaxed mb-6" {...props} />,
-                  ul: ({node, ...props}) => <ul className="list-disc ml-6 my-6 space-y-2" {...props} />,
-                  ol: ({node, ...props}) => <ol className="list-decimal ml-6 my-6 space-y-2" {...props} />,
-                  li: ({node, ...props}) => <li className="text-gray-700 text-lg leading-relaxed" {...props} />,
-                  a: ({node, ...props}) => <a className="text-blue-600 hover:underline" {...props} />,
-                  img: ({node, ...props}) => <img className="rounded-xl shadow-lg my-8 w-full" {...props} />,
-                  code: ({node, inline, ...props}: any) => 
-                    inline 
-                      ? <code className="bg-gray-100 text-gray-800 px-2 py-1 rounded text-sm font-mono" {...props} />
-                      : <code className="block bg-gray-900 text-gray-100 p-4 rounded-lg overflow-x-auto my-6 text-sm font-mono" {...props} />,
-                  pre: ({node, ...props}) => <pre className="bg-gray-900 text-gray-100 p-4 rounded-lg overflow-x-auto my-6" {...props} />,
-                  blockquote: ({node, ...props}) => <blockquote className="border-l-4 border-gray-300 pl-4 italic text-gray-600 my-6" {...props} />,
-                  hr: ({node, ...props}) => <hr className="my-8 border-gray-300" {...props} />,
-                  strong: ({node, ...props}) => <strong className="font-bold text-gray-900" {...props} />,
-                }}
-              >
-                {markdownContent}
-              </ReactMarkdown>
-            </div>
-          </article>
+          )}
         </div>
+
+        <article className="prose prose-lg max-w-none">
+          <ReactMarkdown remarkPlugins={[remarkGfm]}>{doc.content}</ReactMarkdown>
+        </article>
       </main>
     </div>
   );
