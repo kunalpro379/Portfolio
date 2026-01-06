@@ -177,7 +177,7 @@ const ProjectCard = memo(function ProjectCard({
         >
           {/* Description - Large Text */}
           <div className="flex-1 flex items-center justify-center">
-            <p className="text-white/90 text-sm md:text-base lg:text-lg font-medium leading-relaxed text-center">
+            <p className="text-white/90 text-xs md:text-sm lg:text-base font-medium leading-relaxed text-center">
               {description}
             </p>
           </div>
@@ -191,7 +191,7 @@ const ProjectCard = memo(function ProjectCard({
               onClick={(e) => e.stopPropagation()}
               className="text-white hover:text-gray-300 transition-colors"
             >
-              <Github size={40} strokeWidth={1.5} />
+              <Github size={36} strokeWidth={1.5} />
             </a>
           </div>
         </div>

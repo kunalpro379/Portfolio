@@ -1,26 +1,39 @@
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
-import { ChevronLeft, ChevronRight } from "lucide-react";
-import { useRef } from "react";
+import { useRef, useState, useEffect } from "react";
 import blogsData from "@/data/blogs.metadata.json";
-import backgroundsData from "@/data/backgrounds.json";
+import { API_ENDPOINTS } from "@/config/api";
+
+interface Documentation {
+  docId: string;
+  title: string;
+  subject: string;
+  description: string;
+  tags: string[];
+  date: string;
+  isPublic: boolean;
+  createdAt: string;
+}
 
 export default function BlogsSection() {
-  const scrollContainerRef = useRef<HTMLDivElement>(null);
-  const bgTexture = backgroundsData.sections.blogs;
+  const blogsScrollRef = useRef<HTMLDivElement>(null);
+  const docsScrollRef = useRef<HTMLDivElement>(null);
+  const [documentation, setDocumentation] = useState<Documentation[]>([]);
 
-  const scroll = (direction: 'left' | 'right') => {
-    if (scrollContainerRef.current) {
-      const scrollAmount = 300;
-      const newScrollLeft = scrollContainerRef.current.scrollLeft + (direction === 'left' ? -scrollAmount : scrollAmount);
-      scrollContainerRef.current.scrollTo({
-        left: newScrollLeft,
-        behavior: 'smooth'
-      });
-    }
-  };
+  useEffect(() => {
+    const fetchDocumentation = async () => {
+      try {
+        const response = await fetch(API_ENDPOINTS.documentation);
+        const data = await response.json();
+        setDocumentation(data.docs.filter((doc: Documentation) => doc.isPublic).slice(0, 4));
+      } catch (error) {
+        console.error('Error fetching documentation:', error);
+      }
+    };
+    fetchDocumentation();
+  }, []);
 
-  const blogs = blogsData.map((blog, idx) => {
+  const blogs = blogsData.slice(0, 4).map((blog, idx) => {
     const colors = [
       "rgb(244, 114, 182)", // Pink
       "rgb(251, 191, 36)",  // Amber
@@ -29,6 +42,19 @@ export default function BlogsSection() {
     ];
     return {
       ...blog,
+      accentColor: colors[idx % colors.length]
+    };
+  });
+
+  const docs = documentation.map((doc, idx) => {
+    const colors = [
+      "rgb(59, 130, 246)",  // Blue
+      "rgb(236, 72, 153)",  // Pink
+      "rgb(168, 85, 247)",  // Purple
+      "rgb(34, 197, 94)"    // Green
+    ];
+    return {
+      ...doc,
       accentColor: colors[idx % colors.length]
     };
   });
@@ -45,155 +71,198 @@ export default function BlogsSection() {
             viewport={{ once: true }}
             transition={{ duration: 0.6 }}
             className="text-4xl md:text-6xl font-black tracking-tight leading-none text-black"
+            style={{ fontFamily: 'Comic Sans MS, cursive' }}
           >
             Documentation & Learnings
           </motion.h2>
         </div>
 
-        {/* Blog Cards Container with Navigation Arrows */}
-        <div className="relative">
-          {/* Left Arrow - Mobile Only */}
-          <button
-            onClick={() => scroll('left')}
-            className="md:hidden absolute left-0 top-1/2 -translate-y-1/2 z-20 bg-black text-white p-2 rounded-full shadow-lg"
-            aria-label="Scroll left"
-          >
-            <ChevronLeft size={20} />
-          </button>
+        {/* Blogs Section */}
+        <div className="mb-12">
+          <div className="flex items-center justify-between mb-6">
+            <motion.h3
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6 }}
+              className="text-2xl md:text-3xl font-black text-black"
+              style={{ fontFamily: 'Comic Sans MS, cursive' }}
+            >
+              Blogs
+            </motion.h3>
 
-          {/* Right Arrow - Mobile Only */}
-          <button
-            onClick={() => scroll('right')}
-            className="md:hidden absolute right-0 top-1/2 -translate-y-1/2 z-20 bg-black text-white p-2 rounded-full shadow-lg"
-            aria-label="Scroll right"
-          >
-            <ChevronRight size={20} />
-          </button>
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6, delay: 0.2 }}
+            >
+              <Link
+                to="/learnings?tab=blogs"
+                className="inline-flex items-center gap-2 px-6 py-2 bg-black text-white border-3 border-black rounded-xl font-bold text-sm hover:bg-gray-800 transition-all shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]"
+              >
+                Show More →
+              </Link>
+            </motion.div>
+          </div>
 
-          {/* Blog Cards - Horizontal Scroll for Mobile, Grid for Desktop */}
-          <div
-            ref={scrollContainerRef}
-            className="overflow-x-auto pt-4 pb-8 -mx-6 px-6 md:-mx-12 md:px-12 scrollbar-hide"
-          >
-            <div className="flex md:grid md:grid-cols-4 gap-4 md:gap-6 min-w-max md:min-w-0">
-              {blogs.map((blog, idx) => (
-                <motion.a
-                  key={idx}
-                  href={blog.blogUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  initial={{ opacity: 0, y: 50 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.6, delay: idx * 0.15 }}
-                  className="group relative block hover:scale-105 transition-all duration-300 w-[220px] md:w-auto flex-shrink-0"
-                >
-                  {/* Sketchy Border SVG Overlay */}
-                  <svg
-                    className="absolute inset-0 w-full h-full pointer-events-none z-10"
-                    style={{ filter: 'drop-shadow(2px 2px 1px rgba(0,0,0,0.1))' }}
+          <div className="relative">
+            <div
+              ref={blogsScrollRef}
+              className="overflow-x-auto pt-4 pb-8 -mx-6 px-6 md:-mx-12 md:px-12 scrollbar-hide"
+            >
+              <div className="flex md:grid md:grid-cols-4 gap-4 md:gap-6 min-w-max md:min-w-0">
+                {blogs.map((blog, idx) => (
+                  <motion.a
+                    key={idx}
+                    href={blog.blogUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    initial={{ opacity: 0, y: 50 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.6, delay: idx * 0.15 }}
+                    className="group relative block hover:-translate-y-1 transition-all duration-300 w-[220px] md:w-auto flex-shrink-0"
                   >
-                    <rect
-                      x="1"
-                      y="1"
-                      width="calc(100% - 2px)"
-                      height="calc(100% - 2px)"
-                      fill="none"
-                      stroke={blog.accentColor}
-                      strokeWidth="2.5"
-                      rx="6"
-                      strokeDasharray="5, 3"
-                      strokeLinecap="round"
-                    />
-                  </svg>
+                    <div
+                      className="relative bg-white overflow-hidden border-4 border-black rounded-2xl hover:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] transition-all duration-300 h-full flex flex-col"
+                    >
+                      {blog.coverImage && (
+                        <div className="relative h-32 md:h-40 overflow-hidden bg-gray-50 flex-shrink-0 border-b-4 border-black">
+                          <img
+                            src={blog.coverImage}
+                            alt={blog.title}
+                            width={300}
+                            height={160}
+                            loading="lazy"
+                            decoding="async"
+                            className="w-full h-full object-cover group-hover:scale-110 transition-all duration-500"
+                          />
+                        </div>
+                      )}
 
-                  {/* Card Container - Fixed Height with Flexbox */}
-                  <div
-                    className="relative bg-white overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 h-full flex flex-col"
-                    style={{
-                      borderRadius: '6px',
-                      border: `2px solid ${blog.accentColor}50`
-                    }}
-                  >
+                      <div className="p-3 md:p-4 space-y-2 md:space-y-3 flex-grow">
+                        <div className="inline-block px-3 py-1 bg-pink-100 border-2 border-black rounded-lg text-[10px] md:text-xs font-bold">
+                          {blog.subject}
+                        </div>
+                        <h3 className="text-sm md:text-base lg:text-lg font-black leading-tight text-black line-clamp-2">
+                          {blog.title}
+                        </h3>
+                        <p className="text-xs md:text-sm text-gray-700 leading-relaxed line-clamp-2 font-medium">
+                          {blog.shortDescription}
+                        </p>
+                      </div>
 
-                    {/* Subject/Category at Top */}
-                    <div className="p-3 md:p-4 flex-shrink-0">
-                      <div className="text-[10px] md:text-xs lg:text-sm font-semibold text-black/70">
-                        {blog.subject}
+                      <div className="px-3 md:px-4 pb-3 md:pb-4 flex-shrink-0">
+                        <div className="text-[10px] md:text-xs text-gray-600 font-bold">
+                          {new Date(blog.dateUpdated).toLocaleDateString('en-US', {
+                            month: 'short',
+                            day: 'numeric',
+                            year: 'numeric'
+                          })} · {blog.readTime}
+                        </div>
                       </div>
                     </div>
-
-                    {/* Image Section */}
-                    {blog.coverImage && (
-                      <div className="relative h-32 md:h-40 overflow-hidden bg-gray-50 flex-shrink-0">
-                        <img
-                          src={blog.coverImage}
-                          alt={blog.title}
-                          width={300}
-                          height={160}
-                          loading="lazy"
-                          decoding="async"
-                          className="w-full h-full object-cover opacity-70 group-hover:opacity-90 group-hover:scale-110 transition-all duration-500 grayscale-[30%]"
-                        />
-                      </div>
-                    )}
-
-                    {/* Title and Description */}
-                    <div className="p-3 md:p-4 space-y-2 md:space-y-3 flex-grow">
-                      <h3 className="text-sm md:text-base lg:text-lg font-bold leading-tight text-black line-clamp-2">
-                        {blog.title}
-                      </h3>
-                      <p className="text-xs md:text-sm text-black/60 leading-relaxed line-clamp-2">
-                        {blog.shortDescription}
-                      </p>
-                    </div>
-
-                    {/* Date at Bottom */}
-                    <div className="px-3 md:px-4 pb-3 md:pb-4 flex-shrink-0">
-                      <div className="text-[10px] md:text-xs text-black/60 font-medium">
-                        {new Date(blog.dateUpdated).toLocaleDateString('en-US', {
-                          month: 'short',
-                          day: 'numeric',
-                          year: 'numeric'
-                        })} · {blog.readTime}
-                      </div>
-                    </div>
-                  </div>
-                </motion.a>
-              ))}
+                  </motion.a>
+                ))}
+              </div>
             </div>
           </div>
         </div>
 
-        {/* Show More Button */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6, delay: 0.4 }}
-          className="text-center mt-8"
-        >
-          <Link
-            to="/learnings"
-            className="inline-flex items-center gap-2 px-8 py-4 bg-black hover:bg-gray-800 text-white rounded-full font-bold uppercase tracking-wider transition-all text-sm md:text-base shadow-lg hover:shadow-xl"
-          >
-            Show More
-            <svg
-              className="w-4 h-4"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
+        {/* Documentation/Notes Section */}
+        {/* <div>
+          <div className="mb-6">
+            <motion.h3
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6 }}
+              className="text-2xl md:text-3xl font-black text-black text-center"
+              style={{ fontFamily: 'Comic Sans MS, cursive' }}
             >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M9 5l7 7-7 7"
-              />
-            </svg>
-          </Link>
-        </motion.div>
+              📚 Documentation
+            </motion.h3>
+          </div>
+
+          <div className="relative">
+            <div
+              ref={docsScrollRef}
+              className="overflow-x-auto pt-4 pb-8 -mx-6 px-6 md:-mx-12 md:px-12 scrollbar-hide"
+            >
+              <div className="flex md:grid md:grid-cols-4 gap-4 md:gap-6 min-w-max md:min-w-0">
+                {docs.map((doc, idx) => (
+                  <motion.div
+                    key={doc.docId}
+                    initial={{ opacity: 0, y: 50 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.6, delay: idx * 0.15 }}
+                    className="group relative block hover:-translate-y-1 transition-all duration-300 w-[220px] md:w-auto flex-shrink-0"
+                  >
+                    <Link to={`/learnings/documentation/${doc.docId}`}>
+                      <div
+                        className="relative bg-white overflow-hidden border-4 border-black rounded-2xl hover:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] transition-all duration-300 h-full flex flex-col min-h-[220px]"
+                      >
+                        <div className="p-3 md:p-4 space-y-2 flex-grow">
+                          <div className="inline-block px-3 py-1 bg-blue-100 border-2 border-black rounded-lg text-[10px] md:text-xs font-bold">
+                            {doc.subject}
+                          </div>
+                          <h3 className="text-sm md:text-base font-black leading-tight text-black line-clamp-2">
+                            {doc.title}
+                          </h3>
+                          <p className="text-xs text-gray-700 leading-relaxed line-clamp-2 font-medium">
+                            {doc.description}
+                          </p>
+                        </div>
+
+                        <div className="px-3 md:px-4 pb-3 md:pb-4 flex-shrink-0">
+                          <div className="text-[10px] md:text-xs text-gray-600 font-bold">
+                            {new Date(doc.date || doc.createdAt).toLocaleDateString('en-US', {
+                              month: 'short',
+                              day: 'numeric',
+                              year: 'numeric'
+                            })}
+                          </div>
+                        </div>
+                      </div>
+                    </Link>
+                  </motion.div>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6, delay: 0.4 }}
+            className="text-center mt-6"
+          >
+            <Link
+              to="/learnings?tab=documentation"
+              className="inline-flex items-center gap-2 px-8 py-3 bg-black text-white border-3 border-black rounded-xl font-bold hover:bg-gray-800 transition-all shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]"
+            >
+              Show More →
+            </Link>
+          </motion.div>
+        </div> */}
       </div>
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.6, delay: 0.4 }}
+        className="text-center mt-6"
+      >
+        <Link
+          to="/learnings?tab=documentation"
+          className="inline-flex items-center gap-2 px-8 py-3 bg-black text-white border-3 border-black rounded-xl font-bold hover:bg-gray-800 transition-all shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]"
+        >
+          Show More →
+        </Link>
+      </motion.div>
     </section>
   );
 }
