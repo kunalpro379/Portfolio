@@ -68,7 +68,14 @@ export default function DocumentationDetail() {
         try {
             const response = await fetch(`https://api.kunalpatil.me/api/documentation/${docId}/files`);
             const data = await response.json();
-            setFiles(data.files || []);
+            const fetchedFiles = data.files || [];
+            setFiles(fetchedFiles);
+            
+            // Auto-load index.md by default
+            const indexMd = fetchedFiles.find((f: DocFile) => f.name === 'index.md' && f.type === 'markdown');
+            if (indexMd) {
+                loadFile(indexMd);
+            }
         } catch (error) {
             console.error('Error fetching files:', error);
         }
