@@ -66,6 +66,7 @@ const { default: projectsRoutes } = await import('./routes/projects.js');
 const { default: todosRoutes } = await import('./routes/todos.js');
 const { default: blogsRoutes } = await import('./routes/blogs.js');
 const { default: documentationRoutes } = await import('./routes/documentation.js');
+const { default: viewsRoutes } = await import('./routes/views.js');
 
 // Routes
 app.use('/api/auth', authRoutes);
@@ -74,6 +75,7 @@ app.use('/api/projects', projectsRoutes);
 app.use('/api/todos', todosRoutes);
 app.use('/api/blogs', blogsRoutes);
 app.use('/api/documentation', documentationRoutes);
+app.use('/api/views', viewsRoutes);
 
 app.get('/', (req, res) => {
   res.json({ message: 'Portfolio API Server' });
