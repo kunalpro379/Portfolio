@@ -12,21 +12,19 @@ const PORT = process.env.PORT || 5000;
 // Middleware
 const allowedOrigins = [
   'https://api.kunalpatil.me',
-  'https://portfolioadmin-sigma.vercel.app/',
-  'https://portfolioadmin-m72zig1wl-kunaldp379-gmailcoms-projects.vercel.app/',
   'https://www.api.kunalpatil.me',
   'https://admin.kunalpatil.me',
   'https://www.admin.kunalpatil.me',
   'https://kunalpatil.me',
   'https://www.kunalpatil.me',
+  'https://portfolioadmin-sigma.vercel.app',
+  'https://portfolioadmin-m72zig1wl-kunaldp379-gmailcoms-projects.vercel.app',
   'https://portfolioclient-git-master-kunaldp379-gmailcoms-projects.vercel.app',
   'https://www.portfolioclient-git-master-kunaldp379-gmailcoms-projects.vercel.app',
   'https://portfolioclient-1x2z5fjso-kunaldp379-gmailcoms-projects.vercel.app',
   'https://www.portfolioclient-1x2z5fjso-kunaldp379-gmailcoms-projects.vercel.app',
   'http://localhost:5173',
-  'http://localhost:3000',
-  'https://api.kunalpatil.me/api/documentation',
-  'https://api.kunalpatil.me/api/blogs'
+  'http://localhost:3000'
 ];
 
 app.use(cors({
@@ -34,7 +32,10 @@ app.use(cors({
     // Allow requests with no origin (like mobile apps or curl requests)
     if (!origin) return callback(null, true);
     
-    if (allowedOrigins.indexOf(origin) !== -1) {
+    // Remove trailing slash from origin if present
+    const normalizedOrigin = origin.endsWith('/') ? origin.slice(0, -1) : origin;
+    
+    if (allowedOrigins.indexOf(normalizedOrigin) !== -1) {
       callback(null, true);
     } else {
       console.log('CORS blocked origin:', origin);
