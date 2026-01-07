@@ -101,18 +101,7 @@ router.get('/folders', async (req, res) => {
   }
 });
 
-// Get folder structure (tree view)
-router.get('/folders/tree', async (req, res) => {
-  try {
-    const folders = await Folder.find().sort({ path: 1 });
-    res.json({ folders });
-  } catch (error) {
-    console.error('Get folder tree error:', error);
-    res.status(500).json({ message: 'Server error' });
-  }
-});
-
-// Get specific folder with files and subfolders
+// Get single folder with files
 router.get('/folders/:folderId', async (req, res) => {
   try {
     const { folderId } = req.params;
@@ -122,13 +111,17 @@ router.get('/folders/:folderId', async (req, res) => {
       return res.status(404).json({ message: 'Folder not found' });
     }
 
+    console.log('Folder found:', folder.path);
+
     // Get files in this folder
     const files = await File.find({ folderPath: folder.path }).sort({ uploadedAt: -1 });
+    console.log('Files found:', files.length, 'for path:', folder.path);
     
-    // Get direct subfolders
+    // Get subfolders
     const subfolders = await Folder.find({ parentPath: folder.path }).sort({ name: 1 });
+    console.log('Subfolders found:', subfolders.length);
 
-    res.json({ 
+    res.json({
       folder: {
         ...folder.toObject(),
         files,
@@ -137,6 +130,17 @@ router.get('/folders/:folderId', async (req, res) => {
     });
   } catch (error) {
     console.error('Get folder error:', error);
+    res.status(500).json({ message: 'Server error' });
+  }
+});
+
+// Get folder structure (tree view)
+router.get('/folders/tree', async (req, res) => {
+  try {
+    const folders = await Folder.find().sort({ path: 1 });
+    res.json({ folders });
+  } catch (error) {
+    console.error('Get folder tree error:', error);
     res.status(500).json({ message: 'Server error' });
   }
 });
@@ -208,18 +212,7 @@ router.get('/files', async (req, res) => {
   }
 });
 
-// Get all files
-router.get('/files/all', async (req, res) => {
-  try {
-    const files = await File.find().sort({ uploadedAt: -1 });
-    res.json({ files });
-  } catch (error) {
-    console.error('Get all files error:', error);
-    res.status(500).json({ message: 'Server error' });
-  }
-});
-
-// Get specific file with content
+// Get single file with content
 router.get('/files/:fileId', async (req, res) => {
   try {
     const { fileId } = req.params;
@@ -229,36 +222,57 @@ router.get('/files/:fileId', async (req, res) => {
       return res.status(404).json({ message: 'File not found' });
     }
 
-    // For text files, try to get content from Azure
-    const textExtensions = ['txt', 'md', 'java', 'cpp', 'c', 'py', 'js', 'ts', 'jsx', 'tsx', 'html', 'css', 'json', 'xml', 'yaml', 'yml', 'sh', 'bash'];
-    const fileExtension = file.filename.split('.').pop()?.toLowerCase() || '';
-    
-    let content = null;
-    if (textExtensions.includes(fileExtension)) {
-      try {
-        const containerClient = blobServiceClient.getContainerClient(containerName);
-        const blockBlobClient = containerClient.getBlockBlobClient(file.cloudinaryPath);
-        
-        const downloadResponse = await blockBlobClient.download(0);
-        const chunks = [];
-        for await (const chunk of downloadResponse.readableStreamBody) {
-          chunks.push(chunk);
+    // Download content from Azure
+    try {
+      const containerClient = blobServiceClient.getContainerClient(containerName);
+      const blockBlobClient = containerClient.getBlockBlobClient(file.cloudinaryPath);
+      
+      const downloadResponse = await blockBlobClient.download(0);
+      const content = await streamToString(downloadResponse.readableStreamBody);
+      
+      res.json({
+        file: {
+          ...file.toObject(),
+          content
         }
-        content = Buffer.concat(chunks).toString('utf-8');
-      } catch (azureError) {
-        console.error('Error downloading file content from Azure:', azureError);
-        // Content will remain null if download fails
-      }
+      });
+    } catch (azureError) {
+      console.error('Azure download error:', azureError);
+      // Return file info without content if download fails
+      res.json({
+        file: {
+          ...file.toObject(),
+          content: ''
+        }
+      });
     }
-
-    res.json({ 
-      file: {
-        ...file.toObject(),
-        content
-      }
-    });
   } catch (error) {
     console.error('Get file error:', error);
+    res.status(500).json({ message: 'Server error' });
+  }
+});
+
+// Helper function to convert stream to string
+async function streamToString(readableStream) {
+  return new Promise((resolve, reject) => {
+    const chunks = [];
+    readableStream.on('data', (data) => {
+      chunks.push(data.toString());
+    });
+    readableStream.on('end', () => {
+      resolve(chunks.join(''));
+    });
+    readableStream.on('error', reject);
+  });
+}
+
+// Get all files
+router.get('/files/all', async (req, res) => {
+  try {
+    const files = await File.find().sort({ uploadedAt: -1 });
+    res.json({ files });
+  } catch (error) {
+    console.error('Get all files error:', error);
     res.status(500).json({ message: 'Server error' });
   }
 });

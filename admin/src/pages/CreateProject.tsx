@@ -130,7 +130,7 @@ export default function CreateProject() {
         mdFiles: []
       };
 
-      const createResponse = await fetch('http://localhost:5000/api/projects/create', {
+      const createResponse = await fetch('http://api.kunalpatil.me/api/projects/create', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(projectData)
@@ -155,7 +155,7 @@ export default function CreateProject() {
         
         formData.append('assetNames', JSON.stringify(assetNames));
 
-        await fetch(`http://localhost:5000/api/projects/${projectId}/assets`, {
+        await fetch(`http://api.kunalpatil.me/api/projects/${projectId}/assets`, {
           method: 'POST',
           body: formData
         });
@@ -172,7 +172,7 @@ export default function CreateProject() {
           }
         });
 
-        await fetch(`http://localhost:5000/api/projects/${projectId}/cardassets`, {
+        await fetch(`http://api.kunalpatil.me/api/projects/${projectId}/cardassets`, {
           method: 'POST',
           body: formData
         });
@@ -184,7 +184,7 @@ export default function CreateProject() {
         const mdFormData = new FormData();
         mdFormData.append('mdFile', mdBlob, `${projectId}.md`);
 
-        await fetch(`http://localhost:5000/api/projects/${projectId}/md-file`, {
+        await fetch(`http://api.kunalpatil.me/api/projects/${projectId}/md-file`, {
           method: 'POST',
           body: mdFormData
         });

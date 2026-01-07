@@ -3,7 +3,7 @@
 const config = {
   // API Base URL
   api: {
-    baseUrl: import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000',
+    baseUrl: import.meta.env.VITE_API_BASE_URL || 'http://api.kunalpatil.me',
     endpoints: {
       // Auth
       auth: '/api/auth',

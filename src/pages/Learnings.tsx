@@ -289,9 +289,9 @@ export default function LearningsPage() {
               {/* DOCUMENTATION TAB */}
               {activeTab === 'documentation' && (
                 <>
-                  <div className="space-y-4">
+                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                     {documentation.length === 0 ? (
-                      <div className="text-center py-20">
+                      <div className="col-span-full text-center py-20">
                         <div className="bg-white border-4 border-black rounded-2xl p-12 inline-block">
                           <BookOpen size={64} strokeWidth={2.5} className="mx-auto mb-4" />
                           <p className="text-gray-600 text-lg font-bold">No documentation yet</p>
@@ -302,50 +302,64 @@ export default function LearningsPage() {
                         <div
                           key={doc.docId}
                           onClick={() => navigate(`/learnings/documentation/${doc.docId}`)}
-                          className="bg-white border-4 border-black rounded-2xl p-6 hover:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] transition-all cursor-pointer hover:-translate-y-1"
+                          className="bg-white border-4 border-black rounded-2xl p-8 hover:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] transition-all cursor-pointer hover:-translate-y-1 group h-full flex flex-col"
                         >
-                          <div className="flex items-start gap-4">
-                            <div className="p-3 bg-blue-200 border-3 border-black rounded-xl">
-                              <FileText size={24} strokeWidth={2.5} />
+                          <div className="flex items-start gap-5 mb-4">
+                            <div className="p-4 bg-gradient-to-br from-blue-400 to-blue-600 border-3 border-black rounded-xl group-hover:rotate-6 transition-transform flex-shrink-0">
+                              <FileText size={32} strokeWidth={2.5} className="text-white" />
                             </div>
-                            <div className="flex-1">
-                              <div className="flex items-center gap-3 mb-2">
-                                <span className="px-3 py-1 bg-blue-100 border-2 border-black rounded-lg text-xs font-bold">
+                            <div className="flex-1 min-w-0">
+                              <div className="flex items-center gap-2 mb-3 flex-wrap">
+                                <span className="px-3 py-1.5 bg-blue-100 border-2 border-black rounded-lg text-xs font-bold uppercase tracking-wide">
                                   {doc.subject}
                                 </span>
                                 {doc.isPublic && (
-                                  <span className="px-3 py-1 bg-green-100 border-2 border-black rounded-lg text-xs font-bold">
+                                  <span className="px-3 py-1.5 bg-green-100 border-2 border-black rounded-lg text-xs font-bold uppercase tracking-wide">
                                     Public
                                   </span>
                                 )}
                               </div>
-                              <h3 className="text-2xl font-black text-black mb-2">{doc.title}</h3>
-                              {doc.description && (
-                                <p className="text-gray-700 mb-3 font-medium">{doc.description}</p>
+                              <h3 className="text-2xl font-black text-black mb-3 leading-tight group-hover:text-blue-600 transition-colors">
+                                {doc.title}
+                              </h3>
+                            </div>
+                          </div>
+                          
+                          {doc.description && (
+                            <p className="text-gray-700 mb-4 font-medium leading-relaxed line-clamp-3">
+                              {doc.description}
+                            </p>
+                          )}
+                          
+                          {doc.tags && doc.tags.length > 0 && (
+                            <div className="flex flex-wrap gap-2 mb-4">
+                              {doc.tags.slice(0, 4).map((tag, i) => (
+                                <span key={i} className="px-3 py-1 text-xs bg-gray-100 border-2 border-black rounded-full font-bold">
+                                  #{tag}
+                                </span>
+                              ))}
+                              {doc.tags.length > 4 && (
+                                <span className="px-3 py-1 text-xs bg-gray-200 border-2 border-black rounded-full font-bold">
+                                  +{doc.tags.length - 4}
+                                </span>
                               )}
-                              {doc.tags && doc.tags.length > 0 && (
-                                <div className="flex flex-wrap gap-2 mb-3">
-                                  {doc.tags.map((tag, i) => (
-                                    <span key={i} className="px-2 py-1 text-xs bg-gray-100 border-2 border-black rounded font-bold">
-                                      {tag}
-                                    </span>
-                                  ))}
+                            </div>
+                          )}
+                          
+                          <div className="mt-auto pt-4 border-t-2 border-gray-200">
+                            <div className="flex items-center gap-4 text-sm text-gray-600 font-bold">
+                              {doc.date && (
+                                <div className="flex items-center gap-2">
+                                  <Calendar size={16} strokeWidth={2.5} className="text-blue-500" />
+                                  <span>{doc.date}</span>
                                 </div>
                               )}
-                              <div className="flex items-center gap-4 text-sm text-gray-600 font-medium">
-                                {doc.date && (
-                                  <div className="flex items-center gap-1">
-                                    <Calendar size={14} strokeWidth={2.5} />
-                                    <span>{doc.date}</span>
-                                  </div>
-                                )}
-                                {doc.time && (
-                                  <div className="flex items-center gap-1">
-                                    <Clock size={14} strokeWidth={2.5} />
-                                    <span>{doc.time}</span>
-                                  </div>
-                                )}
-                              </div>
+                              {doc.time && (
+                                <div className="flex items-center gap-2">
+                                  <Clock size={16} strokeWidth={2.5} className="text-blue-500" />
+                                  <span>{doc.time}</span>
+                                </div>
+                              )}
                             </div>
                           </div>
                         </div>

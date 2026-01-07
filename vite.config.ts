@@ -9,6 +9,9 @@ export default defineConfig({
       '@': path.resolve(__dirname, './src'),
     },
   },
+  define: {
+    'process.env': {}
+  },
   optimizeDeps: {
     include: ['@excalidraw/excalidraw'],
   },
@@ -40,6 +43,6 @@ export default defineConfig({
     },
   },
   server: {
-    port: 3000,
+    port: 3002,
   },
 })

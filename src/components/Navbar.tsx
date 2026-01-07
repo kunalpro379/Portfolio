@@ -132,7 +132,7 @@ export default function Navbar({ scrollToSection }: NavbarProps) {
             <Briefcase size={18} className="mb-1" />
             <span className="text-[8px] font-bold uppercase">Experience</span>
           </div>
-          <div onClick={() => scrollToSection('blogs')} className="flex flex-col items-center justify-center px-2 py-1 cursor-pointer rounded active:scale-95 active:bg-black/5 min-w-[60px]">
+          <div onClick={() => navigate('/learnings?tab=blogs')} className="flex flex-col items-center justify-center px-2 py-1 cursor-pointer rounded active:scale-95 active:bg-black/5 min-w-[60px]">
             <BookOpen size={18} className="mb-1" />
             <span className="text-[8px] font-bold uppercase">Blogs</span>
           </div>
@@ -178,7 +178,7 @@ export default function Navbar({ scrollToSection }: NavbarProps) {
                 Experience
               </span>
             </div>
-            <div onClick={() => scrollToSection('blogs')} className="flex flex-col items-center justify-center cursor-pointer group">
+            <div onClick={() => navigate('/learnings?tab=blogs')} className="flex flex-col items-center justify-center cursor-pointer group">
               <BookOpen size={24} className="mb-2 text-black/70 group-hover:text-sky-500 transition-colors" />
               <span className="text-xs font-bold uppercase tracking-wider text-black/70 group-hover:text-black transition-colors">
                 Blogs

@@ -18,7 +18,7 @@ const sessionSchema = new mongoose.Schema({
   createdAt: {
     type: Date,
     default: Date.now,
-    expires: 600 // TTL: 10 minutes (600 seconds)
+    expires: 604800 // TTL: 7 days (604800 seconds)
   }
 });
 

@@ -28,7 +28,7 @@ export default function Projects() {
 
   const fetchProjects = async () => {
     try {
-      const response = await fetch('http://localhost:5000/api/projects');
+      const response = await fetch('http://api.kunalpatil.me/api/projects');
       const data = await response.json();
       setProjects(data.projects);
     } catch (error) {
@@ -60,7 +60,7 @@ export default function Projects() {
     if (!confirm('Are you sure you want to delete this project?')) return;
 
     try {
-      const response = await fetch(`http://localhost:5000/api/projects/${projectId}`, {
+      const response = await fetch(`http://api.kunalpatil.me/api/projects/${projectId}`, {
         method: 'DELETE'
       });
 
@@ -87,7 +87,7 @@ export default function Projects() {
     try {
       const projectIds = projects.map(p => p.projectId);
       
-      const response = await fetch('http://localhost:5000/api/projects/reorder', {
+      const response = await fetch('http://api.kunalpatil.me/api/projects/reorder', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

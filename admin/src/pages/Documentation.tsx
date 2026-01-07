@@ -26,7 +26,7 @@ export default function Documentation() {
 
   const fetchDocs = async () => {
     try {
-      const response = await fetch('http://localhost:5000/api/documentation');
+      const response = await fetch('http://api.kunalpatil.me/api/documentation');
       const data = await response.json();
       setDocs(data.docs);
     } catch (error) {
@@ -40,7 +40,7 @@ export default function Documentation() {
     if (!confirm('Delete this documentation? This cannot be undone.')) return;
 
     try {
-      const response = await fetch(`http://localhost:5000/api/documentation/${docId}`, {
+      const response = await fetch(`http://api.kunalpatil.me/api/documentation/${docId}`, {
         method: 'DELETE'
       });
 
