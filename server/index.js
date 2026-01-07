@@ -24,7 +24,9 @@ const allowedOrigins = [
   'https://portfolioclient-1x2z5fjso-kunaldp379-gmailcoms-projects.vercel.app',
   'https://www.portfolioclient-1x2z5fjso-kunaldp379-gmailcoms-projects.vercel.app',
   'http://localhost:5173',
-  'http://localhost:3000'
+  'http://localhost:3000',
+  'https://api.kunalpatil.me/api/documentation',
+  'https://api.kunalpatil.me/api/blogs'
 ];
 
 app.use(cors({
