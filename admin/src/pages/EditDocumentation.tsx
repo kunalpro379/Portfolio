@@ -458,7 +458,7 @@ export default function EditDocumentation() {
   return (
     <div className="h-screen flex flex-col bg-gray-50">
       {/* Header */}
-      <div className="bg-white border-b-4 border-black p-4 md:p-6">
+      <div className={`bg-white border-b-4 border-black p-4 md:p-6 ${isFullscreen ? 'hidden' : ''}`}>
         <div className="max-w-[1800px] mx-auto">
           <button
             onClick={() => navigate('/documentation')}
@@ -521,7 +521,7 @@ export default function EditDocumentation() {
       {/* Main Layout - Mobile: column with scroll, Desktop: row */}
       <div className="flex-1 flex flex-col lg:flex-row overflow-y-auto lg:overflow-hidden relative">
         {/* File Sidebar - Desktop always visible, Mobile as overlay */}
-        <div className={`${showMobileSidebar ? 'fixed inset-y-0 left-0 z-40' : 'hidden'} lg:block w-64 bg-white border-r-4 border-black overflow-y-auto`}>
+        <div className={`${showMobileSidebar ? 'fixed inset-y-0 left-0 z-40' : 'hidden'} ${isFullscreen ? 'hidden' : 'lg:block'} w-64 bg-white border-r-4 border-black overflow-y-auto`}>
           <div className="p-4 space-y-4">
             {/* New File Button */}
             <button
@@ -657,7 +657,7 @@ export default function EditDocumentation() {
         )}
 
         {/* Middle - Form - Desktop: sidebar, Mobile: auto height */}
-        <div className="w-full lg:w-[400px] lg:border-r-4 border-black bg-white p-6 lg:overflow-y-auto">
+        <div className={`w-full lg:w-[400px] lg:border-r-4 border-black bg-white p-6 lg:overflow-y-auto ${isFullscreen ? 'hidden' : ''}`}>
           <div className="space-y-6">
             <div>
               <label className="block text-sm font-black mb-2 uppercase">Title *</label>
@@ -777,10 +777,42 @@ export default function EditDocumentation() {
         </div>
 
         {/* Right - Editor - Mobile: min height, Desktop: flex */}
-        <div className="w-full lg:flex-1 flex flex-col min-h-[500px] lg:min-h-0 lg:overflow-hidden">
+        <div className={`w-full lg:flex-1 flex flex-col min-h-[500px] lg:min-h-0 lg:overflow-hidden ${isFullscreen ? 'fixed inset-0 z-50' : ''}`}>
+          {/* Fullscreen Controls */}
+          {isFullscreen && activeTab === 'diagram' && (
+            <div className="absolute top-0 right-0 z-50 flex items-center gap-2 p-2 bg-white/90 backdrop-blur-sm border-b border-l border-black rounded-bl-lg">
+              <button
+                onClick={() => setIsFullscreen(false)}
+                className="p-2 hover:bg-gray-100 rounded transition"
+                title="Exit Fullscreen"
+              >
+                <Minimize2 className="w-5 h-5" strokeWidth={2.5} />
+              </button>
+              <button
+                className="p-2 hover:bg-gray-100 rounded transition"
+                title="Minimize"
+              >
+                <Minus className="w-5 h-5" strokeWidth={2.5} />
+              </button>
+              <button
+                className="p-2 hover:bg-gray-100 rounded transition"
+                title="Maximize"
+              >
+                <Square className="w-5 h-5" strokeWidth={2.5} />
+              </button>
+              <button
+                onClick={() => setIsFullscreen(false)}
+                className="p-2 hover:bg-red-100 rounded transition"
+                title="Close"
+              >
+                <X className="w-5 h-5" strokeWidth={2.5} />
+              </button>
+            </div>
+          )}
+          
           {currentFile ? (
             <>
-              <div className="flex items-center justify-between p-4 bg-white border-b-4 border-black">
+              <div className={`flex items-center justify-between p-4 bg-white border-b-4 border-black ${isFullscreen ? 'hidden' : ''}`}>
                 <h2 className="font-black text-lg">{currentFile.name}</h2>
                 <button
                   onClick={saveCurrentFile}
@@ -801,7 +833,18 @@ export default function EditDocumentation() {
                 )}
 
                 {activeTab === 'diagram' && (
-                  <div className="w-full h-full">
+                  <div className="w-full h-full relative">
+                    {/* Fullscreen Button */}
+                    {!isFullscreen && (
+                      <button
+                        onClick={() => setIsFullscreen(true)}
+                        className="absolute top-4 right-4 z-10 p-3 bg-white border-3 border-black rounded-lg font-bold hover:bg-gray-100 transition shadow-lg"
+                        title="Fullscreen"
+                      >
+                        <Maximize2 className="w-5 h-5" strokeWidth={2.5} />
+                      </button>
+                    )}
+                    
                     {/* Desktop - Show Excalidraw */}
                     <div className="hidden lg:block w-full h-full">
                       <Excalidraw
