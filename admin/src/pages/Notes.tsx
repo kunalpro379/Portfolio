@@ -215,10 +215,10 @@ export default function Notes() {
                   {Math.round((uploadProgress.current / uploadProgress.total) * 100)}%
                 </div>
               </div>
-              
+
               {/* Progress Bar */}
               <div className="w-full h-4 bg-gray-200 border-3 border-black rounded-full overflow-hidden">
-                <div 
+                <div
                   className="h-full bg-gradient-to-r from-blue-400 to-blue-600 transition-all duration-500 ease-out relative"
                   style={{ width: `${(uploadProgress.current / uploadProgress.total) * 100}%` }}
                 >
@@ -244,21 +244,19 @@ export default function Notes() {
           <div className="flex gap-2">
             <button
               onClick={() => setActiveTab('files')}
-              className={`flex-1 px-6 py-3 rounded-xl font-black uppercase tracking-wide transition-all border-3 border-black ${
-                activeTab === 'files'
-                  ? 'bg-black text-white shadow-[4px_4px_0px_0px_rgba(0,0,0,0.3)]'
-                  : 'bg-white text-black hover:bg-gray-50 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]'
-              }`}
+              className={`flex-1 px-6 py-3 rounded-xl font-black uppercase tracking-wide transition-all border-3 border-black ${activeTab === 'files'
+                ? 'bg-black text-white shadow-[4px_4px_0px_0px_rgba(0,0,0,0.3)]'
+                : 'bg-white text-black hover:bg-gray-50 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]'
+                }`}
             >
               Files
             </button>
             <button
               onClick={() => setActiveTab('todos')}
-              className={`flex-1 px-6 py-3 rounded-xl font-black uppercase tracking-wide transition-all border-3 border-black ${
-                activeTab === 'todos'
-                  ? 'bg-black text-white shadow-[4px_4px_0px_0px_rgba(0,0,0,0.3)]'
-                  : 'bg-white text-black hover:bg-gray-50 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]'
-              }`}
+              className={`flex-1 px-6 py-3 rounded-xl font-black uppercase tracking-wide transition-all border-3 border-black ${activeTab === 'todos'
+                ? 'bg-black text-white shadow-[4px_4px_0px_0px_rgba(0,0,0,0.3)]'
+                : 'bg-white text-black hover:bg-gray-50 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]'
+                }`}
             >
               ToDoList
             </button>
@@ -294,134 +292,134 @@ export default function Notes() {
         {activeTab === 'files' && (
           <>
 
-        {/* Breadcrumbs */}
-        {currentPath && (
-          <div className="bg-white border-3 border-black rounded-xl p-4 mb-6 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
-            <div className="flex items-center gap-2 flex-wrap">
-              <button
-                onClick={() => setCurrentPath('')}
-                className="px-3 py-1 bg-gray-100 border-2 border-black rounded-lg font-bold hover:bg-gray-200 transition"
-              >
-                Root
-              </button>
-              {getBreadcrumbs().map((part, index) => (
-                <div key={index} className="flex items-center gap-2">
-                  <ChevronRight className="w-4 h-4" />
+            {/* Breadcrumbs */}
+            {currentPath && (
+              <div className="bg-white border-3 border-black rounded-xl p-4 mb-6 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+                <div className="flex items-center gap-2 flex-wrap">
                   <button
-                    onClick={() => {
-                      const path = getBreadcrumbs().slice(0, index + 1).join('/');
-                      setCurrentPath(path);
-                    }}
+                    onClick={() => setCurrentPath('')}
                     className="px-3 py-1 bg-gray-100 border-2 border-black rounded-lg font-bold hover:bg-gray-200 transition"
                   >
-                    {part}
+                    Root
                   </button>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
-
-        {/* Main Content */}
-        <div className="grid grid-cols-12 gap-6">
-          {/* Folders Section */}
-          <div className="col-span-12">
-            <div className="bg-white border-4 border-black rounded-2xl p-6 shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]">
-              <h2 className="text-2xl font-black text-black mb-6" style={{ fontFamily: 'Comic Sans MS, cursive' }}>
-                Folders
-              </h2>
-
-              {folders.length === 0 ? (
-                <div className="text-center py-12 border-3 border-dashed border-black rounded-xl">
-                  <Folder className="w-12 h-12 text-gray-400 mx-auto mb-3" strokeWidth={2} />
-                  <p className="text-gray-600 font-medium">No folders here</p>
-                  <p className="text-sm text-gray-500 mt-1">Create a new folder to get started</p>
-                </div>
-              ) : (
-                <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4">
-                  {folders.map((folder) => (
-                    <div
-                      key={folder._id}
-                      className="bg-yellow-50 border-3 border-black rounded-xl p-4 hover:bg-yellow-100 transition cursor-pointer shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:shadow-[5px_5px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[-2px] hover:translate-y-[-2px]"
-                    >
-                      <div className="flex items-start justify-between mb-3">
-                        <div
-                          onClick={() => navigateToFolder(folder.path)}
-                          className="flex-1"
-                        >
-                          <Folder className="w-8 h-8 text-black mb-2" strokeWidth={2.5} />
-                          <h3 className="font-black text-black">{folder.name}</h3>
-                        </div>
-                        <button
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            deleteFolder(folder.folderId);
-                          }}
-                          className="p-2 bg-red-100 border-2 border-black rounded-lg hover:bg-red-200 transition"
-                        >
-                          <Trash2 className="w-6 h-6 text-black" strokeWidth={2.5} />
-                        </button>
-                      </div>
+                  {getBreadcrumbs().map((part, index) => (
+                    <div key={index} className="flex items-center gap-2">
+                      <ChevronRight className="w-4 h-4" />
+                      <button
+                        onClick={() => {
+                          const path = getBreadcrumbs().slice(0, index + 1).join('/');
+                          setCurrentPath(path);
+                        }}
+                        className="px-3 py-1 bg-gray-100 border-2 border-black rounded-lg font-bold hover:bg-gray-200 transition"
+                      >
+                        {part}
+                      </button>
                     </div>
                   ))}
                 </div>
-              )}
-            </div>
-          </div>
+              </div>
+            )}
 
-          {/* Files Section */}
-          {currentPath && (
-            <div className="col-span-12">
-              <div className="bg-white border-4 border-black rounded-2xl p-6 shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]">
-                <h2 className="text-2xl font-black text-black mb-6" style={{ fontFamily: 'Comic Sans MS, cursive' }}>
-                  Files ({files.length})
-                </h2>
+            {/* Main Content */}
+            <div className="grid grid-cols-12 gap-6">
+              {/* Folders Section */}
+              <div className="col-span-12">
+                <div className="bg-white border-4 border-black rounded-2xl p-6 shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]">
+                  <h2 className="text-2xl font-black text-black mb-6" style={{ fontFamily: 'Comic Sans MS, cursive' }}>
+                    Folders
+                  </h2>
 
-                {files.length === 0 ? (
-                  <div className="text-center py-12 border-3 border-dashed border-black rounded-xl">
-                    <File className="w-12 h-12 text-gray-400 mx-auto mb-3" strokeWidth={2} />
-                    <p className="text-gray-600 font-medium">No files in this folder</p>
-                    <p className="text-sm text-gray-500 mt-1">Upload files to get started</p>
-                  </div>
-                ) : (
-                  <div className="space-y-3">
-                    {files.map((file) => (
-                      <div
-                        key={file._id}
-                        className="flex items-center justify-between p-4 bg-white border-3 border-black rounded-xl shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:shadow-[5px_5px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[-2px] hover:translate-y-[-2px] transition"
-                      >
-                        <div className="flex items-center gap-3 flex-1">
-                          <File className="w-5 h-5 text-black" strokeWidth={2.5} />
-                          <div className="flex-1">
-                            <p className="font-bold text-black">{file.filename}</p>
-                            <p className="text-sm text-gray-600">{formatFileSize(file.size)}</p>
+                  {folders.length === 0 ? (
+                    <div className="text-center py-12 border-3 border-dashed border-black rounded-xl">
+                      <Folder className="w-12 h-12 text-gray-400 mx-auto mb-3" strokeWidth={2} />
+                      <p className="text-gray-600 font-medium">No folders here</p>
+                      <p className="text-sm text-gray-500 mt-1">Create a new folder to get started</p>
+                    </div>
+                  ) : (
+                    <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                      {folders.map((folder) => (
+                        <div
+                          key={folder._id}
+                          className="bg-yellow-50 border-3 border-black rounded-xl p-4 hover:bg-yellow-100 transition cursor-pointer shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:shadow-[5px_5px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[-2px] hover:translate-y-[-2px]"
+                        >
+                          <div className="flex items-start justify-between mb-3">
+                            <div
+                              onClick={() => navigateToFolder(folder.path)}
+                              className="flex-1"
+                            >
+                              <Folder className="w-8 h-8 text-black mb-2" strokeWidth={2.5} />
+                              <h3 className="font-black text-black">{folder.name}</h3>
+                            </div>
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                deleteFolder(folder.folderId);
+                              }}
+                              className="p-2 bg-red-100 border-2 border-black rounded-lg hover:bg-red-200 transition"
+                            >
+                              <Trash2 className="w-6 h-6 text-black" strokeWidth={2.5} />
+                            </button>
                           </div>
                         </div>
-                        <div className="flex items-center gap-2">
-                          <a
-                            href={file.cloudinaryUrl}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="p-2 bg-green-100 border-2 border-black rounded-lg hover:bg-green-200 transition"
-                          >
-                            <ExternalLink className="w-4 h-4 text-black" strokeWidth={2.5} />
-                          </a>
-                          <button
-                            onClick={() => deleteFile(file.fileId)}
-                            className="p-2 bg-red-100 border-2 border-black rounded-lg hover:bg-red-200 transition"
-                          >
-                            <Trash2 className="w-6 h-6 text-black" strokeWidth={2.5} />
-                          </button>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                )}
+                      ))}
+                    </div>
+                  )}
+                </div>
               </div>
+
+              {/* Files Section */}
+              {currentPath && (
+                <div className="col-span-12">
+                  <div className="bg-white border-4 border-black rounded-2xl p-6 shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]">
+                    <h2 className="text-2xl font-black text-black mb-6" style={{ fontFamily: 'Comic Sans MS, cursive' }}>
+                      Files ({files.length})
+                    </h2>
+
+                    {files.length === 0 ? (
+                      <div className="text-center py-12 border-3 border-dashed border-black rounded-xl">
+                        <File className="w-12 h-12 text-gray-400 mx-auto mb-3" strokeWidth={2} />
+                        <p className="text-gray-600 font-medium">No files in this folder</p>
+                        <p className="text-sm text-gray-500 mt-1">Upload files to get started</p>
+                      </div>
+                    ) : (
+                      <div className="space-y-3">
+                        {files.map((file) => (
+                          <div
+                            key={file._id}
+                            className="flex items-center justify-between p-4 bg-white border-3 border-black rounded-xl shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:shadow-[5px_5px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[-2px] hover:translate-y-[-2px] transition"
+                          >
+                            <div className="flex items-center gap-3 flex-1">
+                              <File className="w-5 h-5 text-black" strokeWidth={2.5} />
+                              <div className="flex-1">
+                                <p className="font-bold text-black">{file.filename}</p>
+                                <p className="text-sm text-gray-600">{formatFileSize(file.size)}</p>
+                              </div>
+                            </div>
+                            <div className="flex items-center gap-2">
+                              <a
+                                href={file.cloudinaryUrl}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="p-2 bg-green-100 border-2 border-black rounded-lg hover:bg-green-200 transition"
+                              >
+                                <ExternalLink className="w-4 h-4 text-black" strokeWidth={2.5} />
+                              </a>
+                              <button
+                                onClick={() => deleteFile(file.fileId)}
+                                className="p-2 bg-red-100 border-2 border-black rounded-lg hover:bg-red-200 transition"
+                              >
+                                <Trash2 className="w-6 h-6 text-black" strokeWidth={2.5} />
+                              </button>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
             </div>
-          )}
-        </div>
-        </>
+          </>
         )}
 
         {/* ToDo Tab Content */}
@@ -436,7 +434,7 @@ export default function Notes() {
               <h2 className="text-3xl font-black text-black mb-6" style={{ fontFamily: 'Comic Sans MS, cursive' }}>
                 Create New Folder
               </h2>
-              
+
               <div className="space-y-4 mb-6">
                 <div>
                   <label className="block text-sm font-black text-black mb-2 uppercase">
@@ -450,7 +448,7 @@ export default function Notes() {
                     placeholder="e.g., Mathematics"
                   />
                 </div>
-                
+
                 {currentPath && (
                   <div className="p-3 bg-blue-50 border-2 border-black rounded-lg">
                     <p className="text-sm font-medium text-gray-700">
