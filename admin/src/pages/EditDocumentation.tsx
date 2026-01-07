@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { Save, ArrowLeft, Upload, Image as ImageIcon, Trash2, FileText, Pen, Plus, Folder, X, Menu } from 'lucide-react';
+import { Save, ArrowLeft, Upload, Image as ImageIcon, Trash2, FileText, Pen, Plus, Folder, X, Menu, Maximize2, Minimize2, Minus, Square } from 'lucide-react';
 import MDEditor from '@uiw/react-md-editor';
 import { Excalidraw } from '@excalidraw/excalidraw';
 
@@ -35,6 +35,7 @@ export default function EditDocumentation() {
   const [showNewFileModal, setShowNewFileModal] = useState(false);
   const [newFileName, setNewFileName] = useState('');
   const [newFileType, setNewFileType] = useState<'markdown' | 'diagram'>('markdown');
+  const [isFullscreen, setIsFullscreen] = useState(false);
   const [formData, setFormData] = useState({
     title: '',
     subject: '',

@@ -18,8 +18,8 @@ const allowedOrigins = new Set([
   'https://www.admin.kunalpatil.me',
   'http://localhost:5173',
   'http://localhost:3001',
-    'http://localhost:3002'
-    
+  'http://localhost:3002'
+
 ]);
 // app.use((req, res, next) => {
 //   res.setHeader('Cache-Control', ' ye sabno-store, no-cache, must-revalidate, proxy-revalidate');
