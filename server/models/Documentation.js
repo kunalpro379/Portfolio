@@ -48,14 +48,6 @@ const documentationSchema = new mongoose.Schema({
     of: String,
     default: {}
   },
-  files: [{
-    fileId: String,
-    name: String,
-    type: String,
-    azurePath: String,
-    azureUrl: String,
-    createdAt: Date
-  }],
   diagramPath: {
     type: String,
     default: ''
@@ -64,6 +56,14 @@ const documentationSchema = new mongoose.Schema({
     type: String,
     default: ''
   },
+  files: [{
+    fileId: String,
+    name: String,
+    type: { type: String, enum: ['markdown', 'diagram', 'attachment'] },
+    azurePath: String,
+    azureUrl: String,
+    createdAt: { type: Date, default: Date.now }
+  }],
   isPublic: {
     type: Boolean,
     default: false

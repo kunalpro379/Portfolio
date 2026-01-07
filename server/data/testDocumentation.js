@@ -1,6 +1,6 @@
 import fetch from 'node-fetch';
 
-const API_URL = 'http://localhost:5000/api/documentation';
+const API_URL = 'http://api.kunalpatil.me/api/documentation';
 
 // Sample documentation content
 const sampleDoc = {

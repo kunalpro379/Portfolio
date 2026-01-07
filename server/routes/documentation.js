@@ -59,16 +59,49 @@ const uploadDocToAzure = async (content, docId) => {
   }
 };
 
+const uploadDiagramToAzure = async (diagramData, docId) => {
+  try {
+    const containerClient = blobServiceClient.getContainerClient(containerName);
+    const blobPath = `documentation/${docId}.tldr`;
+    const blockBlobClient = containerClient.getBlockBlobClient(blobPath);
+    
+    const buffer = Buffer.from(JSON.stringify(diagramData), 'utf-8');
+    await blockBlobClient.upload(buffer, buffer.length, {
+      blobHTTPHeaders: { blobContentType: 'application/json' },
+      overwrite: true
+    });
+    
+    return {
+      blobPath,
+      blobUrl: blockBlobClient.url
+    };
+  } catch (error) {
+    console.error('Azure diagram upload error:', error);
+    throw error;
+  }
+};
+
 const getDocFromAzure = async (blobPath) => {
   try {
     const containerClient = blobServiceClient.getContainerClient(containerName);
     const blockBlobClient = containerClient.getBlockBlobClient(blobPath);
+    
+    // Check if blob exists first
+    const exists = await blockBlobClient.exists();
+    if (!exists) {
+      console.warn(`Blob not found: ${blobPath}`);
+      return null;
+    }
     
     const downloadResponse = await blockBlobClient.download(0);
     const content = await streamToString(downloadResponse.readableStreamBody);
     
     return content;
   } catch (error) {
+    if (error.statusCode === 404) {
+      console.warn(`Blob not found: ${blobPath}`);
+      return null;
+    }
     console.error('Azure download error:', error);
     throw error;
   }
@@ -122,12 +155,59 @@ router.post('/create', async (req, res) => {
       azureBlobPath: blobPath,
       azureBlobUrl: blobUrl,
       assets: assetsMap,
+      files: [],
       isPublic: isPublic || false,
       createdAt: new Date(),
       updatedAt: new Date()
     });
 
     await doc.save();
+
+    // Create default files (index.md and index.diagram)
+    try {
+      // Create index.md
+      const mdFileId = generateId();
+      const mdBlobPath = `documentation/${docId}/files/${mdFileId}-index.md`;
+      const containerClient = blobServiceClient.getContainerClient(containerName);
+      const mdBlockBlobClient = containerClient.getBlockBlobClient(mdBlobPath);
+      await mdBlockBlobClient.upload(processedContent, processedContent.length, {
+        blobHTTPHeaders: { blobContentType: 'text/markdown' },
+        overwrite: true
+      });
+
+      doc.files.push({
+        fileId: mdFileId,
+        name: 'index.md',
+        type: 'markdown',
+        azurePath: mdBlobPath,
+        azureUrl: mdBlockBlobClient.url,
+        createdAt: new Date()
+      });
+
+      // Create index.diagram
+      const diagramFileId = generateId();
+      const diagramBlobPath = `documentation/${docId}/files/${diagramFileId}-index.tldr`;
+      const diagramBlockBlobClient = containerClient.getBlockBlobClient(diagramBlobPath);
+      const emptyDiagram = JSON.stringify({ elements: [], appState: {} });
+      const diagramBuffer = Buffer.from(emptyDiagram, 'utf-8');
+      await diagramBlockBlobClient.upload(diagramBuffer, diagramBuffer.length, {
+        blobHTTPHeaders: { blobContentType: 'application/json' },
+        overwrite: true
+      });
+
+      doc.files.push({
+        fileId: diagramFileId,
+        name: 'index.diagram',
+        type: 'diagram',
+        azurePath: diagramBlobPath,
+        azureUrl: diagramBlockBlobClient.url,
+        createdAt: new Date()
+      });
+
+      await doc.save();
+    } catch (fileError) {
+      console.error('Error creating default files:', fileError);
+    }
 
     res.status(201).json({
       message: 'Documentation created successfully',
@@ -159,6 +239,11 @@ router.get('/:docId', async (req, res) => {
     }
 
     let content = await getDocFromAzure(doc.azureBlobPath);
+    
+    // If blob doesn't exist, return empty content
+    if (content === null) {
+      content = '';
+    }
 
     const docObject = doc.toObject();
     const assetsObject = {};
@@ -322,169 +407,219 @@ router.delete('/asset/:docId/:assetName', async (req, res) => {
   }
 });
 
-// Get files for a documentation
-router.get('/:docId/files', async (req, res) => {
+// Upload diagram data
+router.post('/:docId/diagram', async (req, res) => {
   try {
     const { docId } = req.params;
-    
-    console.log('Fetching files for docId:', docId);
-    
-    const doc = await Documentation.findOne({ docId }).lean();
-    if (!doc) {
-      console.log('Document not found:', docId);
-      return res.status(404).json({ message: 'Documentation not found' });
-    }
-    
-    console.log('Found document with files:', doc.files?.length || 0);
-    res.json({ files: doc.files || [] });
-  } catch (error) {
-    console.error('Get files error:', error);
-    res.status(500).json({ message: 'Server error', error: error.message });
-  }
-});
+    const { diagramData } = req.body;
 
-// Create a new file
-router.post('/:docId/files', async (req, res) => {
-  try {
-    const { docId } = req.params;
-    const { name, type, content } = req.body;
-
-    console.log('Creating file:', { docId, name, type });
-
-    if (!name || !type) {
-      console.log('Missing name or type');
-      return res.status(400).json({ message: 'Name and type are required' });
+    if (!diagramData) {
+      return res.status(400).json({ message: 'Diagram data is required' });
     }
 
     const doc = await Documentation.findOne({ docId });
     if (!doc) {
-      console.log('Document not found for file creation:', docId);
       return res.status(404).json({ message: 'Documentation not found' });
     }
 
-    // Check if file already exists (check both with and without extension)
-    const cleanName = name.replace(/\.(md|excalidraw)$/, '');
-    const existingFile = doc.files?.find(f => {
-      const fName = f.name.replace(/\.(md|excalidraw)$/, '');
-      return fName === cleanName && f.type === type;
-    });
+    const { blobPath, blobUrl } = await uploadDiagramToAzure(diagramData, docId);
     
-    if (existingFile) {
-      console.log('File already exists:', cleanName, type);
-      return res.status(200).json({ message: 'File already exists', file: existingFile });
-    }
-
-    const fileId = generateId();
-    const fileExtension = type === 'markdown' ? 'md' : (type === 'diagram' ? 'excalidraw' : 'txt');
-    const blobPath = `documentation/${docId}/files/${fileId}.${fileExtension}`;
-    
-    console.log('Uploading to Azure:', blobPath);
-    
-    // Upload to Azure
-    const containerClient = blobServiceClient.getContainerClient(containerName);
-    const blockBlobClient = containerClient.getBlockBlobClient(blobPath);
-    
-    const fileContent = content || (type === 'markdown' ? '# New Document\n\nStart writing...' : '{"type":"excalidraw","version":2,"source":"","elements":[],"appState":{"gridSize":null,"viewBackgroundColor":"#ffffff"}}');
-    
-    await blockBlobClient.upload(fileContent, fileContent.length, {
-      blobHTTPHeaders: { blobContentType: type === 'markdown' ? 'text/markdown' : 'application/json' },
-      overwrite: true
-    });
-
-    const newFile = {
-      fileId,
-      name: cleanName,
-      type,
-      azurePath: blobPath,
-      azureUrl: blockBlobClient.url,
-      createdAt: new Date()
-    };
-
-    if (!doc.files) {
-      doc.files = [];
-    }
-    doc.files.push(newFile);
+    doc.diagramPath = blobPath;
+    doc.diagramUrl = blobUrl;
+    doc.updatedAt = new Date();
     await doc.save();
 
-    console.log('File created successfully:', fileId);
-    res.status(201).json({ message: 'File created successfully', file: newFile });
+    res.json({
+      message: 'Diagram saved successfully',
+      diagramUrl: blobUrl
+    });
   } catch (error) {
-    console.error('Create file error:', error);
-    console.error('Error stack:', error.stack);
+    console.error('Save diagram error:', error);
     res.status(500).json({ message: 'Server error', error: error.message });
   }
 });
 
-// Get specific file content
+// Get diagram data
+router.get('/:docId/diagram', async (req, res) => {
+  try {
+    const { docId } = req.params;
+    
+    const doc = await Documentation.findOne({ docId });
+    if (!doc) {
+      return res.status(404).json({ message: 'Documentation not found' });
+    }
+
+    if (!doc.diagramPath) {
+      return res.json({ exists: false, diagramData: null });
+    }
+
+    // Fetch diagram from Azure
+    const diagramContent = await getDocFromAzure(doc.diagramPath);
+    
+    // If blob doesn't exist, return empty diagram
+    if (diagramContent === null) {
+      return res.json({ 
+        exists: false, 
+        diagramData: null,
+        warning: 'Diagram file not found in Azure Blob Storage'
+      });
+    }
+    
+    const diagramData = JSON.parse(diagramContent);
+
+    res.json({
+      exists: true,
+      diagramData,
+      diagramUrl: doc.diagramUrl
+    });
+  } catch (error) {
+    console.error('Get diagram error:', error);
+    res.status(500).json({ message: 'Server error', error: error.message });
+  }
+});
+
+// Delete diagram
+router.delete('/:docId/diagram', async (req, res) => {
+  try {
+    const { docId } = req.params;
+
+    const doc = await Documentation.findOne({ docId });
+    if (!doc) {
+      return res.status(404).json({ message: 'Documentation not found' });
+    }
+
+    if (doc.diagramPath) {
+      const containerClient = blobServiceClient.getContainerClient(containerName);
+      const blockBlobClient = containerClient.getBlockBlobClient(doc.diagramPath);
+      await blockBlobClient.deleteIfExists();
+    }
+
+    doc.diagramPath = '';
+    doc.diagramUrl = '';
+    doc.updatedAt = new Date();
+    await doc.save();
+
+    res.json({ message: 'Diagram deleted successfully' });
+  } catch (error) {
+    console.error('Delete diagram error:', error);
+    res.status(500).json({ message: 'Server error' });
+  }
+});
+
+// Create new file (markdown or diagram)
+router.post('/:docId/files', async (req, res) => {
+  try {
+    const { docId } = req.params;
+    const { name, type, content } = req.body; // type: 'markdown' or 'diagram'
+
+    const doc = await Documentation.findOne({ docId });
+    if (!doc) {
+      return res.status(404).json({ message: 'Documentation not found' });
+    }
+
+    const fileId = generateId();
+    const timestamp = Date.now();
+    const fileName = `${fileId}-${name}`;
+    
+    let azurePath, azureUrl;
+
+    if (type === 'markdown') {
+      const blobPath = `documentation/${docId}/files/${fileName}.md`;
+      const result = await uploadDocToAzure(content || '', docId);
+      azurePath = blobPath;
+      azureUrl = result.blobUrl;
+    } else if (type === 'diagram') {
+      const result = await uploadDiagramToAzure(content || {}, `${docId}/files/${fileId}`);
+      azurePath = result.blobPath;
+      azureUrl = result.blobUrl;
+    }
+
+    const newFile = {
+      fileId,
+      name,
+      type,
+      azurePath,
+      azureUrl,
+      createdAt: new Date()
+    };
+
+    if (!doc.files) doc.files = [];
+    doc.files.push(newFile);
+    doc.updatedAt = new Date();
+    await doc.save();
+
+    res.json({ message: 'File created', file: newFile });
+  } catch (error) {
+    console.error('Create file error:', error);
+    res.status(500).json({ message: 'Server error', error: error.message });
+  }
+});
+
+// Get all files for a document
+router.get('/:docId/files', async (req, res) => {
+  try {
+    const { docId } = req.params;
+    
+    const doc = await Documentation.findOne({ docId });
+    if (!doc) {
+      return res.status(404).json({ message: 'Documentation not found' });
+    }
+
+    res.json({ files: doc.files || [] });
+  } catch (error) {
+    console.error('Get files error:', error);
+    res.status(500).json({ message: 'Server error' });
+  }
+});
+
+// Get single file content
 router.get('/:docId/files/:fileId', async (req, res) => {
   try {
     const { docId, fileId } = req.params;
     
-    console.log('Fetching file:', { docId, fileId });
-    
-    const doc = await Documentation.findOne({ docId }).lean();
+    const doc = await Documentation.findOne({ docId });
     if (!doc) {
-      console.log('Document not found:', docId);
       return res.status(404).json({ message: 'Documentation not found' });
     }
 
     const file = doc.files?.find(f => f.fileId === fileId);
     if (!file) {
-      console.log('File not found in document:', fileId);
-      console.log('Available files:', doc.files?.map(f => ({ fileId: f.fileId, name: f.name })));
       return res.status(404).json({ message: 'File not found' });
     }
 
-    console.log('Found file:', { fileId: file.fileId, name: file.name, azurePath: file.azurePath });
-
-    // Get file content from Azure
-    try {
-      const containerClient = blobServiceClient.getContainerClient(containerName);
-      const blockBlobClient = containerClient.getBlockBlobClient(file.azurePath);
-      
-      // Check if blob exists
-      const exists = await blockBlobClient.exists();
-      if (!exists) {
-        console.log('Blob does not exist in Azure:', file.azurePath);
-        // Create default content based on file type
-        const defaultContent = file.type === 'markdown' 
-          ? '# New Document\n\nStart writing...' 
-          : '{"type":"excalidraw","version":2,"source":"","elements":[],"appState":{"gridSize":null,"viewBackgroundColor":"#ffffff"}}';
-        
-        // Upload default content
-        await blockBlobClient.upload(defaultContent, defaultContent.length, {
-          blobHTTPHeaders: { blobContentType: file.type === 'markdown' ? 'text/markdown' : 'application/json' },
-          overwrite: true
-        });
-        
-        console.log('Created default content for blob:', file.azurePath);
-        
-        return res.json({ 
-          file: {
-            ...file,
-            content: defaultContent
-          }
-        });
-      }
-      
-      const downloadResponse = await blockBlobClient.download(0);
-      const content = await streamToString(downloadResponse.readableStreamBody);
-      
-      console.log('Successfully downloaded file content, length:', content.length);
-      
-      res.json({ 
+    // Fetch content from Azure
+    const content = await getDocFromAzure(file.azurePath);
+    
+    // If blob doesn't exist, return empty content
+    if (content === null) {
+      return res.json({ 
         file: {
-          ...file,
-          content
+          fileId: file.fileId,
+          name: file.name,
+          type: file.type,
+          azurePath: file.azurePath,
+          azureUrl: file.azureUrl,
+          createdAt: file.createdAt,
+          content: file.type === 'diagram' ? {} : '',
+          warning: 'File content not found in Azure Blob Storage'
         }
       });
-    } catch (azureError) {
-      console.error('Error downloading file from Azure:', azureError);
-      res.status(500).json({ message: 'Error downloading file content', error: azureError.message });
     }
+    
+    res.json({ 
+      file: {
+        fileId: file.fileId,
+        name: file.name,
+        type: file.type,
+        azurePath: file.azurePath,
+        azureUrl: file.azureUrl,
+        createdAt: file.createdAt,
+        content: file.type === 'diagram' ? JSON.parse(content) : content
+      }
+    });
   } catch (error) {
     console.error('Get file error:', error);
-    res.status(500).json({ message: 'Server error', error: error.message });
+    res.status(500).json({ message: 'Server error' });
   }
 });
 
@@ -504,28 +639,31 @@ router.put('/:docId/files/:fileId', async (req, res) => {
       return res.status(404).json({ message: 'File not found' });
     }
 
-    // Update content in Azure if provided
-    if (content !== undefined) {
-      const containerClient = blobServiceClient.getContainerClient(containerName);
-      const blockBlobClient = containerClient.getBlockBlobClient(file.azurePath);
-      
+    // Update content in Azure
+    const containerClient = blobServiceClient.getContainerClient(containerName);
+    const blockBlobClient = containerClient.getBlockBlobClient(file.azurePath);
+    
+    if (file.type === 'markdown') {
       await blockBlobClient.upload(content, content.length, {
-        blobHTTPHeaders: { blobContentType: file.type === 'markdown' ? 'text/markdown' : 'application/json' },
+        blobHTTPHeaders: { blobContentType: 'text/markdown' },
+        overwrite: true
+      });
+    } else if (file.type === 'diagram') {
+      const buffer = Buffer.from(JSON.stringify(content), 'utf-8');
+      await blockBlobClient.upload(buffer, buffer.length, {
+        blobHTTPHeaders: { blobContentType: 'application/json' },
         overwrite: true
       });
     }
 
-    // Update name if provided
-    if (name) {
-      file.name = name;
-    }
-
+    if (name) file.name = name;
+    doc.updatedAt = new Date();
     await doc.save();
 
-    res.json({ message: 'File updated successfully', file });
+    res.json({ message: 'File updated', file });
   } catch (error) {
     console.error('Update file error:', error);
-    res.status(500).json({ message: 'Server error', error: error.message });
+    res.status(500).json({ message: 'Server error' });
   }
 });
 
@@ -547,21 +685,64 @@ router.delete('/:docId/files/:fileId', async (req, res) => {
     const file = doc.files[fileIndex];
 
     // Delete from Azure
-    try {
-      const containerClient = blobServiceClient.getContainerClient(containerName);
-      const blockBlobClient = containerClient.getBlockBlobClient(file.azurePath);
-      await blockBlobClient.deleteIfExists();
-    } catch (azureError) {
-      console.error('Error deleting file from Azure:', azureError);
-    }
+    const containerClient = blobServiceClient.getContainerClient(containerName);
+    const blockBlobClient = containerClient.getBlockBlobClient(file.azurePath);
+    await blockBlobClient.deleteIfExists();
 
     doc.files.splice(fileIndex, 1);
+    doc.updatedAt = new Date();
     await doc.save();
 
-    res.json({ message: 'File deleted successfully' });
+    res.json({ message: 'File deleted' });
   } catch (error) {
     console.error('Delete file error:', error);
     res.status(500).json({ message: 'Server error' });
+  }
+});
+
+// Upload attachment
+router.post('/:docId/attachments', upload.single('attachment'), async (req, res) => {
+  try {
+    const { docId } = req.params;
+    
+    const doc = await Documentation.findOne({ docId });
+    if (!doc) {
+      return res.status(404).json({ message: 'Documentation not found' });
+    }
+
+    if (!req.file) {
+      return res.status(400).json({ message: 'No file uploaded' });
+    }
+
+    const fileId = generateId();
+    const fileName = req.file.originalname;
+    const blobPath = `documentation/${docId}/attachments/${fileId}-${fileName}`;
+
+    const containerClient = blobServiceClient.getContainerClient(containerName);
+    const blockBlobClient = containerClient.getBlockBlobClient(blobPath);
+
+    await blockBlobClient.uploadData(req.file.buffer, {
+      blobHTTPHeaders: { blobContentType: req.file.mimetype }
+    });
+
+    const newFile = {
+      fileId,
+      name: fileName,
+      type: 'attachment',
+      azurePath: blobPath,
+      azureUrl: blockBlobClient.url,
+      createdAt: new Date()
+    };
+
+    if (!doc.files) doc.files = [];
+    doc.files.push(newFile);
+    doc.updatedAt = new Date();
+    await doc.save();
+
+    res.json({ message: 'Attachment uploaded', file: newFile });
+  } catch (error) {
+    console.error('Upload attachment error:', error);
+    res.status(500).json({ message: 'Server error', error: error.message });
   }
 });
 

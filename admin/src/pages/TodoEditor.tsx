@@ -55,7 +55,7 @@ export default function TodoEditor() {
 
   const fetchTodo = async () => {
     try {
-      const response = await fetch(`http://localhost:5000/api/todos/${todoId}`);
+      const response = await fetch(`http://api.kunalpatil.me/api/todos/${todoId}`);
       const data = await response.json();
       const todo = data.todo;
 
@@ -99,7 +99,7 @@ export default function TodoEditor() {
 
       if (isNewTodo) {
         // Create new todo
-        const response = await fetch('http://localhost:5000/api/todos/create', {
+        const response = await fetch('http://api.kunalpatil.me/api/todos/create', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
@@ -120,7 +120,7 @@ export default function TodoEditor() {
         }
       } else {
         // Update existing todo
-        const response = await fetch(`http://localhost:5000/api/todos/${todoId}`, {
+        const response = await fetch(`http://api.kunalpatil.me/api/todos/${todoId}`, {
           method: 'PUT',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({

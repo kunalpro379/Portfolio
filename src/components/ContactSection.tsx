@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { Phone, Mail, MapPin, Clock, Download, Instagram, Linkedin, Twitter, Github } from "lucide-react";
+import { Phone, Mail, MapPin, Clock, Download, Instagram, Linkedin, Twitter, Github, Eye } from "lucide-react";
 import { FaThreads } from "react-icons/fa6";
 import contactData from "@/data/contact.json";
 import backgroundsData from "@/data/backgrounds.json";
@@ -86,16 +86,24 @@ export default function ContactSection() {
                 </div>
               </div>
 
-              {/* Download Resume Button - Mobile Only */}
-              <div className="lg:hidden">
+              {/* Resume Buttons - Mobile Only */}
+              <div className="lg:hidden flex items-center gap-4">
                 <a
-                  href={contactData.resumeUrl}
+                  href="https://notesportfolio.blob.core.windows.net/notes/Resume.kunal.pdf"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="inline-flex items-center gap-3 px-8 py-4 bg-black text-white text-base font-bold uppercase tracking-wider rounded-full hover:bg-gray-800 transition-all shadow-lg hover:shadow-xl group"
                 >
+                  <Eye size={20} className="group-hover:scale-110 transition-transform" />
+                  View Resume
+                </a>
+                <a
+                  href="https://notesportfolio.blob.core.windows.net/notes/Resume.kunal.pdf"
+                  download
+                  className="inline-flex items-center justify-center p-4 bg-black text-white rounded-full hover:bg-gray-800 transition-all shadow-lg hover:shadow-xl group"
+                  aria-label="Download Resume"
+                >
                   <Download size={20} className="group-hover:animate-bounce" />
-                  Download Resume
                 </a>
               </div>
             </div>
@@ -187,16 +195,24 @@ export default function ContactSection() {
                 </div>
               </div>
 
-              {/* Resume Button - Desktop Only */}
-              <div className="pt-8 hidden lg:block">
+              {/* Resume Buttons - Desktop Only */}
+              <div className="pt-8 hidden lg:flex items-center gap-4">
                 <a
-                  href={contactData.resumeUrl}
+                  href="https://notesportfolio.blob.core.windows.net/notes/Resume.kunal.pdf"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="inline-flex items-center gap-3 px-8 py-4 bg-white text-black text-base font-bold uppercase tracking-wider rounded-full hover:bg-sky-400 hover:text-white transition-all shadow-lg hover:shadow-xl group"
                 >
+                  <Eye size={20} className="group-hover:scale-110 transition-transform" />
+                  View Resume
+                </a>
+                <a
+                  href="https://notesportfolio.blob.core.windows.net/notes/Resume.kunal.pdf"
+                  download
+                  className="inline-flex items-center justify-center p-4 bg-white text-black rounded-full hover:bg-sky-400 hover:text-white transition-all shadow-lg hover:shadow-xl group"
+                  aria-label="Download Resume"
+                >
                   <Download size={20} className="group-hover:animate-bounce" />
-                  Download Resume
                 </a>
               </div>
             </div>
