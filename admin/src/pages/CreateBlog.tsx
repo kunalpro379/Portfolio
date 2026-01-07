@@ -112,7 +112,7 @@ export default function CreateBlog() {
         coverImage: ''
       };
 
-      const createResponse = await fetch('http://api.kunalpatil.me/api/blogs/create', {
+      const createResponse = await fetch('https://api.kunalpatil.me/api/blogs/create', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(blogData)
@@ -127,7 +127,7 @@ export default function CreateBlog() {
         const formData = new FormData();
         formData.append('cover', coverImage);
 
-        await fetch(`http://api.kunalpatil.me/api/blogs/${blogId}/cover`, {
+        await fetch(`https://api.kunalpatil.me/api/blogs/${blogId}/cover`, {
           method: 'POST',
           body: formData
         });
@@ -148,7 +148,7 @@ export default function CreateBlog() {
         
         formData.append('assetNames', JSON.stringify(assetNames));
 
-        await fetch(`http://api.kunalpatil.me/api/blogs/${blogId}/assets`, {
+        await fetch(`https://api.kunalpatil.me/api/blogs/${blogId}/assets`, {
           method: 'POST',
           body: formData
         });
@@ -160,7 +160,7 @@ export default function CreateBlog() {
         const mdFormData = new FormData();
         mdFormData.append('mdFile', mdBlob, `${blogId}.md`);
 
-        await fetch(`http://api.kunalpatil.me/api/blogs/${blogId}/md-file`, {
+        await fetch(`https://api.kunalpatil.me/api/blogs/${blogId}/md-file`, {
           method: 'POST',
           body: mdFormData
         });

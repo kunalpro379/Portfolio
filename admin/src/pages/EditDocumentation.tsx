@@ -52,7 +52,7 @@ export default function EditDocumentation() {
 
   const fetchDoc = async () => {
     try {
-      const response = await fetch(`http://api.kunalpatil.me/api/documentation/${docId}`);
+      const response = await fetch(`https://api.kunalpatil.me/api/documentation/${docId}`);
       const data = await response.json();
 
       setFormData({
@@ -85,7 +85,7 @@ export default function EditDocumentation() {
 
   const fetchFiles = async () => {
     try {
-      const response = await fetch(`http://api.kunalpatil.me/api/documentation/${docId}/files`);
+      const response = await fetch(`https://api.kunalpatil.me/api/documentation/${docId}/files`);
       const data = await response.json();
       setFiles(data.files || []);
     } catch (error) {
@@ -103,7 +103,7 @@ export default function EditDocumentation() {
         await saveCurrentFile(false);
       }
 
-      const response = await fetch(`http://api.kunalpatil.me/api/documentation/${docId}/files/${file.fileId}`);
+      const response = await fetch(`https://api.kunalpatil.me/api/documentation/${docId}/files/${file.fileId}`);
 
       if (!response.ok) {
         throw new Error(`Failed to load file: ${response.statusText}`);
@@ -143,7 +143,7 @@ export default function EditDocumentation() {
     }
 
     try {
-      const response = await fetch(`http://api.kunalpatil.me/api/documentation/${docId}/files`, {
+      const response = await fetch(`https://api.kunalpatil.me/api/documentation/${docId}/files`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -186,7 +186,7 @@ export default function EditDocumentation() {
         console.log('Saving markdown content length:', currentContent.length);
       }
 
-      const response = await fetch(`http://api.kunalpatil.me/api/documentation/${docId}/files/${currentFile.fileId}`, {
+      const response = await fetch(`https://api.kunalpatil.me/api/documentation/${docId}/files/${currentFile.fileId}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ content })
@@ -210,7 +210,7 @@ export default function EditDocumentation() {
     if (!confirm('Delete this file?')) return;
 
     try {
-      const response = await fetch(`http://api.kunalpatil.me/api/documentation/${docId}/files/${fileId}`, {
+      const response = await fetch(`https://api.kunalpatil.me/api/documentation/${docId}/files/${fileId}`, {
         method: 'DELETE'
       });
 
@@ -232,7 +232,7 @@ export default function EditDocumentation() {
     if (!indexMd) {
       // Create index.md if it doesn't exist
       try {
-        const response = await fetch(`http://api.kunalpatil.me/api/documentation/${docId}/files`, {
+        const response = await fetch(`https://api.kunalpatil.me/api/documentation/${docId}/files`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
@@ -265,7 +265,7 @@ export default function EditDocumentation() {
     if (!indexDiagram) {
       // Create index.diagram if it doesn't exist
       try {
-        const response = await fetch(`http://api.kunalpatil.me/api/documentation/${docId}/files`, {
+        const response = await fetch(`https://api.kunalpatil.me/api/documentation/${docId}/files`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
@@ -309,7 +309,7 @@ export default function EditDocumentation() {
         const uploadFormData = new FormData();
         uploadFormData.append('asset', file);
 
-        const response = await fetch('http://api.kunalpatil.me/api/documentation/upload-asset', {
+        const response = await fetch('https://api.kunalpatil.me/api/documentation/upload-asset', {
           method: 'POST',
           body: uploadFormData
         });
@@ -347,7 +347,7 @@ export default function EditDocumentation() {
         const uploadFormData = new FormData();
         uploadFormData.append('attachment', file);
 
-        const response = await fetch(`http://api.kunalpatil.me/api/documentation/${docId}/attachments`, {
+        const response = await fetch(`https://api.kunalpatil.me/api/documentation/${docId}/attachments`, {
           method: 'POST',
           body: uploadFormData
         });
@@ -379,7 +379,7 @@ export default function EditDocumentation() {
     if (!confirm(`Delete asset "${name}"?`)) return;
 
     try {
-      const response = await fetch(`http://api.kunalpatil.me/api/documentation/asset/${docId}/${name}`, {
+      const response = await fetch(`https://api.kunalpatil.me/api/documentation/asset/${docId}/${name}`, {
         method: 'DELETE'
       });
 
@@ -415,7 +415,7 @@ export default function EditDocumentation() {
 
     try {
       // Save metadata
-      const response = await fetch(`http://api.kunalpatil.me/api/documentation/${docId}`, {
+      const response = await fetch(`https://api.kunalpatil.me/api/documentation/${docId}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(formData)

@@ -58,7 +58,7 @@ export default function CreateDocumentation() {
         const uploadFormData = new FormData();
         uploadFormData.append('asset', file);
 
-        const response = await fetch('http://api.kunalpatil.me/api/documentation/upload-asset', {
+        const response = await fetch('https://api.kunalpatil.me/api/documentation/upload-asset', {
           method: 'POST',
           body: uploadFormData
         });
@@ -198,7 +198,7 @@ export default function CreateDocumentation() {
       const markdownContent = indexMd?.content || '';
 
       // Create documentation
-      const response = await fetch('http://api.kunalpatil.me/api/documentation/create', {
+      const response = await fetch('https://api.kunalpatil.me/api/documentation/create', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -220,14 +220,14 @@ export default function CreateDocumentation() {
       for (const file of files) {
         const serverFile = data.doc.files?.find((f: any) => f.name === file.name);
         if (serverFile) {
-          await fetch(`http://api.kunalpatil.me/api/documentation/${docId}/files/${serverFile.fileId}`, {
+          await fetch(`https://api.kunalpatil.me/api/documentation/${docId}/files/${serverFile.fileId}`, {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ content: file.content })
           });
         } else {
           // Create new file
-          await fetch(`http://api.kunalpatil.me/api/documentation/${docId}/files`, {
+          await fetch(`https://api.kunalpatil.me/api/documentation/${docId}/files`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({

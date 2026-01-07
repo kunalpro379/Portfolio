@@ -1,5 +1,5 @@
 // API Configuration
-export const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://api.kunalpatil.me';
+export const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'https://api.kunalpatil.me';
 
 export const API_ENDPOINTS = {
   projects: `${API_BASE_URL}/api/projects`,

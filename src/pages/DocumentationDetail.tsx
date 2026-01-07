@@ -43,7 +43,7 @@ export default function DocumentationDetail() {
 
     const fetchDoc = async () => {
         try {
-            const response = await fetch(`http://api.kunalpatil.me/api/documentation/${docId}`);
+            const response = await fetch(`https://api.kunalpatil.me/api/documentation/${docId}`);
             const data = await response.json();
 
             setFormData({
@@ -66,7 +66,7 @@ export default function DocumentationDetail() {
 
     const fetchFiles = async () => {
         try {
-            const response = await fetch(`http://api.kunalpatil.me/api/documentation/${docId}/files`);
+            const response = await fetch(`https://api.kunalpatil.me/api/documentation/${docId}/files`);
             const data = await response.json();
             setFiles(data.files || []);
         } catch (error) {
@@ -77,7 +77,7 @@ export default function DocumentationDetail() {
     const loadFile = async (file: DocFile) => {
         try {
             console.log('Loading file:', file.name, file.fileId);
-            const response = await fetch(`http://api.kunalpatil.me/api/documentation/${docId}/files/${file.fileId}`);
+            const response = await fetch(`https://api.kunalpatil.me/api/documentation/${docId}/files/${file.fileId}`);
 
             if (!response.ok) {
                 throw new Error(`Failed to load file: ${response.statusText}`);

@@ -44,7 +44,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const verifyToken = async (token: string) => {
     try {
-      const response = await fetch('http://api.kunalpatil.me/api/auth/verify', {
+      const response = await fetch('https://api.kunalpatil.me/api/auth/verify', {
         headers: {
           'Authorization': `Bearer ${token}`
         }
@@ -69,7 +69,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   const login = async (username: string, password: string) => {
-    const response = await fetch('http://api.kunalpatil.me/api/auth/login', {
+    const response = await fetch('https://api.kunalpatil.me/api/auth/login', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
