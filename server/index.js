@@ -57,25 +57,47 @@ mongoose.connect(process.env.MONGODB_URI, {
   dbName: 'Portfolio'
 })
   .then(() => console.log('MongoDB Connected to Portfolio DB'))
-  .catch(err => console.error('MongoDB connection error:', err));
+  .catch(err => {
+    console.error('MongoDB connection error:', err);
+    process.exit(1);
+  });
 
-// Import routes after connection
-const { default: authRoutes } = await import('./routes/auth.js');
-const { default: notesRoutes } = await import('./routes/notes.js');
-const { default: projectsRoutes } = await import('./routes/projects.js');
-const { default: todosRoutes } = await import('./routes/todos.js');
-const { default: blogsRoutes } = await import('./routes/blogs.js');
-const { default: documentationRoutes } = await import('./routes/documentation.js');
-const { default: viewsRoutes } = await import('./routes/views.js');
+// Import routes after connection with error handling
+async function loadRoutes() {
+  try {
+    const { default: authRoutes } = await import('./routes/auth.js');
+    const { default: notesRoutes } = await import('./routes/notes.js');
+    const { default: projectsRoutes } = await import('./routes/projects.js');
+    const { default: todosRoutes } = await import('./routes/todos.js');
+    const { default: blogsRoutes } = await import('./routes/blogs.js');
+    const { default: documentationRoutes } = await import('./routes/documentation.js');
 
-// Routes
-app.use('/api/auth', authRoutes);
-app.use('/api/notes', notesRoutes);
-app.use('/api/projects', projectsRoutes);
-app.use('/api/todos', todosRoutes);
-app.use('/api/blogs', blogsRoutes);
-app.use('/api/documentation', documentationRoutes);
-app.use('/api/views', viewsRoutes);
+    // Routes
+    app.use('/api/auth', authRoutes);
+    app.use('/api/notes', notesRoutes);
+    app.use('/api/projects', projectsRoutes);
+    app.use('/api/todos', todosRoutes);
+    app.use('/api/blogs', blogsRoutes);
+    app.use('/api/documentation', documentationRoutes);
+
+    // Try to import views route (optional - may not exist yet)
+    try {
+      const viewsModule = await import('./routes/views.js');
+      app.use('/api/views', viewsModule.default);
+      console.log('✓ Views route loaded');
+    } catch (error) {
+      console.log('ℹ Views route not available yet');
+    }
+
+    console.log('✓ All routes loaded successfully');
+  } catch (error) {
+    console.error('Error loading routes:', error);
+    process.exit(1);
+  }
+}
+
+// Load routes
+await loadRoutes();
 
 app.get('/', (req, res) => {
   res.json({ message: 'Portfolio API Server' });
