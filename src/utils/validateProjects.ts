@@ -6,14 +6,14 @@ export function validateProjectsData() {
   
   // Check if it has the new structure
   if ('projects' in projectsData) {
-    console.log('✅ Using NEW structure (projects array)');
+    console.log('Using NEW structure (projects array)');
     console.log(`Total projects: ${projectsData.projects.length}`);
     console.log(`Featured projects: ${projectsData.projects.filter((p: any) => p.featured).length}`);
   } else if ('featuredProjects' in projectsData) {
-    console.log('❌ Using OLD structure (featuredProjects array)');
-    console.log('⚠️ Please update to new structure!');
+    console.log('Using OLD structure (featuredProjects array)');
+    console.log('Please update to new structure!');
   } else {
-    console.log('❌ Unknown structure!');
+    console.log('Unknown structure!');
   }
   
   return projectsData;

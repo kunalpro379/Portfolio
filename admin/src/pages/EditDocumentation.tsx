@@ -838,7 +838,7 @@ export default function EditDocumentation() {
                     {/* Mobile/Tablet - Show Warning */}
                     <div className="lg:hidden flex items-center justify-center h-full bg-gray-50 p-8">
                       <div className="max-w-md text-center">
-                        <div className="text-6xl mb-4">🖥️</div>
+                        <div className="text-6xl mb-4">Desktop</div>
                         <h2 className="text-2xl font-black mb-3">Desktop Only Feature</h2>
                         <p className="text-gray-600 font-medium">
                           The diagram editor is only available on desktop screens (1024px and above) for the best experience.
