@@ -9,44 +9,34 @@ dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-// Middleware
 const allowedOrigins = [
   'https://kunalpatil.me',
   'https://www.kunalpatil.me',
   'https://admin.kunalpatil.me',
-    'https://www.admin.kunalpatil.me',
-
-  'https://api.kunalpatil.me',
+  'https://www.admin.kunalpatil.me',
   'http://localhost:5173',
   'http://localhost:3000'
 ];
 
-// CORS configuration
-app.use((req, res, next) => {
-  const origin = req.headers.origin;
+app.use(cors({
+  origin: function (origin, callback) {
+    // allow server-to-server or curl/postman
+    if (!origin) return callback(null, true);
 
-  // Check if origin is in allowed list or if no origin (server-to-server)
-  if (allowedOrigins.includes(origin) || !origin) {
-    res.setHeader('Access-Control-Allow-Origin', origin || allowedOrigins[0]);
-    res.setHeader('Access-Control-Allow-Credentials', 'true');
-    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
-    res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
-    res.setHeader('Access-Control-Expose-Headers', 'Content-Length, Content-Type');
-  } else {
-    // For debugging - log rejected origins
-    console.log('CORS: Rejected origin:', origin);
-  }
+    if (allowedOrigins.includes(origin)) {
+      return callback(null, origin);
+    }
 
-  // Handle preflight
-  if (req.method === 'OPTIONS') {
-    return res.sendStatus(200);
-  }
+    return callback(new Error('Not allowed by CORS'));
+  },
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization']
+}));
 
-  next();
-});
 app.use(express.json());
 
-// MongoDB Connection - Single Portfolio DB for everything
+// MongoDB Connection
 mongoose.connect(process.env.MONGODB_URI, {
   dbName: 'Portfolio'
 })
@@ -56,7 +46,7 @@ mongoose.connect(process.env.MONGODB_URI, {
     process.exit(1);
   });
 
-// Import routes after connection with error handling
+// Load routes
 async function loadRoutes() {
   try {
     const { default: authRoutes } = await import('./routes/auth.js');
@@ -66,7 +56,6 @@ async function loadRoutes() {
     const { default: blogsRoutes } = await import('./routes/blogs.js');
     const { default: documentationRoutes } = await import('./routes/documentation.js');
 
-    // Routes
     app.use('/api/auth', authRoutes);
     app.use('/api/notes', notesRoutes);
     app.use('/api/projects', projectsRoutes);
@@ -74,12 +63,11 @@ async function loadRoutes() {
     app.use('/api/blogs', blogsRoutes);
     app.use('/api/documentation', documentationRoutes);
 
-    // Try to import views route (optional - may not exist yet)
     try {
       const viewsModule = await import('./routes/views.js');
       app.use('/api/views', viewsModule.default);
       console.log('✓ Views route loaded');
-    } catch (error) {
+    } catch {
       console.log('ℹ Views route not available yet');
     }
 
@@ -90,7 +78,6 @@ async function loadRoutes() {
   }
 }
 
-// Load routes
 await loadRoutes();
 
 app.get('/', (req, res) => {
