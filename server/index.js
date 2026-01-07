@@ -21,8 +21,7 @@ const corsOptions = {
     'http://localhost:5173',
     'http://localhost:3001',
     'http://localhost:3002',
-    'https://api.kunalpatil.me/api/notes/files/upload'
-    
+    'https://admin.kunalpatil.me'    
   ],
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
@@ -40,7 +39,8 @@ app.use((req, res, next) => {
   next();
 });
 
-app.use(express.json());
+app.use(express.json({ limit: '2gb' }));
+app.use(express.urlencoded({ limit: '2gb', extended: true }));
 
 // MongoDB Connection
 mongoose.connect(process.env.MONGODB_URI, {
