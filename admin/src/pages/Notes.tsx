@@ -42,7 +42,9 @@ export default function Notes() {
 
   const fetchFolders = async () => {
     try {
-      const response = await fetch(`https://api.kunalpatil.me/api/notes/folders?parentPath=${currentPath}`);
+      const response = await fetch(`https://api.kunalpatil.me/api/notes/folders?parentPath=${currentPath}`, {
+        credentials: 'include'
+      });
       const data = await response.json();
       setFolders(data.folders);
     } catch (error) {
@@ -56,7 +58,9 @@ export default function Notes() {
         setFiles([]);
         return;
       }
-      const response = await fetch(`https://api.kunalpatil.me/api/notes/files?folderPath=${currentPath}`);
+      const response = await fetch(`https://api.kunalpatil.me/api/notes/files?folderPath=${currentPath}`, {
+        credentials: 'include'
+      });
       const data = await response.json();
       setFiles(data.files);
     } catch (error) {
@@ -72,6 +76,7 @@ export default function Notes() {
       const response = await fetch('https://api.kunalpatil.me/api/notes/folder/create', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
         body: JSON.stringify({
           name: newFolderName,
           parentPath: currentPath
@@ -108,7 +113,8 @@ export default function Notes() {
     try {
       const response = await fetch('https://api.kunalpatil.me/api/notes/files/upload', {
         method: 'POST',
-        body: formData
+        body: formData,
+        credentials: 'include'
       });
 
       if (response.ok) {
@@ -133,7 +139,8 @@ export default function Notes() {
 
     try {
       const response = await fetch(`https://api.kunalpatil.me/api/notes/files/${fileId}`, {
-        method: 'DELETE'
+        method: 'DELETE',
+        credentials: 'include'
       });
 
       if (response.ok) {
@@ -149,7 +156,8 @@ export default function Notes() {
 
     try {
       const response = await fetch(`https://api.kunalpatil.me/api/notes/folders/${folderId}`, {
-        method: 'DELETE'
+        method: 'DELETE',
+        credentials: 'include'
       });
 
       if (response.ok) {
