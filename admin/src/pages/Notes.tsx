@@ -104,34 +104,120 @@ export default function Notes() {
     setUploading(true);
     setUploadProgress({ current: 0, total: fileList.length });
 
-    const formData = new FormData();
-    formData.append('folderPath', currentPath);
-    Array.from(fileList).forEach(file => {
-      formData.append('files', file);
-    });
-
     try {
+      for (let i = 0; i < fileList.length; i++) {
+        const file = fileList[i];
+        await uploadSingleFile(file);
+        setUploadProgress({ current: i + 1, total: fileList.length });
+      }
+
+      setTimeout(() => {
+        setUploading(false);
+        fetchFiles();
+      }, 1000);
+    } catch (error) {
+      console.error('Error uploading files:', error);
+      setUploading(false);
+      alert('Upload failed: ' + (error as Error).message);
+    }
+  };
+
+  const uploadSingleFile = async (file: File) => {
+    const CHUNK_SIZE = 4 * 1024 * 1024; // 4MB chunks
+    const totalChunks = Math.ceil(file.size / CHUNK_SIZE);
+
+    // For small files (< 4MB), use regular upload
+    if (file.size < CHUNK_SIZE) {
+      const formData = new FormData();
+      formData.append('folderPath', currentPath);
+      formData.append('files', file);
+
       const response = await fetch('https://api.kunalpatil.me/api/notes/files/upload', {
         method: 'POST',
         body: formData,
         credentials: 'include'
       });
 
-      if (response.ok) {
-        setUploadProgress({ current: fileList.length, total: fileList.length });
-        setTimeout(() => {
-          setUploading(false);
-          fetchFiles();
-        }, 1000);
-      } else {
-        setUploading(false);
-        alert('Upload failed');
+      if (!response.ok) {
+        throw new Error('Upload failed');
       }
-    } catch (error) {
-      console.error('Error uploading files:', error);
-      setUploading(false);
-      alert('Upload failed');
+      return;
     }
+
+    // For large files, use chunked upload
+    console.log(`Uploading ${file.name} in ${totalChunks} chunks`);
+
+    // Step 1: Initialize upload
+    const initResponse = await fetch('https://api.kunalpatil.me/api/notes/files/upload/init', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      credentials: 'include',
+      body: JSON.stringify({
+        filename: file.name,
+        fileType: file.type,
+        fileSize: file.size,
+        folderPath: currentPath
+      })
+    });
+
+    if (!initResponse.ok) {
+      throw new Error('Failed to initialize upload');
+    }
+
+    const { uploadId } = await initResponse.json();
+    const blockIds: string[] = [];
+
+    // Step 2: Upload chunks
+    for (let chunkIndex = 0; chunkIndex < totalChunks; chunkIndex++) {
+      const start = chunkIndex * CHUNK_SIZE;
+      const end = Math.min(start + CHUNK_SIZE, file.size);
+      const chunk = file.slice(start, end);
+
+      const chunkFormData = new FormData();
+      chunkFormData.append('chunk', chunk);
+      chunkFormData.append('uploadId', uploadId);
+      chunkFormData.append('chunkIndex', chunkIndex.toString());
+      chunkFormData.append('totalChunks', totalChunks.toString());
+      chunkFormData.append('filename', file.name);
+      chunkFormData.append('folderPath', currentPath);
+      chunkFormData.append('fileType', file.type);
+
+      const chunkResponse = await fetch('https://api.kunalpatil.me/api/notes/files/upload/chunk', {
+        method: 'POST',
+        body: chunkFormData,
+        credentials: 'include'
+      });
+
+      if (!chunkResponse.ok) {
+        throw new Error(`Failed to upload chunk ${chunkIndex + 1}/${totalChunks}`);
+      }
+
+      const { blockId } = await chunkResponse.json();
+      blockIds.push(blockId);
+
+      console.log(`Uploaded chunk ${chunkIndex + 1}/${totalChunks}`);
+    }
+
+    // Step 3: Finalize upload
+    const finalizeResponse = await fetch('https://api.kunalpatil.me/api/notes/files/upload/finalize', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      credentials: 'include',
+      body: JSON.stringify({
+        uploadId,
+        filename: file.name,
+        folderPath: currentPath,
+        fileType: file.type,
+        fileSize: file.size,
+        blockIds
+      })
+    });
+
+    if (!finalizeResponse.ok) {
+      throw new Error('Failed to finalize upload');
+    }
+
+    console.log(`Successfully uploaded ${file.name}`);
   };
 
   const deleteFile = async (fileId: string) => {

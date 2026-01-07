@@ -11,12 +11,12 @@ const blobServiceClient = BlobServiceClient.fromConnectionString(
 );
 const containerName = process.env.AZURE_BLOB_CONTAINER_NAME;
 
-// Configure multer for memory storage with 200MB limit
+// Configure multer for memory storage with 2GB limit
 const storage = multer.memoryStorage();
-const upload = multer({ 
+const upload = multer({
   storage: storage,
   limits: {
-    fileSize: 200 * 1024 * 1024 // 200MB in bytes
+    fileSize: 2 * 1024 * 1024 * 1024 // 2GB in bytes
   }
 });
 
@@ -34,16 +34,16 @@ function generateId() {
 const uploadToAzure = async (buffer, folderPath, filename, fileType) => {
   try {
     const containerClient = blobServiceClient.getContainerClient(containerName);
-    
+
     // Create blob path: notes/folderPath/filename
     const blobPath = `notes/${folderPath}/${filename}`;
     const blockBlobClient = containerClient.getBlockBlobClient(blobPath);
-    
+
     // Upload with content type
     await blockBlobClient.upload(buffer, buffer.length, {
       blobHTTPHeaders: { blobContentType: fileType }
     });
-    
+
     // Return blob URL and path
     return {
       blobPath: blobPath,
@@ -92,7 +92,7 @@ router.get('/folders', async (req, res) => {
   try {
     const { parentPath } = req.query;
     const query = parentPath ? { parentPath } : { parentPath: '' };
-    
+
     const folders = await Folder.find(query).sort({ createdAt: -1 });
     res.json({ folders });
   } catch (error) {
@@ -105,7 +105,7 @@ router.get('/folders', async (req, res) => {
 router.get('/folders/:folderId', async (req, res) => {
   try {
     const { folderId } = req.params;
-    
+
     const folder = await Folder.findOne({ folderId });
     if (!folder) {
       return res.status(404).json({ message: 'Folder not found' });
@@ -116,7 +116,7 @@ router.get('/folders/:folderId', async (req, res) => {
     // Get files in this folder
     const files = await File.find({ folderPath: folder.path }).sort({ uploadedAt: -1 });
     console.log('Files found:', files.length, 'for path:', folder.path);
-    
+
     // Get subfolders
     const subfolders = await Folder.find({ parentPath: folder.path }).sort({ name: 1 });
     console.log('Subfolders found:', subfolders.length);
@@ -164,7 +164,7 @@ router.post('/files/upload', upload.array('files', 10), async (req, res) => {
 
     for (const file of req.files) {
       const fileId = generateId();
-      
+
       console.log('Uploading file:', file.originalname, 'Type:', file.mimetype);
       const result = await uploadToAzure(file.buffer, folderPath, file.originalname, file.mimetype);
       console.log('Azure upload success:', result.blobUrl);
@@ -195,6 +195,109 @@ router.post('/files/upload', upload.array('files', 10), async (req, res) => {
   }
 });
 
+// Chunked upload - Initialize
+router.post('/files/upload/init', async (req, res) => {
+  try {
+    const { filename, fileType, fileSize, folderPath } = req.body;
+
+    if (!filename || !folderPath) {
+      return res.status(400).json({ message: 'Filename and folder path are required' });
+    }
+
+    const uploadId = generateId();
+
+    res.json({
+      uploadId,
+      chunkSize: 4 * 1024 * 1024, // 4MB chunks
+      message: 'Upload initialized'
+    });
+  } catch (error) {
+    console.error('Init upload error:', error);
+    res.status(500).json({ message: 'Failed to initialize upload', error: error.message });
+  }
+});
+
+// Chunked upload - Upload chunk
+router.post('/files/upload/chunk', upload.single('chunk'), async (req, res) => {
+  try {
+    const { uploadId, chunkIndex, totalChunks, filename, folderPath, fileType } = req.body;
+
+    if (!uploadId || !req.file) {
+      return res.status(400).json({ message: 'Upload ID and chunk are required' });
+    }
+
+    console.log(`Chunk ${parseInt(chunkIndex) + 1}/${totalChunks} received for ${filename}`);
+
+    // Upload chunk to Azure as temporary block
+    const containerClient = blobServiceClient.getContainerClient(containerName);
+    const blobPath = `notes/${folderPath}/${filename}`;
+    const blockBlobClient = containerClient.getBlockBlobClient(blobPath);
+
+    // Create block ID (must be base64 encoded and same length for all blocks)
+    const blockId = Buffer.from(`block-${uploadId}-${String(chunkIndex).padStart(6, '0')}`).toString('base64');
+
+    // Upload block
+    await blockBlobClient.stageBlock(blockId, req.file.buffer, req.file.buffer.length);
+
+    res.json({
+      message: 'Chunk uploaded',
+      chunkIndex: parseInt(chunkIndex),
+      blockId
+    });
+  } catch (error) {
+    console.error('Chunk upload error:', error);
+    res.status(500).json({ message: 'Chunk upload failed', error: error.message });
+  }
+});
+
+// Chunked upload - Finalize
+router.post('/files/upload/finalize', async (req, res) => {
+  try {
+    const { uploadId, filename, folderPath, fileType, fileSize, blockIds } = req.body;
+
+    if (!uploadId || !filename || !folderPath || !blockIds) {
+      return res.status(400).json({ message: 'Missing required fields' });
+    }
+
+    console.log(`Finalizing upload for ${filename} with ${blockIds.length} blocks`);
+
+    const containerClient = blobServiceClient.getContainerClient(containerName);
+    const blobPath = `notes/${folderPath}/${filename}`;
+    const blockBlobClient = containerClient.getBlockBlobClient(blobPath);
+
+    // Commit all blocks
+    await blockBlobClient.commitBlockList(blockIds, {
+      blobHTTPHeaders: { blobContentType: fileType }
+    });
+
+    console.log('Blocks committed successfully');
+
+    // Save to database
+    const fileId = generateId();
+    const newFile = new File({
+      fileId,
+      filename,
+      folderPath,
+      cloudinaryPath: blobPath,
+      cloudinaryUrl: blockBlobClient.url,
+      fileType,
+      size: parseInt(fileSize),
+      uploadedAt: new Date()
+    });
+
+    await newFile.save();
+    console.log('File saved to DB:', fileId);
+
+    res.json({
+      message: 'Upload completed successfully',
+      file: newFile
+    });
+  } catch (error) {
+    console.error('Finalize upload error:', error);
+    res.status(500).json({ message: 'Failed to finalize upload', error: error.message });
+  }
+});
+
 // Get files in a folder
 router.get('/files', async (req, res) => {
   try {
@@ -216,7 +319,7 @@ router.get('/files', async (req, res) => {
 router.get('/files/:fileId', async (req, res) => {
   try {
     const { fileId } = req.params;
-    
+
     const file = await File.findOne({ fileId });
     if (!file) {
       return res.status(404).json({ message: 'File not found' });
@@ -226,10 +329,10 @@ router.get('/files/:fileId', async (req, res) => {
     try {
       const containerClient = blobServiceClient.getContainerClient(containerName);
       const blockBlobClient = containerClient.getBlockBlobClient(file.cloudinaryPath);
-      
+
       const downloadResponse = await blockBlobClient.download(0);
       const content = await streamToString(downloadResponse.readableStreamBody);
-      
+
       res.json({
         file: {
           ...file.toObject(),
@@ -312,8 +415,8 @@ router.delete('/folders/:folderId', async (req, res) => {
     }
 
     // Find all subfolders
-    const subfolders = await Folder.find({ 
-      path: { $regex: `^${folder.path}` } 
+    const subfolders = await Folder.find({
+      path: { $regex: `^${folder.path}` }
     });
 
     // Delete all files in this folder and subfolders
@@ -321,7 +424,7 @@ router.delete('/folders/:folderId', async (req, res) => {
     const files = await File.find({ folderPath: { $in: folderPaths } });
 
     const containerClient = blobServiceClient.getContainerClient(containerName);
-    
+
     for (const file of files) {
       try {
         const blockBlobClient = containerClient.getBlockBlobClient(file.cloudinaryPath);
