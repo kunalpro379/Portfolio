@@ -304,18 +304,13 @@ export default function DocumentationDetail() {
                 <div className="w-full lg:flex-1 flex flex-col min-h-[500px] lg:min-h-0 lg:overflow-hidden">
                     {currentFile ? (
                         <>
+                            <div className="flex items-center justify-between p-4 bg-white border-b-4 border-black">
+                                <h2 className="font-black text-lg">{currentFile.name}</h2>
+                            </div>
+
                             <div className="flex-1 overflow-hidden">
                                 {activeTab === 'markdown' && (
                                     <div className="w-full h-full overflow-auto p-6 bg-white" data-color-mode="light">
-                                        {/* About This Project Section */}
-                                        {formData.description && (
-                                            <div className="mb-8 p-6 bg-white border-4 border-black rounded-xl shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
-                                                <h2 className="text-2xl font-black mb-4">About This Project</h2>
-                                                <p className="text-gray-700 font-medium leading-relaxed">{formData.description}</p>
-                                            </div>
-                                        )}
-                                        
-                                        {/* Markdown Content */}
                                         <MDEditor.Markdown
                                             source={previewContent}
                                             style={{ padding: '20px', background: 'white' }}
