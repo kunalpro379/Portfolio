@@ -10,7 +10,34 @@ const app = express();
 const PORT = process.env.PORT || 5000;
 
 // Middleware
-app.use(cors());
+const allowedOrigins = [
+  'https://api.kunalpatil.me',
+  'https://www.api.kunalpatil.me',
+  'https://admin.kunalpatil.me',
+  'https://www.admin.kunalpatil.me',
+  'https://kunalpatil.me',
+  'https://www.kunalpatil.me',
+  'https://portfolioclient-git-master-kunaldp379-gmailcoms-projects.vercel.app',
+  'https://www.portfolioclient-git-master-kunaldp379-gmailcoms-projects.vercel.app',
+  'https://portfolioclient-1x2z5fjso-kunaldp379-gmailcoms-projects.vercel.app',
+  'https://www.portfolioclient-1x2z5fjso-kunaldp379-gmailcoms-projects.vercel.app',
+  'http://localhost:5173',
+  'http://localhost:3000'
+];
+
+app.use(cors({
+  origin: function (origin, callback) {
+    // Allow requests with no origin (like mobile apps or curl requests)
+    if (!origin) return callback(null, true);
+    
+    if (allowedOrigins.indexOf(origin) !== -1) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
+  credentials: true
+}));
 app.use(express.json());
 
 // MongoDB Connection - Single Portfolio DB for everything
