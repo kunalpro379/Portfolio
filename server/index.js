@@ -11,51 +11,32 @@ const PORT = process.env.PORT || 5000;
 
 
 
-const allowedOrigins = new Set([
-  'https://kunalpatil.me/',
-  'https://www.kunalpatil.me/',
-  'https://admin.kunalpatil.me/',
-  'https://www.admin.kunalpatil.me/',
-  'http://localhost:5173',
-  'http://localhost:3001',
-  'http://localhost:3002',
-  'https://admin.kunalpatil.me/notes/',
-  'https://admin.kunalpatil.me/notes/'
-]);
-// app.use((req, res, next) => {
-//   res.setHeader('Cache-Control', ' ye sabno-store, no-cache, must-revalidate, proxy-revalidate');
-//   res.setHeader('Pragma', 'no-cache');
-//   res.setHeader('Expires', '0');
-//   next();
-// });
+// CORS Configuration
+const corsOptions = {
+  origin: [
+    'https://kunalpatil.me',
+    'https://www.kunalpatil.me',
+    'https://admin.kunalpatil.me',
+    'https://www.admin.kunalpatil.me',
+    'http://localhost:5173',
+    'http://localhost:3001',
+    'http://localhost:3002',
+    'https://api.kunalpatil.me/api/notes/files/upload'
+    
+  ],
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Origin', 'X-Requested-With', 'Content-Type', 'Accept', 'Authorization', 'Content-Length'],
+  maxAge: 86400
+};
 
+app.use(cors(corsOptions));
+
+// Cache control
 app.use((req, res, next) => {
-  const origin = req.headers.origin;
-
-  if (origin && allowedOrigins.has(origin)) {
-    res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
-    res.setHeader('Pragma', 'no-cache');
-    res.setHeader('Expires', '0');
-
-    res.setHeader('Access-Control-Allow-Origin', origin);
-    res.setHeader('Vary', 'Origin');
-    res.setHeader('Access-Control-Allow-Credentials', 'true');
-    res.setHeader(
-      'Access-Control-Allow-Headers',
-      'Origin, X-Requested-With, Content-Type, Accept, Authorization, Content-Length'
-    );
-    res.setHeader('Access-Control-Allow-Methods', 'GET,POST,PUT,PATCH,DELETE,OPTIONS');
-    res.setHeader('Access-Control-Max-Age', '86400'); // 24 hours
-
-    // Handle preflight
-    if (req.method === 'OPTIONS') {
-      return res.sendStatus(204);
-    }
-  } else if (req.method === 'OPTIONS') {
-    // Reject OPTIONS from unknown origins
-    return res.sendStatus(403);
-  }
-
+  res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
+  res.setHeader('Pragma', 'no-cache');
+  res.setHeader('Expires', '0');
   next();
 });
 
