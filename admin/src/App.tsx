@@ -14,6 +14,7 @@ import CreateDocumentation from './pages/CreateDocumentation';
 import EditDocumentation from './pages/EditDocumentation';
 import Notes from './pages/Notes';
 import TodoEditor from './pages/TodoEditor';
+import Views from './pages/Views';
 import Layout from './components/Layout';
 import { AuthProvider, useAuth } from './context/AuthContext';
 
@@ -145,6 +146,14 @@ function App() {
               <PrivateRouteNoLayout>
                 <TodoEditor />
               </PrivateRouteNoLayout>
+            }
+          />
+          <Route
+            path="/views"
+            element={
+              <PrivateRoute>
+                <Views />
+              </PrivateRoute>
             }
           />
           <Route path="/" element={<Navigate to="/dashboard" />} />
