@@ -44,11 +44,11 @@ app.use((req, res, next) => {
       'Origin, X-Requested-With, Content-Type, Accept, Authorization'
     );
     res.setHeader('Access-Control-Allow-Methods', 'GET,POST,PUT,PATCH,DELETE,OPTIONS');
-  }
 
-  // Handle preflight
-  if (req.method === 'OPTIONS') {
-    return res.sendStatus(204);
+    // Handle preflight
+    if (req.method === 'OPTIONS') {
+      return res.sendStatus(204);
+    }
   }
 
   next();
