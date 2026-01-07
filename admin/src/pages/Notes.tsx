@@ -42,7 +42,7 @@ export default function Notes() {
 
   const fetchFolders = async () => {
     try {
-      const response = await fetch(`http://api.kunalpatil.me/api/notes/folders?parentPath=${currentPath}`);
+      const response = await fetch(`https://api.kunalpatil.me/api/notes/folders?parentPath=${currentPath}`);
       const data = await response.json();
       setFolders(data.folders);
     } catch (error) {
@@ -56,7 +56,7 @@ export default function Notes() {
         setFiles([]);
         return;
       }
-      const response = await fetch(`http://api.kunalpatil.me/api/notes/files?folderPath=${currentPath}`);
+      const response = await fetch(`https://api.kunalpatil.me/api/notes/files?folderPath=${currentPath}`);
       const data = await response.json();
       setFiles(data.files);
     } catch (error) {
@@ -69,7 +69,7 @@ export default function Notes() {
 
     setLoading(true);
     try {
-      const response = await fetch('http://api.kunalpatil.me/api/notes/folder/create', {
+      const response = await fetch('https://api.kunalpatil.me/api/notes/folder/create', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -106,7 +106,7 @@ export default function Notes() {
     });
 
     try {
-      const response = await fetch('http://api.kunalpatil.me/api/notes/files/upload', {
+      const response = await fetch('https://api.kunalpatil.me/api/notes/files/upload', {
         method: 'POST',
         body: formData
       });
@@ -132,7 +132,7 @@ export default function Notes() {
     if (!confirm('Delete this file?')) return;
 
     try {
-      const response = await fetch(`http://api.kunalpatil.me/api/notes/files/${fileId}`, {
+      const response = await fetch(`https://api.kunalpatil.me/api/notes/files/${fileId}`, {
         method: 'DELETE'
       });
 
@@ -148,7 +148,7 @@ export default function Notes() {
     if (!confirm('Delete this folder and all its contents?')) return;
 
     try {
-      const response = await fetch(`http://api.kunalpatil.me/api/notes/folders/${folderId}`, {
+      const response = await fetch(`https://api.kunalpatil.me/api/notes/folders/${folderId}`, {
         method: 'DELETE'
       });
 

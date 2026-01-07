@@ -40,7 +40,7 @@ export default function EditBlog() {
 
   const fetchBlog = async () => {
     try {
-      const response = await fetch(`http://api.kunalpatil.me/api/blogs/${blogId}`);
+      const response = await fetch(`https://api.kunalpatil.me/api/blogs/${blogId}`);
       const data = await response.json();
       const blog = data.blog;
 
@@ -57,7 +57,7 @@ export default function EditBlog() {
 
       // Fetch MD content if exists
       if (blog.mdFiles && blog.mdFiles.length > 0) {
-        const mdResponse = await fetch(`http://api.kunalpatil.me/api/blogs/${blogId}/md-content`);
+        const mdResponse = await fetch(`https://api.kunalpatil.me/api/blogs/${blogId}/md-content`);
         const mdData = await mdResponse.json();
         if (mdData.exists) {
           setMdContent(mdData.content);
@@ -99,7 +99,7 @@ export default function EditBlog() {
         blogLinks: blogLinks.filter(l => l.platform && l.url)
       };
 
-      await fetch(`http://api.kunalpatil.me/api/blogs/${blogId}`, {
+      await fetch(`https://api.kunalpatil.me/api/blogs/${blogId}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(updateData)
@@ -120,7 +120,7 @@ export default function EditBlog() {
         const mdFormData = new FormData();
         mdFormData.append('mdFile', mdBlob, `${blogId}.md`);
 
-        await fetch(`http://api.kunalpatil.me/api/blogs/${blogId}/md-file`, {
+        await fetch(`https://api.kunalpatil.me/api/blogs/${blogId}/md-file`, {
           method: 'POST',
           body: mdFormData
         });
@@ -144,7 +144,7 @@ export default function EditBlog() {
         formData.append('assets', file);
       });
 
-      const response = await fetch(`http://api.kunalpatil.me/api/blogs/${blogId}/assets`, {
+      const response = await fetch(`https://api.kunalpatil.me/api/blogs/${blogId}/assets`, {
         method: 'POST',
         body: formData
       });
@@ -166,7 +166,7 @@ export default function EditBlog() {
       const formData = new FormData();
       formData.append('cover', file);
 
-      const response = await fetch(`http://api.kunalpatil.me/api/blogs/${blogId}/cover`, {
+      const response = await fetch(`https://api.kunalpatil.me/api/blogs/${blogId}/cover`, {
         method: 'POST',
         body: formData
       });
@@ -186,7 +186,7 @@ export default function EditBlog() {
     if (!confirm('Delete this asset?')) return;
 
     try {
-      const response = await fetch(`http://api.kunalpatil.me/api/blogs/${blogId}/assets/${index}`, {
+      const response = await fetch(`https://api.kunalpatil.me/api/blogs/${blogId}/assets/${index}`, {
         method: 'DELETE'
       });
 
@@ -201,7 +201,7 @@ export default function EditBlog() {
 
   const updateAssetName = async (index: number, newName: string) => {
     try {
-      const response = await fetch(`http://api.kunalpatil.me/api/blogs/${blogId}/assets/${index}/name`, {
+      const response = await fetch(`https://api.kunalpatil.me/api/blogs/${blogId}/assets/${index}/name`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ name: newName })

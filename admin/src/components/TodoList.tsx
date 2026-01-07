@@ -31,7 +31,7 @@ export default function TodoList() {
 
   const fetchTodos = async () => {
     try {
-      const response = await fetch('http://api.kunalpatil.me/api/todos');
+      const response = await fetch('https://api.kunalpatil.me/api/todos');
       const data = await response.json();
       setTodos(data.todos);
     } catch (error) {
@@ -43,7 +43,7 @@ export default function TodoList() {
     if (!confirm('Delete this todo?')) return;
 
     try {
-      const response = await fetch(`http://api.kunalpatil.me/api/todos/${todoId}`, {
+      const response = await fetch(`https://api.kunalpatil.me/api/todos/${todoId}`, {
         method: 'DELETE'
       });
 

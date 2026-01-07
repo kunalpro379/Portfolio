@@ -25,7 +25,7 @@ export default function ReorderProjects() {
 
     const fetchProjects = async () => {
         try {
-            const response = await fetch('http://api.kunalpatil.me/api/projects');
+            const response = await fetch('https://api.kunalpatil.me/api/projects');
             const data = await response.json();
             setProjects(data.projects);
         } catch (error) {
@@ -50,7 +50,7 @@ export default function ReorderProjects() {
         try {
             const projectIds = projects.map(p => p.projectId);
 
-            const response = await fetch('http://api.kunalpatil.me/api/projects/reorder', {
+            const response = await fetch('https://api.kunalpatil.me/api/projects/reorder', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

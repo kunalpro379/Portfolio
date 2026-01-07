@@ -22,9 +22,9 @@ export default function Dashboard() {
     try {
       // Fetch all stats in parallel
       const [projectsRes, blogsRes, docsRes] = await Promise.all([
-        fetch('http://api.kunalpatil.me/api/projects'),
-        fetch('http://api.kunalpatil.me/api/blogs'),
-        fetch('http://api.kunalpatil.me/api/documentation')
+        fetch('https://api.kunalpatil.me/api/projects'),
+        fetch('https://api.kunalpatil.me/api/blogs'),
+        fetch('https://api.kunalpatil.me/api/documentation')
       ]);
 
       const [projectsData, blogsData, docsData] = await Promise.all([
@@ -36,7 +36,7 @@ export default function Dashboard() {
       // Fetch notes folders count
       let notesCount = 0;
       try {
-        const notesRes = await fetch('http://api.kunalpatil.me/api/notes/folders?parentPath=');
+        const notesRes = await fetch('https://api.kunalpatil.me/api/notes/folders?parentPath=');
         if (notesRes.ok) {
           const notesData = await notesRes.json();
           notesCount = notesData.folders?.length || 0;
