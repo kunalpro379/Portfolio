@@ -2,14 +2,14 @@ import { motion } from "framer-motion";
 
 export default function GridSection() {
   const cards = [
-    { title: "Design", icon: "🎨", color: "from-pink-500/20" },
-    { title: "Development", icon: "💻", color: "from-blue-500/20" },
-    { title: "Strategy", icon: "🎯", color: "from-purple-500/20" },
-    { title: "Analytics", icon: "📊", color: "from-green-500/20" },
-    { title: "Marketing", icon: "📱", color: "from-orange-500/20" },
-    { title: "Support", icon: "🤝", color: "from-cyan-500/20" },
-    { title: "Security", icon: "🔒", color: "from-red-500/20" },
-    { title: "Cloud", icon: "☁️", color: "from-indigo-500/20" },
+    { title: "Design", icon: "D", color: "from-pink-500/20" },
+    { title: "Development", icon: "Dev", color: "from-blue-500/20" },
+    { title: "Strategy", icon: "S", color: "from-purple-500/20" },
+    { title: "Analytics", icon: "A", color: "from-green-500/20" },
+    { title: "Marketing", icon: "M", color: "from-orange-500/20" },
+    { title: "Support", icon: "Sup", color: "from-cyan-500/20" },
+    { title: "Security", icon: "Sec", color: "from-red-500/20" },
+    { title: "Cloud", icon: "C", color: "from-indigo-500/20" },
   ];
   
 

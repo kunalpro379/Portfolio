@@ -181,7 +181,7 @@ export default function BlogsSection() {
               className="text-2xl md:text-3xl font-black text-black text-center"
               style={{ fontFamily: 'Comic Sans MS, cursive' }}
             >
-              📚 Documentation
+              Documentation
             </motion.h3>
           </div>
 

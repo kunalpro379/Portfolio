@@ -2,37 +2,37 @@
   {
     "category": "Frontend",
     "items": [
-      { "name": "React", "icon": "⚛️", "level": 95 },
-      { "name": "Next.js", "icon": "▲", "level": 90 },
-      { "name": "TypeScript", "icon": "📘", "level": 88 },
-      { "name": "Tailwind", "icon": "🎨", "level": 92 }
+      { "name": "React", "icon": "R", "level": 95 },
+      { "name": "Next.js", "icon": "N", "level": 90 },
+      { "name": "TypeScript", "icon": "TS", "level": 88 },
+      { "name": "Tailwind", "icon": "TW", "level": 92 }
     ]
   },
   {
     "category": "Backend",
     "items": [
-      { "name": "Node.js", "icon": "🟢", "level": 90 },
-      { "name": "Python", "icon": "🐍", "level": 85 },
-      { "name": "Java", "icon": "☕", "level": 80 },
-      { "name": "GraphQL", "icon": "◈", "level": 75 }
+      { "name": "Node.js", "icon": "Node", "level": 90 },
+      { "name": "Python", "icon": "Py", "level": 85 },
+      { "name": "Java", "icon": "Java", "level": 80 },
+      { "name": "GraphQL", "icon": "GQL", "level": 75 }
     ]
   },
   {
     "category": "Database",
     "items": [
-      { "name": "PostgreSQL", "icon": "🐘", "level": 85 },
-      { "name": "MongoDB", "icon": "🍃", "level": 88 },
-      { "name": "Redis", "icon": "🔴", "level": 80 },
-      { "name": "MySQL", "icon": "🐬", "level": 82 }
+      { "name": "PostgreSQL", "icon": "PG", "level": 85 },
+      { "name": "MongoDB", "icon": "Mongo", "level": 88 },
+      { "name": "Redis", "icon": "Redis", "level": 80 },
+      { "name": "MySQL", "icon": "MySQL", "level": 82 }
     ]
   },
   {
     "category": "DevOps & Cloud",
     "items": [
-      { "name": "AWS", "icon": "☁️", "level": 85 },
-      { "name": "Docker", "icon": "🐳", "level": 90 },
-      { "name": "Kubernetes", "icon": "⎈", "level": 75 },
-      { "name": "CI/CD", "icon": "🔄", "level": 88 }
+      { "name": "AWS", "icon": "AWS", "level": 85 },
+      { "name": "Docker", "icon": "Docker", "level": 90 },
+      { "name": "Kubernetes", "icon": "K8s", "level": 75 },
+      { "name": "CI/CD", "icon": "CI/CD", "level": 88 }
     ]
   }
 ]

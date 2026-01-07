@@ -30,21 +30,24 @@ const allowedOrigins = [
 // CORS configuration
 app.use((req, res, next) => {
   const origin = req.headers.origin;
-  
-  // Check if origin is in allowed list
-  if (!origin || allowedOrigins.includes(origin)) {
-    res.setHeader('Access-Control-Allow-Origin', origin || '*');
+
+  // Check if origin is in allowed list or if no origin (server-to-server)
+  if (allowedOrigins.includes(origin) || !origin) {
+    res.setHeader('Access-Control-Allow-Origin', origin || allowedOrigins[0]);
     res.setHeader('Access-Control-Allow-Credentials', 'true');
     res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
     res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
     res.setHeader('Access-Control-Expose-Headers', 'Content-Length, Content-Type');
+  } else {
+    // For debugging - log rejected origins
+    console.log('CORS: Rejected origin:', origin);
   }
-  
+
   // Handle preflight
   if (req.method === 'OPTIONS') {
     return res.sendStatus(200);
   }
-  
+
   next();
 });
 app.use(express.json());

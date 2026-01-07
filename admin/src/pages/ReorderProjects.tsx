@@ -179,7 +179,7 @@ export default function ReorderProjects() {
 
                 {/* Instructions */}
                 <div className="mt-8 bg-blue-100 border-4 border-black rounded-2xl p-6 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
-                    <h3 className="text-lg font-black text-black mb-2">💡 How to Reorder</h3>
+                    <h3 className="text-lg font-black text-black mb-2">How to Reorder</h3>
                     <ul className="space-y-2 text-sm font-medium text-gray-700">
                         <li>• Drag projects using the grip icon on the left</li>
                         <li>• The order you set here will be reflected on your portfolio</li>
