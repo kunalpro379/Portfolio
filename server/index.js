@@ -12,6 +12,8 @@ const PORT = process.env.PORT || 5000;
 // Middleware
 const allowedOrigins = [
   'https://api.kunalpatil.me',
+  'https://portfolioadmin-sigma.vercel.app/',
+  'https://portfolioadmin-m72zig1wl-kunaldp379-gmailcoms-projects.vercel.app/',
   'https://www.api.kunalpatil.me',
   'https://admin.kunalpatil.me',
   'https://www.admin.kunalpatil.me',
