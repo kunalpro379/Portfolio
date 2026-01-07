@@ -12,12 +12,14 @@ const PORT = process.env.PORT || 5000;
 
 
 const allowedOrigins = new Set([
- 'https://kunalpatil.me',
+  'https://kunalpatil.me',
   'https://www.kunalpatil.me',
   'https://admin.kunalpatil.me',
   'https://www.admin.kunalpatil.me',
   'http://localhost:5173',
-  'http://localhost:3000'
+  'http://localhost:3001',
+    'http://localhost:3002'
+    
 ]);
 // app.use((req, res, next) => {
 //   res.setHeader('Cache-Control', ' ye sabno-store, no-cache, must-revalidate, proxy-revalidate');
