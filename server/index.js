@@ -31,10 +31,10 @@ app.use(cors({
   origin: function (origin, callback) {
     // Allow requests with no origin (like mobile apps or curl requests)
     if (!origin) return callback(null, true);
-    
+
     // Remove trailing slash from origin if present
     const normalizedOrigin = origin.endsWith('/') ? origin.slice(0, -1) : origin;
-    
+
     if (allowedOrigins.indexOf(normalizedOrigin) !== -1) {
       callback(null, true);
     } else {
@@ -52,8 +52,8 @@ app.use(express.json());
 mongoose.connect(process.env.MONGODB_URI, {
   dbName: 'Portfolio'
 })
-.then(() => console.log('MongoDB Connected to Portfolio DB'))
-.catch(err => console.error('MongoDB connection error:', err));
+  .then(() => console.log('MongoDB Connected to Portfolio DB'))
+  .catch(err => console.error('MongoDB connection error:', err));
 
 // Import routes after connection
 const { default: authRoutes } = await import('./routes/auth.js');
