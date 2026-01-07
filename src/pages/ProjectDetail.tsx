@@ -153,29 +153,11 @@ export default function ProjectDetail() {
         <div className="max-w-[1800px] mx-auto">
           <button
             onClick={() => navigate('/learnings?tab=projects')}
-            className="flex items-center gap-2 text-gray-600 hover:text-black mb-4 font-bold text-base"
+            className="flex items-center gap-2 text-gray-600 hover:text-black font-bold text-base"
           >
             <ArrowLeft className="w-5 h-5" strokeWidth={2.5} />
             Back to Projects
           </button>
-          
-          <div className="flex items-start gap-4">
-            <div className="flex-1">
-              <div className="mb-3">
-                <span className="px-3 py-1 bg-green-100 border-2 border-black rounded-lg text-sm font-bold">
-                  {project.tags?.[0] || 'Project'}
-                </span>
-              </div>
-              
-              <h1 className="text-4xl font-black text-black mb-3" style={{ fontFamily: 'Comic Sans MS, cursive' }}>
-                {project.title}
-              </h1>
-              
-              {project.tagline && (
-                <p className="text-lg text-gray-700 mb-4 font-medium">{project.tagline}</p>
-              )}
-            </div>
-          </div>
         </div>
       </div>
 
@@ -183,6 +165,23 @@ export default function ProjectDetail() {
         {/* Fixed Sidebar */}
         <div className="w-80 bg-white border-r-4 border-black overflow-y-auto">
           <div className="p-4 space-y-6">
+            {/* Project Info */}
+            <div className="bg-blue-50 border-3 border-black rounded-xl p-4">
+              <div className="mb-3">
+                <span className="px-3 py-1 bg-green-100 border-2 border-black rounded-lg text-sm font-bold">
+                  {project.tags?.[0] || 'Project'}
+                </span>
+              </div>
+              
+              <h1 className="text-2xl font-black text-black mb-3">
+                {project.title}
+              </h1>
+              
+              {project.tagline && (
+                <p className="text-sm text-gray-700 font-medium">{project.tagline}</p>
+              )}
+            </div>
+
             {/* Tech Stack */}
             <div>
               <div className="flex items-center gap-2 mb-3">
@@ -278,30 +277,10 @@ export default function ProjectDetail() {
 
         {/* Main Content */}
         <div className="flex-1 overflow-y-auto bg-gray-50">
-          <div className="max-w-4xl mx-auto px-8 py-8">
-            {/* Project Images/Assets */}
-            {project.assets && project.assets.length > 0 && (
-              <div className="mb-8 grid grid-cols-1 md:grid-cols-2 gap-4">
-                {project.assets.map((asset: any, idx: number) => (
-                  <div key={idx} className="border-4 border-black rounded-xl overflow-hidden shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
-                    <img
-                      src={asset.url || asset}
-                      alt={asset.name || `Project asset ${idx + 1}`}
-                      className="w-full h-auto object-cover"
-                    />
-                    {asset.name && (
-                      <div className="p-3 bg-white border-t-4 border-black">
-                        <p className="text-sm font-bold text-center">{asset.name}</p>
-                      </div>
-                    )}
-                  </div>
-                ))}
-              </div>
-            )}
-
+          <div className="w-full px-8 py-8">
             {/* Description */}
             {project.description && (
-              <div className="mb-8 bg-white border-4 border-black rounded-xl p-6 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
+              <div className="mb-8 p-6">
                 <h3 className="text-xl font-black text-black mb-3">About This Project</h3>
                 <p className="text-gray-800 leading-relaxed font-medium text-lg">{project.description}</p>
               </div>
@@ -309,7 +288,7 @@ export default function ProjectDetail() {
 
             {/* Markdown Content */}
             {markdownContent ? (
-              <article className="bg-white border-4 border-black rounded-2xl p-8 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
+              <article className="p-8">
                 <ReactMarkdown 
                   remarkPlugins={[remarkGfm]}
                   components={components}
@@ -318,7 +297,7 @@ export default function ProjectDetail() {
                 </ReactMarkdown>
               </article>
             ) : (
-              <div className="bg-white border-4 border-black rounded-2xl p-12 text-center shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
+              <div className="p-12 text-center">
                 <FileText size={64} strokeWidth={2.5} className="mx-auto mb-4 text-gray-400" />
                 <p className="text-gray-600 font-bold">No detailed documentation available for this project yet.</p>
               </div>
