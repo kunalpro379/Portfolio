@@ -175,11 +175,11 @@ export default function LearningsPage() {
           </div>
 
           {/* Tabs */}
-          <div className="flex gap-2 mt-6 overflow-x-auto pb-2">
+          <div className="grid grid-cols-4 gap-1 sm:gap-2 mt-6">
             <button
               onClick={() => changeTab('blogs')}
-              className={`px-6 py-3 rounded-xl font-bold text-sm transition-all border-3 border-black ${activeTab === 'blogs'
-                  ? 'bg-pink-200 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]'
+              className={`px-2 sm:px-4 md:px-6 py-2 md:py-3 rounded-lg md:rounded-xl font-bold text-[10px] sm:text-xs md:text-sm transition-all border-2 md:border-3 border-black ${activeTab === 'blogs'
+                  ? 'bg-pink-200 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] md:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]'
                   : 'bg-white hover:bg-gray-100'
                 }`}
             >
@@ -187,17 +187,17 @@ export default function LearningsPage() {
             </button>
             <button
               onClick={() => changeTab('documentation')}
-              className={`px-6 py-3 rounded-xl font-bold text-sm transition-all border-3 border-black ${activeTab === 'documentation'
-                  ? 'bg-blue-200 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]'
+              className={`px-2 sm:px-4 md:px-6 py-2 md:py-3 rounded-lg md:rounded-xl font-bold text-[10px] sm:text-xs md:text-sm transition-all border-2 md:border-3 border-black ${activeTab === 'documentation'
+                  ? 'bg-blue-200 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] md:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]'
                   : 'bg-white hover:bg-gray-100'
                 }`}
             >
-              Documentation
+              Docs
             </button>
             <button
               onClick={() => changeTab('notes')}
-              className={`px-6 py-3 rounded-xl font-bold text-sm transition-all border-3 border-black ${activeTab === 'notes'
-                  ? 'bg-yellow-200 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]'
+              className={`px-2 sm:px-4 md:px-6 py-2 md:py-3 rounded-lg md:rounded-xl font-bold text-[10px] sm:text-xs md:text-sm transition-all border-2 md:border-3 border-black ${activeTab === 'notes'
+                  ? 'bg-yellow-200 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] md:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]'
                   : 'bg-white hover:bg-gray-100'
                 }`}
             >
@@ -205,8 +205,8 @@ export default function LearningsPage() {
             </button>
             <button
               onClick={() => changeTab('projects')}
-              className={`px-6 py-3 rounded-xl font-bold text-sm transition-all border-3 border-black ${activeTab === 'projects'
-                  ? 'bg-green-200 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]'
+              className={`px-2 sm:px-4 md:px-6 py-2 md:py-3 rounded-lg md:rounded-xl font-bold text-[10px] sm:text-xs md:text-sm transition-all border-2 md:border-3 border-black ${activeTab === 'projects'
+                  ? 'bg-green-200 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] md:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]'
                   : 'bg-white hover:bg-gray-100'
                 }`}
             >

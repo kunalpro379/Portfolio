@@ -16,12 +16,15 @@ interface TempFile {
 export default function CreateDocumentation() {
   const navigate = useNavigate();
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const attachmentInputRef = useRef<HTMLInputElement>(null);
   const excalidrawRef = useRef<any>(null);
   const [activeTab, setActiveTab] = useState<TabType>('markdown');
   const [saving, setSaving] = useState(false);
   const [uploading, setUploading] = useState(false);
+  const [uploadingAttachment, setUploadingAttachment] = useState(false);
   const [showMobileSidebar, setShowMobileSidebar] = useState(false);
   const [assets, setAssets] = useState<Array<{ name: string; url: string }>>([]);
+  const [attachments, setAttachments] = useState<Array<{ fileId: string; name: string; url: string }>>([]);
   const [files, setFiles] = useState<TempFile[]>([
     { id: 'index-md', name: 'index.md', type: 'markdown', content: '# Welcome\n\nStart writing your documentation here...' },
     { id: 'index-diagram', name: 'index.diagram', type: 'diagram', content: { elements: [], appState: {} } }
@@ -84,6 +87,133 @@ export default function CreateDocumentation() {
         fileInputRef.current.value = '';
       }
     }
+  };
+
+  const handleAttachmentUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const uploadFiles = e.target.files;
+    if (!uploadFiles || uploadFiles.length === 0) return;
+
+    setUploadingAttachment(true);
+
+    try {
+      // First create the document to get docId
+      if (!formData.title || !formData.subject) {
+        alert('Please fill in Title and Subject before uploading attachments');
+        setUploadingAttachment(false);
+        return;
+      }
+
+      // Create a temporary doc if not exists
+      let tempDocId = (window as any).tempDocId;
+      if (!tempDocId) {
+        const indexMd = files.find(f => f.name === 'index.md');
+        const markdownContent = indexMd?.content || '';
+
+        const response = await fetch('https://api.kunalpatil.me/api/documentation/create', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            ...formData,
+            content: markdownContent
+          })
+        });
+
+        if (!response.ok) {
+          throw new Error('Failed to create document');
+        }
+
+        const data = await response.json();
+        tempDocId = data.doc.docId;
+        (window as any).tempDocId = tempDocId;
+      }
+
+      for (const file of Array.from(uploadFiles)) {
+        await uploadAttachmentChunked(tempDocId, file);
+      }
+
+      alert('Attachments uploaded successfully!');
+    } catch (error) {
+      console.error('Error uploading attachments:', error);
+      alert('Error uploading attachments');
+    } finally {
+      setUploadingAttachment(false);
+      if (attachmentInputRef.current) {
+        attachmentInputRef.current.value = '';
+      }
+    }
+  };
+
+  const uploadAttachmentChunked = async (docId: string, file: File) => {
+    const CHUNK_SIZE = 4 * 1024 * 1024; // 4MB chunks
+    const totalChunks = Math.ceil(file.size / CHUNK_SIZE);
+
+    // Initialize upload
+    const initResponse = await fetch(`https://api.kunalpatil.me/api/documentation/${docId}/attachments/init`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        fileName: file.name,
+        fileSize: file.size,
+        mimeType: file.type
+      })
+    });
+
+    if (!initResponse.ok) throw new Error('Failed to initialize upload');
+    const { fileId, blobPath } = await initResponse.json();
+
+    const blockIds: string[] = [];
+
+    // Upload chunks
+    for (let i = 0; i < totalChunks; i++) {
+      const start = i * CHUNK_SIZE;
+      const end = Math.min(start + CHUNK_SIZE, file.size);
+      const chunk = file.slice(start, end);
+
+      const chunkFormData = new FormData();
+      chunkFormData.append('chunk', chunk);
+      chunkFormData.append('fileId', fileId);
+      chunkFormData.append('blobPath', blobPath);
+      chunkFormData.append('chunkIndex', i.toString());
+      chunkFormData.append('totalChunks', totalChunks.toString());
+      chunkFormData.append('fileName', file.name);
+      chunkFormData.append('mimeType', file.type);
+
+      const chunkResponse = await fetch(`https://api.kunalpatil.me/api/documentation/${docId}/attachments/chunk`, {
+        method: 'POST',
+        body: chunkFormData
+      });
+
+      if (!chunkResponse.ok) throw new Error(`Failed to upload chunk ${i + 1}`);
+      const chunkData = await chunkResponse.json();
+      blockIds.push(chunkData.blockId);
+    }
+
+    // Complete upload
+    const completeResponse = await fetch(`https://api.kunalpatil.me/api/documentation/${docId}/attachments/complete`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        fileId,
+        blobPath,
+        fileName: file.name,
+        mimeType: file.type,
+        totalChunks,
+        blockIds
+      })
+    });
+
+    if (!completeResponse.ok) throw new Error('Failed to complete upload');
+    const completeData = await completeResponse.json();
+    
+    setAttachments(prev => [...prev, {
+      fileId: completeData.file.fileId,
+      name: completeData.file.name,
+      url: completeData.file.azureUrl
+    }]);
+  };
+
+  const deleteAttachment = (fileId: string) => {
+    setAttachments(prev => prev.filter(att => att.fileId !== fileId));
   };
 
   const insertAsset = (name: string) => {
@@ -513,6 +643,49 @@ export default function CreateDocumentation() {
                         <ImageIcon className="w-5 h-5" strokeWidth={2.5} />
                       </button>
                       <button onClick={() => deleteAsset(asset.name)} className="p-2 hover:bg-red-100 rounded">
+                        <Trash2 className="w-5 h-5" strokeWidth={2.5} />
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            {/* Attachments */}
+            <div>
+              <label className="block text-sm font-black mb-2 uppercase">Attachments</label>
+              <input
+                ref={attachmentInputRef}
+                type="file"
+                multiple
+                onChange={handleAttachmentUpload}
+                className="hidden"
+              />
+              <button
+                onClick={() => attachmentInputRef.current?.click()}
+                disabled={uploadingAttachment}
+                className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-orange-200 border-3 border-black rounded-xl font-bold hover:bg-orange-300 transition"
+              >
+                <Upload className="w-5 h-5" strokeWidth={2.5} />
+                {uploadingAttachment ? 'Uploading...' : 'Upload Attachments'}
+              </button>
+
+              {attachments.length > 0 && (
+                <div className="mt-4 space-y-2">
+                  {attachments.map((attachment) => (
+                    <div key={attachment.fileId} className="flex items-center gap-3 p-3 border-3 border-black rounded-lg bg-white">
+                      <div className="flex-1 min-w-0">
+                        <p className="font-bold text-sm truncate">{attachment.name}</p>
+                      </div>
+                      <a
+                        href={attachment.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="p-2 hover:bg-gray-100 rounded"
+                      >
+                        <Download className="w-5 h-5" strokeWidth={2.5} />
+                      </a>
+                      <button onClick={() => deleteAttachment(attachment.fileId)} className="p-2 hover:bg-red-100 rounded">
                         <Trash2 className="w-5 h-5" strokeWidth={2.5} />
                       </button>
                     </div>

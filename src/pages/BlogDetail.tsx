@@ -1,6 +1,6 @@
 import { useEffect, useState, useMemo } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { ArrowLeft, Calendar, ExternalLink, FileText, Link as LinkIcon, Tag } from 'lucide-react';
+import { ArrowLeft, Calendar, ExternalLink, FileText, Link as LinkIcon, Tag, Menu, X } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import { API_ENDPOINTS } from '@/config/api';
@@ -33,6 +33,7 @@ export default function BlogDetail() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [activeSection, setActiveSection] = useState<string>('');
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   useEffect(() => {
     const fetchBlog = async () => {
@@ -147,21 +148,34 @@ export default function BlogDetail() {
   return (
     <div className="h-screen flex flex-col bg-white">
       {/* Header */}
-      <div className="bg-white border-b-4 border-black p-6">
-        <div className="max-w-[1800px] mx-auto">
+      <div className="bg-white border-b-4 border-black p-4 md:p-6">
+        <div className="max-w-[1800px] mx-auto flex items-center justify-between">
           <button
             onClick={() => navigate('/learnings?tab=blogs')}
             className="flex items-center gap-2 text-gray-600 hover:text-black font-bold text-base"
           >
             <ArrowLeft className="w-5 h-5" strokeWidth={2.5} />
-            Back to Blogs
+            <span className="hidden sm:inline">Back to Blogs</span>
+          </button>
+          
+          {/* Mobile Menu Button */}
+          <button
+            onClick={() => setSidebarOpen(!sidebarOpen)}
+            className="md:hidden p-2 bg-black text-white rounded-lg border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]"
+          >
+            {sidebarOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
           </button>
         </div>
       </div>
 
-      <div className="flex-1 flex overflow-hidden">
+      <div className="flex-1 flex overflow-hidden relative">
         {/* Fixed Sidebar */}
-        <div className="w-80 bg-white border-r-4 border-black overflow-y-auto">
+        <div className={`
+          w-80 bg-white border-r-4 border-black overflow-y-auto
+          md:relative absolute inset-y-0 left-0 z-50
+          transform transition-transform duration-300 ease-in-out
+          ${sidebarOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}
+        `}>
           <div className="p-4 space-y-6">
             {/* Blog Info */}
             <div>
@@ -259,11 +273,49 @@ export default function BlogDetail() {
           </div>
         </div>
 
+        {/* Overlay for mobile */}
+        {sidebarOpen && (
+          <div 
+            className="md:hidden fixed inset-0 bg-black bg-opacity-50 z-40"
+            onClick={() => setSidebarOpen(false)}
+          />
+        )}
+
         {/* Main Content */}
         <div className="flex-1 overflow-y-auto bg-gray-50">
-          <div className="max-w-7xl mx-auto px-8 py-8">
+          <div className="max-w-7xl mx-auto px-4 md:px-8 py-4 md:py-8">
+            {/* Title and Subject - Mobile Only */}
+            <div className="md:hidden mb-6 bg-white rounded-2xl p-4 border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+              <div className="mb-3">
+                <span className="px-3 py-1 bg-pink-100 border-2 border-black rounded-lg text-xs font-bold">
+                  {blog.subject}
+                </span>
+              </div>
+              
+              <h1 className="text-2xl font-black text-black mb-2" style={{ fontFamily: 'Comic Sans MS, cursive' }}>
+                {blog.title}
+              </h1>
+              
+              {blog.tagline && (
+                <p className="text-sm text-gray-700 mb-3 font-medium">{blog.tagline}</p>
+              )}
+              
+              <div className="flex items-center gap-2 text-xs text-gray-600 font-medium">
+                <Calendar size={12} strokeWidth={2.5} />
+                <span>
+                  {new Date(blog.datetime).toLocaleDateString('en-US', {
+                    month: 'long',
+                    day: 'numeric',
+                    year: 'numeric'
+                  })}
+                </span>
+              </div>
+            </div>
+
+            <div className="border-t-4 border-black mb-6 md:hidden"></div>
+
             {/* Content */}
-            <article className="bg-white rounded-2xl p-8">
+            <article className="bg-white rounded-2xl p-4 md:p-8 border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
               <ReactMarkdown 
                 remarkPlugins={[remarkGfm]}
                 components={components}

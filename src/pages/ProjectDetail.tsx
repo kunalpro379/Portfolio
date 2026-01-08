@@ -1,6 +1,6 @@
 import { useParams, useNavigate } from 'react-router-dom';
 import { useState, useEffect, useMemo } from 'react';
-import { Github, ExternalLink, ArrowLeft, FileText, Tag, Link as LinkIcon, Image as ImageIcon } from 'lucide-react';
+import { Github, ExternalLink, ArrowLeft, FileText, Tag, Link as LinkIcon, Image as ImageIcon, Menu, X } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import { API_ENDPOINTS } from '@/config/api';
@@ -19,6 +19,7 @@ export default function ProjectDetail() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [activeSection, setActiveSection] = useState<string>('');
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   useEffect(() => {
     const fetchProject = async () => {
@@ -149,21 +150,34 @@ export default function ProjectDetail() {
   return (
     <div className="h-screen flex flex-col bg-white">
       {/* Header */}
-      <div className="bg-white border-b-4 border-black p-6">
-        <div className="max-w-[1800px] mx-auto">
+      <div className="bg-white border-b-4 border-black p-4 md:p-6">
+        <div className="max-w-[1800px] mx-auto flex items-center justify-between">
           <button
             onClick={() => navigate('/learnings?tab=projects')}
             className="flex items-center gap-2 text-gray-600 hover:text-black font-bold text-base"
           >
             <ArrowLeft className="w-5 h-5" strokeWidth={2.5} />
-            Back to Projects
+            <span className="hidden sm:inline">Back to Projects</span>
+          </button>
+          
+          {/* Mobile Menu Button */}
+          <button
+            onClick={() => setSidebarOpen(!sidebarOpen)}
+            className="md:hidden p-2 bg-black text-white rounded-lg border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]"
+          >
+            {sidebarOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
           </button>
         </div>
       </div>
 
-      <div className="flex-1 flex overflow-hidden">
+      <div className="flex-1 flex overflow-hidden relative">
         {/* Fixed Sidebar */}
-        <div className="w-80 bg-white border-r-4 border-black overflow-y-auto">
+        <div className={`
+          w-80 bg-white border-r-4 border-black overflow-y-auto
+          md:relative absolute inset-y-0 left-0 z-50
+          transform transition-transform duration-300 ease-in-out
+          ${sidebarOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}
+        `}>
           <div className="p-4 space-y-6">
             {/* Project Info */}
             <div className="bg-blue-50 border-3 border-black rounded-xl p-4">
@@ -275,12 +289,39 @@ export default function ProjectDetail() {
           </div>
         </div>
 
+        {/* Overlay for mobile */}
+        {sidebarOpen && (
+          <div 
+            className="md:hidden fixed inset-0 bg-black bg-opacity-50 z-40"
+            onClick={() => setSidebarOpen(false)}
+          />
+        )}
+
         {/* Main Content */}
         <div className="flex-1 overflow-y-auto bg-gray-50">
-          <div className="w-full px-8 py-8">
+          <div className="w-full px-4 md:px-8 py-4 md:py-8">
+            {/* Project Info - Mobile Only */}
+            <div className="md:hidden mb-6 bg-blue-50 border-3 border-black rounded-xl p-4 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+              <div className="mb-3">
+                <span className="px-3 py-1 bg-green-100 border-2 border-black rounded-lg text-sm font-bold">
+                  {project.tags?.[0] || 'Project'}
+                </span>
+              </div>
+              
+              <h1 className="text-2xl font-black text-black mb-3">
+                {project.title}
+              </h1>
+              
+              {project.tagline && (
+                <p className="text-sm text-gray-700 font-medium">{project.tagline}</p>
+              )}
+            </div>
+
+            <div className="border-t-4 border-black mb-6 md:hidden"></div>
+
             {/* Description */}
             {project.description && (
-              <div className="mb-8 p-6">
+              <div className="mb-8 p-4 md:p-6">
                 <h3 className="text-xl font-black text-black mb-3">About This Project</h3>
                 <p className="text-gray-800 leading-relaxed font-medium text-lg">{project.description}</p>
               </div>
@@ -288,7 +329,7 @@ export default function ProjectDetail() {
 
             {/* Markdown Content */}
             {markdownContent ? (
-              <article className="p-8">
+              <article className="p-4 md:p-8">
                 <ReactMarkdown 
                   remarkPlugins={[remarkGfm]}
                   components={components}
@@ -297,7 +338,7 @@ export default function ProjectDetail() {
                 </ReactMarkdown>
               </article>
             ) : (
-              <div className="p-12 text-center">
+              <div className="p-8 md:p-12 text-center">
                 <FileText size={64} strokeWidth={2.5} className="mx-auto mb-4 text-gray-400" />
                 <p className="text-gray-600 font-bold">No detailed documentation available for this project yet.</p>
               </div>
