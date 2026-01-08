@@ -700,7 +700,98 @@ router.delete('/:docId/files/:fileId', async (req, res) => {
   }
 });
 
-// Upload attachment
+// Upload attachment with chunked support
+router.post('/:docId/attachments/init', async (req, res) => {
+  try {
+    const { docId } = req.params;
+    const { fileName, fileSize, mimeType } = req.body;
+
+    const doc = await Documentation.findOne({ docId });
+    if (!doc) {
+      return res.status(404).json({ message: 'Documentation not found' });
+    }
+
+    const fileId = generateId();
+    const blobPath = `documentation/${docId}/attachments/${fileId}-${fileName}`;
+
+    res.json({
+      fileId,
+      blobPath,
+      message: 'Upload initialized'
+    });
+  } catch (error) {
+    console.error('Init attachment upload error:', error);
+    res.status(500).json({ message: 'Server error', error: error.message });
+  }
+});
+
+router.post('/:docId/attachments/chunk', upload.single('chunk'), async (req, res) => {
+  try {
+    const { docId } = req.params;
+    const { fileId, blobPath, chunkIndex, totalChunks, fileName, mimeType } = req.body;
+
+    if (!req.file) {
+      return res.status(400).json({ message: 'No chunk uploaded' });
+    }
+
+    const containerClient = blobServiceClient.getContainerClient(containerName);
+    const blockBlobClient = containerClient.getBlockBlobClient(blobPath);
+
+    // Upload chunk as a block
+    const blockId = Buffer.from(`block-${String(chunkIndex).padStart(6, '0')}`).toString('base64');
+    await blockBlobClient.stageBlock(blockId, req.file.buffer, req.file.buffer.length);
+
+    res.json({
+      message: 'Chunk uploaded',
+      chunkIndex: parseInt(chunkIndex),
+      blockId
+    });
+  } catch (error) {
+    console.error('Upload chunk error:', error);
+    res.status(500).json({ message: 'Server error', error: error.message });
+  }
+});
+
+router.post('/:docId/attachments/complete', async (req, res) => {
+  try {
+    const { docId } = req.params;
+    const { fileId, blobPath, fileName, mimeType, totalChunks, blockIds } = req.body;
+
+    const doc = await Documentation.findOne({ docId });
+    if (!doc) {
+      return res.status(404).json({ message: 'Documentation not found' });
+    }
+
+    const containerClient = blobServiceClient.getContainerClient(containerName);
+    const blockBlobClient = containerClient.getBlockBlobClient(blobPath);
+
+    // Commit all blocks
+    await blockBlobClient.commitBlockList(blockIds, {
+      blobHTTPHeaders: { blobContentType: mimeType }
+    });
+
+    const newFile = {
+      fileId,
+      name: fileName,
+      type: 'attachment',
+      azurePath: blobPath,
+      azureUrl: blockBlobClient.url,
+      createdAt: new Date()
+    };
+
+    if (!doc.files) doc.files = [];
+    doc.files.push(newFile);
+    doc.updatedAt = new Date();
+    await doc.save();
+
+    res.json({ message: 'Attachment uploaded successfully', file: newFile });
+  } catch (error) {
+    console.error('Complete attachment upload error:', error);
+    res.status(500).json({ message: 'Server error', error: error.message });
+  }
+});
+
+// Upload attachment (legacy single upload - kept for backward compatibility)
 router.post('/:docId/attachments', upload.single('attachment'), async (req, res) => {
   try {
     const { docId } = req.params;

@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { ArrowLeft, FileText, FolderOpen, Folder as FolderIcon, ChevronRight, ChevronDown } from 'lucide-react';
+import { ArrowLeft, FileText, FolderOpen, Folder as FolderIcon, ChevronRight, ChevronDown, Menu, X } from 'lucide-react';
 import { API_ENDPOINTS } from '@/config/api';
 
 interface NoteFile {
@@ -63,8 +63,8 @@ export default function NotesDetail() {
         const completeTree = await fetchSubfoldersRecursively(rootData.folder);
         setRootFolder(completeTree);
 
-        // Select first file if available
-        if (completeTree.files && completeTree.files.length > 0) {
+        // On desktop, select first file if available
+        if (window.innerWidth >= 768 && completeTree.files && completeTree.files.length > 0) {
           loadFile(completeTree.files[0]);
         }
       } catch (err) {
@@ -81,6 +81,12 @@ export default function NotesDetail() {
   const loadFile = async (file: NoteFile) => {
     try {
       console.log('Loading file:', file.filename, file.fileId);
+
+      // On mobile, directly redirect to Azure URL
+      if (window.innerWidth < 768) {
+        window.open(file.cloudinaryUrl, '_blank');
+        return;
+      }
 
       // For PDFs and other non-text files, just set the file directly
       if (isPdfFile(file.filename) || !isTextFile(file.filename)) {
@@ -215,32 +221,33 @@ export default function NotesDetail() {
   return (
     <div className="h-screen flex flex-col bg-white">
       {/* Header */}
-      <div className="bg-white border-b-4 border-black p-6">
+      <div className="bg-white border-b-4 border-black p-4 md:p-6">
         <div className="max-w-[1800px] mx-auto">
           <button
             onClick={() => navigate('/learnings?tab=notes')}
-            className="flex items-center gap-2 text-gray-600 hover:text-black mb-4 font-bold text-base"
+            className="flex items-center gap-2 text-gray-600 hover:text-black font-bold text-base mb-4"
           >
             <ArrowLeft className="w-5 h-5" strokeWidth={2.5} />
-            Back to Notes
+            <span className="hidden sm:inline">Back to Notes</span>
           </button>
+          
           <div className="flex items-center gap-3">
             <div className="p-2 bg-yellow-200 border-3 border-black rounded-lg">
               <FolderOpen className="w-6 h-6" strokeWidth={2.5} />
             </div>
             <div>
-              <h1 className="text-3xl font-black text-black" style={{ fontFamily: 'Comic Sans MS, cursive' }}>
+              <h1 className="text-2xl md:text-3xl font-black text-black" style={{ fontFamily: 'Comic Sans MS, cursive' }}>
                 {rootFolder.name}
               </h1>
-              <p className="text-sm text-gray-600 font-medium">{rootFolder.path}</p>
+              <p className="text-xs md:text-sm text-gray-600 font-medium truncate">{rootFolder.path}</p>
             </div>
           </div>
         </div>
       </div>
 
-      <div className="flex-1 flex overflow-hidden">
-        {/* Fixed Sidebar with Tree View */}
-        <div className="w-80 bg-white border-r-4 border-black overflow-y-auto">
+      <div className="flex-1 flex md:overflow-hidden relative">
+        {/* Sidebar with Tree View - Always visible */}
+        <div className="w-full md:w-80 bg-white md:border-r-4 border-black overflow-y-auto h-full">
           <div className="p-4">
             <div className="flex items-center gap-2 mb-3">
               <FolderOpen className="w-4 h-4" strokeWidth={2.5} />
@@ -250,25 +257,25 @@ export default function NotesDetail() {
           </div>
         </div>
 
-        {/* Main Content */}
-        <div className="flex-1 overflow-y-auto bg-gray-50">
+        {/* Main Content - Hidden on mobile */}
+        <div className="hidden md:block flex-1 overflow-y-auto bg-gray-50">
           {selectedFile ? (
-            <div className="max-w-6xl mx-auto px-8 py-8">
+            <div className="max-w-6xl mx-auto px-4 md:px-8 py-4 md:py-8">
               {/* File Header */}
-              <div className="bg-white border-4 border-black rounded-xl p-6 mb-6 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
-                <div className="flex items-center gap-2 text-sm text-gray-600 mb-4 font-medium">
-                  <FolderOpen size={14} strokeWidth={2.5} />
-                  <span>{selectedFile.folderPath}</span>
-                  <ChevronRight size={12} strokeWidth={2.5} />
-                  <span className="text-black font-bold">{selectedFile.filename}</span>
+              <div className="bg-white border-4 border-black rounded-xl p-4 md:p-6 mb-4 md:mb-6 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
+                <div className="flex items-center gap-2 text-xs md:text-sm text-gray-600 mb-4 font-medium overflow-x-auto">
+                  <FolderOpen size={14} strokeWidth={2.5} className="flex-shrink-0" />
+                  <span className="truncate">{selectedFile.folderPath}</span>
+                  <ChevronRight size={12} strokeWidth={2.5} className="flex-shrink-0" />
+                  <span className="text-black font-bold truncate">{selectedFile.filename}</span>
                 </div>
 
-                <div className="flex items-start justify-between mb-4">
-                  <div className="flex-1">
-                    <h1 className="text-3xl font-black text-black mb-3" style={{ fontFamily: 'Comic Sans MS, cursive' }}>
+                <div className="flex flex-col md:flex-row items-start justify-between gap-4 mb-4">
+                  <div className="flex-1 min-w-0">
+                    <h1 className="text-xl md:text-3xl font-black text-black mb-3 break-words" style={{ fontFamily: 'Comic Sans MS, cursive' }}>
                       {selectedFile.filename}
                     </h1>
-                    <div className="flex items-center gap-4 text-sm">
+                    <div className="flex flex-wrap items-center gap-2 md:gap-4 text-xs md:text-sm">
                       <span className="px-3 py-1 bg-gray-200 border-2 border-black rounded-lg font-bold">
                         {getFileExtension(selectedFile.filename).toUpperCase()}
                       </span>
@@ -284,7 +291,7 @@ export default function NotesDetail() {
                     href={selectedFile.cloudinaryUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex items-center gap-2 px-6 py-3 bg-black text-white border-3 border-black rounded-xl hover:bg-gray-800 transition-all font-bold shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]"
+                    className="flex items-center gap-2 px-4 md:px-6 py-2 md:py-3 bg-black text-white border-3 border-black rounded-xl hover:bg-gray-800 transition-all font-bold shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] text-sm md:text-base whitespace-nowrap"
                   >
                     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2.5}>
                       <path strokeLinecap="round" strokeLinejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
@@ -296,21 +303,46 @@ export default function NotesDetail() {
 
               {/* File Content */}
               {isPdfFile(selectedFile.filename) ? (
-                <div className="bg-white border-4 border-black rounded-xl overflow-hidden shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
-                  <iframe src={selectedFile.cloudinaryUrl} className="w-full h-[900px]" title={selectedFile.filename} />
-                </div>
+                <>
+                  {/* Desktop PDF Viewer */}
+                  <div className="hidden md:block bg-white border-4 border-black rounded-xl overflow-hidden shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
+                    <iframe src={selectedFile.cloudinaryUrl} className="w-full h-[900px]" title={selectedFile.filename} />
+                  </div>
+                  
+                  {/* Mobile PDF - Open in New Tab */}
+                  <div className="md:hidden bg-white border-4 border-black rounded-xl p-8 text-center shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
+                    <div className="w-20 h-20 bg-red-200 border-3 border-black rounded-xl flex items-center justify-center mx-auto mb-4">
+                      <FileText size={40} strokeWidth={2.5} />
+                    </div>
+                    <h3 className="text-xl font-black text-black mb-2">PDF Document</h3>
+                    <p className="text-gray-600 mb-6 font-medium text-sm">
+                      View this PDF in a new tab for the best mobile experience
+                    </p>
+                    <a
+                      href={selectedFile.cloudinaryUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-2 px-6 py-3 bg-black text-white border-3 border-black rounded-xl hover:bg-gray-800 transition-all font-bold shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]"
+                    >
+                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2.5}>
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                      </svg>
+                      Open PDF
+                    </a>
+                  </div>
+                </>
               ) : isTextFile(selectedFile.filename) ? (
                 <div className="bg-white border-4 border-black rounded-xl overflow-hidden shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
                   {selectedFile.content ? (
                     <div>
-                      <div className="bg-black text-white px-6 py-4 flex items-center justify-between border-b-4 border-black">
-                        <div className="flex items-center gap-3">
-                          <div className="flex gap-1.5">
-                            <div className="w-3 h-3 rounded-full bg-red-500 border-2 border-white"></div>
-                            <div className="w-3 h-3 rounded-full bg-yellow-500 border-2 border-white"></div>
-                            <div className="w-3 h-3 rounded-full bg-green-500 border-2 border-white"></div>
+                      <div className="bg-black text-white px-4 md:px-6 py-3 md:py-4 flex items-center justify-between border-b-4 border-black">
+                        <div className="flex items-center gap-2 md:gap-3">
+                          <div className="flex gap-1 md:gap-1.5">
+                            <div className="w-2 h-2 md:w-3 md:h-3 rounded-full bg-red-500 border-2 border-white"></div>
+                            <div className="w-2 h-2 md:w-3 md:h-3 rounded-full bg-yellow-500 border-2 border-white"></div>
+                            <div className="w-2 h-2 md:w-3 md:h-3 rounded-full bg-green-500 border-2 border-white"></div>
                           </div>
-                          <span className="text-sm font-bold">
+                          <span className="text-xs md:text-sm font-bold">
                             {getLanguageFromExtension(selectedFile.filename)}
                           </span>
                         </div>
@@ -319,47 +351,47 @@ export default function NotesDetail() {
                             navigator.clipboard.writeText(selectedFile.content || '');
                             alert('Copied to clipboard!');
                           }}
-                          className="px-4 py-2 bg-white text-black border-2 border-white rounded-lg text-sm font-bold hover:bg-gray-200 transition-all"
+                          className="px-3 md:px-4 py-1.5 md:py-2 bg-white text-black border-2 border-white rounded-lg text-xs md:text-sm font-bold hover:bg-gray-200 transition-all"
                         >
-                          Copy Code
+                          Copy
                         </button>
                       </div>
                       <div className="bg-gray-50">
-                        <pre className="p-6 overflow-x-auto">
-                          <code className="text-sm font-mono leading-relaxed text-gray-900">{selectedFile.content}</code>
+                        <pre className="p-4 md:p-6 overflow-x-auto">
+                          <code className="text-xs md:text-sm font-mono leading-relaxed text-gray-900">{selectedFile.content}</code>
                         </pre>
                       </div>
                     </div>
                   ) : (
-                    <div className="p-12 text-center">
-                      <div className="w-20 h-20 bg-gray-100 border-3 border-black rounded-xl flex items-center justify-center mx-auto mb-4">
-                        <FileText size={32} strokeWidth={2.5} />
+                    <div className="p-8 md:p-12 text-center">
+                      <div className="w-16 h-16 md:w-20 md:h-20 bg-gray-100 border-3 border-black rounded-xl flex items-center justify-center mx-auto mb-4">
+                        <FileText size={32} strokeWidth={2.5} className="md:w-8 md:h-8" />
                       </div>
-                      <p className="text-gray-600 mb-6 font-bold">Unable to preview</p>
-                      <a href={selectedFile.cloudinaryUrl} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 px-6 py-3 bg-black text-white border-3 border-black rounded-xl hover:bg-gray-800 transition-all font-bold shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+                      <p className="text-gray-600 mb-4 md:mb-6 font-bold text-sm md:text-base">Unable to preview</p>
+                      <a href={selectedFile.cloudinaryUrl} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 px-4 md:px-6 py-2 md:py-3 bg-black text-white border-3 border-black rounded-xl hover:bg-gray-800 transition-all font-bold shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] text-sm md:text-base">
                         Open in new tab
                       </a>
                     </div>
                   )}
                 </div>
               ) : (
-                <div className="bg-white border-4 border-black rounded-xl p-16 text-center shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
-                  <div className="w-24 h-24 bg-purple-200 border-3 border-black rounded-2xl flex items-center justify-center mx-auto mb-6">
-                    <FileText size={48} strokeWidth={2.5} />
+                <div className="bg-white border-4 border-black rounded-xl p-8 md:p-16 text-center shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
+                  <div className="w-20 h-20 md:w-24 md:h-24 bg-purple-200 border-3 border-black rounded-2xl flex items-center justify-center mx-auto mb-4 md:mb-6">
+                    <FileText size={40} strokeWidth={2.5} className="md:w-12 md:h-12" />
                   </div>
-                  <h3 className="text-2xl font-black text-black mb-2">Cannot preview this file</h3>
-                  <p className="text-gray-600 mb-8 font-medium">
+                  <h3 className="text-xl md:text-2xl font-black text-black mb-2">Cannot preview this file</h3>
+                  <p className="text-gray-600 mb-6 md:mb-8 font-medium text-sm md:text-base">
                     File type: <span className="font-black text-black">{getFileExtension(selectedFile.filename).toUpperCase()}</span>
                   </p>
-                  <div className="flex gap-4 justify-center">
-                    <a href={selectedFile.cloudinaryUrl} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 px-8 py-4 bg-black text-white border-3 border-black rounded-xl hover:bg-gray-800 transition-all font-bold shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
-                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2.5}>
+                  <div className="flex flex-col sm:flex-row gap-3 md:gap-4 justify-center">
+                    <a href={selectedFile.cloudinaryUrl} target="_blank" rel="noopener noreferrer" className="inline-flex items-center justify-center gap-2 px-6 md:px-8 py-3 md:py-4 bg-black text-white border-3 border-black rounded-xl hover:bg-gray-800 transition-all font-bold shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] text-sm md:text-base">
+                      <svg className="w-4 h-4 md:w-5 md:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2.5}>
                         <path strokeLinecap="round" strokeLinejoin="round" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
                       </svg>
                       Open in new tab
                     </a>
-                    <button onClick={() => { navigator.clipboard.writeText(selectedFile.cloudinaryUrl); alert('Link copied!'); }} className="inline-flex items-center gap-2 px-8 py-4 bg-purple-200 text-black border-3 border-black rounded-xl hover:bg-purple-300 transition-all font-bold shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
-                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2.5}>
+                    <button onClick={() => { navigator.clipboard.writeText(selectedFile.cloudinaryUrl); alert('Link copied!'); }} className="inline-flex items-center justify-center gap-2 px-6 md:px-8 py-3 md:py-4 bg-purple-200 text-black border-3 border-black rounded-xl hover:bg-purple-300 transition-all font-bold shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] text-sm md:text-base">
+                      <svg className="w-4 h-4 md:w-5 md:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2.5}>
                         <path strokeLinecap="round" strokeLinejoin="round" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
                       </svg>
                       Copy Link
