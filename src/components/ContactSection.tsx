@@ -32,12 +32,16 @@ export default function ContactSection() {
             className="w-full lg:w-3/5 flex flex-col items-start justify-center p-8 md:p-16 lg:p-24 space-y-16"
           >
             <div>
-              <h2 className="text-4xl md:text-6xl lg:text-7xl xl:text-8xl font-black uppercase tracking-tighter leading-[0.85] text-black">
+              <h2 className="text-4xl md:text-6xl lg:text-7xl xl:text-8xl font-black uppercase tracking-tighter leading-[0.85] text-black transform -rotate-2" style={{ fontFamily: "'Permanent Marker', 'Comic Sans MS', cursive" }}>
                 LET'S<br />
                 COLLABORATE<br />
                 TOGETHER!
               </h2>
-              <div className="mt-8 h-2 w-32 bg-sky-500 rounded-full" />
+              <div className="mt-6 h-2 w-32 bg-sky-500 rounded-full transform rotate-1" />
+              <p className="mt-8 text-lg md:text-xl lg:text-2xl text-black/80 font-medium leading-relaxed max-w-xl" style={{ fontFamily: "'Patrick Hand', 'Comic Sans MS', cursive" }}>
+                Open for full-time roles in AI/ML, DevOps, and Backend Development. 
+                Also available for freelance projects and remote work opportunities.
+              </p>
             </div>
 
             {/* Social Links - Below Title */}

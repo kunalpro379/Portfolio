@@ -1,7 +1,6 @@
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import { useRef, useState, useEffect } from "react";
-import blogsData from "@/data/blogs.metadata.json";
 import { API_ENDPOINTS } from "@/config/api";
 
 interface Documentation {
@@ -15,25 +14,46 @@ interface Documentation {
   createdAt: string;
 }
 
+interface Blog {
+  blogId: string;
+  title: string;
+  slug: string;
+  tagline: string;
+  subject: string;
+  shortDescription: string;
+  tags: string[];
+  datetime: string;
+  footer: string;
+  coverImage: string;
+  blogLinks: Array<{ name: string; url: string }>;
+}
+
 export default function BlogsSection() {
   const blogsScrollRef = useRef<HTMLDivElement>(null);
   const docsScrollRef = useRef<HTMLDivElement>(null);
   const [documentation, setDocumentation] = useState<Documentation[]>([]);
+  const [blogs, setBlogs] = useState<Blog[]>([]);
 
   useEffect(() => {
-    const fetchDocumentation = async () => {
+    const fetchData = async () => {
       try {
-        const response = await fetch(API_ENDPOINTS.documentation);
-        const data = await response.json();
-        setDocumentation(data.docs.filter((doc: Documentation) => doc.isPublic).slice(0, 4));
+        // Fetch documentation
+        const docsResponse = await fetch(API_ENDPOINTS.documentation);
+        const docsData = await docsResponse.json();
+        setDocumentation(docsData.docs.filter((doc: Documentation) => doc.isPublic).slice(0, 4));
+
+        // Fetch blogs
+        const blogsResponse = await fetch(API_ENDPOINTS.blogs);
+        const blogsData = await blogsResponse.json();
+        setBlogs(blogsData.blogs.slice(0, 4));
       } catch (error) {
-        console.error('Error fetching documentation:', error);
+        console.error('Error fetching data:', error);
       }
     };
-    fetchDocumentation();
+    fetchData();
   }, []);
 
-  const blogs = blogsData.slice(0, 4).map((blog, idx) => {
+  const blogsWithColors = blogs.map((blog, idx) => {
     const colors = [
       "rgb(244, 114, 182)", // Pink
       "rgb(251, 191, 36)",  // Amber
@@ -63,23 +83,9 @@ export default function BlogsSection() {
     <section className="relative py-16 md:py-24">
       <div className="max-w-[1440px] mx-auto px-6 md:px-12 relative z-10">
 
-        {/* Header */}
-        <div className="mb-12 md:mb-16">
-          <motion.h2
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
-            className="text-4xl md:text-6xl font-black tracking-tight leading-none text-black"
-            style={{ fontFamily: 'Comic Sans MS, cursive' }}
-          >
-            Documentation & Learnings
-          </motion.h2>
-        </div>
-
         {/* Blogs Section */}
         <div className="mb-12">
-          <div className="flex items-center justify-between mb-6">
+          <div className="mb-6">
             <motion.h3
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
@@ -90,20 +96,6 @@ export default function BlogsSection() {
             >
               Blogs
             </motion.h3>
-
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.6, delay: 0.2 }}
-            >
-              <Link
-                to="/learnings?tab=blogs"
-                className="inline-flex items-center gap-2 px-6 py-2 bg-black text-white border-3 border-black rounded-xl font-bold text-sm hover:bg-gray-800 transition-all shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]"
-              >
-                Show More →
-              </Link>
-            </motion.div>
           </div>
 
           <div className="relative">
@@ -112,76 +104,90 @@ export default function BlogsSection() {
               className="overflow-x-auto pt-4 pb-8 -mx-6 px-6 md:-mx-12 md:px-12 scrollbar-hide"
             >
               <div className="flex md:grid md:grid-cols-4 gap-4 md:gap-6 min-w-max md:min-w-0">
-                {blogs.map((blog, idx) => (
-                  <motion.a
-                    key={idx}
-                    href={blog.blogUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
+                {blogsWithColors.map((blog, idx) => (
+                  <motion.div
+                    key={blog.blogId}
                     initial={{ opacity: 0, y: 50 }}
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true }}
                     transition={{ duration: 0.6, delay: idx * 0.15 }}
                     className="group relative block hover:-translate-y-1 transition-all duration-300 w-[220px] md:w-auto flex-shrink-0"
                   >
-                    <div
-                      className="relative bg-white overflow-hidden border-4 border-black rounded-2xl hover:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] transition-all duration-300 h-full flex flex-col"
-                    >
-                      {blog.coverImage && (
-                        <div className="relative h-32 md:h-40 overflow-hidden bg-gray-50 flex-shrink-0 border-b-4 border-black">
-                          <img
-                            src={blog.coverImage}
-                            alt={blog.title}
-                            width={300}
-                            height={160}
-                            loading="lazy"
-                            decoding="async"
-                            className="w-full h-full object-cover group-hover:scale-110 transition-all duration-500"
-                          />
-                        </div>
-                      )}
+                    <Link to={`/learnings/blogs/${blog.blogId}`}>
+                      <div
+                        className="relative bg-white overflow-hidden border-4 border-black rounded-2xl hover:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] transition-all duration-300 h-full flex flex-col"
+                      >
+                        {blog.coverImage && (
+                          <div className="relative h-32 md:h-40 overflow-hidden bg-gray-50 flex-shrink-0 border-b-4 border-black">
+                            <img
+                              src={blog.coverImage}
+                              alt={blog.title}
+                              width={300}
+                              height={160}
+                              loading="lazy"
+                              decoding="async"
+                              className="w-full h-full object-cover group-hover:scale-110 transition-all duration-500"
+                            />
+                          </div>
+                        )}
 
-                      <div className="p-3 md:p-4 space-y-2 md:space-y-3 flex-grow">
-                        <div className="inline-block px-3 py-1 bg-pink-100 border-2 border-black rounded-lg text-[10px] md:text-xs font-bold">
-                          {blog.subject}
+                        <div className="p-3 md:p-4 space-y-2 md:space-y-3 flex-grow">
+                          <div className="inline-block px-3 py-1 bg-pink-100 border-2 border-black rounded-lg text-[10px] md:text-xs font-bold">
+                            {blog.subject}
+                          </div>
+                          <h3 className="text-sm md:text-base lg:text-lg font-black leading-tight text-black line-clamp-2">
+                            {blog.title}
+                          </h3>
+                          <p className="text-xs md:text-sm text-gray-700 leading-relaxed line-clamp-2 font-medium">
+                            {blog.shortDescription}
+                          </p>
                         </div>
-                        <h3 className="text-sm md:text-base lg:text-lg font-black leading-tight text-black line-clamp-2">
-                          {blog.title}
-                        </h3>
-                        <p className="text-xs md:text-sm text-gray-700 leading-relaxed line-clamp-2 font-medium">
-                          {blog.shortDescription}
-                        </p>
-                      </div>
 
-                      <div className="px-3 md:px-4 pb-3 md:pb-4 flex-shrink-0">
-                        <div className="text-[10px] md:text-xs text-gray-600 font-bold">
-                          {new Date(blog.dateUpdated).toLocaleDateString('en-US', {
-                            month: 'short',
-                            day: 'numeric',
-                            year: 'numeric'
-                          })} · {blog.readTime}
+                        <div className="px-3 md:px-4 pb-3 md:pb-4 flex-shrink-0">
+                          <div className="text-[10px] md:text-xs text-gray-600 font-bold">
+                            {new Date(blog.datetime).toLocaleDateString('en-US', {
+                              month: 'short',
+                              day: 'numeric',
+                              year: 'numeric'
+                            })}
+                          </div>
                         </div>
                       </div>
-                    </div>
-                  </motion.a>
+                    </Link>
+                  </motion.div>
                 ))}
               </div>
             </div>
           </div>
+
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6, delay: 0.4 }}
+            className="text-center mt-6"
+          >
+            <Link
+              to="/learnings?tab=blogs"
+              className="inline-flex items-center gap-2 px-8 py-3 bg-black text-white border-3 border-black rounded-xl font-bold hover:bg-gray-800 transition-all shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]"
+            >
+              Show More →
+            </Link>
+          </motion.div>
         </div>
 
-        {/* Documentation/Notes Section */}
-        {/* <div>
+        {/* Documentation Section */}
+        <div className="mb-12">
           <div className="mb-6">
             <motion.h3
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.6 }}
-              className="text-2xl md:text-3xl font-black text-black text-center"
+              className="text-2xl md:text-3xl font-black text-black"
               style={{ fontFamily: 'Comic Sans MS, cursive' }}
             >
-              Documentation
+              Learnings
             </motion.h3>
           </div>
 
@@ -208,10 +214,10 @@ export default function BlogsSection() {
                           <div className="inline-block px-3 py-1 bg-blue-100 border-2 border-black rounded-lg text-[10px] md:text-xs font-bold">
                             {doc.subject}
                           </div>
-                          <h3 className="text-sm md:text-base font-black leading-tight text-black line-clamp-2">
+                          <h3 className="text-sm md:text-base lg:text-lg font-black leading-tight text-black line-clamp-2">
                             {doc.title}
                           </h3>
-                          <p className="text-xs text-gray-700 leading-relaxed line-clamp-2 font-medium">
+                          <p className="text-xs md:text-sm text-gray-700 leading-relaxed line-clamp-2 font-medium">
                             {doc.description}
                           </p>
                         </div>
@@ -247,22 +253,8 @@ export default function BlogsSection() {
               Show More →
             </Link>
           </motion.div>
-        </div> */}
+        </div>
       </div>
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true }}
-        transition={{ duration: 0.6, delay: 0.4 }}
-        className="text-center mt-6"
-      >
-        <Link
-          to="/learnings?tab=documentation"
-          className="inline-flex items-center gap-2 px-8 py-3 bg-black text-white border-3 border-black rounded-xl font-bold hover:bg-gray-800 transition-all shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]"
-        >
-          Show More →
-        </Link>
-      </motion.div>
     </section>
   );
 }

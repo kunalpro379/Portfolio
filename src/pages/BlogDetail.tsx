@@ -113,7 +113,7 @@ export default function BlogDetail() {
       ),
     pre: ({ children, ...props }: any) => <pre className="mb-4 rounded-xl overflow-hidden border-3 border-black" {...props}>{children}</pre>,
     img: ({ src, alt, ...props }: any) => (
-      <img src={src} alt={alt} className="w-full rounded-xl border-4 border-black my-6 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]" {...props} />
+      <img src={src} alt={alt} className="max-w-2xl w-full rounded-xl border-4 border-black my-6 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]" {...props} />
     ),
     a: ({ href, children, ...props }: any) => (
       <a href={href} className="text-blue-600 font-bold underline hover:text-blue-800" target="_blank" rel="noopener noreferrer" {...props}>{children}</a>
