@@ -13,7 +13,7 @@
     "index.js": {
       "runtime": "nodejs20.x",
       "maxDuration": 60,
-      "memory": 3008
+      "memory": 1024
     }
   }
 }
