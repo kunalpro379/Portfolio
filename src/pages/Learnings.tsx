@@ -361,12 +361,12 @@ export default function LearningsPage() {
           </div>
 
           {/* Tabs */}
-          <div className="grid grid-cols-5 gap-2 mt-4">
+          <div className="grid grid-cols-5 gap-1 md:gap-2 mt-4">
             <button
               onClick={() => changeTab('blogs')}
-              className={`px-3 md:px-6 py-2.5 md:py-3 rounded-xl font-bold text-xs md:text-sm transition-all border-3 border-black ${activeTab === 'blogs'
-                  ? 'bg-pink-400 text-white shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] md:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transform -translate-y-0.5'
-                  : 'bg-white hover:bg-pink-50 hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]'
+              className={`px-1.5 md:px-6 py-1.5 md:py-3 rounded-lg md:rounded-xl font-bold text-[10px] md:text-sm transition-all border-2 md:border-3 border-black ${activeTab === 'blogs'
+                  ? 'bg-pink-400 text-white shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] md:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transform -translate-y-0.5'
+                  : 'bg-white hover:bg-pink-50 hover:shadow-[1px_1px_0px_0px_rgba(0,0,0,1)] md:hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]'
                 }`}
               style={{
                 borderRadius: '12px 15px 13px 14px',
@@ -376,9 +376,9 @@ export default function LearningsPage() {
             </button>
             <button
               onClick={() => changeTab('documentation')}
-              className={`px-3 md:px-6 py-2.5 md:py-3 rounded-xl font-bold text-xs md:text-sm transition-all border-3 border-black ${activeTab === 'documentation'
-                  ? 'bg-blue-400 text-white shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] md:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transform -translate-y-0.5'
-                  : 'bg-white hover:bg-blue-50 hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]'
+              className={`px-1.5 md:px-6 py-1.5 md:py-3 rounded-lg md:rounded-xl font-bold text-[10px] md:text-sm transition-all border-2 md:border-3 border-black ${activeTab === 'documentation'
+                  ? 'bg-blue-400 text-white shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] md:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transform -translate-y-0.5'
+                  : 'bg-white hover:bg-blue-50 hover:shadow-[1px_1px_0px_0px_rgba(0,0,0,1)] md:hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]'
                 }`}
               style={{
                 borderRadius: '14px 12px 15px 13px',
@@ -388,9 +388,9 @@ export default function LearningsPage() {
             </button>
             <button
               onClick={() => changeTab('notes')}
-              className={`px-3 md:px-6 py-2.5 md:py-3 rounded-xl font-bold text-xs md:text-sm transition-all border-3 border-black ${activeTab === 'notes'
-                  ? 'bg-yellow-400 text-white shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] md:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transform -translate-y-0.5'
-                  : 'bg-white hover:bg-yellow-50 hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]'
+              className={`px-1.5 md:px-6 py-1.5 md:py-3 rounded-lg md:rounded-xl font-bold text-[10px] md:text-sm transition-all border-2 md:border-3 border-black ${activeTab === 'notes'
+                  ? 'bg-yellow-400 text-white shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] md:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transform -translate-y-0.5'
+                  : 'bg-white hover:bg-yellow-50 hover:shadow-[1px_1px_0px_0px_rgba(0,0,0,1)] md:hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]'
                 }`}
               style={{
                 borderRadius: '13px 14px 12px 15px',
@@ -400,9 +400,9 @@ export default function LearningsPage() {
             </button>
             <button
               onClick={() => changeTab('diagrams')}
-              className={`px-3 md:px-6 py-2.5 md:py-3 rounded-xl font-bold text-xs md:text-sm transition-all border-3 border-black ${activeTab === 'diagrams'
-                  ? 'bg-purple-400 text-white shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] md:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transform -translate-y-0.5'
-                  : 'bg-white hover:bg-purple-50 hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]'
+              className={`px-1.5 md:px-6 py-1.5 md:py-3 rounded-lg md:rounded-xl font-bold text-[10px] md:text-sm transition-all border-2 md:border-3 border-black ${activeTab === 'diagrams'
+                  ? 'bg-purple-400 text-white shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] md:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transform -translate-y-0.5'
+                  : 'bg-white hover:bg-purple-50 hover:shadow-[1px_1px_0px_0px_rgba(0,0,0,1)] md:hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]'
                 }`}
               style={{
                 borderRadius: '15px 13px 14px 12px',
@@ -412,9 +412,9 @@ export default function LearningsPage() {
             </button>
             <button
               onClick={() => changeTab('projects')}
-              className={`px-3 md:px-6 py-2.5 md:py-3 rounded-xl font-bold text-xs md:text-sm transition-all border-3 border-black ${activeTab === 'projects'
-                  ? 'bg-green-400 text-white shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] md:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transform -translate-y-0.5'
-                  : 'bg-white hover:bg-green-50 hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]'
+              className={`px-1.5 md:px-6 py-1.5 md:py-3 rounded-lg md:rounded-xl font-bold text-[10px] md:text-sm transition-all border-2 md:border-3 border-black ${activeTab === 'projects'
+                  ? 'bg-green-400 text-white shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] md:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transform -translate-y-0.5'
+                  : 'bg-white hover:bg-green-50 hover:shadow-[1px_1px_0px_0px_rgba(0,0,0,1)] md:hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]'
                 }`}
               style={{
                 borderRadius: '12px 15px 13px 14px',

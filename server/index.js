@@ -10,18 +10,36 @@ dotenv.config();
 const app = express();
 const PORT = CONFIG.SERVER.PORT;
 
-
+// Log CORS origins for debugging
+console.log('CORS Allowed Origins:', CONFIG.CORS.ORIGINS);
 
 // CORS Configuration - from shared config
 const corsOptions = {
-  origin: CONFIG.CORS.ORIGINS,
+  origin: function (origin, callback) {
+    // Allow requests with no origin (like mobile apps or curl requests)
+    if (!origin) return callback(null, true);
+    
+    // Check if origin is in allowed list
+    if (CONFIG.CORS.ORIGINS.includes(origin)) {
+      callback(null, true);
+    } else {
+      console.log('CORS blocked origin:', origin);
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Origin', 'X-Requested-With', 'Content-Type', 'Accept', 'Authorization', 'Content-Length'],
-  maxAge: 86400
+  exposedHeaders: ['Content-Length', 'Content-Type'],
+  maxAge: 86400,
+  preflightContinue: false,
+  optionsSuccessStatus: 204
 };
 
 app.use(cors(corsOptions));
+
+// Handle preflight requests explicitly
+app.options('*', cors(corsOptions));
 
 // Cache control
 app.use((req, res, next) => {
