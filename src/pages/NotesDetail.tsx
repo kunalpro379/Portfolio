@@ -31,7 +31,22 @@ export default function NotesDetail() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [expandedFolders, setExpandedFolders] = useState<Set<string>>(new Set([id || '']));
-  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [sidebarOpen, setSidebarOpen] = useState(true);
+
+  // Helper functions
+  const getFileExtension = (filename: string) => {
+    return filename.split('.').pop()?.toLowerCase() || '';
+  };
+
+  const isPdfFile = (filename: string) => {
+    return getFileExtension(filename) === 'pdf';
+  };
+
+  const isTextFile = (filename: string) => {
+    const textExtensions = ['txt', 'md', 'java', 'cpp', 'c', 'py', 'js', 'ts', 'jsx', 'tsx', 'html', 'css', 'json', 'xml', 'yaml', 'yml', 'sh', 'bash'];
+    return textExtensions.includes(getFileExtension(filename));
+  };
+
   useEffect(() => {
     const fetchFolderTree = async () => {
       try {
@@ -63,9 +78,29 @@ export default function NotesDetail() {
         const completeTree = await fetchSubfoldersRecursively(rootData.folder);
         setRootFolder(completeTree);
 
-        // On desktop, select first file if available
-        if (window.innerWidth >= 768 && completeTree.files && completeTree.files.length > 0) {
-          loadFile(completeTree.files[0]);
+        // Helper function to find first PDF in folder tree
+        const findFirstPdf = (folder: Folder): NoteFile | null => {
+          // Check files in current folder
+          if (folder.files && folder.files.length > 0) {
+            const pdfFile = folder.files.find(file => isPdfFile(file.filename));
+            if (pdfFile) return pdfFile;
+            // If no PDF, return first file
+            return folder.files[0];
+          }
+          // Check subfolders recursively
+          if (folder.subfolders && folder.subfolders.length > 0) {
+            for (const subfolder of folder.subfolders) {
+              const pdf = findFirstPdf(subfolder);
+              if (pdf) return pdf;
+            }
+          }
+          return null;
+        };
+
+        // Select first PDF (or first file) on both mobile and desktop
+        const firstFile = findFirstPdf(completeTree);
+        if (firstFile) {
+          loadFile(firstFile, true); // Pass true to indicate initial load
         }
       } catch (err) {
         console.error('Error fetching notes:', err);
@@ -78,17 +113,13 @@ export default function NotesDetail() {
     if (id) fetchFolderTree();
   }, [id]);
 
-  const loadFile = async (file: NoteFile) => {
+  const loadFile = async (file: NoteFile, isInitialLoad: boolean = false) => {
     try {
       console.log('Loading file:', file.filename, file.fileId);
 
       // Close sidebar on mobile after selecting file
-      setSidebarOpen(false);
-
-      // On mobile, directly redirect to Azure URL
-      if (window.innerWidth < 768) {
-        window.open(file.cloudinaryUrl, '_blank');
-        return;
+      if (!isInitialLoad) {
+        setSidebarOpen(false);
       }
 
       // For PDFs and other non-text files, just set the file directly
@@ -110,18 +141,6 @@ export default function NotesDetail() {
     }
   };
 
-  const getFileExtension = (filename: string) => {
-    return filename.split('.').pop()?.toLowerCase() || '';
-  };
-
-  const isTextFile = (filename: string) => {
-    const textExtensions = ['txt', 'md', 'java', 'cpp', 'c', 'py', 'js', 'ts', 'jsx', 'tsx', 'html', 'css', 'json', 'xml', 'yaml', 'yml', 'sh', 'bash'];
-    return textExtensions.includes(getFileExtension(filename));
-  };
-
-  const isPdfFile = (filename: string) => {
-    return getFileExtension(filename) === 'pdf';
-  };
 
   const getLanguageFromExtension = (filename: string) => {
     const ext = getFileExtension(filename);
@@ -323,41 +342,24 @@ export default function NotesDetail() {
           </div>
         </div>
 
-        {/* Main Content - Hidden on mobile */}
-        <div className="hidden md:block flex-1 overflow-y-auto bg-gray-50">
+        {/* Main Content - Visible on all screens */}
+        <div className="flex-1 overflow-hidden bg-gray-50 flex flex-col min-w-0">
           {selectedFile ? (
-            <div className="h-full flex flex-col">
+            <div className="flex-1 flex flex-col min-h-0 overflow-hidden">
               {/* Extended File Content */}
-              <div className="flex-1 overflow-y-auto">
+              <div className="flex-1 overflow-hidden min-h-0">
                 {isPdfFile(selectedFile.filename) ? (
                   <>
-                    {/* Desktop PDF Viewer - Extended Full Height */}
-                    <div className="hidden md:block h-full">
-                      <iframe src={selectedFile.cloudinaryUrl} className="w-full h-full" title={selectedFile.filename} />
+                    {/* PDF Viewer - Full Height for all screens */}
+                    <div className="h-full w-full">
+                      <iframe 
+                        src={selectedFile.cloudinaryUrl} 
+                        className="w-full h-full" 
+                        title={selectedFile.filename}
+                        style={{ border: 'none' }}
+                      />
                     </div>
-                  
-                  {/* Mobile PDF - Open in New Tab */}
-                  <div className="md:hidden p-8 text-center">
-                    <div className="w-20 h-20 bg-red-200 border-3 border-black rounded-xl flex items-center justify-center mx-auto mb-4">
-                      <FileText size={40} strokeWidth={2.5} />
-                    </div>
-                    <h3 className="text-xl font-black text-black mb-2">PDF Document</h3>
-                    <p className="text-gray-600 mb-6 font-medium text-sm">
-                      View this PDF in a new tab for the best mobile experience
-                    </p>
-                    <a
-                      href={selectedFile.cloudinaryUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="inline-flex items-center gap-2 px-6 py-3 bg-black text-white border-3 border-black rounded-xl hover:bg-gray-800 transition-all font-bold shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]"
-                    >
-                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2.5}>
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-                      </svg>
-                      Open PDF
-                    </a>
-                  </div>
-                </>
+                  </>
               ) : isTextFile(selectedFile.filename) ? (
                 <div className="h-full flex flex-col">
                   {selectedFile.content ? (
