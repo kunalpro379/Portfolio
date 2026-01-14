@@ -72,27 +72,33 @@ async function loadRoutes() {
     const { default: blogsRoutes } = await import('./routes/blogs.js');
     const { default: documentationRoutes } = await import('./routes/documentation.js');
     
-    // Load diagrams route with error handling
-    let diagramsRoutes;
-    try {
-      const diagramsModule = await import('./routes/diagrams.js');
-      diagramsRoutes = diagramsModule.default;
-      app.use('/api/diagrams', diagramsRoutes);
-      console.log('✓ Diagrams route loaded');
-    } catch (diagramsError) {
-      console.error('✗ Failed to load diagrams route:', diagramsError);
-      // Add a fallback route to return empty array instead of 404
-      app.use('/api/diagrams', (req, res) => {
-        res.json({ success: true, canvases: [] });
-      });
-    }
-
     app.use('/api/auth', authRoutes);
     app.use('/api/notes', notesRoutes);
     app.use('/api/projects', projectsRoutes);
     app.use('/api/todos', todosRoutes);
     app.use('/api/blogs', blogsRoutes);
     app.use('/api/documentation', documentationRoutes);
+
+    // Load diagrams route with error handling
+    try {
+      const diagramsModule = await import('./routes/diagrams.js');
+      if (diagramsModule && diagramsModule.default) {
+        app.use('/api/diagrams', diagramsModule.default);
+        console.log('✓ Diagrams route loaded successfully');
+      } else {
+        throw new Error('Diagrams route export not found');
+      }
+    } catch (diagramsError) {
+      console.error('✗ Failed to load diagrams route:', diagramsError.message);
+      if (diagramsError.stack) {
+        console.error('Stack trace:', diagramsError.stack);
+      }
+      // Add fallback route to prevent 404
+      app.use('/api/diagrams', (req, res) => {
+        res.json({ success: true, canvases: [] });
+      });
+      console.log('✓ Diagrams fallback route registered');
+    }
 
     try {
       const viewsModule = await import('./routes/views.js');
@@ -105,6 +111,7 @@ async function loadRoutes() {
     console.log('✓ All routes loaded successfully');
   } catch (error) {
     console.error('Error loading routes:', error);
+    console.error('Stack:', error.stack);
     process.exit(1);
   }
 }
