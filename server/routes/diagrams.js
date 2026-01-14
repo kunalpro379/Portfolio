@@ -323,4 +323,9 @@ router.delete('/:canvasId', async (req, res) => {
   }
 });
 
+// Ensure router is properly exported
+if (!router) {
+  console.error('ERROR: Router is undefined in diagrams.js');
+}
+
 export default router;
