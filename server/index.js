@@ -71,7 +71,21 @@ async function loadRoutes() {
     const { default: todosRoutes } = await import('./routes/todos.js');
     const { default: blogsRoutes } = await import('./routes/blogs.js');
     const { default: documentationRoutes } = await import('./routes/documentation.js');
-    const { default: diagramsRoutes } = await import('./routes/diagrams.js');
+    
+    // Load diagrams route with error handling
+    let diagramsRoutes;
+    try {
+      const diagramsModule = await import('./routes/diagrams.js');
+      diagramsRoutes = diagramsModule.default;
+      app.use('/api/diagrams', diagramsRoutes);
+      console.log('✓ Diagrams route loaded');
+    } catch (diagramsError) {
+      console.error('✗ Failed to load diagrams route:', diagramsError);
+      // Add a fallback route to return empty array instead of 404
+      app.use('/api/diagrams', (req, res) => {
+        res.json({ success: true, canvases: [] });
+      });
+    }
 
     app.use('/api/auth', authRoutes);
     app.use('/api/notes', notesRoutes);
@@ -79,7 +93,6 @@ async function loadRoutes() {
     app.use('/api/todos', todosRoutes);
     app.use('/api/blogs', blogsRoutes);
     app.use('/api/documentation', documentationRoutes);
-    app.use('/api/diagrams', diagramsRoutes);
 
     try {
       const viewsModule = await import('./routes/views.js');
