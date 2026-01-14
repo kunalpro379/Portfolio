@@ -174,9 +174,27 @@ export default function DocumentationDetail() {
     const attachmentFiles = files.filter(f => f.type === 'attachment');
 
     return (
-        <div className="h-screen flex flex-col bg-gray-50">
-            {/* Header - Fixed on mobile */}
-            <div className={`bg-white border-b-4 border-black p-4 md:p-6 sticky top-0 z-50 lg:relative ${isFullscreen ? 'hidden' : ''}`}>
+        <>
+            {/* Mobile-specific styles for Excalidraw */}
+            <style>{`
+                .excalidraw-wrapper {
+                    width: 100% !important;
+                    height: 100% !important;
+                    position: relative !important;
+                }
+                .excalidraw-container {
+                    width: 100% !important;
+                    height: 100% !important;
+                }
+                @media (max-width: 1024px) {
+                    .excalidraw-wrapper {
+                        touch-action: none !important;
+                    }
+                }
+            `}</style>
+            <div className="h-screen flex flex-col bg-gray-50">
+                {/* Header - Fixed on mobile */}
+                <div className={`bg-white border-b-4 border-black p-4 md:p-6 sticky top-0 z-50 lg:relative ${isFullscreen ? 'hidden' : ''}`}>
                 <div className="max-w-[1800px] mx-auto flex items-center justify-between">
                     <button
                         onClick={() => navigate('/learnings?tab=documentation')}
@@ -333,7 +351,7 @@ export default function DocumentationDetail() {
                 )}
 
                 {/* Content Area */}
-                <div className="w-full lg:flex-1 flex flex-col flex-1 lg:min-h-0 lg:overflow-hidden">
+                <div className="w-full lg:flex-1 flex flex-col flex-1 lg:min-h-0 lg:overflow-hidden min-h-0">
                     {/* Title and Subject - Mobile Only */}
                     <div className="lg:hidden bg-white border-b-4 border-black p-4">
                         <div className="bg-blue-50 border-3 border-black rounded-xl p-4">
@@ -384,66 +402,9 @@ export default function DocumentationDetail() {
                                             <Minimize2 className="w-5 h-5" />
                                         </button>
                                     </div>
-                                    <div className="flex-1 relative">
-                                        <div className="absolute inset-0 w-full h-full">
-                                            <Excalidraw
-                                                key={currentFile?.fileId}
-                                                excalidrawAPI={(api) => {
-                                                    excalidrawRef.current = api;
-                                                    if (currentFile?.content && currentFile.content.elements) {
-                                                        setTimeout(() => {
-                                                            api.updateScene({
-                                                                elements: currentFile.content.elements,
-                                                                appState: {
-                                                                    ...currentFile.content.appState,
-                                                                    collaborators: new Map(),
-                                                                    viewModeEnabled: true
-                                                                }
-                                                            });
-                                                        }, 100);
-                                                    }
-                                                }}
-                                                theme="light"
-                                                initialData={{
-                                                    elements: [],
-                                                    appState: {
-                                                        collaborators: new Map(),
-                                                        viewModeEnabled: true
-                                                    }
-                                                }}
-                                                viewModeEnabled={true}
-                                            />
-                                        </div>
-                                    </div>
-                                </div>
-                            ) : (
-                                // Normal mode
-                                <>
-                                    <div className="flex items-center justify-between p-4 bg-white border-b-4 border-black">
-                                        <h2 className="font-black text-lg">{currentFile.name}</h2>
-                                        {/* Fullscreen button for mobile diagrams */}
-                                        {activeTab === 'diagram' && (
-                                            <button
-                                                onClick={() => setIsFullscreen(true)}
-                                                className="lg:hidden p-2 bg-black text-white rounded-lg border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]"
-                                            >
-                                                <Maximize2 className="w-5 h-5" />
-                                            </button>
-                                        )}
-                                    </div>
-
-                                    <div className="flex-1 overflow-hidden relative">
-                                        {activeTab === 'markdown' && (
-                                            <div className="w-full h-full overflow-auto p-6 bg-white" data-color-mode="light">
-                                                <MDEditor.Markdown
-                                                    source={previewContent}
-                                                    style={{ padding: '20px', background: 'white' }}
-                                                />
-                                            </div>
-                                        )}
-
-                                        {activeTab === 'diagram' && (
-                                            <div className="absolute inset-0 w-full h-full">
+                                    <div className="flex-1 relative min-h-0">
+                                        <div className="absolute inset-0 w-full h-full touch-none">
+                                            <div className="w-full h-full" style={{ touchAction: 'none' }}>
                                                 <Excalidraw
                                                     key={currentFile?.fileId}
                                                     excalidrawAPI={(api) => {
@@ -470,7 +431,83 @@ export default function DocumentationDetail() {
                                                         }
                                                     }}
                                                     viewModeEnabled={true}
+                                                    UIOptions={{
+                                                        canvasActions: {
+                                                            saveToActiveFile: false,
+                                                            loadScene: false,
+                                                            export: false,
+                                                        }
+                                                    }}
                                                 />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            ) : (
+                                // Normal mode
+                                <>
+                                    <div className="flex items-center justify-between p-4 bg-white border-b-4 border-black">
+                                        <h2 className="font-black text-lg truncate flex-1 mr-2">{currentFile.name}</h2>
+                                        {/* Fullscreen button for diagrams - available on all screens */}
+                                        {activeTab === 'diagram' && (
+                                            <button
+                                                onClick={() => setIsFullscreen(true)}
+                                                className="p-2 bg-black text-white rounded-lg border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:bg-gray-800 transition-colors flex-shrink-0"
+                                                aria-label="Enter fullscreen"
+                                            >
+                                                <Maximize2 className="w-5 h-5" />
+                                            </button>
+                                        )}
+                                    </div>
+
+                                    <div className="flex-1 overflow-hidden relative min-h-0">
+                                        {activeTab === 'markdown' && (
+                                            <div className="w-full h-full overflow-auto p-6 bg-white" data-color-mode="light">
+                                                <MDEditor.Markdown
+                                                    source={previewContent}
+                                                    style={{ padding: '20px', background: 'white' }}
+                                                />
+                                            </div>
+                                        )}
+
+                                        {activeTab === 'diagram' && (
+                                            <div className="absolute inset-0 w-full h-full touch-none">
+                                                <div className="w-full h-full" style={{ touchAction: 'none' }}>
+                                                    <Excalidraw
+                                                        key={currentFile?.fileId}
+                                                        excalidrawAPI={(api) => {
+                                                            excalidrawRef.current = api;
+                                                            if (currentFile?.content && currentFile.content.elements) {
+                                                                setTimeout(() => {
+                                                                    api.updateScene({
+                                                                        elements: currentFile.content.elements,
+                                                                        appState: {
+                                                                            ...currentFile.content.appState,
+                                                                            collaborators: new Map(),
+                                                                            viewModeEnabled: true
+                                                                        }
+                                                                    });
+                                                                }, 100);
+                                                            }
+                                                        }}
+                                                        theme="light"
+                                                        initialData={{
+                                                            elements: [],
+                                                            appState: {
+                                                                collaborators: new Map(),
+                                                                viewModeEnabled: true
+                                                            }
+                                                        }}
+                                                        viewModeEnabled={true}
+                                                        UIOptions={{
+                                                            canvasActions: {
+                                                                saveToActiveFile: false,
+                                                                loadScene: false,
+                                                                export: false,
+                                                            }
+                                                        }}
+                                                    />
+                                                </div>
                                             </div>
                                         )}
                                     </div>
@@ -484,6 +521,7 @@ export default function DocumentationDetail() {
                     )}
                 </div>
             </div>
-        </div>
+            </div>
+        </>
     );
 }
