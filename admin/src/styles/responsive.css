@@ -1,0 +1,106 @@
+/* Admin Panel Mobile Responsive Utilities */
+
+/* Hide scrollbar but keep functionality */
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+/* Mobile-first responsive containers */
+@media (max-width: 768px) {
+  /* Force single column layouts on mobile */
+  .admin-grid-responsive {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* Reduce padding on mobile */
+  .admin-container {
+    padding: 1rem !important;
+  }
+
+  /* Stack flex items on mobile */
+  .admin-flex-responsive {
+    flex-direction: column !important;
+  }
+
+  /* Full width buttons on mobile */
+  .admin-button-responsive {
+    width: 100% !important;
+  }
+
+  /* Smaller text on mobile */
+  .admin-text-responsive {
+    font-size: 0.875rem !important;
+  }
+
+  /* Hide on mobile */
+  .hide-mobile {
+    display: none !important;
+  }
+
+  /* Show only on mobile */
+  .show-mobile {
+    display: block !important;
+  }
+
+  /* Reduce border width on mobile */
+  .border-3 {
+    border-width: 2px !important;
+  }
+
+  .border-4 {
+    border-width: 3px !important;
+  }
+
+  /* Smaller shadows on mobile */
+  .shadow-\[8px_8px_0px_0px_rgba\(0\,0\,0\,1\)\] {
+    box-shadow: 4px 4px 0px 0px rgba(0,0,0,1) !important;
+  }
+
+  .shadow-\[6px_6px_0px_0px_rgba\(0\,0\,0\,1\)\] {
+    box-shadow: 3px 3px 0px 0px rgba(0,0,0,1) !important;
+  }
+
+  .shadow-\[4px_4px_0px_0px_rgba\(0\,0\,0\,1\)\] {
+    box-shadow: 2px 2px 0px 0px rgba(0,0,0,1) !important;
+  }
+
+  /* Responsive spacing */
+  .admin-space-y-responsive > * + * {
+    margin-top: 1rem !important;
+  }
+
+  /* Responsive rounded corners */
+  .rounded-2xl {
+    border-radius: 1rem !important;
+  }
+
+  /* Asset grid responsive */
+  .admin-asset-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* Modal responsive */
+  .admin-modal {
+    margin: 1rem !important;
+    max-width: calc(100vw - 2rem) !important;
+  }
+}
+
+/* Tablet adjustments */
+@media (min-width: 769px) and (max-width: 1024px) {
+  .admin-grid-responsive {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+}
+
+/* Desktop - show mobile elements as none */
+@media (min-width: 769px) {
+  .show-mobile {
+    display: none !important;
+  }
+}

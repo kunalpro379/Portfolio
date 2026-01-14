@@ -2,10 +2,13 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { FileText, FolderOpen, Eye, BookOpen, StickyNote, Plus, Edit, FileEdit } from 'lucide-react';
+import config from '../config/config';
+import DashboardShimmer from '../components/DashboardShimmer';
 
 export default function Dashboard() {
   const { user } = useAuth();
   const navigate = useNavigate();
+  const [loading, setLoading] = useState(true);
   const [stats, setStats] = useState({
     projects: 0,
     blogs: 0,
@@ -20,11 +23,12 @@ export default function Dashboard() {
 
   const fetchStats = async () => {
     try {
+      setLoading(true);
       // Fetch all stats in parallel
       const [projectsRes, blogsRes, docsRes] = await Promise.all([
-        fetch('https://api.kunalpatil.me/api/projects'),
-        fetch('https://api.kunalpatil.me/api/blogs'),
-        fetch('https://api.kunalpatil.me/api/documentation')
+        fetch('${config.api.baseUrl}/api/projects'),
+        fetch('${config.api.baseUrl}/api/blogs'),
+        fetch('${config.api.baseUrl}/api/documentation')
       ]);
 
       const [projectsData, blogsData, docsData] = await Promise.all([
@@ -36,7 +40,7 @@ export default function Dashboard() {
       // Fetch notes folders count
       let notesCount = 0;
       try {
-        const notesRes = await fetch('https://api.kunalpatil.me/api/notes/folders?parentPath=');
+        const notesRes = await fetch('${config.api.baseUrl}/api/notes/folders?parentPath=');
         if (notesRes.ok) {
           const notesData = await notesRes.json();
           notesCount = notesData.folders?.length || 0;
@@ -54,9 +58,15 @@ export default function Dashboard() {
       });
     } catch (error) {
       console.error('Error fetching stats:', error);
+    } finally {
+      setLoading(false);
     }
   };
 
+
+  if (loading) {
+    return <DashboardShimmer />;
+  }
 
   return (
     <div className="p-4 md:p-8">

@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Save, X, Upload, Trash2, Image as ImageIcon, Link as LinkIcon } from 'lucide-react';
 import MDEditor from '@uiw/react-md-editor';
+import config from '../config/config';
 
 interface Link {
   name: string;
@@ -130,7 +131,7 @@ export default function CreateProject() {
         mdFiles: []
       };
 
-      const createResponse = await fetch('https://api.kunalpatil.me/api/projects/create', {
+      const createResponse = await fetch('${config.api.baseUrl}/api/projects/create', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(projectData)
@@ -155,7 +156,7 @@ export default function CreateProject() {
         
         formData.append('assetNames', JSON.stringify(assetNames));
 
-        await fetch(`https://api.kunalpatil.me/api/projects/${projectId}/assets`, {
+        await fetch(`${config.api.baseUrl}/api/projects/${projectId}/assets`, {
           method: 'POST',
           body: formData
         });
@@ -172,7 +173,7 @@ export default function CreateProject() {
           }
         });
 
-        await fetch(`https://api.kunalpatil.me/api/projects/${projectId}/cardassets`, {
+        await fetch(`${config.api.baseUrl}/api/projects/${projectId}/cardassets`, {
           method: 'POST',
           body: formData
         });
@@ -184,7 +185,7 @@ export default function CreateProject() {
         const mdFormData = new FormData();
         mdFormData.append('mdFile', mdBlob, `${projectId}.md`);
 
-        await fetch(`https://api.kunalpatil.me/api/projects/${projectId}/md-file`, {
+        await fetch(`${config.api.baseUrl}/api/projects/${projectId}/md-file`, {
           method: 'POST',
           body: mdFormData
         });
@@ -201,8 +202,9 @@ export default function CreateProject() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 p-6">
-      <div className="max-w-[1800px] mx-auto">
+    <div className="h-screen overflow-y-auto bg-gray-50">
+      <div className="p-6">
+        <div className="max-w-[1800px] mx-auto">
         {/* Header */}
         <div className="bg-white border-4 border-black rounded-2xl p-6 mb-6 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
           <div className="flex items-center justify-between">
@@ -551,5 +553,5 @@ export default function CreateProject() {
         </div>
       </div>
     </div>
-  );
-}
+    </div>
+  );}

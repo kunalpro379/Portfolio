@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { FileText, Plus, Edit, Trash2, Calendar, Tag } from 'lucide-react';
+import config from '../config/config';
 
 interface Blog {
   _id: string;
@@ -29,7 +30,7 @@ export default function Blogs() {
 
   const fetchBlogs = async () => {
     try {
-      const response = await fetch('https://api.kunalpatil.me/api/blogs');
+      const response = await fetch('${config.api.baseUrl}/api/blogs');
       const data = await response.json();
       setBlogs(data.blogs);
     } catch (error) {
@@ -43,7 +44,7 @@ export default function Blogs() {
     if (!confirm('Delete this blog? This will remove all associated files from Azure.')) return;
 
     try {
-      const response = await fetch(`https://api.kunalpatil.me/api/blogs/${blogId}`, {
+      const response = await fetch(`${config.api.baseUrl}/api/blogs/${blogId}`, {
         method: 'DELETE'
       });
 

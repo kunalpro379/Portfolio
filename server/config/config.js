@@ -19,7 +19,7 @@ const config = {
   // Authentication Configuration
   auth: {
     jwtSecret: process.env.JWT_SECRET || 'your-secret-key-change-in-production',
-    jwtExpiresIn: '7d'
+    jwtExpiresIn: '7h'
   },
 
   // Azure Blob Storage Configuration

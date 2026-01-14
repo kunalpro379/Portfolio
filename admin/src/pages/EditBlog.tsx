@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Save, X, Upload, Trash2, Link as LinkIcon } from 'lucide-react';
 import MDEditor from '@uiw/react-md-editor';
+import config from '../config/config';
 
 interface BlogLink {
   platform: string;
@@ -40,7 +41,7 @@ export default function EditBlog() {
 
   const fetchBlog = async () => {
     try {
-      const response = await fetch(`https://api.kunalpatil.me/api/blogs/${blogId}`);
+      const response = await fetch(`${config.api.baseUrl}/api/blogs/${blogId}`);
       const data = await response.json();
       const blog = data.blog;
 
@@ -57,7 +58,7 @@ export default function EditBlog() {
 
       // Fetch MD content if exists
       if (blog.mdFiles && blog.mdFiles.length > 0) {
-        const mdResponse = await fetch(`https://api.kunalpatil.me/api/blogs/${blogId}/md-content`);
+        const mdResponse = await fetch(`${config.api.baseUrl}/api/blogs/${blogId}/md-content`);
         const mdData = await mdResponse.json();
         if (mdData.exists) {
           setMdContent(mdData.content);
@@ -99,7 +100,7 @@ export default function EditBlog() {
         blogLinks: blogLinks.filter(l => l.platform && l.url)
       };
 
-      await fetch(`https://api.kunalpatil.me/api/blogs/${blogId}`, {
+      await fetch(`${config.api.baseUrl}/api/blogs/${blogId}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(updateData)
@@ -120,7 +121,7 @@ export default function EditBlog() {
         const mdFormData = new FormData();
         mdFormData.append('mdFile', mdBlob, `${blogId}.md`);
 
-        await fetch(`https://api.kunalpatil.me/api/blogs/${blogId}/md-file`, {
+        await fetch(`${config.api.baseUrl}/api/blogs/${blogId}/md-file`, {
           method: 'POST',
           body: mdFormData
         });
@@ -144,7 +145,7 @@ export default function EditBlog() {
         formData.append('assets', file);
       });
 
-      const response = await fetch(`https://api.kunalpatil.me/api/blogs/${blogId}/assets`, {
+      const response = await fetch(`${config.api.baseUrl}/api/blogs/${blogId}/assets`, {
         method: 'POST',
         body: formData
       });
@@ -166,7 +167,7 @@ export default function EditBlog() {
       const formData = new FormData();
       formData.append('cover', file);
 
-      const response = await fetch(`https://api.kunalpatil.me/api/blogs/${blogId}/cover`, {
+      const response = await fetch(`${config.api.baseUrl}/api/blogs/${blogId}/cover`, {
         method: 'POST',
         body: formData
       });
@@ -186,7 +187,7 @@ export default function EditBlog() {
     if (!confirm('Delete this asset?')) return;
 
     try {
-      const response = await fetch(`https://api.kunalpatil.me/api/blogs/${blogId}/assets/${index}`, {
+      const response = await fetch(`${config.api.baseUrl}/api/blogs/${blogId}/assets/${index}`, {
         method: 'DELETE'
       });
 
@@ -201,7 +202,7 @@ export default function EditBlog() {
 
   const updateAssetName = async (index: number, newName: string) => {
     try {
-      const response = await fetch(`https://api.kunalpatil.me/api/blogs/${blogId}/assets/${index}/name`, {
+      const response = await fetch(`${config.api.baseUrl}/api/blogs/${blogId}/assets/${index}/name`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ name: newName })
@@ -225,14 +226,15 @@ export default function EditBlog() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 p-4 md:p-6">
-      {uploading && (
-        <div className="fixed top-0 left-0 right-0 z-50 bg-blue-500 text-white text-center py-3 font-bold">
-          Uploading... Please wait
-        </div>
-      )}
+    <div className="h-screen overflow-y-auto bg-gray-50">
+      <div className="p-4 md:p-6">
+        {uploading && (
+          <div className="fixed top-0 left-0 right-0 z-50 bg-blue-500 text-white text-center py-3 font-bold">
+            Uploading... Please wait
+          </div>
+        )}
 
-      <div className="max-w-[1800px] mx-auto">
+        <div className="max-w-[1800px] mx-auto">
         {/* Header */}
         <div className="bg-white border-4 border-black rounded-2xl p-4 md:p-6 mb-4 md:mb-6 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
@@ -571,6 +573,7 @@ export default function EditBlog() {
           </div>
         </div>
       </div>
+    </div>
     </div>
   );
 }

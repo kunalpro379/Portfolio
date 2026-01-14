@@ -1,0 +1,13 @@
+/* Learnings Page Custom Styles */
+
+/* Override card backgrounds to light gray */
+.learnings-card {
+  background-color: rgba(249, 250, 251, 0.7) !important;
+  backdrop-filter: blur(8px);
+}
+
+/* Empty state cards */
+.learnings-empty-card {
+  background-color: rgba(249, 250, 251, 0.7) !important;
+  backdrop-filter: blur(8px);
+}

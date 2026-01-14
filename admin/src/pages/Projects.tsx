@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Plus, Edit, Trash2, ExternalLink, ArrowUpDown, GripVertical, Save, X } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { DragDropContext, Droppable, Draggable, DropResult } from '@hello-pangea/dnd';
+import config from '../config/config';
 
 interface Project {
   _id: string;
@@ -28,7 +29,7 @@ export default function Projects() {
 
   const fetchProjects = async () => {
     try {
-      const response = await fetch('https://api.kunalpatil.me/api/projects');
+      const response = await fetch('${config.api.baseUrl}/api/projects');
       const data = await response.json();
       setProjects(data.projects);
     } catch (error) {
@@ -60,7 +61,7 @@ export default function Projects() {
     if (!confirm('Are you sure you want to delete this project?')) return;
 
     try {
-      const response = await fetch(`https://api.kunalpatil.me/api/projects/${projectId}`, {
+      const response = await fetch(`${config.api.baseUrl}/api/projects/${projectId}`, {
         method: 'DELETE'
       });
 
@@ -87,7 +88,7 @@ export default function Projects() {
     try {
       const projectIds = projects.map(p => p.projectId);
       
-      const response = await fetch('https://api.kunalpatil.me/api/projects/reorder', {
+      const response = await fetch('${config.api.baseUrl}/api/projects/reorder', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

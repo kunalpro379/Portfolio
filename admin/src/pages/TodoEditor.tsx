@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Save, X, Plus, Trash2, Link as LinkIcon, Eye, EyeOff } from 'lucide-react';
+import config from '../config/config';
 
 interface Link {
   name: string;
@@ -55,7 +56,7 @@ export default function TodoEditor() {
 
   const fetchTodo = async () => {
     try {
-      const response = await fetch(`https://api.kunalpatil.me/api/todos/${todoId}`);
+      const response = await fetch(`${config.api.baseUrl}/api/todos/${todoId}`);
       const data = await response.json();
       const todo = data.todo;
 
@@ -99,7 +100,7 @@ export default function TodoEditor() {
 
       if (isNewTodo) {
         // Create new todo
-        const response = await fetch('https://api.kunalpatil.me/api/todos/create', {
+        const response = await fetch('${config.api.baseUrl}/api/todos/create', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
@@ -120,7 +121,7 @@ export default function TodoEditor() {
         }
       } else {
         // Update existing todo
-        const response = await fetch(`https://api.kunalpatil.me/api/todos/${todoId}`, {
+        const response = await fetch(`${config.api.baseUrl}/api/todos/${todoId}`, {
           method: 'PUT',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
@@ -155,8 +156,9 @@ export default function TodoEditor() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 p-6">
-      <div className="max-w-5xl mx-auto">
+    <div className="h-screen overflow-y-auto bg-gray-50">
+      <div className="p-6">
+        <div className="max-w-5xl mx-auto">
         {/* Header */}
         <div className="bg-white border-4 border-black rounded-2xl p-6 mb-6 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
           <div className="flex items-center justify-between">
@@ -303,6 +305,7 @@ export default function TodoEditor() {
           </div>
         </div>
       </div>
+    </div>
     </div>
   );
 }

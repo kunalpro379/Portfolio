@@ -14,7 +14,7 @@ const storage = multer.memoryStorage();
 const upload = multer({ 
   storage: storage,
   limits: {
-    fileSize: 10 * 1024 * 1024
+    fileSize: 50 * 1024 * 1024 // 50MB per chunk (Vercel limit)
   }
 });
 
@@ -734,12 +734,26 @@ router.post('/:docId/attachments/chunk', upload.single('chunk'), async (req, res
       return res.status(400).json({ message: 'No chunk uploaded' });
     }
 
+    console.log(`Chunk ${parseInt(chunkIndex) + 1}/${totalChunks} received for ${fileName} (${(req.file.buffer.length / 1024 / 1024).toFixed(2)}MB)`);
+
     const containerClient = blobServiceClient.getContainerClient(containerName);
     const blockBlobClient = containerClient.getBlockBlobClient(blobPath);
 
-    // Upload chunk as a block
+    // Upload chunk as a block with retry logic
     const blockId = Buffer.from(`block-${String(chunkIndex).padStart(6, '0')}`).toString('base64');
-    await blockBlobClient.stageBlock(blockId, req.file.buffer, req.file.buffer.length);
+    
+    let retries = 3;
+    while (retries > 0) {
+      try {
+        await blockBlobClient.stageBlock(blockId, req.file.buffer, req.file.buffer.length);
+        break;
+      } catch (error) {
+        retries--;
+        if (retries === 0) throw error;
+        console.log(`Retrying chunk ${chunkIndex}, ${retries} attempts left`);
+        await new Promise(resolve => setTimeout(resolve, 1000));
+      }
+    }
 
     res.json({
       message: 'Chunk uploaded',
