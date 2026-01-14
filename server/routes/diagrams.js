@@ -36,8 +36,10 @@ async function initializeBlobStorage() {
   }
 }
 
-// Initialize on module load
-await initializeBlobStorage();
+// Initialize on module load (non-blocking)
+initializeBlobStorage().catch(err => {
+  console.error('Failed to initialize blob storage for diagrams:', err);
+});
 
 // Generate unique canvas ID
 function generateCanvasId() {
@@ -47,20 +49,28 @@ function generateCanvasId() {
 // GET all canvases
 router.get('/', async (req, res) => {
   try {
+    // Check if Diagram model is available
+    if (!Diagram) {
+      return res.json({
+        success: true,
+        canvases: []
+      });
+    }
+
     const canvases = await Diagram.find()
       .select('canvasId name isPublic createdAt updatedAt thumbnail')
       .sort({ updatedAt: -1 });
 
     res.json({
       success: true,
-      canvases
+      canvases: canvases || []
     });
   } catch (error) {
     console.error('Error fetching canvases:', error);
-    res.status(500).json({
-      success: false,
-      message: 'Failed to fetch canvases',
-      error: error.message
+    // Return empty array instead of error to prevent frontend issues
+    res.json({
+      success: true,
+      canvases: []
     });
   }
 });
