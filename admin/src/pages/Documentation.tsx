@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { FileText, Plus, Edit, Trash2, Eye, EyeOff, Calendar, Tag } from 'lucide-react';
+import config from '../config/config';
 
 interface Doc {
   _id: string;
@@ -26,7 +27,7 @@ export default function Documentation() {
 
   const fetchDocs = async () => {
     try {
-      const response = await fetch('https://api.kunalpatil.me/api/documentation');
+      const response = await fetch('${config.api.baseUrl}/api/documentation');
       const data = await response.json();
       setDocs(data.docs);
     } catch (error) {
@@ -40,7 +41,7 @@ export default function Documentation() {
     if (!confirm('Delete this documentation? This cannot be undone.')) return;
 
     try {
-      const response = await fetch(`https://api.kunalpatil.me/api/documentation/${docId}`, {
+      const response = await fetch(`${config.api.baseUrl}/api/documentation/${docId}`, {
         method: 'DELETE'
       });
 

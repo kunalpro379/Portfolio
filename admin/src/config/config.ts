@@ -1,53 +1,62 @@
 // API Configuration for Admin Panel
+import CONFIG from '../../../config.shared.js';
 
 const config = {
-  // API Base URL
+  // API Base URL - from shared config
   api: {
-    baseUrl: import.meta.env.VITE_API_BASE_URL || 'https://api.kunalpatil.me',
+    baseUrl: CONFIG.API.BASE_URL,
     endpoints: {
       // Auth
-      auth: '/api/auth',
-      login: '/api/auth/login',
+      auth: CONFIG.API.ENDPOINTS.auth,
+      login: `${CONFIG.API.ENDPOINTS.auth}/login`,
+      verify: `${CONFIG.API.ENDPOINTS.auth}/verify`,
       
       // Projects
-      projects: '/api/projects',
-      projectById: (id: string) => `/api/projects/${id}`,
-      projectMdContent: (id: string) => `/api/projects/${id}/md-content`,
-      projectMdFile: (id: string) => `/api/projects/${id}/md-file`,
-      projectAssets: (id: string) => `/api/projects/${id}/assets`,
-      projectCardAssets: (id: string) => `/api/projects/${id}/cardassets`,
-      projectAssetByIndex: (id: string, index: number) => `/api/projects/${id}/assets/${index}`,
-      projectAssetName: (id: string, index: number) => `/api/projects/${id}/assets/${index}/name`,
-      projectCardAssetByIndex: (id: string, index: number) => `/api/projects/${id}/cardassets/${index}`,
+      projects: CONFIG.API.ENDPOINTS.projects,
+      projectById: (id: string) => `${CONFIG.API.ENDPOINTS.projects}/${id}`,
+      projectMdContent: (id: string) => `${CONFIG.API.ENDPOINTS.projects}/${id}/md-content`,
+      projectMdFile: (id: string) => `${CONFIG.API.ENDPOINTS.projects}/${id}/md-file`,
+      projectAssets: (id: string) => `${CONFIG.API.ENDPOINTS.projects}/${id}/assets`,
+      projectCardAssets: (id: string) => `${CONFIG.API.ENDPOINTS.projects}/${id}/cardassets`,
+      projectAssetByIndex: (id: string, index: number) => `${CONFIG.API.ENDPOINTS.projects}/${id}/assets/${index}`,
+      projectAssetName: (id: string, index: number) => `${CONFIG.API.ENDPOINTS.projects}/${id}/assets/${index}/name`,
+      projectCardAssetByIndex: (id: string, index: number) => `${CONFIG.API.ENDPOINTS.projects}/${id}/cardassets/${index}`,
       
       // Blogs
-      blogs: '/api/blogs',
-      blogById: (id: string) => `/api/blogs/${id}`,
-      blogMdContent: (id: string) => `/api/blogs/${id}/md-content`,
-      blogMdFile: (id: string) => `/api/blogs/${id}/md-file`,
-      blogAssets: (id: string) => `/api/blogs/${id}/assets`,
-      blogCover: (id: string) => `/api/blogs/${id}/cover`,
-      blogAssetByIndex: (id: string, index: number) => `/api/blogs/${id}/assets/${index}`,
-      blogAssetName: (id: string, index: number) => `/api/blogs/${id}/assets/${index}/name`,
+      blogs: CONFIG.API.ENDPOINTS.blogs,
+      blogById: (id: string) => `${CONFIG.API.ENDPOINTS.blogs}/${id}`,
+      blogMdContent: (id: string) => `${CONFIG.API.ENDPOINTS.blogs}/${id}/md-content`,
+      blogMdFile: (id: string) => `${CONFIG.API.ENDPOINTS.blogs}/${id}/md-file`,
+      blogAssets: (id: string) => `${CONFIG.API.ENDPOINTS.blogs}/${id}/assets`,
+      blogCover: (id: string) => `${CONFIG.API.ENDPOINTS.blogs}/${id}/cover`,
+      blogAssetByIndex: (id: string, index: number) => `${CONFIG.API.ENDPOINTS.blogs}/${id}/assets/${index}`,
+      blogAssetName: (id: string, index: number) => `${CONFIG.API.ENDPOINTS.blogs}/${id}/assets/${index}/name`,
       
       // Documentation
-      documentation: '/api/documentation',
-      docById: (id: string) => `/api/documentation/${id}`,
-      docUploadAsset: '/api/documentation/upload-asset',
-      docAsset: (id: string, name: string) => `/api/documentation/asset/${id}/${name}`,
+      documentation: CONFIG.API.ENDPOINTS.documentation,
+      docById: (id: string) => `${CONFIG.API.ENDPOINTS.documentation}/${id}`,
+      docUploadAsset: `${CONFIG.API.ENDPOINTS.documentation}/upload-asset`,
+      docAsset: (id: string, name: string) => `${CONFIG.API.ENDPOINTS.documentation}/asset/${id}/${name}`,
       
       // Notes
-      notesFolders: (parentPath: string) => `/api/notes/folders?parentPath=${parentPath}`,
-      notesFiles: (folderPath: string) => `/api/notes/files?folderPath=${folderPath}`,
-      notesCreateFolder: '/api/notes/folder/create',
-      notesUploadFiles: '/api/notes/files/upload',
-      notesFileById: (id: string) => `/api/notes/files/${id}`,
-      notesFolderById: (id: string) => `/api/notes/folders/${id}`,
+      notesFolders: (parentPath: string) => `${CONFIG.API.ENDPOINTS.notes}/folders?parentPath=${parentPath}`,
+      notesFiles: (folderPath: string) => `${CONFIG.API.ENDPOINTS.notes}/files?folderPath=${folderPath}`,
+      notesCreateFolder: `${CONFIG.API.ENDPOINTS.notes}/folder/create`,
+      notesUploadFiles: `${CONFIG.API.ENDPOINTS.notes}/files/upload`,
+      notesUploadInit: `${CONFIG.API.ENDPOINTS.notes}/files/upload/init`,
+      notesUploadChunk: `${CONFIG.API.ENDPOINTS.notes}/files/upload/chunk`,
+      notesUploadFinalize: `${CONFIG.API.ENDPOINTS.notes}/files/upload/finalize`,
+      notesFileById: (id: string) => `${CONFIG.API.ENDPOINTS.notes}/files/${id}`,
+      notesFolderById: (id: string) => `${CONFIG.API.ENDPOINTS.notes}/folders/${id}`,
       
       // Todos
-      todos: '/api/todos',
-      todoById: (id: string) => `/api/todos/${id}`,
-      todoCreate: '/api/todos/create',
+      todos: CONFIG.API.ENDPOINTS.todos,
+      todoById: (id: string) => `${CONFIG.API.ENDPOINTS.todos}/${id}`,
+      todoCreate: `${CONFIG.API.ENDPOINTS.todos}/create`,
+      
+      // Diagrams
+      diagrams: CONFIG.API.ENDPOINTS.diagrams,
+      diagramById: (id: string) => `${CONFIG.API.ENDPOINTS.diagrams}/${id}`,
     }
   },
 

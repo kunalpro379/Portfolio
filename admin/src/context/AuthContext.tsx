@@ -1,4 +1,5 @@
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import config from '../config/config';
 
 interface User {
   id: string;
@@ -44,7 +45,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const verifyToken = async (token: string) => {
     try {
-      const response = await fetch('https://api.kunalpatil.me/api/auth/verify', {
+      const response = await fetch(config.api.endpoints.verify, {
         headers: {
           'Authorization': `Bearer ${token}`
         }
@@ -55,10 +56,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         setUser(data.user);
         localStorage.setItem('user', JSON.stringify(data.user));
       } else if (response.status === 401) {
-        // Only clear on 401 (unauthorized), not on network errors
+        // Unauthorized - show error and logout
+        alert('User is not authorized. You have been logged out.');
         localStorage.removeItem('token');
         localStorage.removeItem('user');
         setUser(null);
+        window.location.href = '/login';
       }
       // For other errors (500, network), keep user logged in
     } catch (error) {
@@ -69,7 +72,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   const login = async (username: string, password: string) => {
-    const response = await fetch('https://api.kunalpatil.me/api/auth/login', {
+    const response = await fetch(config.api.endpoints.login, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'

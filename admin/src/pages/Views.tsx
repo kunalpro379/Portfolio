@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Eye, Trash2, RefreshCw, Monitor, Smartphone, Tablet, Globe } from 'lucide-react';
+import config from '../config/config';
 
 interface View {
   viewId: string;
@@ -36,7 +37,7 @@ export default function Views() {
 
   const fetchViews = async () => {
     try {
-      const response = await fetch(`https://api.kunalpatil.me/api/views?page=${page}&limit=50`);
+      const response = await fetch(`${config.api.baseUrl}/api/views?page=${page}&limit=50`);
       const data = await response.json();
       setViews(data.views);
       setTotalPages(data.pagination.pages);
@@ -49,7 +50,7 @@ export default function Views() {
 
   const fetchStats = async () => {
     try {
-      const response = await fetch('https://api.kunalpatil.me/api/views/stats');
+      const response = await fetch('${config.api.baseUrl}/api/views/stats');
       const data = await response.json();
       setStats(data);
     } catch (error) {
@@ -67,7 +68,7 @@ export default function Views() {
     if (!confirm('Are you sure you want to clear all views? This cannot be undone.')) return;
 
     try {
-      const response = await fetch('https://api.kunalpatil.me/api/views', {
+      const response = await fetch('${config.api.baseUrl}/api/views', {
         method: 'DELETE',
       });
 

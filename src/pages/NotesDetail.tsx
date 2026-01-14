@@ -31,7 +31,7 @@ export default function NotesDetail() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [expandedFolders, setExpandedFolders] = useState<Set<string>>(new Set([id || '']));
-
+  const [sidebarOpen, setSidebarOpen] = useState(false);
   useEffect(() => {
     const fetchFolderTree = async () => {
       try {
@@ -81,6 +81,9 @@ export default function NotesDetail() {
   const loadFile = async (file: NoteFile) => {
     try {
       console.log('Loading file:', file.filename, file.fileId);
+
+      // Close sidebar on mobile after selecting file
+      setSidebarOpen(false);
 
       // On mobile, directly redirect to Azure URL
       if (window.innerWidth < 768) {
@@ -221,37 +224,100 @@ export default function NotesDetail() {
   return (
     <div className="h-screen flex flex-col bg-white">
       {/* Header */}
-      <div className="bg-white border-b-4 border-black p-4 md:p-6">
-        <div className="max-w-[1800px] mx-auto">
-          <button
-            onClick={() => navigate('/learnings?tab=notes')}
-            className="flex items-center gap-2 text-gray-600 hover:text-black font-bold text-base mb-4"
-          >
-            <ArrowLeft className="w-5 h-5" strokeWidth={2.5} />
-            <span className="hidden sm:inline">Back to Notes</span>
-          </button>
-          
+      <div className="bg-white border-b-4 border-black p-4">
+        <div className="flex items-center justify-between gap-3">
           <div className="flex items-center gap-3">
-            <div className="p-2 bg-yellow-200 border-3 border-black rounded-lg">
-              <FolderOpen className="w-6 h-6" strokeWidth={2.5} />
-            </div>
-            <div>
-              <h1 className="text-2xl md:text-3xl font-black text-black" style={{ fontFamily: 'Comic Sans MS, cursive' }}>
-                {rootFolder.name}
-              </h1>
-              <p className="text-xs md:text-sm text-gray-600 font-medium truncate">{rootFolder.path}</p>
-            </div>
+            {/* Mobile Menu Toggle */}
+            <button
+              onClick={() => setSidebarOpen(!sidebarOpen)}
+              className="md:hidden p-2 hover:bg-gray-100 rounded-lg border-2 border-black"
+            >
+              {sidebarOpen ? <X size={20} strokeWidth={2.5} /> : <Menu size={20} strokeWidth={2.5} />}
+            </button>
+            
+            <button
+              onClick={() => navigate('/learnings?tab=notes')}
+              className="flex items-center gap-2 text-gray-600 hover:text-black font-bold text-sm"
+            >
+              <ArrowLeft className="w-4 h-4" strokeWidth={2.5} />
+              <span className="hidden sm:inline">Back</span>
+            </button>
           </div>
+          
+          {selectedFile && (
+            <div className="flex items-center gap-2 min-w-0 flex-1 justify-center">
+              <h1 className="text-sm md:text-base font-black text-black truncate">
+                {selectedFile.filename}
+              </h1>
+              <span className="px-2 py-1 bg-gray-200 border-2 border-black rounded text-[10px] font-bold flex-shrink-0">
+                {getFileExtension(selectedFile.filename).toUpperCase()}
+              </span>
+            </div>
+          )}
+          
+          {selectedFile && (
+            <div className="flex items-center gap-2 flex-shrink-0">
+              {isPdfFile(selectedFile.filename) && (
+                <button
+                  onClick={() => {
+                    const iframe = document.querySelector('iframe[title="' + selectedFile.filename + '"]') as HTMLIFrameElement;
+                    if (iframe) {
+                      iframe.requestFullscreen();
+                    }
+                  }}
+                  className="p-2 bg-purple-500 text-white border-2 border-black rounded-lg hover:bg-purple-600 transition-all"
+                  title="Full Screen"
+                >
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2.5}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4" />
+                  </svg>
+                </button>
+              )}
+              <a
+                href={selectedFile.cloudinaryUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="p-2 bg-black text-white border-2 border-black rounded-lg hover:bg-gray-800 transition-all"
+                title="Download"
+              >
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2.5}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                </svg>
+              </a>
+            </div>
+          )}
         </div>
       </div>
 
-      <div className="flex-1 flex md:overflow-hidden relative">
-        {/* Sidebar with Tree View - Always visible */}
-        <div className="w-full md:w-80 bg-white md:border-r-4 border-black overflow-y-auto h-full">
+      <div className="flex-1 flex overflow-hidden relative">
+        {/* Mobile Overlay */}
+        {sidebarOpen && (
+          <div 
+            className="md:hidden fixed inset-0 bg-black/50 z-40"
+            onClick={() => setSidebarOpen(false)}
+          />
+        )}
+        
+        {/* Sidebar */}
+        <div className={`
+          fixed md:relative inset-y-0 left-0 z-50
+          w-80 md:w-80 bg-white border-r-4 border-black
+          transform transition-transform duration-300 ease-in-out
+          ${sidebarOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}
+          overflow-y-auto
+        `}>
           <div className="p-4">
-            <div className="flex items-center gap-2 mb-3">
-              <FolderOpen className="w-4 h-4" strokeWidth={2.5} />
-              <h3 className="font-black text-sm uppercase">Folder Tree</h3>
+            <div className="flex items-center justify-between mb-3">
+              <div className="flex items-center gap-2">
+                <FolderOpen className="w-4 h-4" strokeWidth={2.5} />
+                <h3 className="font-black text-sm uppercase">Files</h3>
+              </div>
+              <button
+                onClick={() => setSidebarOpen(false)}
+                className="md:hidden p-1 hover:bg-gray-100 rounded"
+              >
+                <X size={16} strokeWidth={2.5} />
+              </button>
             </div>
             {renderFolderTree(rootFolder)}
           </div>
@@ -260,57 +326,18 @@ export default function NotesDetail() {
         {/* Main Content - Hidden on mobile */}
         <div className="hidden md:block flex-1 overflow-y-auto bg-gray-50">
           {selectedFile ? (
-            <div className="max-w-6xl mx-auto px-4 md:px-8 py-4 md:py-8">
-              {/* File Header */}
-              <div className="bg-white border-4 border-black rounded-xl p-4 md:p-6 mb-4 md:mb-6 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
-                <div className="flex items-center gap-2 text-xs md:text-sm text-gray-600 mb-4 font-medium overflow-x-auto">
-                  <FolderOpen size={14} strokeWidth={2.5} className="flex-shrink-0" />
-                  <span className="truncate">{selectedFile.folderPath}</span>
-                  <ChevronRight size={12} strokeWidth={2.5} className="flex-shrink-0" />
-                  <span className="text-black font-bold truncate">{selectedFile.filename}</span>
-                </div>
-
-                <div className="flex flex-col md:flex-row items-start justify-between gap-4 mb-4">
-                  <div className="flex-1 min-w-0">
-                    <h1 className="text-xl md:text-3xl font-black text-black mb-3 break-words" style={{ fontFamily: 'Comic Sans MS, cursive' }}>
-                      {selectedFile.filename}
-                    </h1>
-                    <div className="flex flex-wrap items-center gap-2 md:gap-4 text-xs md:text-sm">
-                      <span className="px-3 py-1 bg-gray-200 border-2 border-black rounded-lg font-bold">
-                        {getFileExtension(selectedFile.filename).toUpperCase()}
-                      </span>
-                      <span className="font-medium text-gray-600">
-                        {new Date(selectedFile.uploadedAt).toLocaleDateString('en-US', {
-                          month: 'short', day: 'numeric', year: 'numeric'
-                        })}
-                      </span>
-                      <span className="font-medium text-gray-600">{(selectedFile.size / 1024).toFixed(2)} KB</span>
+            <div className="h-full flex flex-col">
+              {/* Extended File Content */}
+              <div className="flex-1 overflow-y-auto">
+                {isPdfFile(selectedFile.filename) ? (
+                  <>
+                    {/* Desktop PDF Viewer - Extended Full Height */}
+                    <div className="hidden md:block h-full">
+                      <iframe src={selectedFile.cloudinaryUrl} className="w-full h-full" title={selectedFile.filename} />
                     </div>
-                  </div>
-                  <a
-                    href={selectedFile.cloudinaryUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex items-center gap-2 px-4 md:px-6 py-2 md:py-3 bg-black text-white border-3 border-black rounded-xl hover:bg-gray-800 transition-all font-bold shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] text-sm md:text-base whitespace-nowrap"
-                  >
-                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2.5}>
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
-                    </svg>
-                    Download
-                  </a>
-                </div>
-              </div>
-
-              {/* File Content */}
-              {isPdfFile(selectedFile.filename) ? (
-                <>
-                  {/* Desktop PDF Viewer */}
-                  <div className="hidden md:block bg-white border-4 border-black rounded-xl overflow-hidden shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
-                    <iframe src={selectedFile.cloudinaryUrl} className="w-full h-[900px]" title={selectedFile.filename} />
-                  </div>
                   
                   {/* Mobile PDF - Open in New Tab */}
-                  <div className="md:hidden bg-white border-4 border-black rounded-xl p-8 text-center shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
+                  <div className="md:hidden p-8 text-center">
                     <div className="w-20 h-20 bg-red-200 border-3 border-black rounded-xl flex items-center justify-center mx-auto mb-4">
                       <FileText size={40} strokeWidth={2.5} />
                     </div>
@@ -332,10 +359,10 @@ export default function NotesDetail() {
                   </div>
                 </>
               ) : isTextFile(selectedFile.filename) ? (
-                <div className="bg-white border-4 border-black rounded-xl overflow-hidden shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
+                <div className="h-full flex flex-col">
                   {selectedFile.content ? (
-                    <div>
-                      <div className="bg-black text-white px-4 md:px-6 py-3 md:py-4 flex items-center justify-between border-b-4 border-black">
+                    <div className="flex-1 flex flex-col overflow-hidden">
+                      <div className="bg-black text-white px-4 md:px-6 py-3 md:py-4 flex items-center justify-between border-b-4 border-black flex-shrink-0">
                         <div className="flex items-center gap-2 md:gap-3">
                           <div className="flex gap-1 md:gap-1.5">
                             <div className="w-2 h-2 md:w-3 md:h-3 rounded-full bg-red-500 border-2 border-white"></div>
@@ -356,14 +383,14 @@ export default function NotesDetail() {
                           Copy
                         </button>
                       </div>
-                      <div className="bg-gray-50">
-                        <pre className="p-4 md:p-6 overflow-x-auto">
+                      <div className="bg-gray-50 flex-1 overflow-auto">
+                        <pre className="p-4 md:p-6">
                           <code className="text-xs md:text-sm font-mono leading-relaxed text-gray-900">{selectedFile.content}</code>
                         </pre>
                       </div>
                     </div>
                   ) : (
-                    <div className="p-8 md:p-12 text-center">
+                    <div className="p-8 md:p-12 text-center flex-1 flex flex-col items-center justify-center">
                       <div className="w-16 h-16 md:w-20 md:h-20 bg-gray-100 border-3 border-black rounded-xl flex items-center justify-center mx-auto mb-4">
                         <FileText size={32} strokeWidth={2.5} className="md:w-8 md:h-8" />
                       </div>
@@ -375,7 +402,7 @@ export default function NotesDetail() {
                   )}
                 </div>
               ) : (
-                <div className="bg-white border-4 border-black rounded-xl p-8 md:p-16 text-center shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
+                <div className="p-8 md:p-16 text-center flex-1 flex flex-col items-center justify-center">
                   <div className="w-20 h-20 md:w-24 md:h-24 bg-purple-200 border-3 border-black rounded-2xl flex items-center justify-center mx-auto mb-4 md:mb-6">
                     <FileText size={40} strokeWidth={2.5} className="md:w-12 md:h-12" />
                   </div>
@@ -399,6 +426,7 @@ export default function NotesDetail() {
                   </div>
                 </div>
               )}
+              </div>
             </div>
           ) : (
             <div className="flex items-center justify-center h-full">

@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Save, X, Upload, Trash2, Image as ImageIcon, Link as LinkIcon } from 'lucide-react';
 import MDEditor from '@uiw/react-md-editor';
+import config from '../config/config';
 
 interface Link {
   name: string;
@@ -53,7 +54,7 @@ export default function EditProject() {
 
   const fetchProject = async () => {
     try {
-      const response = await fetch(`https://api.kunalpatil.me/api/projects/${projectId}`);
+      const response = await fetch(`${config.api.baseUrl}/api/projects/${projectId}`);
       const data = await response.json();
       const project = data.project;
 
@@ -68,7 +69,7 @@ export default function EditProject() {
 
       // Fetch MD content if exists
       if (project.mdFiles && project.mdFiles.length > 0) {
-        const mdResponse = await fetch(`https://api.kunalpatil.me/api/projects/${projectId}/md-content`);
+        const mdResponse = await fetch(`${config.api.baseUrl}/api/projects/${projectId}/md-content`);
         const mdData = await mdResponse.json();
         if (mdData.exists) {
           setMdContent(mdData.content);
@@ -108,7 +109,7 @@ export default function EditProject() {
         links: links.filter(l => l.name && l.url)
       };
 
-      await fetch(`https://api.kunalpatil.me/api/projects/${projectId}`, {
+      await fetch(`${config.api.baseUrl}/api/projects/${projectId}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(updateData)
@@ -132,7 +133,7 @@ export default function EditProject() {
         const mdFormData = new FormData();
         mdFormData.append('mdFile', mdBlob, `${projectId}.md`);
 
-        await fetch(`https://api.kunalpatil.me/api/projects/${projectId}/md-file`, {
+        await fetch(`${config.api.baseUrl}/api/projects/${projectId}/md-file`, {
           method: 'POST',
           body: mdFormData
         });
@@ -156,7 +157,7 @@ export default function EditProject() {
         formData.append('assets', file);
       });
 
-      const response = await fetch(`https://api.kunalpatil.me/api/projects/${projectId}/assets`, {
+      const response = await fetch(`${config.api.baseUrl}/api/projects/${projectId}/assets`, {
         method: 'POST',
         body: formData
       });
@@ -180,7 +181,7 @@ export default function EditProject() {
         formData.append('cardassets', file);
       });
 
-      const response = await fetch(`https://api.kunalpatil.me/api/projects/${projectId}/cardassets`, {
+      const response = await fetch(`${config.api.baseUrl}/api/projects/${projectId}/cardassets`, {
         method: 'POST',
         body: formData
       });
@@ -200,7 +201,7 @@ export default function EditProject() {
     if (!confirm('Delete this asset?')) return;
 
     try {
-      const response = await fetch(`https://api.kunalpatil.me/api/projects/${projectId}/assets/${index}`, {
+      const response = await fetch(`${config.api.baseUrl}/api/projects/${projectId}/assets/${index}`, {
         method: 'DELETE'
       });
 
@@ -215,7 +216,7 @@ export default function EditProject() {
 
   const updateAssetName = async (index: number, newName: string) => {
     try {
-      const response = await fetch(`https://api.kunalpatil.me/api/projects/${projectId}/assets/${index}/name`, {
+      const response = await fetch(`${config.api.baseUrl}/api/projects/${projectId}/assets/${index}/name`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ name: newName })
@@ -234,7 +235,7 @@ export default function EditProject() {
     if (!confirm('Delete this card asset?')) return;
 
     try {
-      const response = await fetch(`https://api.kunalpatil.me/api/projects/${projectId}/cardassets/${index}`, {
+      const response = await fetch(`${config.api.baseUrl}/api/projects/${projectId}/cardassets/${index}`, {
         method: 'DELETE'
       });
 
@@ -256,14 +257,15 @@ export default function EditProject() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 p-6">
-      {uploading && (
-        <div className="fixed top-0 left-0 right-0 z-50 bg-blue-500 text-white text-center py-3 font-bold">
-          Uploading... Please wait
-        </div>
-      )}
+    <div className="h-screen overflow-y-auto bg-gray-50">
+      <div className="p-6">
+        {uploading && (
+          <div className="fixed top-0 left-0 right-0 z-50 bg-blue-500 text-white text-center py-3 font-bold">
+            Uploading... Please wait
+          </div>
+        )}
 
-      <div className="max-w-[1800px] mx-auto">
+        <div className="max-w-[1800px] mx-auto">
         {/* Header */}
         <div className="bg-white border-4 border-black rounded-2xl p-6 mb-6 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
           <div className="flex items-center justify-between">
@@ -598,6 +600,7 @@ export default function EditProject() {
           </div>
         </div>
       </div>
+    </div>
     </div>
   );
 }

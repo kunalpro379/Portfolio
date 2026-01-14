@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Plus, Trash2, Edit2, Link as LinkIcon, Eye, EyeOff } from 'lucide-react';
+import config from '../config/config';
 
 interface Link {
   name: string;
@@ -31,7 +32,7 @@ export default function TodoList() {
 
   const fetchTodos = async () => {
     try {
-      const response = await fetch('https://api.kunalpatil.me/api/todos');
+      const response = await fetch(config.api.endpoints.todos);
       const data = await response.json();
       setTodos(data.todos);
     } catch (error) {
@@ -43,7 +44,7 @@ export default function TodoList() {
     if (!confirm('Delete this todo?')) return;
 
     try {
-      const response = await fetch(`https://api.kunalpatil.me/api/todos/${todoId}`, {
+      const response = await fetch(config.api.endpoints.todoById(todoId), {
         method: 'DELETE'
       });
 

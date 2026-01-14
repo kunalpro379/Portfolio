@@ -1,9 +1,11 @@
+import CONFIG from '../../config.shared.js';
+
 // Track page view
 export async function trackPageView(path: string) {
   try {
     const referrer = document.referrer || '';
     
-    const response = await fetch('https://api.kunalpatil.me/api/views/track', {
+    const response = await fetch(`${CONFIG.API.BASE_URL}${CONFIG.API.ENDPOINTS.views}/track`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

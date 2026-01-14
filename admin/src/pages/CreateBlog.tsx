@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Save, X, Upload, Trash2, Link as LinkIcon } from 'lucide-react';
 import MDEditor from '@uiw/react-md-editor';
+import config from '../config/config';
 
 interface BlogLink {
   platform: string;
@@ -112,7 +113,7 @@ export default function CreateBlog() {
         coverImage: ''
       };
 
-      const createResponse = await fetch('https://api.kunalpatil.me/api/blogs/create', {
+      const createResponse = await fetch('${config.api.baseUrl}/api/blogs/create', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(blogData)
@@ -127,7 +128,7 @@ export default function CreateBlog() {
         const formData = new FormData();
         formData.append('cover', coverImage);
 
-        await fetch(`https://api.kunalpatil.me/api/blogs/${blogId}/cover`, {
+        await fetch(`${config.api.baseUrl}/api/blogs/${blogId}/cover`, {
           method: 'POST',
           body: formData
         });
@@ -148,7 +149,7 @@ export default function CreateBlog() {
         
         formData.append('assetNames', JSON.stringify(assetNames));
 
-        await fetch(`https://api.kunalpatil.me/api/blogs/${blogId}/assets`, {
+        await fetch(`${config.api.baseUrl}/api/blogs/${blogId}/assets`, {
           method: 'POST',
           body: formData
         });
@@ -160,7 +161,7 @@ export default function CreateBlog() {
         const mdFormData = new FormData();
         mdFormData.append('mdFile', mdBlob, `${blogId}.md`);
 
-        await fetch(`https://api.kunalpatil.me/api/blogs/${blogId}/md-file`, {
+        await fetch(`${config.api.baseUrl}/api/blogs/${blogId}/md-file`, {
           method: 'POST',
           body: mdFormData
         });
@@ -177,8 +178,9 @@ export default function CreateBlog() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 p-4 md:p-6">
-      <div className="max-w-[1800px] mx-auto">
+    <div className="h-screen overflow-y-auto bg-gray-50">
+      <div className="p-4 md:p-6">
+        <div className="max-w-[1800px] mx-auto">
         {/* Header */}
         <div className="bg-white border-4 border-black rounded-2xl p-4 md:p-6 mb-4 md:mb-6 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
@@ -510,6 +512,7 @@ export default function CreateBlog() {
           </div>
         </div>
       </div>
+    </div>
     </div>
   );
 }

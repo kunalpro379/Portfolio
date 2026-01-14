@@ -37,7 +37,7 @@ router.post('/login', async (req, res) => {
     // Generate session hash
     const sessionHash = generateSessionHash();
 
-    // Save session to database (TTL: 10 minutes)
+    // Save session to database (TTL: 7 hours)
     const session = new Session({
       sessionHash,
       userId: user._id,
@@ -54,7 +54,7 @@ router.post('/login', async (req, res) => {
         sessionHash 
       },
       JWT_SECRET,
-      { expiresIn: '7d' } // 7 days
+      { expiresIn: '7h' } // 7 hours
     );
 
     res.json({
@@ -128,7 +128,7 @@ router.post('/logout', async (req, res) => {
   }
 });
 
-// Refresh session endpoint (extends TTL by 10 more minutes)
+// Refresh session endpoint (extends TTL by 7 more hours)
 router.post('/refresh', async (req, res) => {
   try {
     const token = req.headers.authorization?.split(' ')[1];
@@ -161,7 +161,7 @@ router.post('/refresh', async (req, res) => {
         sessionHash: decoded.sessionHash 
       },
       JWT_SECRET,
-      { expiresIn: '7d' } // 7 days
+      { expiresIn: '7h' } // 7 hours
     );
 
     res.json({ 

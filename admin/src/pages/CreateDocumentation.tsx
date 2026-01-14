@@ -2,6 +2,7 @@ import { useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Save, ArrowLeft, Upload, Image as ImageIcon, Trash2, FileText, Pen, Plus, X, Menu, Maximize2, Minimize2, Minus, Square } from 'lucide-react';
 import MDEditor from '@uiw/react-md-editor';
+import config from '../config/config';
 import { Excalidraw } from '@excalidraw/excalidraw';
 
 type TabType = 'markdown' | 'diagram';
@@ -62,7 +63,7 @@ export default function CreateDocumentation() {
         const uploadFormData = new FormData();
         uploadFormData.append('asset', file);
 
-        const response = await fetch('https://api.kunalpatil.me/api/documentation/upload-asset', {
+        const response = await fetch('${config.api.baseUrl}/api/documentation/upload-asset', {
           method: 'POST',
           body: uploadFormData
         });
@@ -109,7 +110,7 @@ export default function CreateDocumentation() {
         const indexMd = files.find(f => f.name === 'index.md');
         const markdownContent = indexMd?.content || '';
 
-        const response = await fetch('https://api.kunalpatil.me/api/documentation/create', {
+        const response = await fetch('${config.api.baseUrl}/api/documentation/create', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
@@ -144,11 +145,12 @@ export default function CreateDocumentation() {
   };
 
   const uploadAttachmentChunked = async (docId: string, file: File) => {
-    const CHUNK_SIZE = 4 * 1024 * 1024; // 4MB chunks
+    const CHUNK_SIZE = 10 * 1024 * 1024; // 10MB chunks for better performance
     const totalChunks = Math.ceil(file.size / CHUNK_SIZE);
+    const MAX_PARALLEL_UPLOADS = 3; // Upload 3 chunks in parallel
 
     // Initialize upload
-    const initResponse = await fetch(`https://api.kunalpatil.me/api/documentation/${docId}/attachments/init`, {
+    const initResponse = await fetch(`${config.api.baseUrl}/api/documentation/${docId}/attachments/init`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -161,10 +163,10 @@ export default function CreateDocumentation() {
     if (!initResponse.ok) throw new Error('Failed to initialize upload');
     const { fileId, blobPath } = await initResponse.json();
 
-    const blockIds: string[] = [];
+    const blockIds: string[] = new Array(totalChunks);
 
-    // Upload chunks
-    for (let i = 0; i < totalChunks; i++) {
+    // Upload chunks in parallel batches
+    const uploadChunk = async (i: number) => {
       const start = i * CHUNK_SIZE;
       const end = Math.min(start + CHUNK_SIZE, file.size);
       const chunk = file.slice(start, end);
@@ -178,18 +180,27 @@ export default function CreateDocumentation() {
       chunkFormData.append('fileName', file.name);
       chunkFormData.append('mimeType', file.type);
 
-      const chunkResponse = await fetch(`https://api.kunalpatil.me/api/documentation/${docId}/attachments/chunk`, {
+      const chunkResponse = await fetch(`${config.api.baseUrl}/api/documentation/${docId}/attachments/chunk`, {
         method: 'POST',
         body: chunkFormData
       });
 
       if (!chunkResponse.ok) throw new Error(`Failed to upload chunk ${i + 1}`);
       const chunkData = await chunkResponse.json();
-      blockIds.push(chunkData.blockId);
+      blockIds[i] = chunkData.blockId;
+    };
+
+    // Upload chunks in parallel batches
+    for (let i = 0; i < totalChunks; i += MAX_PARALLEL_UPLOADS) {
+      const batch = [];
+      for (let j = 0; j < MAX_PARALLEL_UPLOADS && i + j < totalChunks; j++) {
+        batch.push(uploadChunk(i + j));
+      }
+      await Promise.all(batch);
     }
 
     // Complete upload
-    const completeResponse = await fetch(`https://api.kunalpatil.me/api/documentation/${docId}/attachments/complete`, {
+    const completeResponse = await fetch(`${config.api.baseUrl}/api/documentation/${docId}/attachments/complete`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -329,7 +340,7 @@ export default function CreateDocumentation() {
       const markdownContent = indexMd?.content || '';
 
       // Create documentation
-      const response = await fetch('https://api.kunalpatil.me/api/documentation/create', {
+      const response = await fetch('${config.api.baseUrl}/api/documentation/create', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -351,14 +362,14 @@ export default function CreateDocumentation() {
       for (const file of files) {
         const serverFile = data.doc.files?.find((f: any) => f.name === file.name);
         if (serverFile) {
-          await fetch(`https://api.kunalpatil.me/api/documentation/${docId}/files/${serverFile.fileId}`, {
+          await fetch(`${config.api.baseUrl}/api/documentation/${docId}/files/${serverFile.fileId}`, {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ content: file.content })
           });
         } else {
           // Create new file
-          await fetch(`https://api.kunalpatil.me/api/documentation/${docId}/files`, {
+          await fetch(`${config.api.baseUrl}/api/documentation/${docId}/files`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({

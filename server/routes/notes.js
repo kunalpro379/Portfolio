@@ -11,12 +11,12 @@ const blobServiceClient = BlobServiceClient.fromConnectionString(
 );
 const containerName = process.env.AZURE_BLOB_CONTAINER_NAME;
 
-// Configure multer for memory storage with 2GB limit
+// Configure multer for memory storage with 50MB limit per chunk
 const storage = multer.memoryStorage();
 const upload = multer({
   storage: storage,
   limits: {
-    fileSize: 2 * 1024 * 1024 * 1024 // 2GB in bytes
+    fileSize: 50 * 1024 * 1024 // 50MB per chunk (Vercel limit)
   }
 });
 
@@ -208,7 +208,7 @@ router.post('/files/upload/init', async (req, res) => {
 
     res.json({
       uploadId,
-      chunkSize: 4 * 1024 * 1024, // 4MB chunks
+      chunkSize: 10 * 1024 * 1024, // 10MB chunks for better performance
       message: 'Upload initialized'
     });
   } catch (error) {
@@ -226,7 +226,7 @@ router.post('/files/upload/chunk', upload.single('chunk'), async (req, res) => {
       return res.status(400).json({ message: 'Upload ID and chunk are required' });
     }
 
-    console.log(`Chunk ${parseInt(chunkIndex) + 1}/${totalChunks} received for ${filename}`);
+    console.log(`Chunk ${parseInt(chunkIndex) + 1}/${totalChunks} received for ${filename} (${(req.file.buffer.length / 1024 / 1024).toFixed(2)}MB)`);
 
     // Upload chunk to Azure as temporary block
     const containerClient = blobServiceClient.getContainerClient(containerName);
@@ -236,8 +236,19 @@ router.post('/files/upload/chunk', upload.single('chunk'), async (req, res) => {
     // Create block ID (must be base64 encoded and same length for all blocks)
     const blockId = Buffer.from(`block-${uploadId}-${String(chunkIndex).padStart(6, '0')}`).toString('base64');
 
-    // Upload block
-    await blockBlobClient.stageBlock(blockId, req.file.buffer, req.file.buffer.length);
+    // Upload block with retry logic
+    let retries = 3;
+    while (retries > 0) {
+      try {
+        await blockBlobClient.stageBlock(blockId, req.file.buffer, req.file.buffer.length);
+        break;
+      } catch (error) {
+        retries--;
+        if (retries === 0) throw error;
+        console.log(`Retrying chunk ${chunkIndex}, ${retries} attempts left`);
+        await new Promise(resolve => setTimeout(resolve, 1000));
+      }
+    }
 
     res.json({
       message: 'Chunk uploaded',

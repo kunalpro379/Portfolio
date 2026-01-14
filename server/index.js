@@ -2,27 +2,19 @@ import express from 'express';
 import mongoose from 'mongoose';
 import cors from 'cors';
 import dotenv from 'dotenv';
+import CONFIG from '../config.shared.js';
 
 // Load environment variables FIRST
 dotenv.config();
 
 const app = express();
-const PORT = process.env.PORT || 5000;
+const PORT = CONFIG.SERVER.PORT;
 
 
 
-// CORS Configuration
+// CORS Configuration - from shared config
 const corsOptions = {
-  origin: [
-    'https://kunalpatil.me',
-    'https://www.kunalpatil.me',
-    'https://admin.kunalpatil.me',
-    'https://www.admin.kunalpatil.me',
-    'http://localhost:5173',
-    'http://localhost:3001',
-    'http://localhost:3002',
-    'https://admin.kunalpatil.me'
-  ],
+  origin: CONFIG.CORS.ORIGINS,
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Origin', 'X-Requested-With', 'Content-Type', 'Accept', 'Authorization', 'Content-Length'],
@@ -39,14 +31,14 @@ app.use((req, res, next) => {
   next();
 });
 
-app.use(express.json({ limit: '2gb' }));
-app.use(express.urlencoded({ limit: '2gb', extended: true }));
+app.use(express.json({ limit: '50mb' }));
+app.use(express.urlencoded({ limit: '50mb', extended: true }));
 
-// MongoDB Connection
+// MongoDB Connection - using shared config
 mongoose.connect(process.env.MONGODB_URI, {
-  dbName: 'Portfolio'
+  dbName: CONFIG.DATABASE.NAME
 })
-  .then(() => console.log('MongoDB Connected to Portfolio DB'))
+  .then(() => console.log(`MongoDB Connected to ${CONFIG.DATABASE.NAME} DB`))
   .catch(err => {
     console.error('MongoDB connection error:', err);
     process.exit(1);
@@ -61,6 +53,7 @@ async function loadRoutes() {
     const { default: todosRoutes } = await import('./routes/todos.js');
     const { default: blogsRoutes } = await import('./routes/blogs.js');
     const { default: documentationRoutes } = await import('./routes/documentation.js');
+    const { default: diagramsRoutes } = await import('./routes/diagrams.js');
 
     app.use('/api/auth', authRoutes);
     app.use('/api/notes', notesRoutes);
@@ -68,6 +61,7 @@ async function loadRoutes() {
     app.use('/api/todos', todosRoutes);
     app.use('/api/blogs', blogsRoutes);
     app.use('/api/documentation', documentationRoutes);
+    app.use('/api/diagrams', diagramsRoutes);
 
     try {
       const viewsModule = await import('./routes/views.js');
