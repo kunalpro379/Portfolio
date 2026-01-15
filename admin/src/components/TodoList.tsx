@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Plus, Trash2, Edit2, Link as LinkIcon, Eye, EyeOff } from 'lucide-react';
-import config from '../config/config';
+import config, { buildUrl } from '../config/config';
 
 interface Link {
   name: string;
@@ -32,7 +32,15 @@ export default function TodoList() {
 
   const fetchTodos = async () => {
     try {
-      const response = await fetch(config.api.endpoints.todos);
+      const response = await fetch(buildUrl(config.api.endpoints.todos), {
+        credentials: 'include',
+      });
+
+      if (!response.ok) {
+        const text = await response.text();
+        throw new Error(`Failed to fetch todos: ${response.status} ${response.statusText} - ${text}`);
+      }
+
       const data = await response.json();
       setTodos(data.todos);
     } catch (error) {
@@ -44,8 +52,9 @@ export default function TodoList() {
     if (!confirm('Delete this todo?')) return;
 
     try {
-      const response = await fetch(config.api.endpoints.todoById(todoId), {
-        method: 'DELETE'
+      const response = await fetch(buildUrl(config.api.endpoints.todoById(todoId)), {
+        method: 'DELETE',
+        credentials: 'include',
       });
 
       if (response.ok) {

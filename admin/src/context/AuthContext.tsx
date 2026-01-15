@@ -1,5 +1,5 @@
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import config from '../config/config';
+import config, { apiCall } from '../config/config';
 
 interface User {
   id: string;
@@ -45,7 +45,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const verifyToken = async (token: string) => {
     try {
-      const response = await fetch(config.api.endpoints.verify, {
+      const response = await apiCall(config.api.endpoints.verify, {
         headers: {
           'Authorization': `Bearer ${token}`
         }
@@ -72,7 +72,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   const login = async (username: string, password: string) => {
-    const response = await fetch(config.api.endpoints.login, {
+    const response = await apiCall(config.api.endpoints.login, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'

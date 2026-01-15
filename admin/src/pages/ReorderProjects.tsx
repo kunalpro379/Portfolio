@@ -2,7 +2,8 @@ import { useState, useEffect } from 'react';
 import { GripVertical, Save, ArrowLeft } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { DragDropContext, Droppable, Draggable, DropResult } from '@hello-pangea/dnd';
-import config from '../config/config';
+import config, { buildUrl } from '../config/config';
+import PageShimmer from '../components/PageShimmer';
 
 interface Project {
     _id: string;
@@ -26,7 +27,7 @@ export default function ReorderProjects() {
 
     const fetchProjects = async () => {
         try {
-            const response = await fetch('${config.api.baseUrl}/api/projects');
+            const response = await fetch(buildUrl('/api/projects'));
             const data = await response.json();
             setProjects(data.projects);
         } catch (error) {
@@ -51,7 +52,7 @@ export default function ReorderProjects() {
         try {
             const projectIds = projects.map(p => p.projectId);
 
-            const response = await fetch('${config.api.baseUrl}/api/projects/reorder', {
+            const response = await fetch(buildUrl('/api/projects/reorder'), {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -74,13 +75,7 @@ export default function ReorderProjects() {
     };
 
     if (loading) {
-        return (
-            <div className="p-4 sm:p-6 lg:p-8">
-                <div className="max-w-4xl mx-auto text-center">
-                    <p className="text-xl font-bold">Loading projects...</p>
-                </div>
-            </div>
-        );
+        return <PageShimmer />;
     }
 
     return (

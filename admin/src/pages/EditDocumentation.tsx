@@ -2,8 +2,9 @@ import { useState, useEffect, useRef } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Save, ArrowLeft, Upload, Image as ImageIcon, Trash2, FileText, Pen, Plus, Folder, X, Menu, Maximize2, Minimize2, Minus, Square } from 'lucide-react';
 import MDEditor from '@uiw/react-md-editor';
-import config from '../config/config';
+import config, { buildUrl } from '../config/config';
 import { Excalidraw } from '@excalidraw/excalidraw';
+import PageShimmer from '../components/PageShimmer';
 
 type TabType = 'markdown' | 'diagram';
 type FileType = 'markdown' | 'diagram' | 'attachment';
@@ -311,7 +312,7 @@ export default function EditDocumentation() {
         const uploadFormData = new FormData();
         uploadFormData.append('asset', file);
 
-        const response = await fetch('${config.api.baseUrl}/api/documentation/upload-asset', {
+        const response = await fetch(buildUrl('/api/documentation/upload-asset'), {
           method: 'POST',
           body: uploadFormData
         });
@@ -445,11 +446,7 @@ export default function EditDocumentation() {
   };
 
   if (loading) {
-    return (
-      <div className="flex items-center justify-center h-screen">
-        <div className="text-2xl font-black">Loading...</div>
-      </div>
-    );
+    return <PageShimmer />;
   }
 
   const markdownFiles = files.filter(f => f.type === 'markdown');

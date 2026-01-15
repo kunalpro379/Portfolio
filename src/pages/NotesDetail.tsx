@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { ArrowLeft, FileText, FolderOpen, Folder as FolderIcon, ChevronRight, ChevronDown, Menu, X } from 'lucide-react';
 import { API_ENDPOINTS } from '@/config/api';
+import PageShimmer from '@/components/PageShimmer';
 
 interface NoteFile {
   fileId: string;
@@ -217,11 +218,7 @@ export default function NotesDetail() {
   };
 
   if (loading) {
-    return (
-      <div className="min-h-screen bg-white flex items-center justify-center">
-        <div className="text-2xl font-black">Loading...</div>
-      </div>
-    );
+    return <PageShimmer />;
   }
 
   if (error || !rootFolder) {

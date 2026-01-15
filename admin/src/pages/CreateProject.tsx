@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Save, X, Upload, Trash2, Image as ImageIcon, Link as LinkIcon } from 'lucide-react';
 import MDEditor from '@uiw/react-md-editor';
-import config from '../config/config';
+import config, { buildUrl } from '../config/config';
 
 interface Link {
   name: string;
@@ -131,7 +131,7 @@ export default function CreateProject() {
         mdFiles: []
       };
 
-      const createResponse = await fetch('${config.api.baseUrl}/api/projects/create', {
+      const createResponse = await fetch(buildUrl('/api/projects/create'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(projectData)

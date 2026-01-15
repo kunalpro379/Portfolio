@@ -3,6 +3,7 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { API_ENDPOINTS, API_BASE_URL } from "@/config/api";
 import ExcalidrawCanvas from "@/components/ExcalidrawCanvas";
+import PageShimmer from "@/components/PageShimmer";
 
 interface ProjectData {
   size?: "big" | "small" | "large" | "medium";
@@ -430,11 +431,7 @@ export default function LearningsPage() {
       <main className="flex-1 bg-transparent p-4 md:p-6 relative z-10">
         <div className="max-w-7xl mx-auto">
           {/* Loading State */}
-          {loading && (
-            <div className="flex items-center justify-center py-20">
-              <div className="text-gray-900 text-2xl font-black">Loading {activeTab}...</div>
-            </div>
-          )}
+          {loading && <PageShimmer />}
 
           {/* Error State */}
           {error && !loading && (

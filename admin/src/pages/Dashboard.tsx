@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { FileText, FolderOpen, Eye, BookOpen, StickyNote, Plus, Edit, FileEdit } from 'lucide-react';
-import config from '../config/config';
+import config, { buildUrl } from '../config/config';
 import DashboardShimmer from '../components/DashboardShimmer';
 
 export default function Dashboard() {
@@ -26,9 +26,9 @@ export default function Dashboard() {
       setLoading(true);
       // Fetch all stats in parallel
       const [projectsRes, blogsRes, docsRes] = await Promise.all([
-        fetch('${config.api.baseUrl}/api/projects'),
-        fetch('${config.api.baseUrl}/api/blogs'),
-        fetch('${config.api.baseUrl}/api/documentation')
+        fetch(buildUrl(config.api.endpoints.projects)),
+        fetch(buildUrl(config.api.endpoints.blogs)),
+        fetch(buildUrl(config.api.endpoints.documentation))
       ]);
 
       const [projectsData, blogsData, docsData] = await Promise.all([
@@ -40,7 +40,7 @@ export default function Dashboard() {
       // Fetch notes folders count
       let notesCount = 0;
       try {
-        const notesRes = await fetch('${config.api.baseUrl}/api/notes/folders?parentPath=');
+        const notesRes = await fetch(buildUrl(config.api.endpoints.notesFolders('')));
         if (notesRes.ok) {
           const notesData = await notesRes.json();
           notesCount = notesData.folders?.length || 0;

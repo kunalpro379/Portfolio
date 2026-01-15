@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Eye, Trash2, RefreshCw, Monitor, Smartphone, Tablet, Globe } from 'lucide-react';
-import config from '../config/config';
+import config, { buildUrl } from '../config/config';
+import PageShimmer from '../components/PageShimmer';
 
 interface View {
   viewId: string;
@@ -50,7 +51,7 @@ export default function Views() {
 
   const fetchStats = async () => {
     try {
-      const response = await fetch('${config.api.baseUrl}/api/views/stats');
+      const response = await fetch(buildUrl('/api/views/stats'));
       const data = await response.json();
       setStats(data);
     } catch (error) {
@@ -68,7 +69,7 @@ export default function Views() {
     if (!confirm('Are you sure you want to clear all views? This cannot be undone.')) return;
 
     try {
-      const response = await fetch('${config.api.baseUrl}/api/views', {
+      const response = await fetch(buildUrl('/api/views'), {
         method: 'DELETE',
       });
 
@@ -95,13 +96,7 @@ export default function Views() {
   };
 
   if (loading) {
-    return (
-      <div className="p-8">
-        <div className="text-center">
-          <p className="text-xl font-bold">Loading views...</p>
-        </div>
-      </div>
-    );
+    return <PageShimmer />;
   }
 
   return (

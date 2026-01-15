@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Save, X, Plus, Trash2, Link as LinkIcon, Eye, EyeOff } from 'lucide-react';
-import config from '../config/config';
+import config, { buildUrl } from '../config/config';
+import PageShimmer from '../components/PageShimmer';
 
 interface Link {
   name: string;
@@ -100,7 +101,7 @@ export default function TodoEditor() {
 
       if (isNewTodo) {
         // Create new todo
-        const response = await fetch('${config.api.baseUrl}/api/todos/create', {
+        const response = await fetch(buildUrl('/api/todos/create'), {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
@@ -148,11 +149,7 @@ export default function TodoEditor() {
   };
 
   if (loading) {
-    return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <p className="text-2xl font-black">Loading todo...</p>
-      </div>
-    );
+    return <PageShimmer />;
   }
 
   return (

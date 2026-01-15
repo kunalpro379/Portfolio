@@ -3,6 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { Save, X, Upload, Trash2, Link as LinkIcon } from 'lucide-react';
 import MDEditor from '@uiw/react-md-editor';
 import config from '../config/config';
+import PageShimmer from '../components/PageShimmer';
 
 interface BlogLink {
   platform: string;
@@ -218,11 +219,7 @@ export default function EditBlog() {
   };
 
   if (loading) {
-    return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <p className="text-2xl font-black">Loading blog...</p>
-      </div>
-    );
+    return <PageShimmer />;
   }
 
   return (

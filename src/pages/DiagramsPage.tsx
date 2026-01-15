@@ -3,6 +3,7 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 import { Plus, FileImage, Lock, Unlock, Trash2, Edit, ArrowLeft } from 'lucide-react';
 import ExcalidrawCanvas from '@/components/ExcalidrawCanvas';
 import { API_BASE_URL } from '@/config/api';
+import PageShimmer from '@/components/PageShimmer';
 
 interface Canvas {
   canvasId: string;
@@ -265,9 +266,7 @@ export default function DiagramsPage() {
       <main className="flex-1 bg-gray-50 p-4 md:p-6">
         <div className="max-w-7xl mx-auto">
           {loading ? (
-            <div className="flex items-center justify-center py-20">
-              <div className="text-gray-900 text-xl md:text-2xl font-black">Loading canvases...</div>
-            </div>
+            <PageShimmer />
           ) : canvases.length === 0 ? (
             <div className="text-center py-20">
               <div className="bg-white border-3 md:border-4 border-black rounded-xl md:rounded-2xl p-8 md:p-12 inline-block">

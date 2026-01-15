@@ -4,6 +4,7 @@ import { Github, ExternalLink, ArrowLeft, FileText, Tag, Link as LinkIcon, Image
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import { API_ENDPOINTS } from '@/config/api';
+import PageShimmer from '@/components/PageShimmer';
 
 interface Heading {
   id: string;
@@ -124,11 +125,7 @@ export default function ProjectDetail() {
   };
 
   if (loading) {
-    return (
-      <div className="min-h-screen bg-white flex items-center justify-center">
-        <div className="text-2xl font-black">Loading...</div>
-      </div>
-    );
+    return <PageShimmer />;
   }
 
   if (error || !project) {

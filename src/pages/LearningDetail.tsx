@@ -5,6 +5,7 @@ import Navbar from '@/components/Navbar';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import { API_ENDPOINTS } from '@/config/api';
+import PageShimmer from '@/components/PageShimmer';
 
 interface Blog {
   blogId: string;
@@ -116,11 +117,7 @@ export default function LearningDetail() {
   }, [id]);
 
   if (loading) {
-    return (
-      <div className="min-h-screen bg-white flex items-center justify-center">
-        <div className="text-2xl font-bold">Loading...</div>
-      </div>
-    );
+    return <PageShimmer />;
   }
 
   if (!content || !type) {
