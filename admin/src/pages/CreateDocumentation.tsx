@@ -2,7 +2,7 @@ import { useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Save, ArrowLeft, Upload, Image as ImageIcon, Trash2, FileText, Pen, Plus, X, Menu, Maximize2, Minimize2, Minus, Square } from 'lucide-react';
 import MDEditor from '@uiw/react-md-editor';
-import config from '../config/config';
+import config, { buildUrl } from '../config/config';
 import { Excalidraw } from '@excalidraw/excalidraw';
 
 type TabType = 'markdown' | 'diagram';
@@ -63,7 +63,7 @@ export default function CreateDocumentation() {
         const uploadFormData = new FormData();
         uploadFormData.append('asset', file);
 
-        const response = await fetch('${config.api.baseUrl}/api/documentation/upload-asset', {
+        const response = await fetch(buildUrl('/api/documentation/upload-asset'), {
           method: 'POST',
           body: uploadFormData
         });
@@ -110,7 +110,7 @@ export default function CreateDocumentation() {
         const indexMd = files.find(f => f.name === 'index.md');
         const markdownContent = indexMd?.content || '';
 
-        const response = await fetch('${config.api.baseUrl}/api/documentation/create', {
+        const response = await fetch(buildUrl('/api/documentation/create'), {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
@@ -340,7 +340,7 @@ export default function CreateDocumentation() {
       const markdownContent = indexMd?.content || '';
 
       // Create documentation
-      const response = await fetch('${config.api.baseUrl}/api/documentation/create', {
+      const response = await fetch(buildUrl('/api/documentation/create'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

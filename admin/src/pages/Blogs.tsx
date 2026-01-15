@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { FileText, Plus, Edit, Trash2, Calendar, Tag } from 'lucide-react';
-import config from '../config/config';
+import config, { buildUrl } from '../config/config';
+import PageShimmer from '../components/PageShimmer';
 
 interface Blog {
   _id: string;
@@ -30,7 +31,7 @@ export default function Blogs() {
 
   const fetchBlogs = async () => {
     try {
-      const response = await fetch('${config.api.baseUrl}/api/blogs');
+      const response = await fetch(buildUrl('/api/blogs'));
       const data = await response.json();
       setBlogs(data.blogs);
     } catch (error) {
@@ -73,11 +74,7 @@ export default function Blogs() {
   };
 
   if (loading) {
-    return (
-      <div className="flex items-center justify-center h-screen">
-        <div className="text-2xl font-black">Loading...</div>
-      </div>
-    );
+    return <PageShimmer />;
   }
 
   return (

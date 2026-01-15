@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { FileText, Plus, Edit, Trash2, Eye, EyeOff, Calendar, Tag } from 'lucide-react';
-import config from '../config/config';
+import config, { buildUrl } from '../config/config';
+import PageShimmer from '../components/PageShimmer';
 
 interface Doc {
   _id: string;
@@ -27,7 +28,7 @@ export default function Documentation() {
 
   const fetchDocs = async () => {
     try {
-      const response = await fetch('${config.api.baseUrl}/api/documentation');
+      const response = await fetch(buildUrl('/api/documentation'));
       const data = await response.json();
       setDocs(data.docs);
     } catch (error) {
@@ -68,11 +69,7 @@ export default function Documentation() {
   };
 
   if (loading) {
-    return (
-      <div className="flex items-center justify-center h-screen">
-        <div className="text-2xl font-black">Loading...</div>
-      </div>
-    );
+    return <PageShimmer />;
   }
 
   return (

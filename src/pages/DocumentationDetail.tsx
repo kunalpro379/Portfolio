@@ -4,6 +4,7 @@ import { ArrowLeft, FileText, Pen, Folder, Menu, Download, X, Maximize2, Minimiz
 import MDEditor from '@uiw/react-md-editor';
 import { Excalidraw } from '@excalidraw/excalidraw';
 import { API_ENDPOINTS } from '../config/api';
+import PageShimmer from '@/components/PageShimmer';
 
 type TabType = 'markdown' | 'diagram';
 type FileType = 'markdown' | 'diagram' | 'attachment';
@@ -162,11 +163,7 @@ export default function DocumentationDetail() {
     })();
 
     if (loading) {
-        return (
-            <div className="flex items-center justify-center h-screen">
-                <div className="text-2xl font-black">Loading...</div>
-            </div>
-        );
+        return <PageShimmer />;
     }
 
     const markdownFiles = files.filter(f => f.type === 'markdown');

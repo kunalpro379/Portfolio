@@ -3,6 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { Save, X, Upload, Trash2, Image as ImageIcon, Link as LinkIcon } from 'lucide-react';
 import MDEditor from '@uiw/react-md-editor';
 import config from '../config/config';
+import PageShimmer from '../components/PageShimmer';
 
 interface Link {
   name: string;
@@ -249,11 +250,7 @@ export default function EditProject() {
   };
 
   if (loading) {
-    return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <p className="text-2xl font-black">Loading project...</p>
-      </div>
-    );
+    return <PageShimmer />;
   }
 
   return (
