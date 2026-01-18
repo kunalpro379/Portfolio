@@ -29,7 +29,7 @@ const corsOptions = {
   },
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Origin', 'X-Requested-With', 'Content-Type', 'Accept', 'Authorization', 'Content-Length'],
+  allowedHeaders: ['Origin', 'X-Requested-With', 'Content-Type', 'Accept', 'Authorization', 'Content-Length', 'X-File-Name', 'X-File-Size', 'X-File-Type'],
   exposedHeaders: ['Content-Length', 'Content-Type'],
   maxAge: 86400,
   preflightContinue: false,

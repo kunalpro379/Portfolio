@@ -34,7 +34,15 @@ export default function Notes() {
   const [newFolderName, setNewFolderName] = useState('');
   const [loading, setLoading] = useState(false);
   const [uploading, setUploading] = useState(false);
-  const [uploadProgress, setUploadProgress] = useState({ current: 0, total: 0 });
+  const [uploadProgress, setUploadProgress] = useState({ 
+    current: 0, 
+    total: 0,
+    currentFile: '',
+    currentFileProgress: 0,
+    currentFileTotal: 0,
+    totalBytesUploaded: 0,
+    totalBytes: 0
+  });
 
   useEffect(() => {
     fetchFolders();
@@ -102,14 +110,56 @@ export default function Notes() {
       return;
     }
 
+    // Calculate total bytes
+    let totalBytes = 0;
+    for (let i = 0; i < fileList.length; i++) {
+      totalBytes += fileList[i].size;
+    }
+
     setUploading(true);
-    setUploadProgress({ current: 0, total: fileList.length });
+    setUploadProgress({ 
+      current: 0, 
+      total: fileList.length,
+      currentFile: '',
+      currentFileProgress: 0,
+      currentFileTotal: 0,
+      totalBytesUploaded: 0,
+      totalBytes
+    });
+
+    let totalBytesUploaded = 0;
 
     try {
       for (let i = 0; i < fileList.length; i++) {
         const file = fileList[i];
-        await uploadSingleFile(file);
-        setUploadProgress({ current: i + 1, total: fileList.length });
+        setUploadProgress(prev => ({
+          ...prev,
+          currentFile: file.name,
+          currentFileProgress: 0,
+          currentFileTotal: file.size,
+          current: i
+        }));
+
+        await uploadSingleFile(file, (chunkProgress: number, chunkTotal: number) => {
+          setUploadProgress(prev => {
+            const fileProgressDiff = chunkProgress - prev.currentFileProgress;
+            const newTotal = prev.totalBytesUploaded + fileProgressDiff;
+
+            return {
+              ...prev,
+              currentFileProgress: Math.min(chunkProgress, file.size),
+              totalBytesUploaded: Math.min(newTotal, totalBytes)
+            };
+          });
+        });
+
+        totalBytesUploaded += file.size;
+        setUploadProgress(prev => ({
+          ...prev,
+          current: i + 1,
+          currentFileProgress: file.size,
+          totalBytesUploaded
+        }));
       }
 
       setTimeout(() => {
@@ -123,7 +173,7 @@ export default function Notes() {
     }
   };
 
-  const uploadSingleFile = async (file: File) => {
+  const uploadSingleFile = async (file: File, onProgress?: (uploaded: number, total: number) => void) => {
     const CHUNK_SIZE = 10 * 1024 * 1024; // 10MB chunks for better performance
     const totalChunks = Math.ceil(file.size / CHUNK_SIZE);
     const MAX_PARALLEL_UPLOADS = 3; // Upload 3 chunks in parallel
@@ -142,6 +192,11 @@ export default function Notes() {
 
       if (!response.ok) {
         throw new Error('Upload failed');
+      }
+
+      // Report progress for small files
+      if (onProgress) {
+        onProgress(file.size, file.size);
       }
       return;
     }
@@ -169,11 +224,14 @@ export default function Notes() {
     const { uploadId } = await initResponse.json();
     const blockIds: string[] = new Array(totalChunks);
 
-    // Step 2: Upload chunks in parallel batches
+    // Step 2: Upload chunks in parallel batches with progress tracking
+    let uploadedBytes = 0;
+    
     const uploadChunk = async (chunkIndex: number) => {
       const start = chunkIndex * CHUNK_SIZE;
       const end = Math.min(start + CHUNK_SIZE, file.size);
       const chunk = file.slice(start, end);
+      const chunkSize = end - start;
 
       const chunkFormData = new FormData();
       chunkFormData.append('chunk', chunk);
@@ -197,7 +255,13 @@ export default function Notes() {
       const { blockId } = await chunkResponse.json();
       blockIds[chunkIndex] = blockId;
 
-      console.log(`Uploaded chunk ${chunkIndex + 1}/${totalChunks}`);
+      // Update progress
+      uploadedBytes += chunkSize;
+      if (onProgress) {
+        onProgress(uploadedBytes, file.size);
+      }
+
+      console.log(`Uploaded chunk ${chunkIndex + 1}/${totalChunks} (${((uploadedBytes / file.size) * 100).toFixed(1)}%)`);
     };
 
     // Upload chunks in parallel batches
@@ -297,31 +361,50 @@ export default function Notes() {
           <div className="fixed top-0 left-0 right-0 z-50 bg-white border-b-2 sm:border-b-3 lg:border-b-4 border-black shadow-[0_2px_0px_0px_rgba(0,0,0,1)] lg:shadow-[0_4px_0px_0px_rgba(0,0,0,1)]">
             <div className="max-w-7xl mx-auto px-3 sm:px-4 md:px-6 lg:px-8 py-2.5 sm:py-3 lg:py-4">
               <div className="flex items-center justify-between mb-2 lg:mb-3">
-                <div className="flex items-center gap-2 lg:gap-3">
-                  <div className="w-6 h-6 sm:w-7 sm:h-7 lg:w-8 lg:h-8 border-2 lg:border-3 border-black rounded-full flex items-center justify-center bg-blue-200 animate-pulse">
+                <div className="flex items-center gap-2 lg:gap-3 flex-1 min-w-0">
+                  <div className="w-6 h-6 sm:w-7 sm:h-7 lg:w-8 lg:h-8 border-2 lg:border-3 border-black rounded-full flex items-center justify-center bg-blue-200 animate-pulse flex-shrink-0">
                     <Upload className="w-3 h-3 sm:w-3.5 sm:h-3.5 lg:w-4 lg:h-4 text-black" strokeWidth={2.5} />
                   </div>
-                  <div>
-                    <h3 className="font-black text-black text-sm sm:text-base lg:text-lg">Uploading Files...</h3>
+                  <div className="flex-1 min-w-0">
+                    <h3 className="font-black text-black text-sm sm:text-base lg:text-lg truncate">
+                      {uploadProgress.currentFile || 'Uploading Files...'}
+                    </h3>
                     <p className="text-[10px] sm:text-xs lg:text-sm text-gray-600 font-medium">
-                      {uploadProgress.current} of {uploadProgress.total} files uploaded
+                      File {uploadProgress.current} of {uploadProgress.total} 
+                      {uploadProgress.currentFileTotal > 0 && ` • ${formatFileSize(uploadProgress.currentFileProgress)} / ${formatFileSize(uploadProgress.currentFileTotal)}`}
                     </p>
                   </div>
                 </div>
-                <div className="text-lg sm:text-xl lg:text-2xl font-black text-black">
-                  {Math.round((uploadProgress.current / uploadProgress.total) * 100)}%
+                <div className="text-lg sm:text-xl lg:text-2xl font-black text-black flex-shrink-0 ml-2">
+                  {uploadProgress.totalBytes > 0 
+                    ? Math.round((uploadProgress.totalBytesUploaded / uploadProgress.totalBytes) * 100)
+                    : Math.round((uploadProgress.current / uploadProgress.total) * 100)}%
                 </div>
               </div>
 
-              {/* Progress Bar */}
-              <div className="w-full h-2.5 sm:h-3 lg:h-4 bg-gray-200 border-2 lg:border-3 border-black rounded-full overflow-hidden">
+              {/* Overall Progress Bar */}
+              <div className="w-full h-2.5 sm:h-3 lg:h-4 bg-gray-200 border-2 lg:border-3 border-black rounded-full overflow-hidden mb-2">
                 <div
-                  className="h-full bg-gradient-to-r from-blue-400 to-blue-600 transition-all duration-500 ease-out relative"
-                  style={{ width: `${(uploadProgress.current / uploadProgress.total) * 100}%` }}
+                  className="h-full bg-gradient-to-r from-blue-400 to-blue-600 transition-all duration-300 ease-out relative"
+                  style={{ 
+                    width: `${uploadProgress.totalBytes > 0 
+                      ? (uploadProgress.totalBytesUploaded / uploadProgress.totalBytes) * 100
+                      : (uploadProgress.current / uploadProgress.total) * 100}%` 
+                  }}
                 >
                   <div className="absolute inset-0 bg-white/20 animate-pulse"></div>
                 </div>
               </div>
+
+              {/* Current File Progress Bar (for chunked uploads) */}
+              {uploadProgress.currentFileTotal > (10 * 1024 * 1024) && (
+                <div className="w-full h-1.5 sm:h-2 bg-gray-100 border-2 border-gray-300 rounded-full overflow-hidden">
+                  <div
+                    className="h-full bg-gradient-to-r from-green-400 to-green-600 transition-all duration-300 ease-out"
+                    style={{ width: `${(uploadProgress.currentFileProgress / uploadProgress.currentFileTotal) * 100}%` }}
+                  />
+                </div>
+              )}
             </div>
           </div>
         )}
