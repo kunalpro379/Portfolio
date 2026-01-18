@@ -2,6 +2,7 @@ import express from 'express';
 import multer from 'multer';
 import { BlobServiceClient } from '@azure/storage-blob';
 import { Folder, File } from '../models/Note.js';
+import CONFIG from '../../config.shared.js';
 
 const router = express.Router();
 
@@ -195,6 +196,52 @@ router.post('/files/upload', upload.array('files', 10), async (req, res) => {
   }
 });
 
+// Helper function to get allowed origin for CORS
+const getAllowedOrigin = (origin) => {
+  if (!origin) return null;
+  if (CONFIG.CORS.ORIGINS.includes(origin)) {
+    return origin;
+  }
+  return null;
+};
+
+// Handle OPTIONS preflight for chunk upload routes with explicit CORS headers
+router.options('/files/upload/init', (req, res) => {
+  const origin = getAllowedOrigin(req.headers.origin);
+  if (origin) {
+    res.header('Access-Control-Allow-Origin', origin);
+    res.header('Access-Control-Allow-Credentials', 'true');
+  }
+  res.header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
+  res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization, Content-Length, X-File-Name, X-File-Size, X-File-Type');
+  res.header('Access-Control-Max-Age', '86400');
+  res.status(200).end();
+});
+
+router.options('/files/upload/chunk', (req, res) => {
+  const origin = getAllowedOrigin(req.headers.origin);
+  if (origin) {
+    res.header('Access-Control-Allow-Origin', origin);
+    res.header('Access-Control-Allow-Credentials', 'true');
+  }
+  res.header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
+  res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization, Content-Length, X-File-Name, X-File-Size, X-File-Type');
+  res.header('Access-Control-Max-Age', '86400');
+  res.status(200).end();
+});
+
+router.options('/files/upload/finalize', (req, res) => {
+  const origin = getAllowedOrigin(req.headers.origin);
+  if (origin) {
+    res.header('Access-Control-Allow-Origin', origin);
+    res.header('Access-Control-Allow-Credentials', 'true');
+  }
+  res.header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
+  res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization, Content-Length, X-File-Name, X-File-Size, X-File-Type');
+  res.header('Access-Control-Max-Age', '86400');
+  res.status(200).end();
+});
+
 // Chunked upload - Initialize
 router.post('/files/upload/init', async (req, res) => {
   try {
@@ -202,6 +249,14 @@ router.post('/files/upload/init', async (req, res) => {
 
     if (!filename || !folderPath) {
       return res.status(400).json({ message: 'Filename and folder path are required' });
+    }
+
+    // Validate file size - allow up to 2GB
+    const MAX_FILE_SIZE = 2 * 1024 * 1024 * 1024; // 2GB
+    if (fileSize && fileSize > MAX_FILE_SIZE) {
+      return res.status(400).json({ 
+        message: `File size exceeds maximum limit of ${MAX_FILE_SIZE / (1024 * 1024 * 1024)}GB` 
+      });
     }
 
     const uploadId = generateId();
