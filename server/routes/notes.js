@@ -308,14 +308,53 @@ router.post('/files/upload/init', async (req, res) => {
 });
 
 // Chunked upload - Upload chunk
-router.post('/files/upload/chunk', upload.single('chunk'), async (req, res) => {
-  try {
-    // Set CORS headers explicitly
+router.post('/files/upload/chunk', (req, res, next) => {
+  // Log incoming request for debugging
+  console.log('POST /files/upload/chunk - Request received', {
+    method: req.method,
+    origin: req.headers.origin,
+    contentType: req.headers['content-type'],
+    contentLength: req.headers['content-length']
+  });
+  
+  // Set CORS headers BEFORE multer processes the request
+  const origin = getAllowedOrigin(req.headers.origin);
+  if (origin) {
+    res.header('Access-Control-Allow-Origin', origin);
+    res.header('Access-Control-Allow-Credentials', 'true');
+  }
+  res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, PATCH, DELETE, OPTIONS');
+  res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization, Content-Length, X-File-Name, X-File-Size, X-File-Type');
+  next();
+}, upload.single('chunk'), (err, req, res, next) => {
+  // Handle multer errors (like file size exceeded)
+  if (err) {
+    console.error('Multer error:', err);
     const origin = getAllowedOrigin(req.headers.origin);
     if (origin) {
       res.header('Access-Control-Allow-Origin', origin);
       res.header('Access-Control-Allow-Credentials', 'true');
     }
+    if (err.code === 'LIMIT_FILE_SIZE') {
+      return res.status(413).json({ message: 'File too large', error: err.message });
+    }
+    return res.status(400).json({ message: 'Upload error', error: err.message });
+  }
+  next();
+}, async (req, res) => {
+  try {
+    // Ensure CORS headers are still set after multer
+    const origin = getAllowedOrigin(req.headers.origin);
+    if (origin) {
+      res.header('Access-Control-Allow-Origin', origin);
+      res.header('Access-Control-Allow-Credentials', 'true');
+    }
+
+    console.log('Chunk upload handler - Processing request', {
+      hasFile: !!req.file,
+      fileSize: req.file?.size,
+      body: Object.keys(req.body)
+    });
 
     const { uploadId, chunkIndex, totalChunks, filename, folderPath, fileType } = req.body;
 

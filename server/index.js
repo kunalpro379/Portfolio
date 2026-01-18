@@ -21,9 +21,10 @@ const corsOptions = {
     
     // Check if origin is in allowed list
     if (CONFIG.CORS.ORIGINS.includes(origin)) {
+      console.log('CORS: Allowing origin:', origin);
       callback(null, true);
     } else {
-      console.log('CORS blocked origin:', origin);
+      console.log('CORS blocked origin:', origin, 'Allowed origins:', CONFIG.CORS.ORIGINS);
       callback(new Error('Not allowed by CORS'));
     }
   },
@@ -38,14 +39,37 @@ const corsOptions = {
 
 app.use(cors(corsOptions));
 
-// Handle preflight requests explicitly
-app.options('*', cors(corsOptions));
+// Handle preflight requests explicitly - MUST be before other routes
+app.options('*', (req, res) => {
+  const origin = req.headers.origin;
+  const allowedOrigin = CONFIG.CORS.ORIGINS.includes(origin) ? origin : null;
+  
+  if (allowedOrigin) {
+    res.header('Access-Control-Allow-Origin', allowedOrigin);
+    res.header('Access-Control-Allow-Credentials', 'true');
+  }
+  res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, PATCH, DELETE, OPTIONS');
+  res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization, Content-Length, X-File-Name, X-File-Size, X-File-Type');
+  res.header('Access-Control-Max-Age', '86400');
+  res.status(204).end();
+});
 
 // Cache control
 app.use((req, res, next) => {
   res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
   res.setHeader('Pragma', 'no-cache');
   res.setHeader('Expires', '0');
+  next();
+});
+
+// Log all incoming requests for debugging
+app.use((req, res, next) => {
+  console.log(`[${new Date().toISOString()}] ${req.method} ${req.path}`, {
+    origin: req.headers.origin,
+    contentType: req.headers['content-type'],
+    contentLength: req.headers['content-length'],
+    userAgent: req.headers['user-agent']?.substring(0, 50)
+  });
   next();
 });
 
@@ -135,6 +159,40 @@ await loadRoutes();
 
 app.get('/', (req, res) => {
   res.json({ message: 'Portfolio API Server' });
+});
+
+// Debug route to test if requests are reaching Express
+app.post('/api/notes/files/upload/chunk/test', (req, res) => {
+  console.log('Test route hit!', {
+    method: req.method,
+    headers: req.headers,
+    body: req.body,
+    hasFile: !!req.file
+  });
+  const origin = req.headers.origin;
+  const allowedOrigin = CONFIG.CORS.ORIGINS.includes(origin) ? origin : null;
+  if (allowedOrigin) {
+    res.header('Access-Control-Allow-Origin', allowedOrigin);
+    res.header('Access-Control-Allow-Credentials', 'true');
+  }
+  res.json({ message: 'Test route works', received: true });
+});
+
+// Error handling middleware - ensure CORS headers are set even on errors
+app.use((err, req, res, next) => {
+  console.error('Error:', err);
+  const origin = req.headers.origin;
+  const allowedOrigin = CONFIG.CORS.ORIGINS.includes(origin) ? origin : null;
+  
+  if (allowedOrigin) {
+    res.header('Access-Control-Allow-Origin', allowedOrigin);
+    res.header('Access-Control-Allow-Credentials', 'true');
+  }
+  
+  res.status(err.status || 500).json({
+    message: err.message || 'Internal server error',
+    error: process.env.NODE_ENV === 'development' ? err.stack : undefined
+  });
 });
 
 // Export app for Vercel serverless functions
