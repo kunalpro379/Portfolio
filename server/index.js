@@ -53,14 +53,29 @@ app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ limit: '50mb', extended: true }));
 
 // MongoDB Connection - using shared config
-mongoose.connect(process.env.MONGODB_URI, {
-  dbName: CONFIG.DATABASE.NAME
-})
-  .then(() => console.log(`MongoDB Connected to ${CONFIG.DATABASE.NAME} DB`))
-  .catch(err => {
+// Handle connection for both serverless and traditional server environments
+const connectMongoDB = async () => {
+  try {
+    // Check if already connected
+    if (mongoose.connection.readyState === 1) {
+      console.log('MongoDB already connected');
+      return;
+    }
+
+    await mongoose.connect(process.env.MONGODB_URI, {
+      dbName: CONFIG.DATABASE.NAME
+    });
+    console.log(`MongoDB Connected to ${CONFIG.DATABASE.NAME} DB`);
+  } catch (err) {
     console.error('MongoDB connection error:', err);
-    process.exit(1);
-  });
+    // Don't exit in serverless environment - let Vercel handle it
+    if (process.env.VERCEL !== '1') {
+      process.exit(1);
+    }
+  }
+};
+
+connectMongoDB();
 
 // Load routes
 async function loadRoutes() {
@@ -122,6 +137,12 @@ app.get('/', (req, res) => {
   res.json({ message: 'Portfolio API Server' });
 });
 
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
-});
+// Export app for Vercel serverless functions
+// Only start listening if not in serverless environment
+if (process.env.VERCEL !== '1') {
+  app.listen(PORT, () => {
+    console.log(`Server running on port ${PORT}`);
+  });
+}
+
+export default app;
