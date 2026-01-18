@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { ArrowLeft, FileText, FolderOpen, Folder as FolderIcon, ChevronRight, ChevronDown, Menu, X } from 'lucide-react';
+import { ArrowLeft, FileText, FolderOpen, Folder as FolderIcon, ChevronRight, ChevronDown, Menu, X, Download, ExternalLink } from 'lucide-react';
 import { API_ENDPOINTS } from '@/config/api';
 import PageShimmer from '@/components/PageShimmer';
 
@@ -394,9 +394,25 @@ export default function NotesDetail() {
                         <FileText size={32} strokeWidth={2.5} className="md:w-8 md:h-8" />
                       </div>
                       <p className="text-gray-600 mb-4 md:mb-6 font-bold text-sm md:text-base">Unable to preview</p>
-                      <a href={selectedFile.cloudinaryUrl} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 px-4 md:px-6 py-2 md:py-3 bg-black text-white border-3 border-black rounded-xl hover:bg-gray-800 transition-all font-bold shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] text-sm md:text-base">
-                        Open in new tab
-                      </a>
+                      <div className="flex flex-col sm:flex-row gap-3 md:gap-4 justify-center">
+                        <a 
+                          href={selectedFile.cloudinaryUrl} 
+                          download={selectedFile.filename}
+                          className="inline-flex items-center justify-center gap-2 px-4 md:px-6 py-2 md:py-3 bg-green-500 text-white border-3 border-black rounded-xl hover:bg-green-600 transition-all font-bold shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] text-sm md:text-base"
+                        >
+                          <Download className="w-4 h-4 md:w-5 md:h-5" strokeWidth={2.5} />
+                          Download
+                        </a>
+                        <a 
+                          href={selectedFile.cloudinaryUrl} 
+                          target="_blank" 
+                          rel="noopener noreferrer" 
+                          className="inline-flex items-center justify-center gap-2 px-4 md:px-6 py-2 md:py-3 bg-black text-white border-3 border-black rounded-xl hover:bg-gray-800 transition-all font-bold shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] text-sm md:text-base"
+                        >
+                          <ExternalLink className="w-4 h-4 md:w-5 md:h-5" strokeWidth={2.5} />
+                          Open in new tab
+                        </a>
+                      </div>
                     </div>
                   )}
                 </div>
@@ -410,18 +426,23 @@ export default function NotesDetail() {
                     File type: <span className="font-black text-black">{getFileExtension(selectedFile.filename).toUpperCase()}</span>
                   </p>
                   <div className="flex flex-col sm:flex-row gap-3 md:gap-4 justify-center">
-                    <a href={selectedFile.cloudinaryUrl} target="_blank" rel="noopener noreferrer" className="inline-flex items-center justify-center gap-2 px-6 md:px-8 py-3 md:py-4 bg-black text-white border-3 border-black rounded-xl hover:bg-gray-800 transition-all font-bold shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] text-sm md:text-base">
-                      <svg className="w-4 h-4 md:w-5 md:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2.5}>
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-                      </svg>
+                    <a 
+                      href={selectedFile.cloudinaryUrl} 
+                      download={selectedFile.filename}
+                      className="inline-flex items-center justify-center gap-2 px-6 md:px-8 py-3 md:py-4 bg-green-500 text-white border-3 border-black rounded-xl hover:bg-green-600 transition-all font-bold shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] text-sm md:text-base"
+                    >
+                      <Download className="w-4 h-4 md:w-5 md:h-5" strokeWidth={2.5} />
+                      Download
+                    </a>
+                    <a 
+                      href={selectedFile.cloudinaryUrl} 
+                      target="_blank" 
+                      rel="noopener noreferrer" 
+                      className="inline-flex items-center justify-center gap-2 px-6 md:px-8 py-3 md:py-4 bg-black text-white border-3 border-black rounded-xl hover:bg-gray-800 transition-all font-bold shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] text-sm md:text-base"
+                    >
+                      <ExternalLink className="w-4 h-4 md:w-5 md:h-5" strokeWidth={2.5} />
                       Open in new tab
                     </a>
-                    <button onClick={() => { navigator.clipboard.writeText(selectedFile.cloudinaryUrl); alert('Link copied!'); }} className="inline-flex items-center justify-center gap-2 px-6 md:px-8 py-3 md:py-4 bg-purple-200 text-black border-3 border-black rounded-xl hover:bg-purple-300 transition-all font-bold shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] text-sm md:text-base">
-                      <svg className="w-4 h-4 md:w-5 md:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2.5}>
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
-                      </svg>
-                      Copy Link
-                    </button>
                   </div>
                 </div>
               )}
