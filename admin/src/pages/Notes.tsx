@@ -174,7 +174,7 @@ export default function Notes() {
   };
 
   const uploadSingleFile = async (file: File, onProgress?: (uploaded: number, total: number) => void) => {
-    const CHUNK_SIZE = 10 * 1024 * 1024; // 10MB chunks for better performance
+    const CHUNK_SIZE = 4 * 1024 * 1024; // 4MB chunks (Vercel WAF limit is ~4-5MB for multipart/form-data)
     const totalChunks = Math.ceil(file.size / CHUNK_SIZE);
     const MAX_PARALLEL_UPLOADS = 3; // Upload 3 chunks in parallel
 

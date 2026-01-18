@@ -292,7 +292,7 @@ router.post('/files/upload/init', async (req, res) => {
 
     res.json({
       uploadId,
-      chunkSize: 10 * 1024 * 1024, // 10MB chunks for better performance
+      chunkSize: 4 * 1024 * 1024, // 4MB chunks (Vercel WAF limit is ~4-5MB for multipart/form-data)
       message: 'Upload initialized'
     });
   } catch (error) {
