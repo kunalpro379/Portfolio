@@ -205,6 +205,28 @@ const getAllowedOrigin = (origin) => {
   return null;
 };
 
+// Middleware to set CORS headers on all responses
+const setCorsHeaders = (req, res, next) => {
+  const origin = req.headers.origin;
+  const allowedOrigin = getAllowedOrigin(origin);
+  
+  if (allowedOrigin) {
+    res.header('Access-Control-Allow-Origin', allowedOrigin);
+    res.header('Access-Control-Allow-Credentials', 'true');
+    console.log(`CORS: Allowing origin ${allowedOrigin} for ${req.path}`);
+  } else if (origin) {
+    console.log(`CORS: Blocking origin ${origin} for ${req.path}`);
+  }
+  
+  res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, PATCH, DELETE, OPTIONS');
+  res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization, Content-Length, X-File-Name, X-File-Size, X-File-Type');
+  res.header('Access-Control-Expose-Headers', 'Content-Length, Content-Type');
+  next();
+};
+
+// Apply CORS middleware to all routes BEFORE other middleware
+router.use(setCorsHeaders);
+
 // Handle OPTIONS preflight for chunk upload routes with explicit CORS headers
 router.options('/files/upload/init', (req, res) => {
   const origin = getAllowedOrigin(req.headers.origin);
@@ -245,6 +267,13 @@ router.options('/files/upload/finalize', (req, res) => {
 // Chunked upload - Initialize
 router.post('/files/upload/init', async (req, res) => {
   try {
+    // Set CORS headers explicitly
+    const origin = getAllowedOrigin(req.headers.origin);
+    if (origin) {
+      res.header('Access-Control-Allow-Origin', origin);
+      res.header('Access-Control-Allow-Credentials', 'true');
+    }
+
     const { filename, fileType, fileSize, folderPath } = req.body;
 
     if (!filename || !folderPath) {
@@ -268,6 +297,12 @@ router.post('/files/upload/init', async (req, res) => {
     });
   } catch (error) {
     console.error('Init upload error:', error);
+    // Set CORS headers on error response too
+    const origin = getAllowedOrigin(req.headers.origin);
+    if (origin) {
+      res.header('Access-Control-Allow-Origin', origin);
+      res.header('Access-Control-Allow-Credentials', 'true');
+    }
     res.status(500).json({ message: 'Failed to initialize upload', error: error.message });
   }
 });
@@ -275,6 +310,13 @@ router.post('/files/upload/init', async (req, res) => {
 // Chunked upload - Upload chunk
 router.post('/files/upload/chunk', upload.single('chunk'), async (req, res) => {
   try {
+    // Set CORS headers explicitly
+    const origin = getAllowedOrigin(req.headers.origin);
+    if (origin) {
+      res.header('Access-Control-Allow-Origin', origin);
+      res.header('Access-Control-Allow-Credentials', 'true');
+    }
+
     const { uploadId, chunkIndex, totalChunks, filename, folderPath, fileType } = req.body;
 
     if (!uploadId || !req.file) {
@@ -312,6 +354,12 @@ router.post('/files/upload/chunk', upload.single('chunk'), async (req, res) => {
     });
   } catch (error) {
     console.error('Chunk upload error:', error);
+    // Set CORS headers on error response too
+    const origin = getAllowedOrigin(req.headers.origin);
+    if (origin) {
+      res.header('Access-Control-Allow-Origin', origin);
+      res.header('Access-Control-Allow-Credentials', 'true');
+    }
     res.status(500).json({ message: 'Chunk upload failed', error: error.message });
   }
 });
@@ -319,6 +367,13 @@ router.post('/files/upload/chunk', upload.single('chunk'), async (req, res) => {
 // Chunked upload - Finalize
 router.post('/files/upload/finalize', async (req, res) => {
   try {
+    // Set CORS headers explicitly
+    const origin = getAllowedOrigin(req.headers.origin);
+    if (origin) {
+      res.header('Access-Control-Allow-Origin', origin);
+      res.header('Access-Control-Allow-Credentials', 'true');
+    }
+
     const { uploadId, filename, folderPath, fileType, fileSize, blockIds } = req.body;
 
     if (!uploadId || !filename || !folderPath || !blockIds) {
@@ -360,6 +415,12 @@ router.post('/files/upload/finalize', async (req, res) => {
     });
   } catch (error) {
     console.error('Finalize upload error:', error);
+    // Set CORS headers on error response too
+    const origin = getAllowedOrigin(req.headers.origin);
+    if (origin) {
+      res.header('Access-Control-Allow-Origin', origin);
+      res.header('Access-Control-Allow-Credentials', 'true');
+    }
     res.status(500).json({ message: 'Failed to finalize upload', error: error.message });
   }
 });
