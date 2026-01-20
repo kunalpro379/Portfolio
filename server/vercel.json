@@ -2,9 +2,7 @@
   "version": 2,
   "functions": {
     "index.js": {
-      "runtime": "@vercel/node@18.x",
-      "maxDuration": 60,
-      "memory": 1024
+      "runtime": "@vercel/node@20.x"
     }
   },
   "routes": [
