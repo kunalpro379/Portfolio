@@ -2,6 +2,7 @@ import express from 'express';
 import { BlobServiceClient } from '@azure/storage-blob';
 import Diagram from '../models/Diagram.js';
 import crypto from 'crypto';
+import databaseUtils from '../utils/database.js';
 
 const router = express.Router();
 
@@ -49,17 +50,17 @@ function generateCanvasId() {
 // GET all canvases
 router.get('/', async (req, res) => {
   try {
-    // Check if Diagram model is available
-    if (!Diagram) {
-      return res.json({
-        success: true,
-        canvases: []
-      });
-    }
+    // Use database singleton to ensure connection and execute operation
+    const canvases = await databaseUtils.executeOperation(async () => {
+      // Check if Diagram model is available
+      if (!Diagram) {
+        return [];
+      }
 
-    const canvases = await Diagram.find()
-      .select('canvasId name isPublic createdAt updatedAt thumbnail')
-      .sort({ updatedAt: -1 });
+      return await Diagram.find()
+        .select('canvasId name isPublic createdAt updatedAt thumbnail')
+        .sort({ updatedAt: -1 });
+    }, 'Fetch all canvases');
 
     res.json({
       success: true,
@@ -80,7 +81,9 @@ router.get('/:canvasId', async (req, res) => {
   try {
     const { canvasId } = req.params;
 
-    const canvas = await Diagram.findOne({ canvasId });
+    const canvas = await databaseUtils.executeOperation(async () => {
+      return await Diagram.findOne({ canvasId });
+    }, `Fetch canvas ${canvasId}`);
 
     if (!canvas) {
       return res.status(404).json({
@@ -178,16 +181,18 @@ router.post('/', async (req, res) => {
       }
     }
 
-    // Save to MongoDB
-    const newCanvas = new Diagram({
-      canvasId,
-      name,
-      isPublic: isPublic || false,
-      data: canvasData,
-      blobUrl
-    });
+    // Save to MongoDB using database singleton
+    const newCanvas = await databaseUtils.executeOperation(async () => {
+      const canvas = new Diagram({
+        canvasId,
+        name,
+        isPublic: isPublic || false,
+        data: canvasData,
+        blobUrl
+      });
 
-    await newCanvas.save();
+      return await canvas.save();
+    }, `Create canvas ${canvasId}`);
 
     res.status(201).json({
       success: true,
