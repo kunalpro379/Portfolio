@@ -1,11 +1,9 @@
 {
   "version": 2,
-  "functions": {
-    "index.js": {
-      "runtime": "nodejs18.x",
-      "maxDuration": 60,
-      "memory": 1024
+  "routes": [
+    {
+      "src": "/(.*)",
+      "dest": "/api/index.js"
     }
-  }
+  ]
 }
-
