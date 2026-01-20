@@ -21,6 +21,9 @@ router.get('/', async (req, res) => {
     // Get database connection info
     const connectionInfo = databaseUtils.getConnectionInfo();
     
+    // Get connection statistics
+    const connectionStats = databaseUtils.dbConnection.getConnectionStats();
+    
     // Overall health status
     const isHealthy = databaseHealth.connected && serverStatus.configured;
     
@@ -41,7 +44,14 @@ router.get('/', async (req, res) => {
         connected: databaseHealth.connected,
         connectionStatus: connectionInfo.status,
         readyState: connectionInfo.readyState,
-        lastPing: databaseHealth.timestamp
+        lastPing: databaseHealth.timestamp,
+        stats: {
+          connectionAttempts: connectionStats.connectionAttempts,
+          connectionReuses: connectionStats.connectionReuses,
+          efficiency: connectionStats.connectionReuses > 0 
+            ? `${Math.round((connectionStats.connectionReuses / (connectionStats.connectionAttempts + connectionStats.connectionReuses)) * 100)}%`
+            : '0%'
+        }
       },
       memory: {
         used: Math.round(process.memoryUsage().heapUsed / 1024 / 1024),

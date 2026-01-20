@@ -31,7 +31,8 @@ class DatabaseConnection {
   async connect() {
     // Return existing connection if already connected
     if (this.connection && mongoose.connection.readyState === 1) {
-      console.log('MongoDB: Using existing connection');
+      this.connectionReuses++;
+      console.log(`MongoDB: Using existing connection (reused ${this.connectionReuses} times)`);
       return this.connection;
     }
 
@@ -47,7 +48,8 @@ class DatabaseConnection {
 
     try {
       this.isConnecting = true;
-      console.log('MongoDB: Establishing new connection...');
+      this.connectionAttempts++;
+      console.log(`MongoDB: Establishing new connection (attempt #${this.connectionAttempts})...`);
 
       // Connection options for better reliability
       const options = {
@@ -156,6 +158,19 @@ class DatabaseConnection {
    */
   isConnected() {
     return mongoose.connection.readyState === 1;
+  }
+
+  /**
+   * Get connection statistics
+   * @returns {object} Connection statistics
+   */
+  getConnectionStats() {
+    return {
+      connectionAttempts: this.connectionAttempts,
+      connectionReuses: this.connectionReuses,
+      currentStatus: this.getConnectionStatus(),
+      isConnected: this.isConnected()
+    };
   }
 }
 
