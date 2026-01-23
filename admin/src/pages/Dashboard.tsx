@@ -5,6 +5,35 @@ import { FileText, FolderOpen, Eye, BookOpen, StickyNote, Plus, Edit, FileEdit }
 import config, { buildUrl } from '../config/config';
 import DashboardShimmer from '../components/DashboardShimmer';
 
+// Helper function to safely fetch and parse JSON
+const safeFetch = async (url: string) => {
+  try {
+    console.log(`Fetching: ${url}`);
+    const response = await fetch(url);
+    console.log(`Response for ${url}: ${response.status} ${response.statusText}`);
+    
+    if (!response.ok) {
+      console.warn(`API endpoint ${url} returned ${response.status}: ${response.statusText}`);
+      return null;
+    }
+    
+    const contentType = response.headers.get('content-type');
+    if (!contentType || !contentType.includes('application/json')) {
+      console.warn(`API endpoint ${url} returned non-JSON content: ${contentType}`);
+      const text = await response.text();
+      console.warn(`Response body: ${text.substring(0, 200)}...`);
+      return null;
+    }
+    
+    const data = await response.json();
+    console.log(`Data from ${url}:`, data);
+    return data;
+  } catch (error) {
+    console.error(`Error fetching ${url}:`, error);
+    return null;
+  }
+};
+
 export default function Dashboard() {
   const { user } = useAuth();
   const navigate = useNavigate();
@@ -24,40 +53,46 @@ export default function Dashboard() {
   const fetchStats = async () => {
     try {
       setLoading(true);
-      // Fetch all stats in parallel
-      const [projectsRes, blogsRes, docsRes] = await Promise.all([
-        fetch(config.api.endpoints.projects),
-        fetch(config.api.endpoints.blogs),
-        fetch(config.api.endpoints.documentation)
-      ]);
-
+      
+      // Debug: Log the API endpoints being used
+      console.log('API Endpoints:', {
+        projects: config.api.endpoints.projects,
+        blogs: config.api.endpoints.blogs,
+        documentation: config.api.endpoints.documentation,
+        notesFolders: config.api.endpoints.notesFolders('')
+      });
+      
+      // Fetch all stats with safe error handling
       const [projectsData, blogsData, docsData] = await Promise.all([
-        projectsRes.json(),
-        blogsRes.json(),
-        docsRes.json()
+        safeFetch(config.api.endpoints.projects),
+        safeFetch(config.api.endpoints.blogs),
+        safeFetch(config.api.endpoints.documentation)
       ]);
 
       // Fetch notes folders count
       let notesCount = 0;
-      try {
-        const notesRes = await fetch(config.api.endpoints.notesFolders(''));
-        if (notesRes.ok) {
-          const notesData = await notesRes.json();
-          notesCount = notesData.folders?.length || 0;
-        }
-      } catch (e) {
-        console.log('Notes API not available');
+      const notesData = await safeFetch(config.api.endpoints.notesFolders(''));
+      if (notesData && notesData.folders) {
+        notesCount = notesData.folders.length;
       }
 
       setStats({
-        projects: projectsData.projects?.length || 0,
-        blogs: blogsData.blogs?.length || 0,
-        documentation: docsData.docs?.length || 0,
+        projects: projectsData?.projects?.length || 0,
+        blogs: blogsData?.blogs?.length || 0,
+        documentation: docsData?.docs?.length || 0,
         notes: notesCount,
         views: 0
       });
     } catch (error) {
       console.error('Error fetching stats:', error);
+      // Set default stats on error
+      setStats({
+        projects: 0,
+        blogs: 0,
+        documentation: 0,
+        notes: 0,
+        views: 0
+      });
     } finally {
       setLoading(false);
     }
