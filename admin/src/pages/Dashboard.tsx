@@ -26,9 +26,9 @@ export default function Dashboard() {
       setLoading(true);
       // Fetch all stats in parallel
       const [projectsRes, blogsRes, docsRes] = await Promise.all([
-        fetch(buildUrl(config.api.endpoints.projects)),
-        fetch(buildUrl(config.api.endpoints.blogs)),
-        fetch(buildUrl(config.api.endpoints.documentation))
+        fetch(config.api.endpoints.projects),
+        fetch(config.api.endpoints.blogs),
+        fetch(config.api.endpoints.documentation)
       ]);
 
       const [projectsData, blogsData, docsData] = await Promise.all([
@@ -40,7 +40,7 @@ export default function Dashboard() {
       // Fetch notes folders count
       let notesCount = 0;
       try {
-        const notesRes = await fetch(buildUrl(config.api.endpoints.notesFolders('')));
+        const notesRes = await fetch(config.api.endpoints.notesFolders(''));
         if (notesRes.ok) {
           const notesData = await notesRes.json();
           notesCount = notesData.folders?.length || 0;

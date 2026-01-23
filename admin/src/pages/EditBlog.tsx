@@ -42,7 +42,7 @@ export default function EditBlog() {
 
   const fetchBlog = async () => {
     try {
-      const response = await fetch(`${config.api.baseUrl}/api/blogs/${blogId}`);
+      const response = await fetch(config.api.endpoints.blogById(blogId!));
       const data = await response.json();
       const blog = data.blog;
 
@@ -59,7 +59,7 @@ export default function EditBlog() {
 
       // Fetch MD content if exists
       if (blog.mdFiles && blog.mdFiles.length > 0) {
-        const mdResponse = await fetch(`${config.api.baseUrl}/api/blogs/${blogId}/md-content`);
+        const mdResponse = await fetch(config.api.endpoints.blogMdContent(blogId!));
         const mdData = await mdResponse.json();
         if (mdData.exists) {
           setMdContent(mdData.content);
@@ -101,7 +101,7 @@ export default function EditBlog() {
         blogLinks: blogLinks.filter(l => l.platform && l.url)
       };
 
-      await fetch(`${config.api.baseUrl}/api/blogs/${blogId}`, {
+      await fetch(config.api.endpoints.blogById(blogId!), {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(updateData)
@@ -122,7 +122,7 @@ export default function EditBlog() {
         const mdFormData = new FormData();
         mdFormData.append('mdFile', mdBlob, `${blogId}.md`);
 
-        await fetch(`${config.api.baseUrl}/api/blogs/${blogId}/md-file`, {
+        await fetch(config.api.endpoints.blogMdFile(blogId!), {
           method: 'POST',
           body: mdFormData
         });
@@ -146,7 +146,7 @@ export default function EditBlog() {
         formData.append('assets', file);
       });
 
-      const response = await fetch(`${config.api.baseUrl}/api/blogs/${blogId}/assets`, {
+      const response = await fetch(config.api.endpoints.blogAssets(blogId!), {
         method: 'POST',
         body: formData
       });
@@ -168,7 +168,7 @@ export default function EditBlog() {
       const formData = new FormData();
       formData.append('cover', file);
 
-      const response = await fetch(`${config.api.baseUrl}/api/blogs/${blogId}/cover`, {
+      const response = await fetch(config.api.endpoints.blogCover(blogId!), {
         method: 'POST',
         body: formData
       });
@@ -188,7 +188,7 @@ export default function EditBlog() {
     if (!confirm('Delete this asset?')) return;
 
     try {
-      const response = await fetch(`${config.api.baseUrl}/api/blogs/${blogId}/assets/${index}`, {
+      const response = await fetch(config.api.endpoints.blogAssetByIndex(blogId!, index), {
         method: 'DELETE'
       });
 
@@ -203,7 +203,7 @@ export default function EditBlog() {
 
   const updateAssetName = async (index: number, newName: string) => {
     try {
-      const response = await fetch(`${config.api.baseUrl}/api/blogs/${blogId}/assets/${index}/name`, {
+      const response = await fetch(config.api.endpoints.blogAssetName(blogId!, index), {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ name: newName })

@@ -55,7 +55,7 @@ export default function EditDocumentation() {
 
   const fetchDoc = async () => {
     try {
-      const response = await fetch(`${config.api.baseUrl}/api/documentation/${docId}`);
+      const response = await fetch(config.api.endpoints.docById(docId!));
       const data = await response.json();
 
       setFormData({
@@ -88,7 +88,7 @@ export default function EditDocumentation() {
 
   const fetchFiles = async () => {
     try {
-      const response = await fetch(`${config.api.baseUrl}/api/documentation/${docId}/files`);
+      const response = await fetch(config.api.endpoints.docFiles(docId!));
       const data = await response.json();
       setFiles(data.files || []);
     } catch (error) {
@@ -106,7 +106,7 @@ export default function EditDocumentation() {
         await saveCurrentFile(false);
       }
 
-      const response = await fetch(`${config.api.baseUrl}/api/documentation/${docId}/files/${file.fileId}`);
+      const response = await fetch(config.api.endpoints.docFileById(docId!, file.fileId));
 
       if (!response.ok) {
         throw new Error(`Failed to load file: ${response.statusText}`);
@@ -146,7 +146,7 @@ export default function EditDocumentation() {
     }
 
     try {
-      const response = await fetch(`${config.api.baseUrl}/api/documentation/${docId}/files`, {
+      const response = await fetch(config.api.endpoints.docFiles(docId!), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -189,7 +189,7 @@ export default function EditDocumentation() {
         console.log('Saving markdown content length:', currentContent.length);
       }
 
-      const response = await fetch(`${config.api.baseUrl}/api/documentation/${docId}/files/${currentFile.fileId}`, {
+      const response = await fetch(config.api.endpoints.docFileById(docId!, currentFile.fileId), {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ content })
@@ -213,7 +213,7 @@ export default function EditDocumentation() {
     if (!confirm('Delete this file?')) return;
 
     try {
-      const response = await fetch(`${config.api.baseUrl}/api/documentation/${docId}/files/${fileId}`, {
+      const response = await fetch(config.api.endpoints.docFileById(docId!, fileId), {
         method: 'DELETE'
       });
 
@@ -235,7 +235,7 @@ export default function EditDocumentation() {
     if (!indexMd) {
       // Create index.md if it doesn't exist
       try {
-        const response = await fetch(`${config.api.baseUrl}/api/documentation/${docId}/files`, {
+        const response = await fetch(config.api.endpoints.docFiles(docId!), {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
@@ -268,7 +268,7 @@ export default function EditDocumentation() {
     if (!indexDiagram) {
       // Create index.diagram if it doesn't exist
       try {
-        const response = await fetch(`${config.api.baseUrl}/api/documentation/${docId}/files`, {
+        const response = await fetch(config.api.endpoints.docFiles(docId!), {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
@@ -312,7 +312,7 @@ export default function EditDocumentation() {
         const uploadFormData = new FormData();
         uploadFormData.append('asset', file);
 
-        const response = await fetch(buildUrl('/api/documentation/upload-asset'), {
+        const response = await fetch(config.api.endpoints.docUploadAsset, {
           method: 'POST',
           body: uploadFormData
         });
@@ -350,7 +350,7 @@ export default function EditDocumentation() {
         const uploadFormData = new FormData();
         uploadFormData.append('attachment', file);
 
-        const response = await fetch(`${config.api.baseUrl}/api/documentation/${docId}/attachments`, {
+        const response = await fetch(config.api.endpoints.docAttachments(docId!), {
           method: 'POST',
           body: uploadFormData
         });
@@ -382,7 +382,7 @@ export default function EditDocumentation() {
     if (!confirm(`Delete asset "${name}"?`)) return;
 
     try {
-      const response = await fetch(`${config.api.baseUrl}/api/documentation/asset/${docId}/${name}`, {
+      const response = await fetch(config.api.endpoints.docAsset(docId!, name), {
         method: 'DELETE'
       });
 
@@ -418,7 +418,7 @@ export default function EditDocumentation() {
 
     try {
       // Save metadata
-      const response = await fetch(`${config.api.baseUrl}/api/documentation/${docId}`, {
+      const response = await fetch(config.api.endpoints.docById(docId!), {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(formData)

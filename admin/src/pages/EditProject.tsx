@@ -55,7 +55,7 @@ export default function EditProject() {
 
   const fetchProject = async () => {
     try {
-      const response = await fetch(`${config.api.baseUrl}/api/projects/${projectId}`);
+      const response = await fetch(config.api.endpoints.projectById(projectId!));
       const data = await response.json();
       const project = data.project;
 
@@ -70,7 +70,7 @@ export default function EditProject() {
 
       // Fetch MD content if exists
       if (project.mdFiles && project.mdFiles.length > 0) {
-        const mdResponse = await fetch(`${config.api.baseUrl}/api/projects/${projectId}/md-content`);
+        const mdResponse = await fetch(config.api.endpoints.projectMdContent(projectId!));
         const mdData = await mdResponse.json();
         if (mdData.exists) {
           setMdContent(mdData.content);
@@ -110,7 +110,7 @@ export default function EditProject() {
         links: links.filter(l => l.name && l.url)
       };
 
-      await fetch(`${config.api.baseUrl}/api/projects/${projectId}`, {
+      await fetch(config.api.endpoints.projectById(projectId!), {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(updateData)
@@ -134,7 +134,7 @@ export default function EditProject() {
         const mdFormData = new FormData();
         mdFormData.append('mdFile', mdBlob, `${projectId}.md`);
 
-        await fetch(`${config.api.baseUrl}/api/projects/${projectId}/md-file`, {
+        await fetch(config.api.endpoints.projectMdFile(projectId!), {
           method: 'POST',
           body: mdFormData
         });
@@ -158,7 +158,7 @@ export default function EditProject() {
         formData.append('assets', file);
       });
 
-      const response = await fetch(`${config.api.baseUrl}/api/projects/${projectId}/assets`, {
+      const response = await fetch(config.api.endpoints.projectAssets(projectId!), {
         method: 'POST',
         body: formData
       });
@@ -182,7 +182,7 @@ export default function EditProject() {
         formData.append('cardassets', file);
       });
 
-      const response = await fetch(`${config.api.baseUrl}/api/projects/${projectId}/cardassets`, {
+      const response = await fetch(config.api.endpoints.projectCardAssets(projectId!), {
         method: 'POST',
         body: formData
       });
@@ -202,7 +202,7 @@ export default function EditProject() {
     if (!confirm('Delete this asset?')) return;
 
     try {
-      const response = await fetch(`${config.api.baseUrl}/api/projects/${projectId}/assets/${index}`, {
+      const response = await fetch(config.api.endpoints.projectAssetByIndex(projectId!, index), {
         method: 'DELETE'
       });
 
@@ -217,7 +217,7 @@ export default function EditProject() {
 
   const updateAssetName = async (index: number, newName: string) => {
     try {
-      const response = await fetch(`${config.api.baseUrl}/api/projects/${projectId}/assets/${index}/name`, {
+      const response = await fetch(config.api.endpoints.projectAssetName(projectId!, index), {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ name: newName })
@@ -236,7 +236,7 @@ export default function EditProject() {
     if (!confirm('Delete this card asset?')) return;
 
     try {
-      const response = await fetch(`${config.api.baseUrl}/api/projects/${projectId}/cardassets/${index}`, {
+      const response = await fetch(config.api.endpoints.projectCardAssetByIndex(projectId!, index), {
         method: 'DELETE'
       });
 

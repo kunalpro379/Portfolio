@@ -38,7 +38,7 @@ export default function Views() {
 
   const fetchViews = async () => {
     try {
-      const response = await fetch(`${config.api.baseUrl}/api/views?page=${page}&limit=50`);
+      const response = await fetch(`${config.api.endpoints.views}?page=${page}&limit=50`);
       const data = await response.json();
       setViews(data.views);
       setTotalPages(data.pagination.pages);
@@ -51,7 +51,7 @@ export default function Views() {
 
   const fetchStats = async () => {
     try {
-      const response = await fetch(buildUrl('/api/views/stats'));
+      const response = await fetch(config.api.endpoints.viewsStats);
       const data = await response.json();
       setStats(data);
     } catch (error) {
@@ -69,7 +69,7 @@ export default function Views() {
     if (!confirm('Are you sure you want to clear all views? This cannot be undone.')) return;
 
     try {
-      const response = await fetch(buildUrl('/api/views'), {
+      const response = await fetch(config.api.endpoints.views, {
         method: 'DELETE',
       });
 

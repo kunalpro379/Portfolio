@@ -63,7 +63,7 @@ export default function CreateDocumentation() {
         const uploadFormData = new FormData();
         uploadFormData.append('asset', file);
 
-        const response = await fetch(buildUrl('/api/documentation/upload-asset'), {
+        const response = await fetch(config.api.endpoints.docUploadAsset, {
           method: 'POST',
           body: uploadFormData
         });
@@ -110,7 +110,7 @@ export default function CreateDocumentation() {
         const indexMd = files.find(f => f.name === 'index.md');
         const markdownContent = indexMd?.content || '';
 
-        const response = await fetch(buildUrl('/api/documentation/create'), {
+        const response = await fetch(config.api.endpoints.docCreate, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
@@ -150,7 +150,7 @@ export default function CreateDocumentation() {
     const MAX_PARALLEL_UPLOADS = 3; // Upload 3 chunks in parallel
 
     // Initialize upload
-    const initResponse = await fetch(`${config.api.baseUrl}/api/documentation/${docId}/attachments/init`, {
+    const initResponse = await fetch(config.api.endpoints.docAttachmentsInit(docId!), {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -180,7 +180,7 @@ export default function CreateDocumentation() {
       chunkFormData.append('fileName', file.name);
       chunkFormData.append('mimeType', file.type);
 
-      const chunkResponse = await fetch(`${config.api.baseUrl}/api/documentation/${docId}/attachments/chunk`, {
+      const chunkResponse = await fetch(config.api.endpoints.docAttachmentsChunk(docId!), {
         method: 'POST',
         body: chunkFormData
       });
@@ -200,7 +200,7 @@ export default function CreateDocumentation() {
     }
 
     // Complete upload
-    const completeResponse = await fetch(`${config.api.baseUrl}/api/documentation/${docId}/attachments/complete`, {
+    const completeResponse = await fetch(config.api.endpoints.docAttachmentsComplete(docId!), {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -340,7 +340,7 @@ export default function CreateDocumentation() {
       const markdownContent = indexMd?.content || '';
 
       // Create documentation
-      const response = await fetch(buildUrl('/api/documentation/create'), {
+      const response = await fetch(config.api.endpoints.docCreate, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -362,14 +362,14 @@ export default function CreateDocumentation() {
       for (const file of files) {
         const serverFile = data.doc.files?.find((f: any) => f.name === file.name);
         if (serverFile) {
-          await fetch(`${config.api.baseUrl}/api/documentation/${docId}/files/${serverFile.fileId}`, {
+          await fetch(config.api.endpoints.docFileById(docId!, serverFile.fileId), {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ content: file.content })
           });
         } else {
           // Create new file
-          await fetch(`${config.api.baseUrl}/api/documentation/${docId}/files`, {
+          await fetch(config.api.endpoints.docFiles(docId!), {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({

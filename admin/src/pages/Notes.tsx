@@ -51,7 +51,7 @@ export default function Notes() {
 
   const fetchFolders = async () => {
     try {
-      const response = await fetch(buildUrl(config.api.endpoints.notesFolders(currentPath)), {
+      const response = await fetch(config.api.endpoints.notesFolders(currentPath), {
         credentials: 'include'
       });
       const data = await response.json();
@@ -67,7 +67,7 @@ export default function Notes() {
         setFiles([]);
         return;
       }
-      const response = await fetch(buildUrl(config.api.endpoints.notesFiles(currentPath)), {
+      const response = await fetch(config.api.endpoints.notesFiles(currentPath), {
         credentials: 'include'
       });
       const data = await response.json();
@@ -82,7 +82,7 @@ export default function Notes() {
 
     setLoading(true);
     try {
-      const response = await fetch(buildUrl(config.api.endpoints.notesCreateFolder), {
+      const response = await fetch(config.api.endpoints.notesCreateFolder, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
@@ -184,7 +184,7 @@ export default function Notes() {
       formData.append('folderPath', currentPath);
       formData.append('files', file);
 
-      const response = await fetch(buildUrl(config.api.endpoints.notesUploadFiles), {
+      const response = await fetch(config.api.endpoints.notesUploadFiles, {
         method: 'POST',
         body: formData,
         credentials: 'include'
@@ -205,7 +205,7 @@ export default function Notes() {
     console.log(`Uploading ${file.name} in ${totalChunks} chunks`);
 
     // Step 1: Initialize upload
-    const initResponse = await fetch(buildUrl(config.api.endpoints.notesUploadInit), {
+    const initResponse = await fetch(config.api.endpoints.notesUploadInit, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       credentials: 'include',
@@ -242,7 +242,7 @@ export default function Notes() {
       chunkFormData.append('folderPath', currentPath);
       chunkFormData.append('fileType', file.type);
 
-      const chunkResponse = await fetch(buildUrl(config.api.endpoints.notesUploadChunk), {
+      const chunkResponse = await fetch(config.api.endpoints.notesUploadChunk, {
         method: 'POST',
         body: chunkFormData,
         credentials: 'include'
@@ -274,7 +274,7 @@ export default function Notes() {
     }
 
     // Step 3: Finalize upload
-    const finalizeResponse = await fetch(buildUrl(config.api.endpoints.notesUploadFinalize), {
+    const finalizeResponse = await fetch(config.api.endpoints.notesUploadFinalize, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       credentials: 'include',
@@ -299,7 +299,7 @@ export default function Notes() {
     if (!confirm('Delete this file?')) return;
 
     try {
-      const response = await fetch(buildUrl(config.api.endpoints.notesFileById(fileId)), {
+      const response = await fetch(config.api.endpoints.notesFileById(fileId), {
         method: 'DELETE',
         credentials: 'include'
       });
@@ -316,7 +316,7 @@ export default function Notes() {
     if (!confirm('Delete this folder and all its contents?')) return;
 
     try {
-      const response = await fetch(buildUrl(config.api.endpoints.notesFolderById(folderId)), {
+      const response = await fetch(config.api.endpoints.notesFolderById(folderId), {
         method: 'DELETE',
         credentials: 'include'
       });

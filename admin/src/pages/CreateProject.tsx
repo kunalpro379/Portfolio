@@ -131,7 +131,7 @@ export default function CreateProject() {
         mdFiles: []
       };
 
-      const createResponse = await fetch(buildUrl('/api/projects/create'), {
+      const createResponse = await fetch(config.api.endpoints.projectCreate, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(projectData)
@@ -156,7 +156,7 @@ export default function CreateProject() {
         
         formData.append('assetNames', JSON.stringify(assetNames));
 
-        await fetch(`${config.api.baseUrl}/api/projects/${projectId}/assets`, {
+        await fetch(config.api.endpoints.projectAssets(projectId!), {
           method: 'POST',
           body: formData
         });
@@ -173,7 +173,7 @@ export default function CreateProject() {
           }
         });
 
-        await fetch(`${config.api.baseUrl}/api/projects/${projectId}/cardassets`, {
+        await fetch(config.api.endpoints.projectCardAssets(projectId!), {
           method: 'POST',
           body: formData
         });
@@ -185,7 +185,7 @@ export default function CreateProject() {
         const mdFormData = new FormData();
         mdFormData.append('mdFile', mdBlob, `${projectId}.md`);
 
-        await fetch(`${config.api.baseUrl}/api/projects/${projectId}/md-file`, {
+        await fetch(config.api.endpoints.projectMdFile(projectId!), {
           method: 'POST',
           body: mdFormData
         });

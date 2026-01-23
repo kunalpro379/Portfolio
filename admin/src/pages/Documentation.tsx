@@ -28,7 +28,7 @@ export default function Documentation() {
 
   const fetchDocs = async () => {
     try {
-      const response = await fetch(buildUrl('/api/documentation'));
+      const response = await fetch(config.api.endpoints.documentation);
       const data = await response.json();
       setDocs(data.docs);
     } catch (error) {
@@ -42,7 +42,7 @@ export default function Documentation() {
     if (!confirm('Delete this documentation? This cannot be undone.')) return;
 
     try {
-      const response = await fetch(`${config.api.baseUrl}/api/documentation/${docId}`, {
+      const response = await fetch(config.api.endpoints.docById(docId), {
         method: 'DELETE'
       });
 

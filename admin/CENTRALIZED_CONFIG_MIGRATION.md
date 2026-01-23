@@ -82,21 +82,35 @@ const response = await fetch(config.api.endpoints.notesFolders('root'), {
 
 ## Remaining Files to Migrate
 
-The following files still contain hardcoded URLs and should be migrated:
+✅ **All files have been migrated!**
 
-- [ ] admin/src/pages/CreateBlog.tsx
-- [ ] admin/src/pages/EditBlog.tsx
-- [ ] admin/src/pages/CreateProject.tsx
-- [ ] admin/src/pages/EditProject.tsx
-- [ ] admin/src/pages/TodoEditor.tsx
-- [ ] admin/src/pages/Blogs.tsx
-- [ ] admin/src/pages/CreateDocumentation.tsx
-- [ ] admin/src/pages/Dashboard.tsx
-- [ ] admin/src/pages/EditDocumentation.tsx
-- [ ] admin/src/pages/Documentation.tsx
-- [ ] admin/src/pages/ReorderProjects.tsx
-- [ ] admin/src/pages/Projects.tsx
-- [ ] admin/src/pages/Views.tsx
+The following files have been successfully updated:
+
+- ✅ admin/src/pages/CreateBlog.tsx
+- ✅ admin/src/pages/EditBlog.tsx
+- ✅ admin/src/pages/CreateProject.tsx
+- ✅ admin/src/pages/EditProject.tsx
+- ✅ admin/src/pages/TodoEditor.tsx
+- ✅ admin/src/pages/Blogs.tsx
+- ✅ admin/src/pages/CreateDocumentation.tsx
+- ✅ admin/src/pages/Dashboard.tsx
+- ✅ admin/src/pages/EditDocumentation.tsx
+- ✅ admin/src/pages/Documentation.tsx
+- ✅ admin/src/pages/ReorderProjects.tsx
+- ✅ admin/src/pages/Projects.tsx
+- ✅ admin/src/pages/Views.tsx
+- ✅ admin/src/pages/Code.tsx
+- ✅ admin/src/pages/CodeEditor.tsx
+- ✅ admin/src/components/TodoList.tsx
+
+## Critical Fix Applied
+
+**Fixed Double URL Construction Issue:**
+- Removed `buildUrl()` calls when using `config.api.endpoints.*` 
+- The endpoints already return full URLs, so `buildUrl()` was causing double URL construction
+- This was the root cause of "File not found" errors in the admin panel
+
+## Migration Status: ✅ COMPLETE
 
 ## How to Use Config
 

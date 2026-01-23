@@ -113,7 +113,7 @@ export default function CreateBlog() {
         coverImage: ''
       };
 
-      const createResponse = await fetch(buildUrl('/api/blogs/create'), {
+      const createResponse = await fetch(config.api.endpoints.blogCreate, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(blogData)
@@ -128,7 +128,7 @@ export default function CreateBlog() {
         const formData = new FormData();
         formData.append('cover', coverImage);
 
-        await fetch(`${config.api.baseUrl}/api/blogs/${blogId}/cover`, {
+        await fetch(config.api.endpoints.blogCover(blogId!), {
           method: 'POST',
           body: formData
         });
@@ -149,7 +149,7 @@ export default function CreateBlog() {
         
         formData.append('assetNames', JSON.stringify(assetNames));
 
-        await fetch(`${config.api.baseUrl}/api/blogs/${blogId}/assets`, {
+        await fetch(config.api.endpoints.blogAssets(blogId!), {
           method: 'POST',
           body: formData
         });
@@ -161,7 +161,7 @@ export default function CreateBlog() {
         const mdFormData = new FormData();
         mdFormData.append('mdFile', mdBlob, `${blogId}.md`);
 
-        await fetch(`${config.api.baseUrl}/api/blogs/${blogId}/md-file`, {
+        await fetch(config.api.endpoints.blogMdFile(blogId!), {
           method: 'POST',
           body: mdFormData
         });

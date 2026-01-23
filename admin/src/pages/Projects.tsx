@@ -30,7 +30,7 @@ export default function Projects() {
 
   const fetchProjects = async () => {
     try {
-      const response = await fetch(buildUrl('/api/projects'));
+      const response = await fetch(config.api.endpoints.projects);
       const data = await response.json();
       setProjects(data.projects);
     } catch (error) {
@@ -62,7 +62,7 @@ export default function Projects() {
     if (!confirm('Are you sure you want to delete this project?')) return;
 
     try {
-      const response = await fetch(`${config.api.baseUrl}/api/projects/${projectId}`, {
+      const response = await fetch(config.api.endpoints.projectById(projectId), {
         method: 'DELETE'
       });
 
@@ -89,7 +89,7 @@ export default function Projects() {
     try {
       const projectIds = projects.map(p => p.projectId);
       
-      const response = await fetch(buildUrl('/api/projects/reorder'), {
+      const response = await fetch(config.api.endpoints.projectReorder, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

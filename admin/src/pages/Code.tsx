@@ -42,7 +42,7 @@ export default function Code() {
 
   const fetchFolders = async () => {
     try {
-      const response = await fetch(buildUrl(config.api.endpoints.codeFolders(currentPath)), {
+      const response = await fetch(config.api.endpoints.codeFolders(currentPath), {
         credentials: 'include'
       });
       const data = await response.json();
@@ -58,7 +58,7 @@ export default function Code() {
         setFiles([]);
         return;
       }
-      const response = await fetch(buildUrl(config.api.endpoints.codeFiles(currentPath)), {
+      const response = await fetch(config.api.endpoints.codeFiles(currentPath), {
         credentials: 'include'
       });
       const data = await response.json();
@@ -73,7 +73,7 @@ export default function Code() {
 
     setLoading(true);
     try {
-      const response = await fetch(buildUrl(config.api.endpoints.codeCreateFolder), {
+      const response = await fetch(config.api.endpoints.codeCreateFolder, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
@@ -100,7 +100,7 @@ export default function Code() {
 
     setLoading(true);
     try {
-      const response = await fetch(buildUrl(config.api.endpoints.codeCreateFile), {
+      const response = await fetch(config.api.endpoints.codeCreateFile, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
@@ -133,7 +133,7 @@ export default function Code() {
     if (!confirm('Delete this file?')) return;
 
     try {
-      const response = await fetch(buildUrl(config.api.endpoints.codeFileById(fileId)), {
+      const response = await fetch(config.api.endpoints.codeFileById(fileId), {
         method: 'DELETE',
         credentials: 'include'
       });
@@ -150,7 +150,7 @@ export default function Code() {
     if (!confirm('Delete this folder and all its contents?')) return;
 
     try {
-      const response = await fetch(buildUrl(config.api.endpoints.codeFolderById(folderId)), {
+      const response = await fetch(config.api.endpoints.codeFolderById(folderId), {
         method: 'DELETE',
         credentials: 'include'
       });

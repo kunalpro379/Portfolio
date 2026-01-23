@@ -14,6 +14,8 @@ const config = {
       // Projects
       projects: CONFIG.API.ENDPOINTS.projects,
       projectById: (id: string) => `${CONFIG.API.ENDPOINTS.projects}/${id}`,
+      projectCreate: `${CONFIG.API.ENDPOINTS.projects}/create`,
+      projectReorder: `${CONFIG.API.ENDPOINTS.projects}/reorder`,
       projectMdContent: (id: string) => `${CONFIG.API.ENDPOINTS.projects}/${id}/md-content`,
       projectMdFile: (id: string) => `${CONFIG.API.ENDPOINTS.projects}/${id}/md-file`,
       projectAssets: (id: string) => `${CONFIG.API.ENDPOINTS.projects}/${id}/assets`,
@@ -25,6 +27,7 @@ const config = {
       // Blogs
       blogs: CONFIG.API.ENDPOINTS.blogs,
       blogById: (id: string) => `${CONFIG.API.ENDPOINTS.blogs}/${id}`,
+      blogCreate: `${CONFIG.API.ENDPOINTS.blogs}/create`,
       blogMdContent: (id: string) => `${CONFIG.API.ENDPOINTS.blogs}/${id}/md-content`,
       blogMdFile: (id: string) => `${CONFIG.API.ENDPOINTS.blogs}/${id}/md-file`,
       blogAssets: (id: string) => `${CONFIG.API.ENDPOINTS.blogs}/${id}/assets`,
@@ -35,8 +38,15 @@ const config = {
       // Documentation
       documentation: CONFIG.API.ENDPOINTS.documentation,
       docById: (id: string) => `${CONFIG.API.ENDPOINTS.documentation}/${id}`,
+      docCreate: `${CONFIG.API.ENDPOINTS.documentation}/create`,
       docUploadAsset: `${CONFIG.API.ENDPOINTS.documentation}/upload-asset`,
       docAsset: (id: string, name: string) => `${CONFIG.API.ENDPOINTS.documentation}/asset/${id}/${name}`,
+      docFiles: (id: string) => `${CONFIG.API.ENDPOINTS.documentation}/${id}/files`,
+      docFileById: (docId: string, fileId: string) => `${CONFIG.API.ENDPOINTS.documentation}/${docId}/files/${fileId}`,
+      docAttachments: (id: string) => `${CONFIG.API.ENDPOINTS.documentation}/${id}/attachments`,
+      docAttachmentsInit: (id: string) => `${CONFIG.API.ENDPOINTS.documentation}/${id}/attachments/init`,
+      docAttachmentsChunk: (id: string) => `${CONFIG.API.ENDPOINTS.documentation}/${id}/attachments/chunk`,
+      docAttachmentsComplete: (id: string) => `${CONFIG.API.ENDPOINTS.documentation}/${id}/attachments/complete`,
       
       // Notes
       notesFolders: (parentPath: string) => `${CONFIG.API.ENDPOINTS.notes}/folders?parentPath=${parentPath}`,
@@ -66,6 +76,10 @@ const config = {
       // Diagrams
       diagrams: CONFIG.API.ENDPOINTS.diagrams,
       diagramById: (id: string) => `${CONFIG.API.ENDPOINTS.diagrams}/${id}`,
+      
+      // Views
+      views: CONFIG.API.ENDPOINTS.views,
+      viewsStats: `${CONFIG.API.ENDPOINTS.views}/stats`,
     }
   },
 

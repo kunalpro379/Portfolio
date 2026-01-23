@@ -31,7 +31,7 @@ export default function Blogs() {
 
   const fetchBlogs = async () => {
     try {
-      const response = await fetch(buildUrl('/api/blogs'));
+      const response = await fetch(config.api.endpoints.blogs);
       const data = await response.json();
       setBlogs(data.blogs);
     } catch (error) {
@@ -45,7 +45,7 @@ export default function Blogs() {
     if (!confirm('Delete this blog? This will remove all associated files from Azure.')) return;
 
     try {
-      const response = await fetch(`${config.api.baseUrl}/api/blogs/${blogId}`, {
+      const response = await fetch(config.api.endpoints.blogById(blogId), {
         method: 'DELETE'
       });
 

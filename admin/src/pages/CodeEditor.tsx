@@ -48,7 +48,7 @@ export default function CodeEditor() {
       setLoading(true);
       
       // Get file metadata
-      const fileResponse = await fetch(buildUrl(config.api.endpoints.codeFileById(fileId!)), {
+      const fileResponse = await fetch(config.api.endpoints.codeFileById(fileId!), {
         credentials: 'include'
       });
       
@@ -57,7 +57,7 @@ export default function CodeEditor() {
       const fileData = await fileResponse.json();
       
       // Get file content
-      const contentResponse = await fetch(buildUrl(config.api.endpoints.codeFileContent(fileId!)), {
+      const contentResponse = await fetch(config.api.endpoints.codeFileContent(fileId!), {
         credentials: 'include'
       });
       
@@ -83,7 +83,7 @@ export default function CodeEditor() {
     try {
       setSaving(true);
       
-      const response = await fetch(buildUrl(config.api.endpoints.codeFileById(file.fileId)), {
+      const response = await fetch(config.api.endpoints.codeFileById(file.fileId), {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',

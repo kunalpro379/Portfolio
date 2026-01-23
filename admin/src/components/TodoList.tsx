@@ -32,7 +32,7 @@ export default function TodoList() {
 
   const fetchTodos = async () => {
     try {
-      const response = await fetch(buildUrl(config.api.endpoints.todos), {
+      const response = await fetch(config.api.endpoints.todos, {
         credentials: 'include',
       });
 
@@ -52,7 +52,7 @@ export default function TodoList() {
     if (!confirm('Delete this todo?')) return;
 
     try {
-      const response = await fetch(buildUrl(config.api.endpoints.todoById(todoId)), {
+      const response = await fetch(config.api.endpoints.todoById(todoId), {
         method: 'DELETE',
         credentials: 'include',
       });
