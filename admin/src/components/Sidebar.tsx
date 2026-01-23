@@ -1,5 +1,5 @@
 import { NavLink } from 'react-router-dom';
-import { LayoutDashboard, FolderOpen, FileText, BookOpen, StickyNote, Eye, LogOut, X } from 'lucide-react';
+import { LayoutDashboard, FolderOpen, FileText, BookOpen, StickyNote, Code2, Eye, LogOut, X } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 
 interface SidebarProps {
@@ -15,6 +15,7 @@ export default function Sidebar({ onClose }: SidebarProps) {
     { to: '/blogs', icon: FileText, label: 'Blogs' },
     { to: '/documentation', icon: BookOpen, label: 'Documentation' },
     { to: '/notes', icon: StickyNote, label: 'Notes' },
+    { to: '/code', icon: Code2, label: 'Code' },
     { to: '/views', icon: Eye, label: 'Views' },
   ];
 

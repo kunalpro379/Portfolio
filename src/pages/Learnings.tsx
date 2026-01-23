@@ -70,13 +70,6 @@ export default function LearningsPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  // Show more states
-  const [showAllBlogs, setShowAllBlogs] = useState(false);
-  const [showAllNotes, setShowAllNotes] = useState(false);
-  const [showAllDocs, setShowAllDocs] = useState(false);
-  const [showAllProjects, setShowAllProjects] = useState(false);
-  const [showAllDiagrams, setShowAllDiagrams] = useState(false);
-
   // Canvas state
   const [activeCanvas, setActiveCanvas] = useState<string | null>(null);
   const [canvasData, setCanvasData] = useState<any>(null);
@@ -87,8 +80,6 @@ export default function LearningsPage() {
   const [password, setPassword] = useState('');
   const [newCanvasName, setNewCanvasName] = useState('');
   const [newCanvasPublic, setNewCanvasPublic] = useState(false);
-
-  const ITEMS_TO_SHOW = 8; // Increased from 6 since cards are smaller
 
   // Check for canvas parameter in URL
   const canvasIdFromUrl = searchParams.get('canvas');
@@ -327,7 +318,7 @@ export default function LearningsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-100 flex flex-col relative">
+    <div className="min-h-screen bg-gray-100 flex flex-col">
       {/* Background Image */}
       <div 
         className="fixed inset-0 z-0 opacity-30"
@@ -339,8 +330,8 @@ export default function LearningsPage() {
         }}
       />
       
-      {/* Header */}
-      <div className="bg-gray-50/80 backdrop-blur-sm border-b-4 border-black p-4 md:p-6 sticky top-0 z-50 shadow-lg relative">
+      {/* Fixed Header */}
+      <div className="bg-gray-50/80 backdrop-blur-sm border-b-4 border-black p-4 md:p-6 sticky top-0 z-50 shadow-lg relative flex-shrink-0">
         <div className="max-w-7xl mx-auto">
           <button
             onClick={() => navigate('/')}
@@ -427,8 +418,8 @@ export default function LearningsPage() {
         </div>
       </div>
 
-      {/* Main Content */}
-      <main className="flex-1 bg-transparent p-4 md:p-6 relative z-10">
+      {/* Scrollable Main Content */}
+      <main className="flex-1 overflow-y-auto bg-transparent p-4 md:p-6 relative z-10">
         <div className="max-w-7xl mx-auto">
           {/* Loading State */}
           {loading && <PageShimmer />}
@@ -457,7 +448,7 @@ export default function LearningsPage() {
                         </div>
                       </div>
                     ) : (
-                      (showAllNotes ? notes : notes.slice(0, ITEMS_TO_SHOW)).map((note) => (
+                      notes.map((note) => (
                         <div
                           key={note.folderId}
                           onClick={() => {
@@ -480,17 +471,6 @@ export default function LearningsPage() {
                       ))
                     )}
                   </div>
-
-                  {notes.length > ITEMS_TO_SHOW && (
-                    <div className="flex justify-center mt-6">
-                      <button
-                        onClick={() => setShowAllNotes(!showAllNotes)}
-                        className="px-6 py-2.5 bg-black text-white border-3 border-black rounded-xl font-bold hover:bg-gray-800 transition-all shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:shadow-[5px_5px_0px_0px_rgba(0,0,0,1)] text-sm"
-                      >
-                        {showAllNotes ? '← Show Less' : 'Show More →'}
-                      </button>
-                    </div>
-                  )}
                 </>
               )}
 
@@ -506,7 +486,7 @@ export default function LearningsPage() {
                         </div>
                       </div>
                     ) : (
-                      (showAllDocs ? documentation : documentation.slice(0, ITEMS_TO_SHOW)).map((doc) => (
+                      documentation.map((doc) => (
                         <div
                           key={doc.docId}
                           onClick={() => navigate(`/learnings/documentation/${doc.docId}`)}
@@ -575,17 +555,6 @@ export default function LearningsPage() {
                       ))
                     )}
                   </div>
-
-                  {documentation.length > ITEMS_TO_SHOW && (
-                    <div className="flex justify-center mt-6">
-                      <button
-                        onClick={() => setShowAllDocs(!showAllDocs)}
-                        className="px-6 py-2.5 bg-black text-white border-3 border-black rounded-xl font-bold hover:bg-gray-800 transition-all shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:shadow-[5px_5px_0px_0px_rgba(0,0,0,1)] text-sm"
-                      >
-                        {showAllDocs ? '← Show Less' : 'Show More →'}
-                      </button>
-                    </div>
-                  )}
                 </>
               )}
 
@@ -601,7 +570,7 @@ export default function LearningsPage() {
                         </div>
                       </div>
                     ) : (
-                      (showAllBlogs ? blogs : blogs.slice(0, ITEMS_TO_SHOW)).map((blog) => (
+                      blogs.map((blog) => (
                         <div
                           key={blog.blogId}
                           onClick={() => navigate(`/learnings/blogs/${blog.blogId}`)}
@@ -642,17 +611,6 @@ export default function LearningsPage() {
                       ))
                     )}
                   </div>
-
-                  {blogs.length > ITEMS_TO_SHOW && (
-                    <div className="flex justify-center mt-6">
-                      <button
-                        onClick={() => setShowAllBlogs(!showAllBlogs)}
-                        className="px-6 py-2.5 bg-black text-white border-3 border-black rounded-xl font-bold hover:bg-gray-800 transition-all shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:shadow-[5px_5px_0px_0px_rgba(0,0,0,1)] text-sm"
-                      >
-                        {showAllBlogs ? '← Show Less' : 'Show More →'}
-                      </button>
-                    </div>
-                  )}
                 </>
               )}
 
@@ -668,7 +626,7 @@ export default function LearningsPage() {
                         </div>
                       </div>
                     ) : (
-                      (showAllProjects ? projects : projects.slice(0, ITEMS_TO_SHOW)).map((project) => (
+                      projects.map((project) => (
                         <div
                           key={project.id}
                           onClick={() => navigate(`/projects/${project.id}`)}
@@ -702,18 +660,6 @@ export default function LearningsPage() {
                       ))
                     )}
                   </div>
-
-                  {projects.length > ITEMS_TO_SHOW && (
-                    <div className="flex justify-center mt-6">
-                      <button
-                        onClick={() => setShowAllProjects(!showAllProjects)}
-                        className="px-6 py-2.5 bg-black text-white border-3 border-black rounded-xl font-bold hover:bg-gray-800 transition-all shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:shadow-[5px_5px_0px_0px_rgba(0,0,0,1)] text-sm"
-                        style={{ borderRadius: '12px 15px 13px 14px' }}
-                      >
-                        {showAllProjects ? '← Show Less' : 'Show More →'}
-                      </button>
-                    </div>
-                  )}
                 </>
               )}
 
@@ -741,7 +687,7 @@ export default function LearningsPage() {
                         </div>
                       </div>
                     ) : (
-                      (showAllDiagrams ? diagrams : diagrams.slice(0, ITEMS_TO_SHOW)).map((diagram) => (
+                      diagrams.map((diagram) => (
                         <div
                           key={diagram.canvasId}
                           onClick={() => handleCanvasClick(diagram)}
@@ -761,18 +707,6 @@ export default function LearningsPage() {
                       ))
                     )}
                   </div>
-
-                  {diagrams.length > ITEMS_TO_SHOW && (
-                    <div className="flex justify-center mt-6">
-                      <button
-                        onClick={() => setShowAllDiagrams(!showAllDiagrams)}
-                        className="px-6 py-2.5 bg-black text-white border-3 border-black rounded-xl font-bold hover:bg-gray-800 transition-all shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:shadow-[5px_5px_0px_0px_rgba(0,0,0,1)] text-sm"
-                        style={{ borderRadius: '12px 15px 13px 14px' }}
-                      >
-                        {showAllDiagrams ? '← Show Less' : 'Show More →'}
-                      </button>
-                    </div>
-                  )}
                 </>
               )}
             </>

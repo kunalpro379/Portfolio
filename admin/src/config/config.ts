@@ -49,6 +49,15 @@ const config = {
       notesFileById: (id: string) => `${CONFIG.API.ENDPOINTS.notes}/files/${id}`,
       notesFolderById: (id: string) => `${CONFIG.API.ENDPOINTS.notes}/folders/${id}`,
       
+      // Code
+      codeFolders: (parentPath: string) => `${CONFIG.API.ENDPOINTS.code}/folders?parentPath=${parentPath}`,
+      codeFiles: (folderPath: string) => `${CONFIG.API.ENDPOINTS.code}/files?folderPath=${folderPath}`,
+      codeCreateFolder: `${CONFIG.API.ENDPOINTS.code}/folder/create`,
+      codeCreateFile: `${CONFIG.API.ENDPOINTS.code}/file/create`,
+      codeFileById: (id: string) => `${CONFIG.API.ENDPOINTS.code}/files/${id}`,
+      codeFileContent: (id: string) => `${CONFIG.API.ENDPOINTS.code}/files/${id}/content`,
+      codeFolderById: (id: string) => `${CONFIG.API.ENDPOINTS.code}/folders/${id}`,
+      
       // Todos
       todos: CONFIG.API.ENDPOINTS.todos,
       todoById: (id: string) => `${CONFIG.API.ENDPOINTS.todos}/${id}`,

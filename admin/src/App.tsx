@@ -13,6 +13,7 @@ import Documentation from './pages/Documentation';
 import CreateDocumentation from './pages/CreateDocumentation';
 import EditDocumentation from './pages/EditDocumentation';
 import Notes from './pages/Notes';
+import Code from './pages/Code';
 import TodoEditor from './pages/TodoEditor';
 import Views from './pages/Views';
 import Layout from './components/Layout';
@@ -142,6 +143,14 @@ function App() {
             element={
               <PrivateRoute>
                 <Notes />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/code"
+            element={
+              <PrivateRoute>
+                <Code />
               </PrivateRoute>
             }
           />

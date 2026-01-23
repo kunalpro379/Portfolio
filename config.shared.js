@@ -37,6 +37,7 @@ const CONFIG = {
       blogs: '/api/blogs',
       documentation: '/api/documentation',
       notes: '/api/notes',
+      code: '/api/code',
       todos: '/api/todos',
       diagrams: '/api/diagrams',
       auth: '/api/auth',
@@ -87,6 +88,7 @@ const CONFIG = {
   AZURE: {
     CONTAINERS: {
       NOTES: 'notes',
+      CODE: 'code',
       DIAGRAMS: 'diagrams',
     }
   },

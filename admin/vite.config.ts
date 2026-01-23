@@ -14,5 +14,17 @@ export default defineConfig({
   },
   define: {
     'process.env': {}
+  },
+  optimizeDeps: {
+    include: ['monaco-editor']
+  },
+  build: {
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          monaco: ['monaco-editor']
+        }
+      }
+    }
   }
 });
