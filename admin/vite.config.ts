@@ -25,7 +25,8 @@ export default defineConfig({
           monaco: ['monaco-editor']
         }
       }
-    }
+    },
+    assetsInlineLimit: 0
   },
   worker: {
     format: 'es'

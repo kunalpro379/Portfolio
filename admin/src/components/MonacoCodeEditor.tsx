@@ -27,22 +27,28 @@ export default function MonacoCodeEditor({
           const monacoModule = await import('monaco-editor');
           const monaco = (monacoModule as any).default || monacoModule;
           
-          // Configure Monaco Editor workers for Vite
+          // Configure Monaco Editor workers for Vite build
           (self as any).MonacoEnvironment = {
             getWorker: function (_: any, label: string) {
-              if (label === 'json') {
-                return new Worker(new URL('monaco-editor/esm/vs/language/json/json.worker', import.meta.url), { type: 'module' });
+              const baseUrl = import.meta.env.DEV ? '/node_modules/monaco-editor/esm/vs' : '/assets';
+              
+              switch (label) {
+                case 'json':
+                  return new Worker(`${baseUrl}/language/json/json.worker.js`, { type: 'module' });
+                case 'css':
+                case 'scss':
+                case 'less':
+                  return new Worker(`${baseUrl}/language/css/css.worker.js`, { type: 'module' });
+                case 'html':
+                case 'handlebars':
+                case 'razor':
+                  return new Worker(`${baseUrl}/language/html/html.worker.js`, { type: 'module' });
+                case 'typescript':
+                case 'javascript':
+                  return new Worker(`${baseUrl}/language/typescript/ts.worker.js`, { type: 'module' });
+                default:
+                  return new Worker(`${baseUrl}/editor/editor.worker.js`, { type: 'module' });
               }
-              if (label === 'css' || label === 'scss' || label === 'less') {
-                return new Worker(new URL('monaco-editor/esm/vs/language/css/css.worker', import.meta.url), { type: 'module' });
-              }
-              if (label === 'html' || label === 'handlebars' || label === 'razor') {
-                return new Worker(new URL('monaco-editor/esm/vs/language/html/html.worker', import.meta.url), { type: 'module' });
-              }
-              if (label === 'typescript' || label === 'javascript') {
-                return new Worker(new URL('monaco-editor/esm/vs/language/typescript/ts.worker', import.meta.url), { type: 'module' });
-              }
-              return new Worker(new URL('monaco-editor/esm/vs/editor/editor.worker', import.meta.url), { type: 'module' });
             }
           };
           

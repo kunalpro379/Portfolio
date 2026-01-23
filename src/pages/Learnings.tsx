@@ -687,34 +687,17 @@ export default function LearningsPage() {
               {/* CODE TAB */}
               {activeTab === 'code' && (
                 <>
-                  <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3 md:gap-4">
-                    {codeFiles.length === 0 ? (
-                      <div className="col-span-full text-center py-16">
-                        <div className="bg-gray-50/70 backdrop-blur-sm border-3 border-black rounded-2xl p-10 inline-block shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]">
-                          <Code size={48} strokeWidth={2.5} className="mx-auto mb-3 text-orange-500" />
-                          <p className="text-gray-600 text-base font-bold">No code folders yet</p>
-                        </div>
-                      </div>
-                    ) : (
-                      codeFiles.map((folder) => (
-                        <div
-                          key={folder.folderId}
-                          onClick={() => {
-                            // Navigate to code folder view (you can implement this later)
-                            console.log('Navigate to code folder:', folder.path);
-                          }}
-                          className="bg-gray-50/70 backdrop-blur-sm border-3 border-black rounded-xl p-4 hover:shadow-[5px_5px_0px_0px_rgba(0,0,0,1)] transition-all cursor-pointer hover:-translate-y-1 group"
-                          style={{ borderRadius: '12px 15px 13px 14px' }}
-                        >
-                          <div className="flex flex-col items-center text-center gap-2">
-                            <div className="p-2.5 bg-orange-300 border-2 border-black rounded-lg group-hover:rotate-6 transition-transform" style={{ borderRadius: '8px 10px 9px 11px' }}>
-                              <Code size={24} strokeWidth={2.5} />
-                            </div>
-                            <h3 className="text-sm font-black text-black line-clamp-2">{folder.name}</h3>
-                          </div>
-                        </div>
-                      ))
-                    )}
+                  <div className="text-center py-16">
+                    <div className="bg-gray-50/70 backdrop-blur-sm border-3 border-black rounded-2xl p-10 inline-block shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]">
+                      <Code size={48} strokeWidth={2.5} className="mx-auto mb-3 text-orange-500" />
+                      <p className="text-gray-600 text-base font-bold mb-4">Explore My Code Repository</p>
+                      <button
+                        onClick={() => navigate('/learnings/code')}
+                        className="px-6 py-3 bg-orange-400 text-white border-3 border-black rounded-xl font-bold hover:bg-orange-500 transition-all shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:-translate-y-1"
+                      >
+                        Browse Code Files
+                      </button>
+                    </div>
                   </div>
                 </>
               )}

@@ -2,6 +2,8 @@ import { Routes, Route, useLocation } from 'react-router-dom';
 import { useEffect } from 'react';
 import Home from './pages/Home';
 import Learnings from './pages/Learnings';
+import CodePage from './pages/CodePage';
+import DiagramsPage from './pages/DiagramsPage';
 import ProjectDetail from './pages/ProjectDetail';
 import BlogDetail from './pages/BlogDetail';
 import NotesDetail from './pages/NotesDetail';
@@ -26,7 +28,8 @@ function App() {
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/learnings" element={<Learnings />} />
-        <Route path="/learnings/diagrams" element={<Learnings />} />
+        <Route path="/learnings/code" element={<CodePage />} />
+        <Route path="/learnings/diagrams" element={<DiagramsPage />} />
         <Route path="/projects/:id" element={<ProjectDetail />} />
         <Route path="/learnings/blogs/:id" element={<BlogDetail />} />
         <Route path="/learnings/notes/:id" element={<NotesDetail />} />
