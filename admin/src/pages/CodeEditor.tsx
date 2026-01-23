@@ -17,7 +17,7 @@ interface CodeFile {
 }
 
 export default function CodeEditor() {
-  const { filename } = useParams<{ filename: string }>();
+  const { fileId } = useParams<{ fileId: string }>();
   const navigate = useNavigate();
   const [file, setFile] = useState<CodeFile | null>(null);
   const [content, setContent] = useState('');
@@ -27,10 +27,10 @@ export default function CodeEditor() {
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
 
   useEffect(() => {
-    if (filename) {
+    if (fileId) {
       fetchFile();
     }
-  }, [filename]);
+  }, [fileId]);
 
   useEffect(() => {
     // Auto-save every 30 seconds if there are unsaved changes
@@ -47,20 +47,17 @@ export default function CodeEditor() {
     try {
       setLoading(true);
       
-      // First get file metadata by filename
-      const filesResponse = await fetch(buildUrl(`${config.api.endpoints.codeFiles('')}?filename=${filename}`), {
+      // Get file metadata
+      const fileResponse = await fetch(buildUrl(config.api.endpoints.codeFileById(fileId!)), {
         credentials: 'include'
       });
       
-      if (!filesResponse.ok) throw new Error('File not found');
+      if (!fileResponse.ok) throw new Error('File not found');
       
-      const filesData = await filesResponse.json();
-      const fileData = filesData.files?.find((f: CodeFile) => f.filename === filename);
+      const fileData = await fileResponse.json();
       
-      if (!fileData) throw new Error('File not found');
-      
-      // Then get file content
-      const contentResponse = await fetch(buildUrl(config.api.endpoints.codeFileContent(fileData.fileId)), {
+      // Get file content
+      const contentResponse = await fetch(buildUrl(config.api.endpoints.codeFileContent(fileId!)), {
         credentials: 'include'
       });
       
@@ -68,7 +65,7 @@ export default function CodeEditor() {
       
       const contentData = await contentResponse.json();
       
-      setFile(fileData);
+      setFile(fileData.file);
       setContent(contentData.content || '');
       setHasUnsavedChanges(false);
     } catch (error) {

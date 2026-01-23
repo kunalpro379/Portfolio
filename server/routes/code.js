@@ -227,6 +227,32 @@ router.post('/file/create', async (req, res) => {
   }
 });
 
+// Get file metadata by fileId
+router.get('/files/:fileId', async (req, res) => {
+  try {
+    const { fileId } = req.params;
+    
+    const client = new MongoClient(MONGODB_URI);
+    await client.connect();
+    
+    const db = client.db(DATABASE_NAME);
+    const collection = db.collection('codeFiles');
+    
+    const file = await collection.findOne({ fileId });
+    
+    await client.close();
+    
+    if (!file) {
+      return res.status(404).json({ error: 'File not found' });
+    }
+    
+    res.json({ file });
+  } catch (error) {
+    console.error('Error fetching file metadata:', error);
+    res.status(500).json({ error: 'Failed to fetch file metadata' });
+  }
+});
+
 // Get file content
 router.get('/files/:fileId/content', async (req, res) => {
   try {

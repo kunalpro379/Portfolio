@@ -125,8 +125,8 @@ export default function Code() {
   };
 
   const editFile = async (file: CodeFileType) => {
-    // Navigate to dedicated editor page
-    navigate(`/code/${file.filename}`);
+    // Navigate to dedicated editor page with fileId
+    navigate(`/code/${file.fileId}`);
   };
 
   const deleteFile = async (fileId: string) => {

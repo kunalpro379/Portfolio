@@ -1,9 +1,9 @@
+/* Import responsive utilities */
+@import './styles/responsive.css';
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-
-/* Import responsive utilities */
-@import './styles/responsive.css';
 
 * {
   margin: 0;

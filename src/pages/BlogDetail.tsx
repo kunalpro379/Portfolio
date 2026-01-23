@@ -3,8 +3,8 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { ArrowLeft, Calendar, ExternalLink, FileText, Link as LinkIcon, Tag, Menu, X } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
-import { API_ENDPOINTS } from '@/config/api';
-import PageShimmer from '@/components/PageShimmer';
+import { API_ENDPOINTS } from '../config/api';
+import PageShimmer from '../components/PageShimmer';
 
 interface Blog {
   blogId: string;
@@ -32,6 +32,7 @@ export default function BlogDetail() {
   const navigate = useNavigate();
   const [blog, setBlog] = useState<Blog | null>(null);
   const [loading, setLoading] = useState(true);
+  const [contentLoading, setContentLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [activeSection, setActiveSection] = useState<string>('');
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -40,22 +41,34 @@ export default function BlogDetail() {
     const fetchBlog = async () => {
       try {
         setLoading(true);
+        setError(null);
+        
+        // Fetch blog metadata first
         const response = await fetch(`${API_ENDPOINTS.blogs}/${id}`);
         if (!response.ok) throw new Error('Failed to fetch blog');
         const data = await response.json();
         
-        // Fetch markdown content separately
-        const contentResponse = await fetch(`${API_ENDPOINTS.blogs}/${id}/md-content`);
-        if (contentResponse.ok) {
-          const contentData = await contentResponse.json();
-          setBlog({ ...data.blog, content: contentData.content || '' });
-        } else {
-          setBlog({ ...data.blog, content: '' });
+        // Set blog data without content first
+        setBlog({ ...data.blog, content: '' });
+        setLoading(false);
+        
+        // Then fetch markdown content separately with loading indicator
+        setContentLoading(true);
+        try {
+          const contentResponse = await fetch(`${API_ENDPOINTS.blogs}/${id}/md-content`);
+          if (contentResponse.ok) {
+            const contentData = await contentResponse.json();
+            setBlog(prev => prev ? { ...prev, content: contentData.content || '' } : null);
+          }
+        } catch (contentError) {
+          console.error('Error fetching content:', contentError);
+          // Don't fail the whole page if content fails to load
+        } finally {
+          setContentLoading(false);
         }
       } catch (err) {
         console.error('Error fetching blog:', err);
         setError(err instanceof Error ? err.message : 'Failed to load blog');
-      } finally {
         setLoading(false);
       }
     };
@@ -261,7 +274,7 @@ export default function BlogDetail() {
                       className="flex items-center gap-2 p-3 bg-blue-100 border-2 border-black rounded-lg hover:bg-blue-200 transition-all"
                     >
                       <ExternalLink size={16} strokeWidth={2.5} />
-                      <span className="text-sm font-bold truncate flex-1">{link.platform || link.name || 'External Link'}</span>
+                      <span className="text-sm font-bold truncate flex-1">{link.name || 'External Link'}</span>
                     </a>
                   ))}
                 </div>
@@ -313,12 +326,28 @@ export default function BlogDetail() {
 
             {/* Content */}
             <article className="bg-white rounded-2xl p-4 md:p-8 border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
-              <ReactMarkdown 
-                remarkPlugins={[remarkGfm]}
-                components={components}
-              >
-                {blog.content}
-              </ReactMarkdown>
+              {contentLoading ? (
+                <div className="flex items-center justify-center py-12">
+                  <div className="text-center">
+                    <div className="animate-spin w-8 h-8 border-3 border-black border-t-transparent rounded-full mx-auto mb-4"></div>
+                    <p className="text-gray-600 font-medium">Loading content...</p>
+                  </div>
+                </div>
+              ) : blog.content ? (
+                <ReactMarkdown 
+                  remarkPlugins={[remarkGfm]}
+                  components={components}
+                >
+                  {blog.content}
+                </ReactMarkdown>
+              ) : (
+                <div className="text-center py-12">
+                  <div className="w-16 h-16 bg-gray-100 border-3 border-black rounded-xl flex items-center justify-center mx-auto mb-4">
+                    <FileText size={32} strokeWidth={2.5} className="text-gray-400" />
+                  </div>
+                  <p className="text-gray-600 font-medium">No content available</p>
+                </div>
+              )}
 
               {/* Footer */}
               {blog.footer && (

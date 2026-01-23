@@ -156,7 +156,7 @@ function App() {
             }
           />
           <Route
-            path="/code/:filename"
+            path="/code/:fileId"
             element={
               <PrivateRouteNoLayout>
                 <CodeEditor />
