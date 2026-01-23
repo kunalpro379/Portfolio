@@ -1,8 +1,9 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { ArrowLeft, Save, FileText, Clock, Folder } from 'lucide-react';
-import config, { buildUrl } from '../config/config';
-import MonacoCodeEditor from '../components/MonacoCodeEditor';
+import config from '../config/config';
+// Using professional code editor with Prism.js
+import ProfessionalCodeEditor from '../components/ProfessionalCodeEditor';
 
 interface CodeFile {
   _id: string;
@@ -46,6 +47,7 @@ export default function CodeEditor() {
   const fetchFile = async () => {
     try {
       setLoading(true);
+      console.log('Fetching file metadata for fileId:', fileId);
       
       // Get file metadata
       const fileResponse = await fetch(config.api.endpoints.codeFileById(fileId!), {
@@ -55,8 +57,10 @@ export default function CodeEditor() {
       if (!fileResponse.ok) throw new Error('File not found');
       
       const fileData = await fileResponse.json();
+      console.log('File metadata received:', fileData);
       
       // Get file content
+      console.log('Fetching file content...');
       const contentResponse = await fetch(config.api.endpoints.codeFileContent(fileId!), {
         credentials: 'include'
       });
@@ -64,10 +68,12 @@ export default function CodeEditor() {
       if (!contentResponse.ok) throw new Error('Failed to fetch file content');
       
       const contentData = await contentResponse.json();
+      console.log('File content received:', contentData);
       
       setFile(fileData.file);
       setContent(contentData.content || '');
       setHasUnsavedChanges(false);
+      console.log('File loaded successfully');
     } catch (error) {
       console.error('Error fetching file:', error);
       alert('Failed to load file');
@@ -174,7 +180,7 @@ export default function CodeEditor() {
   }
 
   return (
-    <div className="min-h-screen bg-[#1E1E1E] flex flex-col">
+    <div className="h-screen bg-[#1E1E1E] flex flex-col overflow-hidden">
       {/* Header */}
       <div className="bg-[#2D2D30] border-b border-[#3E3E42] px-4 py-3 flex items-center justify-between flex-shrink-0">
         <div className="flex items-center gap-4">
@@ -219,6 +225,14 @@ export default function CodeEditor() {
             </div>
           )}
 
+          {/* Status info moved from editor footer */}
+          <div className="flex items-center gap-4 text-[#CCCCCC] text-sm">
+            <span>Ln {content.split('\n').length}, Col 1</span>
+            <span>UTF-8</span>
+            <span>{content.split('\n').length} lines</span>
+            <span>{content.length} chars</span>
+          </div>
+
           <button
             onClick={saveFile}
             disabled={saving || !hasUnsavedChanges}
@@ -230,38 +244,14 @@ export default function CodeEditor() {
         </div>
       </div>
 
-      {/* Editor */}
-      <div className="flex-1 overflow-hidden">
-        <MonacoCodeEditor
+      {/* Editor - Takes remaining screen height */}
+      <div className="flex-1 min-h-0">
+        <ProfessionalCodeEditor
           value={content}
           onChange={handleContentChange}
           language={file.language}
           filename={file.filename}
         />
-      </div>
-
-      {/* Status Bar */}
-      <div className="bg-[#007ACC] px-4 py-2 flex items-center justify-between text-sm text-white flex-shrink-0">
-        <div className="flex items-center gap-6">
-          <div className="flex items-center gap-1">
-            <span className="font-medium">Ln {content.split('\n').length}</span>
-            <span className="text-[#CCE7FF]">•</span>
-            <span className="font-medium">Col 1</span>
-          </div>
-          <span>UTF-8</span>
-          <span>LF</span>
-          <span className="capitalize font-medium">{file.language}</span>
-        </div>
-        
-        <div className="flex items-center gap-6">
-          <span>{content.split('\n').length} lines</span>
-          <span>{content.length} characters</span>
-          <span>{new Blob([content]).size} bytes</span>
-          <div className="flex items-center gap-1">
-            <div className="w-2 h-2 bg-green-400 rounded-full"></div>
-            <span className="font-medium">Ready</span>
-          </div>
-        </div>
       </div>
     </div>
   );

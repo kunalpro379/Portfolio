@@ -1,85 +1,86 @@
 // API Configuration for Admin Panel
+// @ts-ignore
 import CONFIG from '../../../config.shared.js';
 
 const config = {
-  // API Base URL - from shared config
+  // API Base URL - always use production API
   api: {
-    baseUrl: CONFIG.API.BASE_URL,
+    baseUrl: 'https://api.kunalpatil.me',
     endpoints: {
       // Auth
-      auth: CONFIG.API.ENDPOINTS.auth,
-      login: `${CONFIG.API.ENDPOINTS.auth}/login`,
-      verify: `${CONFIG.API.ENDPOINTS.auth}/verify`,
+      auth: `https://api.kunalpatil.me/api/auth`,
+      login: `https://api.kunalpatil.me/api/auth/login`,
+      verify: `https://api.kunalpatil.me/api/auth/verify`,
       
       // Projects
-      projects: CONFIG.API.ENDPOINTS.projects,
-      projectById: (id: string) => `${CONFIG.API.ENDPOINTS.projects}/${id}`,
-      projectCreate: `${CONFIG.API.ENDPOINTS.projects}/create`,
-      projectReorder: `${CONFIG.API.ENDPOINTS.projects}/reorder`,
-      projectMdContent: (id: string) => `${CONFIG.API.ENDPOINTS.projects}/${id}/md-content`,
-      projectMdFile: (id: string) => `${CONFIG.API.ENDPOINTS.projects}/${id}/md-file`,
-      projectAssets: (id: string) => `${CONFIG.API.ENDPOINTS.projects}/${id}/assets`,
-      projectCardAssets: (id: string) => `${CONFIG.API.ENDPOINTS.projects}/${id}/cardassets`,
-      projectAssetByIndex: (id: string, index: number) => `${CONFIG.API.ENDPOINTS.projects}/${id}/assets/${index}`,
-      projectAssetName: (id: string, index: number) => `${CONFIG.API.ENDPOINTS.projects}/${id}/assets/${index}/name`,
-      projectCardAssetByIndex: (id: string, index: number) => `${CONFIG.API.ENDPOINTS.projects}/${id}/cardassets/${index}`,
+      projects: `https://api.kunalpatil.me/api/projects`,
+      projectById: (id: string) => `https://api.kunalpatil.me/api/projects/${id}`,
+      projectCreate: `https://api.kunalpatil.me/api/projects/create`,
+      projectReorder: `https://api.kunalpatil.me/api/projects/reorder`,
+      projectMdContent: (id: string) => `https://api.kunalpatil.me/api/projects/${id}/md-content`,
+      projectMdFile: (id: string) => `https://api.kunalpatil.me/api/projects/${id}/md-file`,
+      projectAssets: (id: string) => `https://api.kunalpatil.me/api/projects/${id}/assets`,
+      projectCardAssets: (id: string) => `https://api.kunalpatil.me/api/projects/${id}/cardassets`,
+      projectAssetByIndex: (id: string, index: number) => `https://api.kunalpatil.me/api/projects/${id}/assets/${index}`,
+      projectAssetName: (id: string, index: number) => `https://api.kunalpatil.me/api/projects/${id}/assets/${index}/name`,
+      projectCardAssetByIndex: (id: string, index: number) => `https://api.kunalpatil.me/api/projects/${id}/cardassets/${index}`,
       
       // Blogs
-      blogs: CONFIG.API.ENDPOINTS.blogs,
-      blogById: (id: string) => `${CONFIG.API.ENDPOINTS.blogs}/${id}`,
-      blogCreate: `${CONFIG.API.ENDPOINTS.blogs}/create`,
-      blogMdContent: (id: string) => `${CONFIG.API.ENDPOINTS.blogs}/${id}/md-content`,
-      blogMdFile: (id: string) => `${CONFIG.API.ENDPOINTS.blogs}/${id}/md-file`,
-      blogAssets: (id: string) => `${CONFIG.API.ENDPOINTS.blogs}/${id}/assets`,
-      blogCover: (id: string) => `${CONFIG.API.ENDPOINTS.blogs}/${id}/cover`,
-      blogAssetByIndex: (id: string, index: number) => `${CONFIG.API.ENDPOINTS.blogs}/${id}/assets/${index}`,
-      blogAssetName: (id: string, index: number) => `${CONFIG.API.ENDPOINTS.blogs}/${id}/assets/${index}/name`,
+      blogs: `https://api.kunalpatil.me/api/blogs`,
+      blogById: (id: string) => `https://api.kunalpatil.me/api/blogs/${id}`,
+      blogCreate: `https://api.kunalpatil.me/api/blogs/create`,
+      blogMdContent: (id: string) => `https://api.kunalpatil.me/api/blogs/${id}/md-content`,
+      blogMdFile: (id: string) => `https://api.kunalpatil.me/api/blogs/${id}/md-file`,
+      blogAssets: (id: string) => `https://api.kunalpatil.me/api/blogs/${id}/assets`,
+      blogCover: (id: string) => `https://api.kunalpatil.me/api/blogs/${id}/cover`,
+      blogAssetByIndex: (id: string, index: number) => `https://api.kunalpatil.me/api/blogs/${id}/assets/${index}`,
+      blogAssetName: (id: string, index: number) => `https://api.kunalpatil.me/api/blogs/${id}/assets/${index}/name`,
       
       // Documentation
-      documentation: CONFIG.API.ENDPOINTS.documentation,
-      docById: (id: string) => `${CONFIG.API.ENDPOINTS.documentation}/${id}`,
-      docCreate: `${CONFIG.API.ENDPOINTS.documentation}/create`,
-      docUploadAsset: `${CONFIG.API.ENDPOINTS.documentation}/upload-asset`,
-      docAsset: (id: string, name: string) => `${CONFIG.API.ENDPOINTS.documentation}/asset/${id}/${name}`,
-      docFiles: (id: string) => `${CONFIG.API.ENDPOINTS.documentation}/${id}/files`,
-      docFileById: (docId: string, fileId: string) => `${CONFIG.API.ENDPOINTS.documentation}/${docId}/files/${fileId}`,
-      docAttachments: (id: string) => `${CONFIG.API.ENDPOINTS.documentation}/${id}/attachments`,
-      docAttachmentsInit: (id: string) => `${CONFIG.API.ENDPOINTS.documentation}/${id}/attachments/init`,
-      docAttachmentsChunk: (id: string) => `${CONFIG.API.ENDPOINTS.documentation}/${id}/attachments/chunk`,
-      docAttachmentsComplete: (id: string) => `${CONFIG.API.ENDPOINTS.documentation}/${id}/attachments/complete`,
+      documentation: `https://api.kunalpatil.me/api/documentation`,
+      docById: (id: string) => `https://api.kunalpatil.me/api/documentation/${id}`,
+      docCreate: `https://api.kunalpatil.me/api/documentation/create`,
+      docUploadAsset: `https://api.kunalpatil.me/api/documentation/upload-asset`,
+      docAsset: (id: string, name: string) => `https://api.kunalpatil.me/api/documentation/asset/${id}/${name}`,
+      docFiles: (id: string) => `https://api.kunalpatil.me/api/documentation/${id}/files`,
+      docFileById: (docId: string, fileId: string) => `https://api.kunalpatil.me/api/documentation/${docId}/files/${fileId}`,
+      docAttachments: (id: string) => `https://api.kunalpatil.me/api/documentation/${id}/attachments`,
+      docAttachmentsInit: (id: string) => `https://api.kunalpatil.me/api/documentation/${id}/attachments/init`,
+      docAttachmentsChunk: (id: string) => `https://api.kunalpatil.me/api/documentation/${id}/attachments/chunk`,
+      docAttachmentsComplete: (id: string) => `https://api.kunalpatil.me/api/documentation/${id}/attachments/complete`,
       
       // Notes
-      notesFolders: (parentPath: string) => `${CONFIG.API.ENDPOINTS.notes}/folders?parentPath=${parentPath}`,
-      notesFiles: (folderPath: string) => `${CONFIG.API.ENDPOINTS.notes}/files?folderPath=${folderPath}`,
-      notesCreateFolder: `${CONFIG.API.ENDPOINTS.notes}/folder/create`,
-      notesUploadFiles: `${CONFIG.API.ENDPOINTS.notes}/files/upload`,
-      notesUploadInit: `${CONFIG.API.ENDPOINTS.notes}/files/upload/init`,
-      notesUploadChunk: `${CONFIG.API.ENDPOINTS.notes}/files/upload/chunk`,
-      notesUploadFinalize: `${CONFIG.API.ENDPOINTS.notes}/files/upload/finalize`,
-      notesFileById: (id: string) => `${CONFIG.API.ENDPOINTS.notes}/files/${id}`,
-      notesFolderById: (id: string) => `${CONFIG.API.ENDPOINTS.notes}/folders/${id}`,
+      notesFolders: (parentPath: string) => `https://api.kunalpatil.me/api/notes/folders?parentPath=${parentPath}`,
+      notesFiles: (folderPath: string) => `https://api.kunalpatil.me/api/notes/files?folderPath=${folderPath}`,
+      notesCreateFolder: `https://api.kunalpatil.me/api/notes/folder/create`,
+      notesUploadFiles: `https://api.kunalpatil.me/api/notes/files/upload`,
+      notesUploadInit: `https://api.kunalpatil.me/api/notes/files/upload/init`,
+      notesUploadChunk: `https://api.kunalpatil.me/api/notes/files/upload/chunk`,
+      notesUploadFinalize: `https://api.kunalpatil.me/api/notes/files/upload/finalize`,
+      notesFileById: (id: string) => `https://api.kunalpatil.me/api/notes/files/${id}`,
+      notesFolderById: (id: string) => `https://api.kunalpatil.me/api/notes/folders/${id}`,
       
       // Code
-      codeFolders: (parentPath: string) => `${CONFIG.API.ENDPOINTS.code}/folders?parentPath=${parentPath}`,
-      codeFiles: (folderPath: string) => `${CONFIG.API.ENDPOINTS.code}/files?folderPath=${folderPath}`,
-      codeCreateFolder: `${CONFIG.API.ENDPOINTS.code}/folder/create`,
-      codeCreateFile: `${CONFIG.API.ENDPOINTS.code}/file/create`,
-      codeFileById: (id: string) => `${CONFIG.API.ENDPOINTS.code}/files/${id}`,
-      codeFileContent: (id: string) => `${CONFIG.API.ENDPOINTS.code}/files/${id}/content`,
-      codeFolderById: (id: string) => `${CONFIG.API.ENDPOINTS.code}/folders/${id}`,
+      codeFolders: (parentPath: string) => `https://api.kunalpatil.me/api/code/folders?parentPath=${parentPath}`,
+      codeFiles: (folderPath: string) => `https://api.kunalpatil.me/api/code/files?folderPath=${folderPath}`,
+      codeCreateFolder: `https://api.kunalpatil.me/api/code/folder/create`,
+      codeCreateFile: `https://api.kunalpatil.me/api/code/file/create`,
+      codeFileById: (id: string) => `https://api.kunalpatil.me/api/code/files/${id}`,
+      codeFileContent: (id: string) => `https://api.kunalpatil.me/api/code/files/${id}/content`,
+      codeFolderById: (id: string) => `https://api.kunalpatil.me/api/code/folders/${id}`,
       
       // Todos
-      todos: CONFIG.API.ENDPOINTS.todos,
-      todoById: (id: string) => `${CONFIG.API.ENDPOINTS.todos}/${id}`,
-      todoCreate: `${CONFIG.API.ENDPOINTS.todos}/create`,
+      todos: `https://api.kunalpatil.me/api/todos`,
+      todoById: (id: string) => `https://api.kunalpatil.me/api/todos/${id}`,
+      todoCreate: `https://api.kunalpatil.me/api/todos/create`,
       
       // Diagrams
-      diagrams: CONFIG.API.ENDPOINTS.diagrams,
-      diagramById: (id: string) => `${CONFIG.API.ENDPOINTS.diagrams}/${id}`,
+      diagrams: `https://api.kunalpatil.me/api/diagrams`,
+      diagramById: (id: string) => `https://api.kunalpatil.me/api/diagrams/${id}`,
       
       // Views
-      views: CONFIG.API.ENDPOINTS.views,
-      viewsStats: `${CONFIG.API.ENDPOINTS.views}/stats`,
+      views: `https://api.kunalpatil.me/api/views`,
+      viewsStats: `https://api.kunalpatil.me/api/views/stats`,
     }
   },
 

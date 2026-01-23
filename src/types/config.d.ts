@@ -1,4 +1,4 @@
-declare module '../../../config.shared.js' {
+declare module '../../config.shared.js' {
   interface Config {
     NODE_ENV: string;
     API: {

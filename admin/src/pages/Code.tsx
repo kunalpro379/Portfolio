@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { FolderPlus, FilePlus, Folder, File, Trash2, Edit3, ChevronRight, Code2 } from 'lucide-react';
-import config, { buildUrl } from '../config/config';
+import config from '../config/config';
 
 interface FolderType {
   _id: string;
