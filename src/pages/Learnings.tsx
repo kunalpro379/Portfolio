@@ -59,7 +59,7 @@ export default function LearningsPage() {
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
   const tabFromUrl = searchParams.get('tab') || 'blogs';
-  const [activeTab, setActiveTab] = useState<'notes' | 'documentation' | 'blogs' | 'projects' | 'diagrams'>(tabFromUrl as any);
+  const [activeTab, setActiveTab] = useState<'notes' | 'documentation' | 'blogs' | 'projects' | 'diagrams' | 'code'>(tabFromUrl as any);
 
   // State for API data
   const [projects, setProjects] = useState<ProjectData[]>([]);
@@ -67,6 +67,7 @@ export default function LearningsPage() {
   const [notes, setNotes] = useState<Note[]>([]);
   const [documentation, setDocumentation] = useState<Documentation[]>([]);
   const [diagrams, setDiagrams] = useState<any[]>([]);
+  const [codeFiles, setCodeFiles] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -160,6 +161,14 @@ export default function LearningsPage() {
             const diagramsData = await diagramsRes.json();
             setDiagrams(diagramsData.canvases || []);
             break;
+
+          case 'code':
+            // Fetch code folders from root
+            const codeRes = await fetch(`${API_ENDPOINTS.code}/folders?parentPath=`);
+            if (!codeRes.ok) throw new Error('Failed to fetch code');
+            const codeData = await codeRes.json();
+            setCodeFiles(codeData.folders || []);
+            break;
         }
       } catch (err) {
         console.error('Error fetching data:', err);
@@ -172,7 +181,7 @@ export default function LearningsPage() {
     fetchData();
   }, [activeTab]);
 
-  const changeTab = (tab: 'notes' | 'documentation' | 'blogs' | 'projects' | 'diagrams') => {
+  const changeTab = (tab: 'notes' | 'documentation' | 'blogs' | 'projects' | 'diagrams' | 'code') => {
     setSearchParams({ tab });
     setActiveTab(tab);
   };
@@ -353,7 +362,7 @@ export default function LearningsPage() {
           </div>
 
           {/* Tabs */}
-          <div className="grid grid-cols-5 gap-1 md:gap-2 mt-4">
+          <div className="grid grid-cols-6 gap-1 md:gap-2 mt-4">
             <button
               onClick={() => changeTab('blogs')}
               className={`px-1.5 md:px-6 py-1.5 md:py-3 rounded-lg md:rounded-xl font-bold text-[10px] md:text-sm transition-all border-2 md:border-3 border-black ${activeTab === 'blogs'
@@ -389,6 +398,18 @@ export default function LearningsPage() {
               }}
             >
               Notes
+            </button>
+            <button
+              onClick={() => changeTab('code')}
+              className={`px-1.5 md:px-6 py-1.5 md:py-3 rounded-lg md:rounded-xl font-bold text-[10px] md:text-sm transition-all border-2 md:border-3 border-black ${activeTab === 'code'
+                  ? 'bg-orange-400 text-white shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] md:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transform -translate-y-0.5'
+                  : 'bg-white hover:bg-orange-50 hover:shadow-[1px_1px_0px_0px_rgba(0,0,0,1)] md:hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]'
+                }`}
+              style={{
+                borderRadius: '15px 13px 14px 12px',
+              }}
+            >
+              Code
             </button>
             <button
               onClick={() => changeTab('diagrams')}
@@ -655,6 +676,41 @@ export default function LearningsPage() {
                                 </span>
                               )}
                             </div>
+                          </div>
+                        </div>
+                      ))
+                    )}
+                  </div>
+                </>
+              )}
+
+              {/* CODE TAB */}
+              {activeTab === 'code' && (
+                <>
+                  <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3 md:gap-4">
+                    {codeFiles.length === 0 ? (
+                      <div className="col-span-full text-center py-16">
+                        <div className="bg-gray-50/70 backdrop-blur-sm border-3 border-black rounded-2xl p-10 inline-block shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]">
+                          <Code size={48} strokeWidth={2.5} className="mx-auto mb-3 text-orange-500" />
+                          <p className="text-gray-600 text-base font-bold">No code folders yet</p>
+                        </div>
+                      </div>
+                    ) : (
+                      codeFiles.map((folder) => (
+                        <div
+                          key={folder.folderId}
+                          onClick={() => {
+                            // Navigate to code folder view (you can implement this later)
+                            console.log('Navigate to code folder:', folder.path);
+                          }}
+                          className="bg-gray-50/70 backdrop-blur-sm border-3 border-black rounded-xl p-4 hover:shadow-[5px_5px_0px_0px_rgba(0,0,0,1)] transition-all cursor-pointer hover:-translate-y-1 group"
+                          style={{ borderRadius: '12px 15px 13px 14px' }}
+                        >
+                          <div className="flex flex-col items-center text-center gap-2">
+                            <div className="p-2.5 bg-orange-300 border-2 border-black rounded-lg group-hover:rotate-6 transition-transform" style={{ borderRadius: '8px 10px 9px 11px' }}>
+                              <Code size={24} strokeWidth={2.5} />
+                            </div>
+                            <h3 className="text-sm font-black text-black line-clamp-2">{folder.name}</h3>
                           </div>
                         </div>
                       ))

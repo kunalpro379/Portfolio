@@ -8,6 +8,7 @@ export const API_ENDPOINTS = {
   blogs: `${API_BASE_URL}${CONFIG.API.ENDPOINTS.blogs}`,
   documentation: `${API_BASE_URL}${CONFIG.API.ENDPOINTS.documentation}`,
   notes: `${API_BASE_URL}${CONFIG.API.ENDPOINTS.notes}`,
+  code: `${API_BASE_URL}${CONFIG.API.ENDPOINTS.code}`,
   todos: `${API_BASE_URL}${CONFIG.API.ENDPOINTS.todos}`,
   diagrams: `${API_BASE_URL}${CONFIG.API.ENDPOINTS.diagrams}`,
 };

@@ -14,6 +14,7 @@ import CreateDocumentation from './pages/CreateDocumentation';
 import EditDocumentation from './pages/EditDocumentation';
 import Notes from './pages/Notes';
 import Code from './pages/Code';
+import CodeEditor from './pages/CodeEditor';
 import TodoEditor from './pages/TodoEditor';
 import Views from './pages/Views';
 import Layout from './components/Layout';
@@ -152,6 +153,14 @@ function App() {
               <PrivateRoute>
                 <Code />
               </PrivateRoute>
+            }
+          />
+          <Route
+            path="/code/:filename"
+            element={
+              <PrivateRouteNoLayout>
+                <CodeEditor />
+              </PrivateRouteNoLayout>
             }
           />
           <Route

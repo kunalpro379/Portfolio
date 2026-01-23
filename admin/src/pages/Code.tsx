@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
-import { FolderPlus, FilePlus, Folder, File, Trash2, Edit3, Save, X, ChevronRight, Code2 } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { FolderPlus, FilePlus, Folder, File, Trash2, Edit3, ChevronRight, Code2 } from 'lucide-react';
 import config, { buildUrl } from '../config/config';
-import CodeEditor from '../components/CodeEditor';
 
 interface FolderType {
   _id: string;
@@ -25,6 +25,7 @@ interface CodeFileType {
 }
 
 export default function Code() {
+  const navigate = useNavigate();
   const [folders, setFolders] = useState<FolderType[]>([]);
   const [files, setFiles] = useState<CodeFileType[]>([]);
   const [currentPath, setCurrentPath] = useState('');
@@ -33,8 +34,6 @@ export default function Code() {
   const [newFolderName, setNewFolderName] = useState('');
   const [newFileName, setNewFileName] = useState('');
   const [loading, setLoading] = useState(false);
-  const [editingFile, setEditingFile] = useState<CodeFileType | null>(null);
-  const [fileContent, setFileContent] = useState('');
 
   useEffect(() => {
     fetchFolders();
@@ -126,42 +125,8 @@ export default function Code() {
   };
 
   const editFile = async (file: CodeFileType) => {
-    try {
-      const response = await fetch(buildUrl(config.api.endpoints.codeFileContent(file.fileId)), {
-        credentials: 'include'
-      });
-      const data = await response.json();
-      setEditingFile(file);
-      setFileContent(data.content || '');
-    } catch (error) {
-      console.error('Error fetching file content:', error);
-    }
-  };
-
-  const saveFile = async () => {
-    if (!editingFile) return;
-
-    setLoading(true);
-    try {
-      const response = await fetch(buildUrl(config.api.endpoints.codeFileById(editingFile.fileId)), {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        credentials: 'include',
-        body: JSON.stringify({
-          content: fileContent
-        })
-      });
-
-      if (response.ok) {
-        setEditingFile(null);
-        setFileContent('');
-        fetchFiles();
-      }
-    } catch (error) {
-      console.error('Error saving file:', error);
-    } finally {
-      setLoading(false);
-    }
+    // Navigate to dedicated editor page
+    navigate(`/code/${file.filename}`);
   };
 
   const deleteFile = async (fileId: string) => {
@@ -507,54 +472,6 @@ export default function Code() {
                 >
                   {loading ? 'Creating...' : 'Create'}
                 </button>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* Code Editor Modal */}
-        {editingFile && (
-          <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-3 sm:p-4">
-            <div className="bg-white border-2 sm:border-3 lg:border-4 border-black rounded-lg sm:rounded-xl lg:rounded-2xl w-full max-w-6xl h-[80vh] flex flex-col shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] sm:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] lg:shadow-[12px_12px_0px_0px_rgba(0,0,0,1)]">
-              {/* Header */}
-              <div className="flex items-center justify-between p-4 sm:p-5 lg:p-6 border-b-2 lg:border-b-3 border-black">
-                <div>
-                  <h2 className="text-lg sm:text-xl lg:text-2xl font-black text-black" style={{ fontFamily: 'Comic Sans MS, cursive' }}>
-                    {editingFile.filename}
-                  </h2>
-                  <p className="text-xs sm:text-sm text-gray-600 font-medium">
-                    {editingFile.language} • {formatFileSize(editingFile.size)}
-                  </p>
-                </div>
-                <div className="flex items-center gap-2">
-                  <button
-                    onClick={saveFile}
-                    disabled={loading}
-                    className="flex items-center gap-1.5 px-3 sm:px-4 py-2 bg-green-200 border-2 border-black rounded-lg font-bold text-xs sm:text-sm hover:bg-green-300 transition shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] disabled:opacity-50"
-                  >
-                    <Save className="w-4 h-4" strokeWidth={2.5} />
-                    {loading ? 'Saving...' : 'Save'}
-                  </button>
-                  <button
-                    onClick={() => {
-                      setEditingFile(null);
-                      setFileContent('');
-                    }}
-                    className="p-2 bg-red-100 border-2 border-black rounded-lg hover:bg-red-200 transition shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]"
-                  >
-                    <X className="w-4 h-4" strokeWidth={2.5} />
-                  </button>
-                </div>
-              </div>
-
-              {/* Editor */}
-              <div className="flex-1 p-4 sm:p-5 lg:p-6">
-                <CodeEditor
-                  value={fileContent}
-                  onChange={setFileContent}
-                  language={editingFile.language}
-                  filename={editingFile.filename}
-                />
               </div>
             </div>
           </div>
