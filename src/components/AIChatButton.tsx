@@ -253,12 +253,8 @@ const AIChatButton: React.FC = () => {
           >
             {/* Header - Mobile Optimized */}
             <div className="flex items-center justify-between p-3 sm:p-4 border-b-4 border-black bg-white relative overflow-hidden">
-              {/* Background pattern */}
+              {/* Background pattern - removed dots */}
               <div className="absolute inset-0 opacity-5">
-                <div className="absolute top-1 left-4 w-1 h-1 bg-black rounded-full"></div>
-                <div className="absolute top-3 left-8 w-0.5 h-0.5 bg-black rounded-full"></div>
-                <div className="absolute top-2 right-6 w-1 h-1 bg-black rounded-full"></div>
-                <div className="absolute bottom-2 left-12 w-0.5 h-0.5 bg-black rounded-full"></div>
               </div>
               
               <div className="flex items-center gap-2 sm:gap-3 relative">
