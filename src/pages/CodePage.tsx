@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import { ArrowLeft, FileText, Folder as FolderIcon, ChevronRight, ChevronDown, Menu, X, Code2 } from 'lucide-react';
+import { ArrowLeft, FileText, Folder as FolderIcon, ChevronRight, ChevronDown, Menu, X, Code2, Github } from 'lucide-react';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { vscDarkPlus } from 'react-syntax-highlighter/dist/esm/styles/prism';
 import { API_ENDPOINTS } from '../config/api';
@@ -29,17 +29,55 @@ interface CodeFolder {
   subfolders?: CodeFolder[];
 }
 
+interface GitHubRepo {
+  _id: string;
+  name: string;
+  owner: string;
+  fullName: string;
+  description: string;
+  url: string;
+  defaultBranch: string;
+  isPrivate: boolean;
+  createdAt: string;
+}
+
+interface GitHubTreeItem {
+  name: string;
+  path: string;
+  type: 'file' | 'dir';
+  size?: number;
+  sha: string;
+}
+
+interface GitHubFileContent {
+  content: string;
+  encoding: string;
+  size: number;
+  name: string;
+  path: string;
+}
+
 export default function CodePage() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const folderFromUrl = searchParams.get('folder');
   
+  // Local files state
   const [rootFolders, setRootFolders] = useState<CodeFolder[]>([]);
   const [selectedFile, setSelectedFile] = useState<CodeFile | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [expandedFolders, setExpandedFolders] = useState<Set<string>>(new Set());
   const [sidebarOpen, setSidebarOpen] = useState(true);
+
+  // GitHub state
+  const [activeTab, setActiveTab] = useState<'local' | 'github'>('local');
+  const [githubRepos, setGithubRepos] = useState<GitHubRepo[]>([]);
+  const [selectedRepo, setSelectedRepo] = useState<GitHubRepo | null>(null);
+  const [githubItems, setGithubItems] = useState<GitHubTreeItem[]>([]);
+  const [githubPath, setGithubPath] = useState('');
+  const [selectedGithubFile, setSelectedGithubFile] = useState<GitHubFileContent | null>(null);
+  const [githubLoading, setGithubLoading] = useState(false);
 
   // Helper functions
   const getFileExtension = (filename: string) => {
@@ -64,91 +102,161 @@ export default function CodePage() {
     return languageMap[ext] || 'text';
   };
 
+  // GitHub functions
+  const fetchGithubRepos = async () => {
+    try {
+      setGithubLoading(true);
+      const response = await fetch(API_ENDPOINTS.github.repos);
+      const data = await response.json();
+      setGithubRepos(data.repos || []);
+    } catch (error) {
+      console.error('Error fetching GitHub repos:', error);
+      setGithubRepos([]);
+    } finally {
+      setGithubLoading(false);
+    }
+  };
+
+  const fetchGithubTree = async () => {
+    if (!selectedRepo) return;
+    
+    try {
+      setGithubLoading(true);
+      const response = await fetch(API_ENDPOINTS.github.repoTree(selectedRepo._id, githubPath));
+      const data = await response.json();
+      setGithubItems(data.items || []);
+    } catch (error) {
+      console.error('Error fetching GitHub tree:', error);
+      setGithubItems([]);
+    } finally {
+      setGithubLoading(false);
+    }
+  };
+
+  const fetchGithubFile = async (path: string) => {
+    if (!selectedRepo) return;
+    
+    try {
+      setGithubLoading(true);
+      const response = await fetch(API_ENDPOINTS.github.repoFile(selectedRepo._id, path));
+      const data = await response.json();
+      setSelectedGithubFile(data.file);
+      setSelectedFile(null); // Clear local file selection
+    } catch (error) {
+      console.error('Error fetching GitHub file:', error);
+      alert('Failed to load file content');
+    } finally {
+      setGithubLoading(false);
+    }
+  };
+
+  const navigateGithubFolder = (path: string) => {
+    setGithubPath(path);
+  };
+
+  const getGithubBreadcrumbs = () => {
+    if (!githubPath) return [];
+    return githubPath.split('/').filter(Boolean);
+  };
+
   useEffect(() => {
-    const fetchCodeStructure = async () => {
-      try {
-        setLoading(true);
+    if (activeTab === 'local') {
+      const fetchCodeStructure = async () => {
+        try {
+          setLoading(true);
 
-        // Fetch root folders
-        const foldersResponse = await fetch(`${API_ENDPOINTS.code}/folders?parentPath=`);
-        if (!foldersResponse.ok) throw new Error('Failed to fetch code folders');
-        const foldersData = await foldersResponse.json();
+          // Fetch root folders
+          const foldersResponse = await fetch(`${API_ENDPOINTS.code}/folders?parentPath=`);
+          if (!foldersResponse.ok) throw new Error('Failed to fetch code folders');
+          const foldersData = await foldersResponse.json();
 
-        // For each folder, fetch its files and subfolders recursively
-        const fetchFolderContents = async (folder: CodeFolder): Promise<CodeFolder> => {
-          // Fetch files in this folder
-          const filesResponse = await fetch(`${API_ENDPOINTS.code}/files?folderPath=${folder.path}`);
-          if (filesResponse.ok) {
-            const filesData = await filesResponse.json();
-            folder.files = filesData.files || [];
-          } else {
-            folder.files = [];
-          }
-
-          // Fetch subfolders
-          const subfoldersResponse = await fetch(`${API_ENDPOINTS.code}/folders?parentPath=${folder.path}`);
-          if (subfoldersResponse.ok) {
-            const subfoldersData = await subfoldersResponse.json();
-            if (subfoldersData.folders && subfoldersData.folders.length > 0) {
-              folder.subfolders = await Promise.all(
-                subfoldersData.folders.map((subfolder: CodeFolder) => fetchFolderContents(subfolder))
-              );
+          // For each folder, fetch its files and subfolders recursively
+          const fetchFolderContents = async (folder: CodeFolder): Promise<CodeFolder> => {
+            // Fetch files in this folder
+            const filesResponse = await fetch(`${API_ENDPOINTS.code}/files?folderPath=${folder.path}`);
+            if (filesResponse.ok) {
+              const filesData = await filesResponse.json();
+              folder.files = filesData.files || [];
+            } else {
+              folder.files = [];
             }
-          }
 
-          return folder;
-        };
-
-        const foldersWithContents = await Promise.all(
-          foldersData.folders.map((folder: CodeFolder) => fetchFolderContents(folder))
-        );
-
-        setRootFolders(foldersWithContents);
-
-        // Auto-expand folder from URL and select first file
-        if (folderFromUrl) {
-          const targetFolder = foldersWithContents.find(f => f.path === folderFromUrl);
-          if (targetFolder) {
-            setExpandedFolders(new Set([targetFolder.folderId]));
-            if (targetFolder.files && targetFolder.files.length > 0) {
-              loadFile(targetFolder.files[0], true);
-            }
-          }
-        } else {
-          // Find first file in any folder
-          const findFirstFile = (folders: CodeFolder[]): CodeFile | null => {
-            for (const folder of folders) {
-              if (folder.files && folder.files.length > 0) {
-                setExpandedFolders(new Set([folder.folderId]));
-                return folder.files[0];
-              }
-              if (folder.subfolders) {
-                const file = findFirstFile(folder.subfolders);
-                if (file) return file;
+            // Fetch subfolders
+            const subfoldersResponse = await fetch(`${API_ENDPOINTS.code}/folders?parentPath=${folder.path}`);
+            if (subfoldersResponse.ok) {
+              const subfoldersData = await subfoldersResponse.json();
+              if (subfoldersData.folders && subfoldersData.folders.length > 0) {
+                folder.subfolders = await Promise.all(
+                  subfoldersData.folders.map((subfolder: CodeFolder) => fetchFolderContents(subfolder))
+                );
               }
             }
-            return null;
+
+            return folder;
           };
 
-          const firstFile = findFirstFile(foldersWithContents);
-          if (firstFile) {
-            loadFile(firstFile, true);
-          }
-        }
-      } catch (err) {
-        console.error('Error fetching code structure:', err);
-        setError(err instanceof Error ? err.message : 'Failed to load code files');
-      } finally {
-        setLoading(false);
-      }
-    };
+          const foldersWithContents = await Promise.all(
+            foldersData.folders.map((folder: CodeFolder) => fetchFolderContents(folder))
+          );
 
-    fetchCodeStructure();
-  }, [folderFromUrl]);
+          setRootFolders(foldersWithContents);
+
+          // Auto-expand folder from URL and select first file
+          if (folderFromUrl) {
+            const targetFolder = foldersWithContents.find(f => f.path === folderFromUrl);
+            if (targetFolder) {
+              setExpandedFolders(new Set([targetFolder.folderId]));
+              if (targetFolder.files && targetFolder.files.length > 0) {
+                loadFile(targetFolder.files[0], true);
+              }
+            }
+          } else {
+            // Find first file in any folder
+            const findFirstFile = (folders: CodeFolder[]): CodeFile | null => {
+              for (const folder of folders) {
+                if (folder.files && folder.files.length > 0) {
+                  setExpandedFolders(new Set([folder.folderId]));
+                  return folder.files[0];
+                }
+                if (folder.subfolders) {
+                  const file = findFirstFile(folder.subfolders);
+                  if (file) return file;
+                }
+              }
+              return null;
+            };
+
+            const firstFile = findFirstFile(foldersWithContents);
+            if (firstFile) {
+              loadFile(firstFile, true);
+            }
+          }
+        } catch (err) {
+          console.error('Error fetching code structure:', err);
+          setError(err instanceof Error ? err.message : 'Failed to load code files');
+        } finally {
+          setLoading(false);
+        }
+      };
+
+      fetchCodeStructure();
+    } else {
+      fetchGithubRepos();
+    }
+  }, [folderFromUrl, activeTab]);
+
+  useEffect(() => {
+    if (selectedRepo) {
+      fetchGithubTree();
+    }
+  }, [selectedRepo, githubPath]);
 
   const loadFile = async (file: CodeFile, isInitialLoad: boolean = false) => {
     try {
       console.log('Loading file:', file.filename, file.fileId);
+
+      // Clear GitHub selections when loading local file
+      setSelectedGithubFile(null);
 
       // Close sidebar on mobile after selecting file
       if (!isInitialLoad) {
@@ -337,7 +445,168 @@ export default function CodePage() {
                 <X size={16} strokeWidth={2.5} />
               </button>
             </div>
-            {rootFolders.map(folder => renderFolderTree(folder))}
+
+            {/* Tab Navigation */}
+            <div className="flex gap-1 mb-4">
+              <button
+                onClick={() => {
+                  setActiveTab('local');
+                  setSelectedRepo(null);
+                  setGithubPath('');
+                  setSelectedGithubFile(null);
+                }}
+                className={`flex-1 px-3 py-2 border-2 border-black rounded-lg font-bold text-xs transition ${
+                  activeTab === 'local'
+                    ? 'bg-orange-200 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]'
+                    : 'bg-white hover:bg-gray-50'
+                }`}
+              >
+                <Code2 className="w-3 h-3 inline mr-1" strokeWidth={2.5} />
+                Local
+              </button>
+              <button
+                onClick={() => {
+                  setActiveTab('github');
+                  setSelectedFile(null);
+                }}
+                className={`flex-1 px-3 py-2 border-2 border-black rounded-lg font-bold text-xs transition ${
+                  activeTab === 'github'
+                    ? 'bg-orange-200 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]'
+                    : 'bg-white hover:bg-gray-50'
+                }`}
+              >
+                <Github className="w-3 h-3 inline mr-1" strokeWidth={2.5} />
+                GitHub
+              </button>
+            </div>
+
+            {/* Content based on active tab */}
+            {activeTab === 'local' ? (
+              <div>
+                {rootFolders.map(folder => renderFolderTree(folder))}
+              </div>
+            ) : (
+              <div>
+                {selectedRepo ? (
+                  /* GitHub Repository Browser */
+                  <div className="space-y-3">
+                    {/* Repository Header */}
+                    <div className="flex items-center justify-between p-2 bg-gray-50 border-2 border-black rounded-lg">
+                      <div className="flex items-center gap-2 min-w-0">
+                        <button
+                          onClick={() => setSelectedRepo(null)}
+                          className="p-1 hover:bg-gray-200 rounded"
+                        >
+                          <ArrowLeft className="w-3 h-3" strokeWidth={2.5} />
+                        </button>
+                        <Github className="w-3 h-3 flex-shrink-0" strokeWidth={2.5} />
+                        <span className="text-xs font-bold truncate">{selectedRepo.name}</span>
+                      </div>
+                    </div>
+
+                    {/* GitHub Breadcrumbs */}
+                    {githubPath && (
+                      <div className="flex items-center gap-1 flex-wrap text-xs">
+                        <button
+                          onClick={() => setGithubPath('')}
+                          className="px-2 py-1 bg-gray-100 border border-black rounded text-xs font-bold hover:bg-gray-200"
+                        >
+                          Root
+                        </button>
+                        {getGithubBreadcrumbs().map((part, index) => (
+                          <div key={index} className="flex items-center gap-1">
+                            <ChevronRight className="w-2 h-2" />
+                            <button
+                              onClick={() => {
+                                const path = getGithubBreadcrumbs().slice(0, index + 1).join('/');
+                                setGithubPath(path);
+                              }}
+                              className="px-2 py-1 bg-gray-100 border border-black rounded text-xs font-bold hover:bg-gray-200"
+                            >
+                              {part}
+                            </button>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+
+                    {/* GitHub Content */}
+                    {githubLoading ? (
+                      <div className="text-center py-4">
+                        <div className="animate-spin w-4 h-4 border-2 border-black border-t-transparent rounded-full mx-auto mb-2"></div>
+                        <p className="text-xs font-medium">Loading...</p>
+                      </div>
+                    ) : (
+                      <div className="space-y-1">
+                        {githubItems.map((item) => (
+                          <button
+                            key={item.path}
+                            onClick={() => {
+                              if (item.type === 'dir') {
+                                navigateGithubFolder(item.path);
+                              } else {
+                                fetchGithubFile(item.path);
+                              }
+                            }}
+                            className={`w-full text-left flex items-center gap-2 p-2 rounded-lg transition-all ${
+                              selectedGithubFile?.path === item.path
+                                ? 'bg-orange-200 border-2 border-black'
+                                : 'hover:bg-gray-100'
+                            }`}
+                          >
+                            {item.type === 'dir' ? (
+                              <FolderIcon size={14} strokeWidth={2.5} className="flex-shrink-0 text-orange-600" />
+                            ) : (
+                              <Code2 size={14} strokeWidth={2.5} className="flex-shrink-0 text-blue-600" />
+                            )}
+                            <span className="text-sm font-medium truncate">{item.name}</span>
+                          </button>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                ) : (
+                  /* GitHub Repository List */
+                  <div>
+                    {githubLoading ? (
+                      <div className="text-center py-4">
+                        <div className="animate-spin w-4 h-4 border-2 border-black border-t-transparent rounded-full mx-auto mb-2"></div>
+                        <p className="text-xs font-medium">Loading repositories...</p>
+                      </div>
+                    ) : githubRepos.length === 0 ? (
+                      <div className="text-center py-4">
+                        <Github className="w-8 h-8 text-gray-400 mx-auto mb-2" strokeWidth={2} />
+                        <p className="text-xs font-bold text-black mb-1">No GitHub Repositories</p>
+                        <p className="text-xs text-gray-600">Repositories will be added by the admin</p>
+                      </div>
+                    ) : (
+                      <div className="space-y-2">
+                        {githubRepos.map((repo) => (
+                          <button
+                            key={repo._id}
+                            onClick={() => setSelectedRepo(repo)}
+                            className="w-full text-left p-2 bg-white border-2 border-black rounded-lg hover:bg-gray-50 transition"
+                          >
+                            <div className="flex items-center gap-2 mb-1">
+                              <Github className="w-3 h-3 flex-shrink-0" strokeWidth={2.5} />
+                              <span className="text-xs font-bold truncate">{repo.name}</span>
+                              {repo.isPrivate && (
+                                <span className="px-1 py-0.5 bg-red-100 border border-red-300 rounded text-[10px] font-bold text-red-800">
+                                  Private
+                                </span>
+                              )}
+                            </div>
+                            {repo.description && (
+                              <p className="text-[10px] text-gray-600 truncate">{repo.description}</p>
+                            )}
+                          </button>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>
+            )}
           </div>
         </div>
 
@@ -352,18 +621,21 @@ export default function CodePage() {
                 <div className="w-2 h-2 md:w-3 md:h-3 rounded-full bg-green-500"></div>
               </div>
               <span className="text-xs md:text-sm font-bold text-[#CCCCCC]">
-                {selectedFile ? getLanguageFromExtension(selectedFile.filename) : 'Code Editor'}
+                {selectedFile ? getLanguageFromExtension(selectedFile.filename) : 
+                 selectedGithubFile ? getLanguageFromExtension(selectedGithubFile.name) : 
+                 'Code Editor'}
               </span>
             </div>
             
-            {selectedFile && (
+            {(selectedFile || selectedGithubFile) && (
               <div className="flex items-center gap-3">
                 <span className="text-xs text-[#CCCCCC] font-medium hidden sm:inline">
-                  {selectedFile.filename}
+                  {selectedFile ? selectedFile.filename : selectedGithubFile?.name}
                 </span>
                 <button
                   onClick={() => {
-                    navigator.clipboard.writeText(selectedFile.content || '');
+                    const content = selectedFile?.content || selectedGithubFile?.content || '';
+                    navigator.clipboard.writeText(content);
                     alert('Copied to clipboard!');
                   }}
                   className="px-3 md:px-4 py-1.5 md:py-2 bg-[#0E639C] text-white rounded-md text-xs md:text-sm font-bold hover:bg-[#1177BB] transition-all"
@@ -376,10 +648,10 @@ export default function CodePage() {
 
           {/* Editor Content Area */}
           <div className="flex-1 overflow-hidden bg-[#1E1E1E]">
-            {selectedFile && selectedFile.content ? (
+            {(selectedFile && selectedFile.content) || (selectedGithubFile && selectedGithubFile.content) ? (
               <div className="h-full">
                 <SyntaxHighlighter
-                  language={getLanguageFromExtension(selectedFile.filename)}
+                  language={selectedFile ? getLanguageFromExtension(selectedFile.filename) : getLanguageFromExtension(selectedGithubFile?.name || '')}
                   style={vscDarkPlus}
                   customStyle={{
                     margin: 0,
@@ -401,10 +673,10 @@ export default function CodePage() {
                   wrapLines={true}
                   wrapLongLines={true}
                 >
-                  {selectedFile.content}
+                  {selectedFile?.content || selectedGithubFile?.content || ''}
                 </SyntaxHighlighter>
               </div>
-            ) : selectedFile && !selectedFile.content ? (
+            ) : (selectedFile && !selectedFile.content) || (selectedGithubFile && !selectedGithubFile.content) ? (
               <div className="h-full flex items-center justify-center">
                 <div className="text-center">
                   <div className="w-16 h-16 md:w-20 md:h-20 bg-[#2D2D30] border border-[#3E3E42] rounded-xl flex items-center justify-center mx-auto mb-4">
@@ -412,7 +684,7 @@ export default function CodePage() {
                   </div>
                   <p className="text-[#CCCCCC] mb-4 md:mb-6 font-medium text-sm md:text-base">Unable to load file content</p>
                   <p className="text-[#858585] text-xs md:text-sm">
-                    File: {selectedFile.filename}
+                    File: {selectedFile?.filename || selectedGithubFile?.name}
                   </p>
                 </div>
               </div>
@@ -439,11 +711,11 @@ export default function CodePage() {
                     <div className="space-y-2 text-xs text-[#858585]">
                       <div className="flex items-center justify-center gap-2">
                         <div className="w-2 h-2 bg-[#569CD6] rounded-full"></div>
-                        <span>Syntax highlighting for 100+ languages</span>
+                        <span>Local files and GitHub repositories</span>
                       </div>
                       <div className="flex items-center justify-center gap-2">
                         <div className="w-2 h-2 bg-[#4FC1FF] rounded-full"></div>
-                        <span>Line numbers and code formatting</span>
+                        <span>Syntax highlighting for 100+ languages</span>
                       </div>
                       <div className="flex items-center justify-center gap-2">
                         <div className="w-2 h-2 bg-[#DCDCAA] rounded-full"></div>

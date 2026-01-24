@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Code2, Folder, File, ExternalLink, ChevronRight, Github } from 'lucide-react';
+import { Code2, Folder, File, ExternalLink, ChevronRight, Github, ArrowLeft } from 'lucide-react';
 import { API_ENDPOINTS } from '../config/api';
 
 interface CodeFolder {
@@ -84,7 +84,7 @@ export default function CodeSection() {
 
   const fetchFolders = async () => {
     try {
-      const response = await fetch(`https://api.kunalpatil.me/api/code/folders?parentPath=${currentPath}`);
+      const response = await fetch(`${API_ENDPOINTS.code}/folders?parentPath=${currentPath}`);
       const data = await response.json();
       setFolders(data.folders || []);
     } catch (error) {
@@ -100,7 +100,7 @@ export default function CodeSection() {
         setFiles([]);
         return;
       }
-      const response = await fetch(`https://api.kunalpatil.me/api/code/files?folderPath=${currentPath}`);
+      const response = await fetch(`${API_ENDPOINTS.code}/files?folderPath=${currentPath}`);
       const data = await response.json();
       setFiles(data.files || []);
     } catch (error) {
@@ -113,7 +113,7 @@ export default function CodeSection() {
 
   const viewFile = async (file: CodeFile) => {
     try {
-      const response = await fetch(`https://api.kunalpatil.me/api/code/files/${file.fileId}/content`);
+      const response = await fetch(`${API_ENDPOINTS.code}/files/${file.fileId}/content`);
       const data = await response.json();
       setSelectedFile({ ...file, content: data.content });
     } catch (error) {
@@ -125,8 +125,11 @@ export default function CodeSection() {
   const fetchGithubRepos = async () => {
     try {
       setGithubLoading(true);
+      console.log('Fetching GitHub repos from:', API_ENDPOINTS.github.repos);
       const response = await fetch(API_ENDPOINTS.github.repos);
+      console.log('GitHub repos response:', response.status);
       const data = await response.json();
+      console.log('GitHub repos data:', data);
       setGithubRepos(data.repos || []);
     } catch (error) {
       console.error('Error fetching GitHub repos:', error);
