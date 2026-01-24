@@ -21,4 +21,22 @@ export const API_CONFIG = {
   }
 };
 
+// Export API_BASE_URL for backward compatibility
+export const API_BASE_URL = getApiBaseUrl();
+
+// Export API_ENDPOINTS for backward compatibility
+export const API_ENDPOINTS = {
+  projects: '/api/projects',
+  blogs: '/api/blogs',
+  documentation: '/api/documentation',
+  notes: '/api/notes',
+  code: '/api/code',
+  todos: '/api/todos',
+  diagrams: '/api/diagrams',
+  auth: '/api/auth',
+  views: '/api/views',
+  github: '/api/github',
+  aiChat: '/api/ai-chat',
+};
+
 export default API_CONFIG;
