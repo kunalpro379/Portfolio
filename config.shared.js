@@ -42,6 +42,7 @@ const CONFIG = {
       diagrams: '/api/diagrams',
       auth: '/api/auth',
       views: '/api/views',
+      github: '/api/github',
     }
   },
   

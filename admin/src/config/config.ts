@@ -69,6 +69,14 @@ const config = {
       codeFileContent: (id: string) => `https://api.kunalpatil.me/api/code/files/${id}/content`,
       codeFolderById: (id: string) => `https://api.kunalpatil.me/api/code/folders/${id}`,
       
+      // GitHub Integration
+      githubRepos: `https://api.kunalpatil.me/api/github/repos`,
+      githubRepoAdd: `https://api.kunalpatil.me/api/github/repos/add`,
+      githubRepoById: (id: string) => `https://api.kunalpatil.me/api/github/repos/${id}`,
+      githubRepoTree: (id: string, path: string = '') => `https://api.kunalpatil.me/api/github/repos/${id}/tree?path=${encodeURIComponent(path)}`,
+      githubRepoFile: (id: string, path: string) => `https://api.kunalpatil.me/api/github/repos/${id}/file?path=${encodeURIComponent(path)}`,
+      githubRepoDelete: (id: string) => `https://api.kunalpatil.me/api/github/repos/${id}`,
+      
       // Todos
       todos: `https://api.kunalpatil.me/api/todos`,
       todoById: (id: string) => `https://api.kunalpatil.me/api/todos/${id}`,

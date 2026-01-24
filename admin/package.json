@@ -28,6 +28,7 @@
     "@excalidraw/excalidraw": "^0.17.6",
     "@hello-pangea/dnd": "^18.0.1",
     "@uiw/react-md-editor": "^4.0.4",
+    "graphql-request": "^7.4.0",
     "lucide-react": "^0.552.0",
     "monaco-editor": "^0.45.0",
     "prismjs": "^1.30.0",

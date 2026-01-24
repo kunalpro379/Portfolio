@@ -1,7 +1,9 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { FolderPlus, FilePlus, Folder, File, Trash2, Edit3, ChevronRight, Code2 } from 'lucide-react';
+import { FolderPlus, FilePlus, Folder, File, Trash2, Edit3, ChevronRight, Code2, Github } from 'lucide-react';
 import config from '../config/config';
+import GitHubRepoManager from '../components/GitHubRepoManager';
+import GitHubRepoBrowser from '../components/GitHubRepoBrowser';
 
 interface FolderType {
   _id: string;
@@ -24,6 +26,18 @@ interface CodeFileType {
   updatedAt: string;
 }
 
+interface GitHubRepo {
+  _id: string;
+  name: string;
+  owner: string;
+  fullName: string;
+  description: string;
+  url: string;
+  defaultBranch: string;
+  isPrivate: boolean;
+  createdAt: string;
+}
+
 export default function Code() {
   const navigate = useNavigate();
   const [folders, setFolders] = useState<FolderType[]>([]);
@@ -34,6 +48,10 @@ export default function Code() {
   const [newFolderName, setNewFolderName] = useState('');
   const [newFileName, setNewFileName] = useState('');
   const [loading, setLoading] = useState(false);
+  
+  // GitHub integration state
+  const [activeTab, setActiveTab] = useState<'local' | 'github'>('local');
+  const [selectedRepo, setSelectedRepo] = useState<GitHubRepo | null>(null);
 
   useEffect(() => {
     fetchFolders();
@@ -211,6 +229,14 @@ export default function Code() {
     return currentPath.split('/');
   };
 
+  const handleRepoSelect = (repo: GitHubRepo) => {
+    setSelectedRepo(repo);
+  };
+
+  const handleBackToRepos = () => {
+    setSelectedRepo(null);
+  };
+
   return (
     <div className="p-3 sm:p-4 md:p-6 lg:p-8">
       <div className="max-w-7xl mx-auto">
@@ -224,155 +250,195 @@ export default function Code() {
           </div>
         </div>
 
-        {/* Action Buttons */}
-        <div className="flex flex-col sm:flex-row gap-2 sm:gap-2 md:gap-3 mb-3 sm:mb-4 md:mb-5 lg:mb-6">
+        {/* Tab Navigation */}
+        <div className="flex gap-2 mb-4">
           <button
-            onClick={() => setShowCreateFolderModal(true)}
-            className="flex items-center justify-center gap-1.5 sm:gap-2 px-3 sm:px-4 md:px-5 lg:px-6 py-2 sm:py-2.5 lg:py-3 bg-blue-200 border-2 lg:border-3 border-black rounded-lg lg:rounded-xl font-bold text-xs sm:text-sm lg:text-base hover:bg-blue-300 transition shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] lg:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] lg:hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] active:translate-x-[1px] active:translate-y-[1px] active:shadow-[1px_1px_0px_0px_rgba(0,0,0,1)] sm:hover:translate-x-[-1px] sm:hover:translate-y-[-1px] lg:hover:translate-x-[-2px] lg:hover:translate-y-[-2px]"
+            onClick={() => setActiveTab('local')}
+            className={`px-4 py-2 border-2 border-black rounded-lg font-bold text-sm transition ${
+              activeTab === 'local'
+                ? 'bg-blue-200 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]'
+                : 'bg-white hover:bg-gray-50'
+            }`}
           >
-            <FolderPlus className="w-4 h-4 lg:w-5 lg:h-5" strokeWidth={2.5} />
-            <span className="whitespace-nowrap">New Folder</span>
+            <Code2 className="w-4 h-4 inline mr-2" strokeWidth={2.5} />
+            Local Files
           </button>
-          {currentPath && (
-            <button
-              onClick={() => setShowCreateFileModal(true)}
-              className="flex items-center justify-center gap-1.5 sm:gap-2 px-3 sm:px-4 md:px-5 lg:px-6 py-2 sm:py-2.5 lg:py-3 bg-green-200 border-2 lg:border-3 border-black rounded-lg lg:rounded-xl font-bold text-xs sm:text-sm lg:text-base hover:bg-green-300 transition shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] lg:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] lg:hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] active:translate-x-[1px] active:translate-y-[1px] active:shadow-[1px_1px_0px_0px_rgba(0,0,0,1)] sm:hover:translate-x-[-1px] sm:hover:translate-y-[-1px] lg:hover:translate-x-[-2px] lg:hover:translate-y-[-2px]"
-            >
-              <FilePlus className="w-4 h-4 lg:w-5 lg:h-5" strokeWidth={2.5} />
-              <span className="whitespace-nowrap">New File</span>
-            </button>
-          )}
+          <button
+            onClick={() => setActiveTab('github')}
+            className={`px-4 py-2 border-2 border-black rounded-lg font-bold text-sm transition ${
+              activeTab === 'github'
+                ? 'bg-blue-200 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]'
+                : 'bg-white hover:bg-gray-50'
+            }`}
+          >
+            <Github className="w-4 h-4 inline mr-2" strokeWidth={2.5} />
+            GitHub Repos
+          </button>
         </div>
 
-        {/* Breadcrumbs */}
-        {currentPath && (
-          <div className="bg-white border-2 sm:border-3 lg:border-3 border-black rounded-lg lg:rounded-xl p-2.5 sm:p-3 lg:p-4 mb-3 sm:mb-4 md:mb-5 lg:mb-6 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] lg:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
-            <div className="flex items-center gap-1 sm:gap-1.5 lg:gap-2 flex-wrap">
+        {/* Content based on active tab */}
+        {activeTab === 'local' ? (
+          <>
+            {/* Action Buttons */}
+            <div className="flex flex-col sm:flex-row gap-2 sm:gap-2 md:gap-3 mb-3 sm:mb-4 md:mb-5 lg:mb-6">
               <button
-                onClick={() => setCurrentPath('')}
-                className="px-2 sm:px-2.5 lg:px-3 py-0.5 sm:py-1 bg-gray-100 border-2 border-black rounded-md lg:rounded-lg font-bold text-[10px] sm:text-xs lg:text-sm hover:bg-gray-200 transition"
+                onClick={() => setShowCreateFolderModal(true)}
+                className="flex items-center justify-center gap-1.5 sm:gap-2 px-3 sm:px-4 md:px-5 lg:px-6 py-2 sm:py-2.5 lg:py-3 bg-blue-200 border-2 lg:border-3 border-black rounded-lg lg:rounded-xl font-bold text-xs sm:text-sm lg:text-base hover:bg-blue-300 transition shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] lg:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] lg:hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] active:translate-x-[1px] active:translate-y-[1px] active:shadow-[1px_1px_0px_0px_rgba(0,0,0,1)] sm:hover:translate-x-[-1px] sm:hover:translate-y-[-1px] lg:hover:translate-x-[-2px] lg:hover:translate-y-[-2px]"
               >
-                Root
+                <FolderPlus className="w-4 h-4 lg:w-5 lg:h-5" strokeWidth={2.5} />
+                <span className="whitespace-nowrap">New Folder</span>
               </button>
-              {getBreadcrumbs().map((part, index) => (
-                <div key={index} className="flex items-center gap-1 sm:gap-1.5 lg:gap-2">
-                  <ChevronRight className="w-2.5 h-2.5 sm:w-3 sm:h-3 lg:w-4 lg:h-4" />
-                  <button
-                    onClick={() => {
-                      const path = getBreadcrumbs().slice(0, index + 1).join('/');
-                      setCurrentPath(path);
-                    }}
-                    className="px-2 sm:px-2.5 lg:px-3 py-0.5 sm:py-1 bg-gray-100 border-2 border-black rounded-md lg:rounded-lg font-bold text-[10px] sm:text-xs lg:text-sm hover:bg-gray-200 transition break-all max-w-[120px] sm:max-w-none truncate"
-                  >
-                    {part}
-                  </button>
-                </div>
-              ))}
+              {currentPath && (
+                <button
+                  onClick={() => setShowCreateFileModal(true)}
+                  className="flex items-center justify-center gap-1.5 sm:gap-2 px-3 sm:px-4 md:px-5 lg:px-6 py-2 sm:py-2.5 lg:py-3 bg-green-200 border-2 lg:border-3 border-black rounded-lg lg:rounded-xl font-bold text-xs sm:text-sm lg:text-base hover:bg-green-300 transition shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] lg:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] lg:hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] active:translate-x-[1px] active:translate-y-[1px] active:shadow-[1px_1px_0px_0px_rgba(0,0,0,1)] sm:hover:translate-x-[-1px] sm:hover:translate-y-[-1px] lg:hover:translate-x-[-2px] lg:hover:translate-y-[-2px]"
+                >
+                  <FilePlus className="w-4 h-4 lg:w-5 lg:h-5" strokeWidth={2.5} />
+                  <span className="whitespace-nowrap">New File</span>
+                </button>
+              )}
             </div>
-          </div>
-        )}
 
-        {/* Main Content */}
-        <div className="grid grid-cols-12 gap-3 sm:gap-4 md:gap-5 lg:gap-6">
-          {/* Folders Section */}
-          <div className="col-span-12">
-            <div className="bg-white border-2 sm:border-3 lg:border-4 border-black rounded-lg sm:rounded-xl lg:rounded-2xl p-3 sm:p-4 lg:p-6 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] sm:shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] lg:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]">
-              <h2 className="text-lg sm:text-xl lg:text-2xl font-black text-black mb-3 sm:mb-4 lg:mb-6" style={{ fontFamily: 'Comic Sans MS, cursive' }}>
-                Folders
-              </h2>
-
-              {folders.length === 0 ? (
-                <div className="text-center py-6 sm:py-8 lg:py-12 border-2 lg:border-3 border-dashed border-black rounded-lg lg:rounded-xl">
-                  <Folder className="w-8 h-8 sm:w-10 sm:h-10 lg:w-12 lg:h-12 text-gray-400 mx-auto mb-2 lg:mb-3" strokeWidth={2} />
-                  <p className="text-xs sm:text-sm lg:text-base text-gray-600 font-medium">No folders here</p>
-                  <p className="text-[10px] sm:text-xs lg:text-sm text-gray-500 mt-1">Create a new folder to get started</p>
-                </div>
-              ) : (
-                <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2 sm:gap-3 lg:gap-4">
-                  {folders.map((folder) => (
-                    <div
-                      key={folder._id}
-                      className="bg-yellow-50 border-2 lg:border-3 border-black rounded-lg lg:rounded-xl p-2.5 sm:p-3 lg:p-4 hover:bg-yellow-100 transition cursor-pointer shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] lg:shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] active:shadow-[1px_1px_0px_0px_rgba(0,0,0,1)] active:translate-x-[1px] active:translate-y-[1px] sm:hover:shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] lg:hover:shadow-[5px_5px_0px_0px_rgba(0,0,0,1)] sm:hover:translate-x-[-1px] sm:hover:translate-y-[-1px] lg:hover:translate-x-[-2px] lg:hover:translate-y-[-2px]"
-                    >
-                      <div className="flex items-start justify-between gap-1.5 sm:gap-2">
-                        <div
-                          onClick={() => navigateToFolder(folder.path)}
-                          className="flex-1 min-w-0"
-                        >
-                          <Folder className="w-6 h-6 sm:w-7 sm:h-7 lg:w-8 lg:h-8 text-black mb-1 sm:mb-1.5 lg:mb-2" strokeWidth={2.5} />
-                          <h3 className="font-black text-black text-xs sm:text-sm lg:text-base break-words line-clamp-2">{folder.name}</h3>
-                        </div>
-                        <button
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            deleteFolder(folder.folderId);
-                          }}
-                          className="p-1 sm:p-1.5 lg:p-2 bg-red-100 border-2 border-black rounded-md lg:rounded-lg hover:bg-red-200 transition flex-shrink-0"
-                        >
-                          <Trash2 className="w-3.5 h-3.5 sm:w-4 sm:h-4 lg:w-5 lg:h-5 text-black" strokeWidth={2.5} />
-                        </button>
-                      </div>
+            {/* Breadcrumbs */}
+            {currentPath && (
+              <div className="bg-white border-2 sm:border-3 lg:border-3 border-black rounded-lg lg:rounded-xl p-2.5 sm:p-3 lg:p-4 mb-3 sm:mb-4 md:mb-5 lg:mb-6 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] lg:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+                <div className="flex items-center gap-1 sm:gap-1.5 lg:gap-2 flex-wrap">
+                  <button
+                    onClick={() => setCurrentPath('')}
+                    className="px-2 sm:px-2.5 lg:px-3 py-0.5 sm:py-1 bg-gray-100 border-2 border-black rounded-md lg:rounded-lg font-bold text-[10px] sm:text-xs lg:text-sm hover:bg-gray-200 transition"
+                  >
+                    Root
+                  </button>
+                  {getBreadcrumbs().map((part, index) => (
+                    <div key={index} className="flex items-center gap-1 sm:gap-1.5 lg:gap-2">
+                      <ChevronRight className="w-2.5 h-2.5 sm:w-3 sm:h-3 lg:w-4 lg:h-4" />
+                      <button
+                        onClick={() => {
+                          const path = getBreadcrumbs().slice(0, index + 1).join('/');
+                          setCurrentPath(path);
+                        }}
+                        className="px-2 sm:px-2.5 lg:px-3 py-0.5 sm:py-1 bg-gray-100 border-2 border-black rounded-md lg:rounded-lg font-bold text-[10px] sm:text-xs lg:text-sm hover:bg-gray-200 transition break-all max-w-[120px] sm:max-w-none truncate"
+                      >
+                        {part}
+                      </button>
                     </div>
                   ))}
                 </div>
-              )}
-            </div>
-          </div>
+              </div>
+            )}
 
-          {/* Files Section */}
-          {currentPath && (
-            <div className="col-span-12">
-              <div className="bg-white border-2 sm:border-3 lg:border-4 border-black rounded-lg sm:rounded-xl lg:rounded-2xl p-3 sm:p-4 lg:p-6 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] sm:shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] lg:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]">
-                <h2 className="text-lg sm:text-xl lg:text-2xl font-black text-black mb-3 sm:mb-4 lg:mb-6" style={{ fontFamily: 'Comic Sans MS, cursive' }}>
-                  Code Files ({files.length})
-                </h2>
+            {/* Main Content */}
+            <div className="grid grid-cols-12 gap-3 sm:gap-4 md:gap-5 lg:gap-6">
+              {/* Folders Section */}
+              <div className="col-span-12">
+                <div className="bg-white border-2 sm:border-3 lg:border-4 border-black rounded-lg sm:rounded-xl lg:rounded-2xl p-3 sm:p-4 lg:p-6 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] sm:shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] lg:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]">
+                  <h2 className="text-lg sm:text-xl lg:text-2xl font-black text-black mb-3 sm:mb-4 lg:mb-6" style={{ fontFamily: 'Comic Sans MS, cursive' }}>
+                    Folders
+                  </h2>
 
-                {files.length === 0 ? (
-                  <div className="text-center py-6 sm:py-8 lg:py-12 border-2 lg:border-3 border-dashed border-black rounded-lg lg:rounded-xl">
-                    <Code2 className="w-8 h-8 sm:w-10 sm:h-10 lg:w-12 lg:h-12 text-gray-400 mx-auto mb-2 lg:mb-3" strokeWidth={2} />
-                    <p className="text-xs sm:text-sm lg:text-base text-gray-600 font-medium">No code files in this folder</p>
-                    <p className="text-[10px] sm:text-xs lg:text-sm text-gray-500 mt-1">Create a new file to get started</p>
-                  </div>
-                ) : (
-                  <div className="space-y-2 sm:space-y-2.5 lg:space-y-3">
-                    {files.map((file) => (
-                      <div
-                        key={file._id}
-                        className="flex items-center justify-between p-3 sm:p-3 lg:p-4 bg-white border-2 lg:border-3 border-black rounded-lg lg:rounded-xl shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] lg:shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] active:shadow-[1px_1px_0px_0px_rgba(0,0,0,1)] active:translate-x-[1px] active:translate-y-[1px] sm:hover:shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] lg:hover:shadow-[5px_5px_0px_0px_rgba(0,0,0,1)] sm:hover:translate-x-[-1px] sm:hover:translate-y-[-1px] lg:hover:translate-x-[-2px] lg:hover:translate-y-[-2px] transition gap-2 sm:gap-3"
-                      >
-                        <div className="flex items-center gap-2 sm:gap-2.5 lg:gap-3 flex-1 min-w-0 overflow-hidden">
-                          <File className="w-5 h-5 sm:w-5 sm:h-5 lg:w-5 lg:h-5 text-black flex-shrink-0" strokeWidth={2.5} />
-                          <div className="flex-1 min-w-0 overflow-hidden">
-                            <p className="font-bold text-black text-sm sm:text-sm lg:text-base truncate w-full">{file.filename}</p>
-                            <p className="text-xs sm:text-xs lg:text-sm text-gray-600 font-medium mt-0.5">
-                              {file.language} • {formatFileSize(file.size)}
-                            </p>
+                  {folders.length === 0 ? (
+                    <div className="text-center py-6 sm:py-8 lg:py-12 border-2 lg:border-3 border-dashed border-black rounded-lg lg:rounded-xl">
+                      <Folder className="w-8 h-8 sm:w-10 sm:h-10 lg:w-12 lg:h-12 text-gray-400 mx-auto mb-2 lg:mb-3" strokeWidth={2} />
+                      <p className="text-xs sm:text-sm lg:text-base text-gray-600 font-medium">No folders here</p>
+                      <p className="text-[10px] sm:text-xs lg:text-sm text-gray-500 mt-1">Create a new folder to get started</p>
+                    </div>
+                  ) : (
+                    <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2 sm:gap-3 lg:gap-4">
+                      {folders.map((folder) => (
+                        <div
+                          key={folder._id}
+                          className="bg-yellow-50 border-2 lg:border-3 border-black rounded-lg lg:rounded-xl p-2.5 sm:p-3 lg:p-4 hover:bg-yellow-100 transition cursor-pointer shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] lg:shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] active:shadow-[1px_1px_0px_0px_rgba(0,0,0,1)] active:translate-x-[1px] active:translate-y-[1px] sm:hover:shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] lg:hover:shadow-[5px_5px_0px_0px_rgba(0,0,0,1)] sm:hover:translate-x-[-1px] sm:hover:translate-y-[-1px] lg:hover:translate-x-[-2px] lg:hover:translate-y-[-2px]"
+                        >
+                          <div className="flex items-start justify-between gap-1.5 sm:gap-2">
+                            <div
+                              onClick={() => navigateToFolder(folder.path)}
+                              className="flex-1 min-w-0"
+                            >
+                              <Folder className="w-6 h-6 sm:w-7 sm:h-7 lg:w-8 lg:h-8 text-black mb-1 sm:mb-1.5 lg:mb-2" strokeWidth={2.5} />
+                              <h3 className="font-black text-black text-xs sm:text-sm lg:text-base break-words line-clamp-2">{folder.name}</h3>
+                            </div>
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                deleteFolder(folder.folderId);
+                              }}
+                              className="p-1 sm:p-1.5 lg:p-2 bg-red-100 border-2 border-black rounded-md lg:rounded-lg hover:bg-red-200 transition flex-shrink-0"
+                            >
+                              <Trash2 className="w-3.5 h-3.5 sm:w-4 sm:h-4 lg:w-5 lg:h-5 text-black" strokeWidth={2.5} />
+                            </button>
                           </div>
                         </div>
-                        <div className="flex items-center gap-1.5 sm:gap-2 justify-end flex-shrink-0">
-                          <button
-                            onClick={() => editFile(file)}
-                            className="p-2 sm:p-2 bg-blue-100 border-2 border-black rounded-md lg:rounded-lg hover:bg-blue-200 transition active:translate-x-[1px] active:translate-y-[1px]"
-                            title="Edit file"
-                          >
-                            <Edit3 className="w-4 h-4 sm:w-4 sm:h-4 text-black" strokeWidth={2.5} />
-                          </button>
-                          <button
-                            onClick={() => deleteFile(file.fileId)}
-                            className="p-2 sm:p-2 bg-red-100 border-2 border-black rounded-md lg:rounded-lg hover:bg-red-200 transition active:translate-x-[1px] active:translate-y-[1px]"
-                            title="Delete file"
-                          >
-                            <Trash2 className="w-4 h-4 sm:w-4 sm:h-4 lg:w-5 lg:h-5 text-black" strokeWidth={2.5} />
-                          </button>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                )}
+                      ))}
+                    </div>
+                  )}
+                </div>
               </div>
+
+              {/* Files Section */}
+              {currentPath && (
+                <div className="col-span-12">
+                  <div className="bg-white border-2 sm:border-3 lg:border-4 border-black rounded-lg sm:rounded-xl lg:rounded-2xl p-3 sm:p-4 lg:p-6 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] sm:shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] lg:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]">
+                    <h2 className="text-lg sm:text-xl lg:text-2xl font-black text-black mb-3 sm:mb-4 lg:mb-6" style={{ fontFamily: 'Comic Sans MS, cursive' }}>
+                      Code Files ({files.length})
+                    </h2>
+
+                    {files.length === 0 ? (
+                      <div className="text-center py-6 sm:py-8 lg:py-12 border-2 lg:border-3 border-dashed border-black rounded-lg lg:rounded-xl">
+                        <Code2 className="w-8 h-8 sm:w-10 sm:h-10 lg:w-12 lg:h-12 text-gray-400 mx-auto mb-2 lg:mb-3" strokeWidth={2} />
+                        <p className="text-xs sm:text-sm lg:text-base text-gray-600 font-medium">No code files in this folder</p>
+                        <p className="text-[10px] sm:text-xs lg:text-sm text-gray-500 mt-1">Create a new file to get started</p>
+                      </div>
+                    ) : (
+                      <div className="space-y-2 sm:space-y-2.5 lg:space-y-3">
+                        {files.map((file) => (
+                          <div
+                            key={file._id}
+                            className="flex items-center justify-between p-3 sm:p-3 lg:p-4 bg-white border-2 lg:border-3 border-black rounded-lg lg:rounded-xl shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] lg:shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] active:shadow-[1px_1px_0px_0px_rgba(0,0,0,1)] active:translate-x-[1px] active:translate-y-[1px] sm:hover:shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] lg:hover:shadow-[5px_5px_0px_0px_rgba(0,0,0,1)] sm:hover:translate-x-[-1px] sm:hover:translate-y-[-1px] lg:hover:translate-x-[-2px] lg:hover:translate-y-[-2px] transition gap-2 sm:gap-3"
+                          >
+                            <div className="flex items-center gap-2 sm:gap-2.5 lg:gap-3 flex-1 min-w-0 overflow-hidden">
+                              <File className="w-5 h-5 sm:w-5 sm:h-5 lg:w-5 lg:h-5 text-black flex-shrink-0" strokeWidth={2.5} />
+                              <div className="flex-1 min-w-0 overflow-hidden">
+                                <p className="font-bold text-black text-sm sm:text-sm lg:text-base truncate w-full">{file.filename}</p>
+                                <p className="text-xs sm:text-xs lg:text-sm text-gray-600 font-medium mt-0.5">
+                                  {file.language} • {formatFileSize(file.size)}
+                                </p>
+                              </div>
+                            </div>
+                            <div className="flex items-center gap-1.5 sm:gap-2 justify-end flex-shrink-0">
+                              <button
+                                onClick={() => editFile(file)}
+                                className="p-2 sm:p-2 bg-blue-100 border-2 border-black rounded-md lg:rounded-lg hover:bg-blue-200 transition active:translate-x-[1px] active:translate-y-[1px]"
+                                title="Edit file"
+                              >
+                                <Edit3 className="w-4 h-4 sm:w-4 sm:h-4 text-black" strokeWidth={2.5} />
+                              </button>
+                              <button
+                                onClick={() => deleteFile(file.fileId)}
+                                className="p-2 sm:p-2 bg-red-100 border-2 border-black rounded-md lg:rounded-lg hover:bg-red-200 transition active:translate-x-[1px] active:translate-y-[1px]"
+                                title="Delete file"
+                              >
+                                <Trash2 className="w-4 h-4 sm:w-4 sm:h-4 lg:w-5 lg:h-5 text-black" strokeWidth={2.5} />
+                              </button>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
             </div>
-          )}
-        </div>
+          </>
+        ) : (
+          /* GitHub Tab Content */
+          <div className="space-y-6">
+            {selectedRepo ? (
+              <GitHubRepoBrowser repo={selectedRepo} onBack={handleBackToRepos} />
+            ) : (
+              <GitHubRepoManager onRepoSelect={handleRepoSelect} />
+            )}
+          </div>
+        )}
 
         {/* Create Folder Modal */}
         {showCreateFolderModal && (
