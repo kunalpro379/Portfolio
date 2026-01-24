@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Github, Folder, File, ChevronRight, ArrowLeft, ExternalLink, Download } from 'lucide-react';
-import config, { buildUrl } from '../config/config';
+import config from '../config/config';
 
 interface GitHubRepo {
   _id: string;
@@ -48,7 +48,7 @@ export default function GitHubRepoBrowser({ repo, onBack }: GitHubRepoBrowserPro
   const fetchTree = async () => {
     setLoading(true);
     try {
-      const response = await fetch(buildUrl(config.api.endpoints.githubRepoTree(repo._id, currentPath)), {
+      const response = await fetch(config.api.endpoints.githubRepoTree(repo._id, currentPath), {
         credentials: 'include'
       });
       const data = await response.json();
@@ -64,7 +64,7 @@ export default function GitHubRepoBrowser({ repo, onBack }: GitHubRepoBrowserPro
   const fetchFile = async (path: string) => {
     setFileLoading(true);
     try {
-      const response = await fetch(buildUrl(config.api.endpoints.githubRepoFile(repo._id, path)), {
+      const response = await fetch(config.api.endpoints.githubRepoFile(repo._id, path), {
         credentials: 'include'
       });
       const data = await response.json();
