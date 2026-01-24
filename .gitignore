@@ -42,3 +42,10 @@ next-env.d.ts
 .env*.local
 
 /dist/
+
+# Environment variables
+.env
+admin/.env
+server/.env
+*.env
+!*.env.example
