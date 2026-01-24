@@ -3,7 +3,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { ArrowLeft, FileText, Pen, Folder, Menu, Download, X, Maximize2, Minimize2 } from 'lucide-react';
 import MDEditor from '@uiw/react-md-editor';
 import { Excalidraw } from '@excalidraw/excalidraw';
-import { API_ENDPOINTS } from '../config/api';
+import { API_ENDPOINTS, API_BASE_URL } from '../config/api';
 import PageShimmer from '@/components/PageShimmer';
 
 type TabType = 'markdown' | 'diagram';
@@ -46,7 +46,7 @@ export default function DocumentationDetail() {
 
     const fetchDoc = async () => {
         try {
-            const response = await fetch(`${API_ENDPOINTS.documentation}/${docId}`);
+            const response = await fetch(`${API_BASE_URL}${API_ENDPOINTS.documentation}/${docId}`);
             const data = await response.json();
 
             setFormData({
@@ -69,7 +69,7 @@ export default function DocumentationDetail() {
 
     const fetchFiles = async () => {
         try {
-            const response = await fetch(`${API_ENDPOINTS.documentation}/${docId}/files`);
+            const response = await fetch(`${API_BASE_URL}${API_ENDPOINTS.documentation}/${docId}/files`);
             const data = await response.json();
             const fetchedFiles = data.files || [];
             setFiles(fetchedFiles);
@@ -93,7 +93,7 @@ export default function DocumentationDetail() {
                 setShowMobileSidebar(false);
             }
             
-            const response = await fetch(`${API_ENDPOINTS.documentation}/${docId}/files/${file.fileId}`);
+            const response = await fetch(`${API_BASE_URL}${API_ENDPOINTS.documentation}/${docId}/files/${file.fileId}`);
 
             if (!response.ok) {
                 throw new Error(`Failed to load file: ${response.statusText}`);

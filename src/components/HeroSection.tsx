@@ -153,7 +153,7 @@ export default function HeroSection() {
                       src="/me.png"
                       alt="Hero Character"
                       loading="eager"
-                      fetchPriority="high"
+                      fetchpriority="high"
                       width={500}
                       height={500}
                       decoding="async"

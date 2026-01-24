@@ -1,7 +1,7 @@
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import { useRef, useState, useEffect } from "react";
-import { API_ENDPOINTS } from "@/config/api";
+import { API_ENDPOINTS, API_BASE_URL } from "@/config/api";
 
 interface Documentation {
   docId: string;
@@ -38,14 +38,42 @@ export default function BlogsSection() {
     const fetchData = async () => {
       try {
         // Fetch documentation
-        const docsResponse = await fetch(API_ENDPOINTS.documentation);
-        const docsData = await docsResponse.json();
-        setDocumentation(docsData.docs.filter((doc: Documentation) => doc.isPublic).slice(0, 4));
+        const docsUrl = `${API_BASE_URL}${API_ENDPOINTS.documentation}`;
+        console.log('Fetching documentation from:', docsUrl);
+        
+        const docsResponse = await fetch(docsUrl, {
+          headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+          }
+        });
+        
+        if (docsResponse.ok) {
+          const contentType = docsResponse.headers.get('content-type');
+          if (contentType && contentType.includes('application/json')) {
+            const docsData = await docsResponse.json();
+            setDocumentation(docsData.docs.filter((doc: Documentation) => doc.isPublic).slice(0, 4));
+          }
+        }
 
         // Fetch blogs
-        const blogsResponse = await fetch(API_ENDPOINTS.blogs);
-        const blogsData = await blogsResponse.json();
-        setBlogs(blogsData.blogs.slice(0, 4));
+        const blogsUrl = `${API_BASE_URL}${API_ENDPOINTS.blogs}`;
+        console.log('Fetching blogs from:', blogsUrl);
+        
+        const blogsResponse = await fetch(blogsUrl, {
+          headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+          }
+        });
+        
+        if (blogsResponse.ok) {
+          const contentType = blogsResponse.headers.get('content-type');
+          if (contentType && contentType.includes('application/json')) {
+            const blogsData = await blogsResponse.json();
+            setBlogs(blogsData.blogs.slice(0, 4));
+          }
+        }
       } catch (error) {
         console.error('Error fetching data:', error);
       }

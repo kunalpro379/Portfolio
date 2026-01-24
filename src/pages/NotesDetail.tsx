@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { ArrowLeft, FileText, FolderOpen, Folder as FolderIcon, ChevronRight, ChevronDown, Menu, X, Download, ExternalLink } from 'lucide-react';
-import { API_ENDPOINTS } from '@/config/api';
+import { API_ENDPOINTS, API_BASE_URL } from '@/config/api';
 import PageShimmer from '@/components/PageShimmer';
 
 interface NoteFile {
@@ -54,7 +54,7 @@ export default function NotesDetail() {
         setLoading(true);
 
         // Fetch the root folder with all nested data
-        const rootResponse = await fetch(`${API_ENDPOINTS.notes}/folders/${id}`);
+        const rootResponse = await fetch(`${API_BASE_URL}${API_ENDPOINTS.notes}/folders/${id}`);
         if (!rootResponse.ok) throw new Error('Failed to fetch notes');
         const rootData = await rootResponse.json();
 
@@ -63,7 +63,7 @@ export default function NotesDetail() {
           if (folder.subfolders && folder.subfolders.length > 0) {
             const subfoldersWithData = await Promise.all(
               folder.subfolders.map(async (subfolder) => {
-                const subResponse = await fetch(`${API_ENDPOINTS.notes}/folders/${subfolder.folderId}`);
+                const subResponse = await fetch(`${API_BASE_URL}${API_ENDPOINTS.notes}/folders/${subfolder.folderId}`);
                 if (subResponse.ok) {
                   const subData = await subResponse.json();
                   return await fetchSubfoldersRecursively(subData.folder);
@@ -131,7 +131,7 @@ export default function NotesDetail() {
       }
 
       // For text files, fetch the content
-      const response = await fetch(`${API_ENDPOINTS.notes}/files/${file.fileId}`);
+      const response = await fetch(`${API_BASE_URL}${API_ENDPOINTS.notes}/files/${file.fileId}`);
       if (!response.ok) throw new Error('Failed to load file');
       const data = await response.json();
       console.log('File content loaded');

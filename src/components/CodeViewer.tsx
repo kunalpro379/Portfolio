@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { X, Download, Copy, Eye, FileText, Calendar, HardDrive } from 'lucide-react';
-import { API_ENDPOINTS } from '../config/api';
+import { API_BASE_URL, API_ENDPOINTS } from '../config/api';
 
 interface CodeFile {
   _id: string;
@@ -33,7 +33,7 @@ export default function CodeViewer({ file, onClose }: CodeViewerProps) {
       setLoading(true);
       setError(null);
       
-      const response = await fetch(`${API_ENDPOINTS.code}/files/${file.fileId}/content`);
+      const response = await fetch(`${API_BASE_URL}${API_ENDPOINTS.code}/files/${file.fileId}/content`);
       
       if (!response.ok) {
         throw new Error('Failed to fetch file content');

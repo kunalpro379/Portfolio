@@ -1,7 +1,7 @@
 import { FolderKanban } from "lucide-react";
 import ProjectCard from "./ProjectCard";
 import { useEffect, useState } from "react";
-import { API_ENDPOINTS } from "@/config/api";
+import { API_ENDPOINTS, API_BASE_URL } from "@/config/api";
 
 interface RawProjectData {
   _id: string;
@@ -96,13 +96,34 @@ export default function ProjectsSection() {
     const fetchProjects = async () => {
       try {
         setLoading(true);
-        const response = await fetch(API_ENDPOINTS.projects);
+        const apiUrl = `${API_BASE_URL}${API_ENDPOINTS.projects}`;
+        console.log('Fetching projects from:', apiUrl);
+        
+        const response = await fetch(apiUrl, {
+          headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+          }
+        });
+        
+        console.log('Projects response status:', response.status);
+        console.log('Projects response headers:', response.headers);
         
         if (!response.ok) {
+          const errorText = await response.text();
+          console.error('Projects HTTP error response:', errorText);
           throw new Error(`Failed to fetch projects: ${response.statusText}`);
         }
         
+        const contentType = response.headers.get('content-type');
+        if (!contentType || !contentType.includes('application/json')) {
+          const responseText = await response.text();
+          console.error('Projects non-JSON response:', responseText);
+          throw new Error('Server returned non-JSON response');
+        }
+        
         const data = await response.json();
+        console.log('Projects data received:', data);
         const transformedProjects = transformProjects(data.projects);
         setProjects(transformedProjects);
       } catch (err) {

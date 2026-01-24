@@ -287,6 +287,21 @@
   img[width][height] {
     aspect-ratio: attr(width) / attr(height);
   }
+
+  /* AI Chat Button Fixed Position */
+  .ai-chat-button-fixed {
+    position: fixed !important;
+    bottom: 16px !important;
+    right: 16px !important;
+    z-index: 999999 !important;
+  }
+
+  @media (min-width: 640px) {
+    .ai-chat-button-fixed {
+      bottom: 24px !important;
+      right: 24px !important;
+    }
+  }
 }
 
 @layer base {

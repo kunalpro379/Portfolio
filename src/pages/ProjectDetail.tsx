@@ -3,7 +3,7 @@ import { useState, useEffect, useMemo } from 'react';
 import { Github, ExternalLink, ArrowLeft, FileText, Tag, Link as LinkIcon, Image as ImageIcon, Menu, X } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
-import { API_ENDPOINTS } from '@/config/api';
+import { API_ENDPOINTS, API_BASE_URL } from '@/config/api';
 import PageShimmer from '@/components/PageShimmer';
 
 interface Heading {
@@ -33,7 +33,7 @@ export default function ProjectDetail() {
       try {
         setLoading(true);
         
-        const projectResponse = await fetch(`${API_ENDPOINTS.projects}/${id}`);
+        const projectResponse = await fetch(`${API_BASE_URL}${API_ENDPOINTS.projects}/${id}`);
         if (!projectResponse.ok) {
           throw new Error('Project not found');
         }
@@ -42,7 +42,7 @@ export default function ProjectDetail() {
 
         if (projectData.project.mdFiles && projectData.project.mdFiles.length > 0) {
           try {
-            const mdResponse = await fetch(`${API_ENDPOINTS.projects}/${id}/md-content`);
+            const mdResponse = await fetch(`${API_BASE_URL}${API_ENDPOINTS.projects}/${id}/md-content`);
             const mdData = await mdResponse.json();
             if (mdData.exists && mdData.content) {
               setMarkdownContent(mdData.content);

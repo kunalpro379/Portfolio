@@ -3,7 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { ArrowLeft, Calendar, ExternalLink, FileText, Link as LinkIcon, Tag, Menu, X } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
-import { API_ENDPOINTS } from '../config/api';
+import { API_ENDPOINTS, API_BASE_URL } from '../config/api';
 import PageShimmer from '../components/PageShimmer';
 
 interface Blog {
@@ -44,7 +44,7 @@ export default function BlogDetail() {
         setError(null);
         
         // Fetch blog metadata first
-        const response = await fetch(`${API_ENDPOINTS.blogs}/${id}`);
+        const response = await fetch(`${API_BASE_URL}${API_ENDPOINTS.blogs}/${id}`);
         if (!response.ok) throw new Error('Failed to fetch blog');
         const data = await response.json();
         
@@ -55,7 +55,7 @@ export default function BlogDetail() {
         // Then fetch markdown content separately with loading indicator
         setContentLoading(true);
         try {
-          const contentResponse = await fetch(`${API_ENDPOINTS.blogs}/${id}/md-content`);
+          const contentResponse = await fetch(`${API_BASE_URL}${API_ENDPOINTS.blogs}/${id}/md-content`);
           if (contentResponse.ok) {
             const contentData = await contentResponse.json();
             setBlog(prev => prev ? { ...prev, content: contentData.content || '' } : null);

@@ -4,7 +4,7 @@ import { Clock, Calendar, ArrowLeft, FileText, Download, ExternalLink } from 'lu
 import Navbar from '@/components/Navbar';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
-import { API_ENDPOINTS } from '@/config/api';
+import { API_ENDPOINTS, API_BASE_URL } from '@/config/api';
 import PageShimmer from '@/components/PageShimmer';
 
 interface Blog {
@@ -68,7 +68,7 @@ export default function LearningDetail() {
         
         // Try blog first
         try {
-          const blogRes = await fetch(`${API_ENDPOINTS.blogs}/${id}`);
+          const blogRes = await fetch(`${API_BASE_URL}${API_ENDPOINTS.blogs}/${id}`);
           if (blogRes.ok) {
             const data = await blogRes.json();
             setContent(data.blog);
@@ -80,7 +80,7 @@ export default function LearningDetail() {
 
         // Try documentation
         try {
-          const docRes = await fetch(`${API_ENDPOINTS.documentation}/${id}`);
+          const docRes = await fetch(`${API_BASE_URL}${API_ENDPOINTS.documentation}/${id}`);
           if (docRes.ok) {
             const data = await docRes.json();
             setContent(data.doc);
@@ -92,7 +92,7 @@ export default function LearningDetail() {
 
         // Try notes
         try {
-          const notesRes = await fetch(`${API_ENDPOINTS.notes}/folders/${id}`);
+          const notesRes = await fetch(`${API_BASE_URL}${API_ENDPOINTS.notes}/folders/${id}`);
           if (notesRes.ok) {
             const data = await notesRes.json();
             setContent(data.folder);

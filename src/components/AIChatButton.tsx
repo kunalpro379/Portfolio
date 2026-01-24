@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
-import { MessageCircle, X, Send, Loader2, Bot, User, Sparkles } from 'lucide-react';
+import { X, Send, Loader2, User } from 'lucide-react';
 import { API_CONFIG } from '../config/api';
-import GeminiIcon from './icons/GeminiIcon';
 
 interface ChatMessage {
   id: string;
@@ -31,6 +30,9 @@ const AIChatButton: React.FC = () => {
   const [inputMessage, setInputMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
+  // Debug log to ensure component is rendering
+  console.log('AIChatButton rendered, isOpen:', isOpen);
+
   const sendMessage = async () => {
     if (!inputMessage.trim() || isLoading) return;
 
@@ -46,8 +48,11 @@ const AIChatButton: React.FC = () => {
     setIsLoading(true);
 
     try {
-      // Use the correct API base URL from config
-      const response = await fetch(`${API_CONFIG.BASE_URL}${API_CONFIG.ENDPOINTS.AI_CHAT}/chat`, {
+      // Construct the full URL
+      const apiUrl = `${API_CONFIG.BASE_URL}${API_CONFIG.ENDPOINTS.AI_CHAT}/chat`;
+      console.log('Making API call to:', apiUrl);
+      
+      const response = await fetch(apiUrl, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -58,17 +63,27 @@ const AIChatButton: React.FC = () => {
         })
       });
 
+      console.log('Response status:', response.status);
+      console.log('Response headers:', response.headers);
+
       // Check if response is ok and content-type is JSON
       if (!response.ok) {
+        const errorText = await response.text();
+        console.error('HTTP error response:', errorText);
         throw new Error(`HTTP error! status: ${response.status}`);
       }
 
       const contentType = response.headers.get('content-type');
+      console.log('Content-Type:', contentType);
+      
       if (!contentType || !contentType.includes('application/json')) {
+        const responseText = await response.text();
+        console.error('Non-JSON response:', responseText);
         throw new Error('Server returned non-JSON response');
       }
 
       const data: ChatResponse = await response.json();
+      console.log('API response:', data);
 
       const aiMessage: ChatMessage = {
         id: (Date.now() + 1).toString(),
@@ -92,7 +107,7 @@ const AIChatButton: React.FC = () => {
     }
   };
 
-  const handleKeyPress = (e: React.KeyboardEvent) => {
+  const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault();
       sendMessage();
@@ -108,48 +123,63 @@ const AIChatButton: React.FC = () => {
 
   // Format AI message content for better display
   const formatMessageContent = (content: string) => {
+    // Clean up the content by removing markdown formatting
+    let cleanContent = content
+      .replace(/\*\*(.*?)\*\*/g, '$1') // Remove bold markdown
+      .replace(/\*(.*?)\*/g, '$1')     // Remove italic markdown
+      .replace(/`(.*?)`/g, '$1')       // Remove inline code markdown
+      .replace(/#{1,6}\s/g, '')        // Remove heading markdown
+      .replace(/^\s*[-•]\s*/gm, '• ')  // Normalize bullet points
+      .replace(/^\s*\d+\.\s*/gm, (_, offset, string) => {
+        const lineStart = string.lastIndexOf('\n', offset) + 1;
+        const lineNumber = string.substring(lineStart, offset).match(/^\s*(\d+)\./);
+        return lineNumber ? `${lineNumber[1]}. ` : '• ';
+      });
+
     // Split content into paragraphs
-    const paragraphs = content.split('\n\n').filter(p => p.trim());
+    const paragraphs = cleanContent.split('\n\n').filter(p => p.trim());
     
     return paragraphs.map((paragraph, index) => {
+      const trimmedParagraph = paragraph.trim();
+      
       // Handle bullet points
-      if (paragraph.includes('•') || paragraph.includes('-')) {
-        const lines = paragraph.split('\n');
+      if (trimmedParagraph.includes('•')) {
+        const lines = trimmedParagraph.split('\n');
         return (
           <div key={index} className="mb-3">
             {lines.map((line, lineIndex) => {
               const trimmedLine = line.trim();
-              if (trimmedLine.startsWith('•') || trimmedLine.startsWith('-')) {
+              if (trimmedLine.startsWith('•')) {
                 return (
                   <div key={lineIndex} className="flex items-start gap-2 mb-1">
-                    <span className="text-purple-500 mt-1">•</span>
-                    <span>{trimmedLine.replace(/^[•-]\s*/, '')}</span>
+                    <span className="text-black mt-1 font-bold">•</span>
+                    <span>{trimmedLine.replace(/^•\s*/, '')}</span>
                   </div>
                 );
               }
-              return <div key={lineIndex} className="mb-1">{trimmedLine}</div>;
+              return trimmedLine ? <div key={lineIndex} className="mb-1">{trimmedLine}</div> : null;
             })}
           </div>
         );
       }
       
       // Handle numbered lists
-      if (/^\d+\./.test(paragraph.trim())) {
-        const lines = paragraph.split('\n');
+      if (/^\d+\./.test(trimmedParagraph)) {
+        const lines = trimmedParagraph.split('\n');
         return (
           <div key={index} className="mb-3">
             {lines.map((line, lineIndex) => {
               const trimmedLine = line.trim();
               if (/^\d+\./.test(trimmedLine)) {
-                const [number, ...rest] = trimmedLine.split('.');
+                const [numberPart, ...rest] = trimmedLine.split('.');
                 return (
                   <div key={lineIndex} className="flex items-start gap-2 mb-1">
-                    <span className="text-purple-500 font-semibold">{number}.</span>
+                    <span className="text-black font-bold">{numberPart}.</span>
                     <span>{rest.join('.').trim()}</span>
                   </div>
                 );
               }
-              return <div key={lineIndex} className="mb-1 ml-4">{trimmedLine}</div>;
+              return trimmedLine ? <div key={lineIndex} className="mb-1 ml-4">{trimmedLine}</div> : null;
             })}
           </div>
         );
@@ -158,7 +188,7 @@ const AIChatButton: React.FC = () => {
       // Regular paragraphs
       return (
         <div key={index} className="mb-3">
-          {paragraph}
+          {trimmedParagraph}
         </div>
       );
     });
@@ -166,159 +196,221 @@ const AIChatButton: React.FC = () => {
 
   return (
     <>
-      {/* Chat Button - Enhanced with Gemini Icon */}
+      {/* Chat Button - Mobile Optimized */}
       <button
         onClick={() => setIsOpen(true)}
-        className={`fixed bottom-6 right-6 z-40 group ${
+        className={`ai-chat-button-fixed group ${
           isOpen ? 'hidden' : 'flex'
-        } items-center gap-3 bg-gradient-to-r from-purple-600 via-blue-600 to-green-600 text-white px-6 py-4 rounded-full shadow-2xl hover:shadow-3xl transition-all duration-500 transform hover:scale-105 hover:-translate-y-1 border-2 border-white/20 backdrop-blur-sm`}
+        } items-center gap-2 sm:gap-3 bg-white text-black px-4 py-3 sm:px-6 sm:py-4 rounded-2xl shadow-2xl hover:shadow-3xl transition-all duration-500 transform hover:scale-105 hover:-translate-y-2 border-4 border-black relative overflow-hidden`}
         style={{
-          background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-          boxShadow: '0 20px 40px rgba(102, 126, 234, 0.4), 0 0 0 1px rgba(255,255,255,0.1)',
+          borderRadius: '20px 25px 20px 25px',
+          boxShadow: '8px 8px 0px 0px rgba(0,0,0,1), 0 0 30px rgba(0,0,0,0.1)',
         }}
         aria-label="Ask about Kunal"
       >
-        <div className="relative">
-          <GeminiIcon className="w-6 h-6 transition-transform duration-300 group-hover:rotate-12" size={24} />
-          <div className="absolute -top-1 -right-1 w-3 h-3 bg-white/90 rounded-full animate-pulse">
-            <div className="w-full h-full bg-gradient-to-r from-yellow-400 to-orange-500 rounded-full animate-ping"></div>
-          </div>
+        {/* Animated background pattern - removed dots */}
+        <div className="absolute inset-0 opacity-5">
         </div>
-        <span className="hidden sm:block font-semibold tracking-wide text-white drop-shadow-sm">Ask about me</span>
-        <Sparkles className="w-4 h-4 opacity-80 animate-pulse text-yellow-300" />
+        
+        {/* Main content */}
+        <div className="relative flex items-center gap-2 sm:gap-3">
+          <div className="relative">
+            <div className="w-8 h-8 sm:w-12 sm:h-12 rounded-full flex items-center justify-center p-1">
+              <img src="/gemini.png" alt="Gemini AI" className="w-full h-full object-contain animate-spin" style={{ animationDuration: '3s' }} />
+            </div>
+          </div>
+          <span className="text-sm sm:text-base font-black tracking-wide text-black relative">
+            Ask about me
+            <div className="absolute -bottom-1 left-0 w-full h-0.5 bg-black transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300"></div>
+          </span>
+        </div>
+        
+        {/* Hover effect lines */}
+        <div className="absolute top-0 left-0 w-full h-0.5 bg-black transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300"></div>
+        <div className="absolute bottom-0 right-0 w-full h-0.5 bg-black transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300"></div>
+        
+        {/* Hover effect lines */}
+        <div className="absolute top-0 left-0 w-full h-0.5 bg-white transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300"></div>
+        <div className="absolute bottom-0 right-0 w-full h-0.5 bg-white transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300"></div>
       </button>
 
-      {/* Chat Modal - Minimalist Artistic Design */}
+      {/* Chat Modal - Mobile Optimized */}
       {isOpen && (
-        <div className="fixed inset-0 z-50 flex items-end justify-end p-4 sm:p-6">
+        <div className="fixed inset-0 flex items-end justify-center sm:justify-end p-2 sm:p-4" style={{ zIndex: 999998 }}>
           {/* Backdrop */}
           <div 
             className="absolute inset-0 bg-black/10 dark:bg-white/10 backdrop-blur-md"
             onClick={() => setIsOpen(false)}
           />
           
-          {/* Chat Window - Enhanced Design */}
-          <div className="relative bg-white/95 dark:bg-gray-900/95 backdrop-blur-xl rounded-3xl shadow-2xl w-full max-w-md h-[600px] max-h-[80vh] flex flex-col border-2 border-white/20 dark:border-gray-700/30 overflow-hidden"
+          {/* Chat Window - Mobile Responsive */}
+          <div 
+            className="relative bg-white rounded-2xl shadow-2xl w-full max-w-sm sm:max-w-md h-[85vh] sm:h-[600px] max-h-[85vh] sm:max-h-[80vh] flex flex-col border-4 border-black overflow-hidden mx-auto sm:mx-0"
             style={{
-              boxShadow: '0 25px 50px rgba(0,0,0,0.15), 0 0 0 1px rgba(255,255,255,0.1)',
+              borderRadius: '25px 30px 25px 30px',
+              boxShadow: '12px 12px 0px 0px rgba(0,0,0,1), 0 0 40px rgba(0,0,0,0.1)',
             }}
           >
-            {/* Header - Enhanced */}
-            <div className="flex items-center justify-between p-6 border-b border-gray-200/50 dark:border-gray-700/50 bg-gradient-to-r from-gray-50/80 to-white/80 dark:from-gray-800/80 dark:to-gray-900/80 backdrop-blur-sm">
-              <div className="flex items-center gap-4">
+            {/* Header - Mobile Optimized */}
+            <div className="flex items-center justify-between p-3 sm:p-4 border-b-4 border-black bg-white relative overflow-hidden">
+              {/* Background pattern */}
+              <div className="absolute inset-0 opacity-5">
+                <div className="absolute top-1 left-4 w-1 h-1 bg-black rounded-full"></div>
+                <div className="absolute top-3 left-8 w-0.5 h-0.5 bg-black rounded-full"></div>
+                <div className="absolute top-2 right-6 w-1 h-1 bg-black rounded-full"></div>
+                <div className="absolute bottom-2 left-12 w-0.5 h-0.5 bg-black rounded-full"></div>
+              </div>
+              
+              <div className="flex items-center gap-2 sm:gap-3 relative">
                 <div className="relative">
-                  <div className="w-12 h-12 bg-gradient-to-br from-purple-600 to-blue-600 rounded-full flex items-center justify-center shadow-lg">
-                    <GeminiIcon className="w-6 h-6 text-white" size={24} />
+                  <div className="w-10 h-10 sm:w-14 sm:h-14 rounded-full flex items-center justify-center p-2">
+                    <img src="/gemini.png" alt="Gemini AI" className="w-full h-full object-contain animate-spin" style={{ animationDuration: '4s' }} />
                   </div>
-                  <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-green-500 rounded-full border-2 border-white dark:border-gray-900 shadow-sm"></div>
+                  <div className="absolute -bottom-1 -right-1 w-3 h-3 bg-white border-2 border-black rounded-full flex items-center justify-center">
+                    <div className="w-1 h-1 bg-green-500 rounded-full animate-pulse"></div>
+                  </div>
                 </div>
                 <div>
-                  <h3 className="font-bold text-gray-900 dark:text-white tracking-tight">Kunal's AI Assistant</h3>
-                  <p className="text-sm text-gray-600 dark:text-gray-400 font-medium">Ask me anything</p>
+                  <h3 className="text-sm sm:text-base font-black text-black tracking-tight">Kunal's AI Assistant</h3>
+                  <p className="text-xs sm:text-sm text-gray-600 font-medium">Ask me anything</p>
                 </div>
               </div>
+              
               <button
                 onClick={() => setIsOpen(false)}
-                className="p-2 hover:bg-gray-200/50 dark:hover:bg-gray-700/50 rounded-full transition-all duration-200 hover:scale-110"
+                className="p-2 hover:bg-gray-100 rounded-full transition-all duration-200 transform hover:scale-110 border-2 border-transparent hover:border-black"
               >
-                <X className="w-5 h-5 text-gray-600 dark:text-gray-400" />
+                <X className="w-5 h-5 text-black" />
               </button>
             </div>
 
-            {/* Messages - Enhanced Styling */}
-            <div className="flex-1 overflow-y-auto p-6 space-y-6 bg-gradient-to-b from-gray-50/30 to-white/30 dark:from-gray-800/30 dark:to-gray-900/30 backdrop-blur-sm">
+            {/* Messages - Mobile Optimized */}
+            <div className="flex-1 overflow-y-auto p-3 sm:p-4 space-y-3 sm:space-y-4 bg-gray-50 relative">
+              {/* Background pattern - removed dots */}
+              <div className="absolute inset-0 opacity-5 pointer-events-none">
+              </div>
+              
               {messages.map((message) => (
                 <div
                   key={message.id}
-                  className={`flex gap-4 ${
+                  className={`flex gap-3 relative ${
                     message.type === 'user' ? 'justify-end' : 'justify-start'
                   }`}
                 >
                   {message.type === 'ai' && (
-                    <div className="w-8 h-8 bg-gradient-to-br from-purple-600 to-blue-600 rounded-full flex items-center justify-center flex-shrink-0 mt-1 shadow-md">
-                      <GeminiIcon className="w-4 h-4 text-white" size={16} />
+                    <div className="w-8 h-8 sm:w-12 sm:h-12 rounded-full flex items-center justify-center flex-shrink-0 mt-1 relative p-1">
+                      <img src="/gemini.png" alt="Gemini AI" className="w-full h-full object-contain animate-spin" style={{ animationDuration: '5s' }} />
+                      <div className="absolute -top-1 -right-1 w-2 h-2 bg-white border border-black rounded-full flex items-center justify-center">
+                        <div className="w-0.5 h-0.5 bg-black rounded-full"></div>
+                      </div>
                     </div>
                   )}
                   
                   <div className={`max-w-[80%] ${message.type === 'user' ? 'order-1' : ''}`}>
                     <div
-                      className={`p-4 rounded-2xl shadow-sm ${
+                      className={`p-3 relative ${
                         message.type === 'user'
-                          ? 'bg-gradient-to-r from-blue-600 to-purple-600 text-white ml-auto shadow-lg'
-                          : 'bg-white/80 dark:bg-gray-800/80 text-gray-900 dark:text-white border border-gray-200/50 dark:border-gray-700/50 backdrop-blur-sm'
+                          ? 'bg-black text-white ml-auto rounded-2xl'
+                          : 'bg-white text-black border-2 border-gray-200 rounded-2xl'
                       }`}
                       style={message.type === 'user' ? {
-                        boxShadow: '0 8px 25px rgba(59, 130, 246, 0.3)'
-                      } : {}}
+                        borderRadius: '18px 20px 18px 20px',
+                        boxShadow: '4px 4px 0px 0px rgba(0,0,0,0.1)'
+                      } : {
+                        borderRadius: '20px 18px 20px 18px',
+                        boxShadow: '2px 2px 0px 0px rgba(0,0,0,0.05)'
+                      }}
                     >
+                      {/* Message decoration */}
+                      {message.type === 'ai' && (
+                        <div className="absolute top-2 right-2 w-1 h-1 bg-gray-300 rounded-full opacity-50"></div>
+                      )}
+                      
                       {message.type === 'ai' ? (
-                        <div className="text-sm leading-relaxed font-medium">
+                        <div className="text-sm leading-relaxed">
                           {formatMessageContent(message.content)}
                         </div>
                       ) : (
-                        <p className="text-sm leading-relaxed whitespace-pre-wrap font-medium">{message.content}</p>
+                        <p className="text-sm leading-relaxed">{message.content}</p>
                       )}
                     </div>
                     
-                    <p className="text-xs text-gray-400 dark:text-gray-500 mt-2 font-medium opacity-60">
+                    <p className="text-xs text-gray-500 mt-2 flex items-center gap-1">
+                      <div className="w-1 h-1 bg-gray-400 rounded-full"></div>
                       {formatTimestamp(message.timestamp)}
                     </p>
                   </div>
 
                   {message.type === 'user' && (
-                    <div className="w-8 h-8 bg-gradient-to-br from-gray-300 to-gray-400 dark:from-gray-600 dark:to-gray-700 rounded-full flex items-center justify-center flex-shrink-0 mt-1 shadow-md">
-                      <User className="w-4 h-4 text-gray-700 dark:text-gray-300" />
+                    <div className="w-8 h-8 bg-gray-300 rounded-full flex items-center justify-center flex-shrink-0 mt-1 relative border-2 border-gray-400">
+                      <User className="w-4 h-4 text-gray-700" />
+                      <div className="absolute -top-1 -right-1 w-2 h-2 bg-white border border-gray-400 rounded-full"></div>
                     </div>
                   )}
                 </div>
               ))}
               
               {isLoading && (
-                <div className="flex gap-4 justify-start">
-                  <div className="w-8 h-8 bg-gradient-to-br from-purple-600 to-blue-600 rounded-full flex items-center justify-center shadow-md">
-                    <GeminiIcon className="w-4 h-4 text-white" size={16} />
+                <div className="flex gap-3 justify-start">
+                  <div className="w-8 h-8 sm:w-12 sm:h-12 rounded-full flex items-center justify-center relative p-1">
+                    <img src="/gemini.png" alt="Gemini AI" className="w-full h-full object-contain animate-spin" style={{ animationDuration: '2s' }} />
                   </div>
-                  <div className="bg-white/80 dark:bg-gray-800/80 p-4 rounded-2xl border border-gray-200/50 dark:border-gray-700/50 backdrop-blur-sm shadow-sm">
+                  <div className="bg-white p-3 rounded-2xl border-2 border-gray-200 relative"
+                    style={{
+                      borderRadius: '20px 18px 20px 18px',
+                      boxShadow: '2px 2px 0px 0px rgba(0,0,0,0.05)'
+                    }}
+                  >
                     <div className="flex items-center gap-3">
-                      <Loader2 className="w-4 h-4 animate-spin text-purple-600" />
-                      <span className="text-sm text-gray-600 dark:text-gray-400 font-medium">Thinking...</span>
-                      <div className="flex gap-1">
-                        <div className="w-1 h-1 bg-purple-600 rounded-full animate-bounce"></div>
-                        <div className="w-1 h-1 bg-blue-600 rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
-                        <div className="w-1 h-1 bg-green-600 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
-                      </div>
+                      <Loader2 className="w-4 h-4 animate-spin text-black" />
+                      <span className="text-sm text-black">Thinking...</span>
                     </div>
                   </div>
                 </div>
               )}
             </div>
 
-            {/* Input - Enhanced */}
-            <div className="p-6 border-t border-gray-200/50 dark:border-gray-700/50 bg-white/80 dark:bg-gray-900/80 backdrop-blur-sm">
-              <div className="flex gap-3">
-                <input
-                  type="text"
-                  value={inputMessage}
-                  onChange={(e) => setInputMessage(e.target.value)}
-                  onKeyPress={handleKeyPress}
-                  placeholder="Ask about Kunal's projects, skills, experience..."
-                  className="flex-1 p-4 border-2 border-gray-200/50 dark:border-gray-700/50 rounded-2xl bg-gray-50/50 dark:bg-gray-800/50 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-all duration-200 font-medium backdrop-blur-sm"
-                  disabled={isLoading}
-                />
+            {/* Input - Mobile Optimized */}
+            <div className="p-3 sm:p-4 border-t-4 border-black bg-white relative overflow-hidden">
+              {/* Background pattern - removed dots */}
+              <div className="absolute inset-0 opacity-5">
+              </div>
+              
+              <div className="flex gap-2 sm:gap-3 relative">
+                <div className="flex-1 relative">
+                  <input
+                    type="text"
+                    value={inputMessage}
+                    onChange={(e) => setInputMessage(e.target.value)}
+                    onKeyDown={handleKeyDown}
+                    placeholder="Ask about Kunal's projects, skills, experience..."
+                    className="w-full p-2 sm:p-3 text-sm sm:text-base border-2 border-gray-300 rounded-xl bg-white text-black placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-black focus:border-black transition-all duration-200"
+                    style={{
+                      borderRadius: '15px 18px 15px 18px',
+                    }}
+                    disabled={isLoading}
+                  />
+                </div>
+                
                 <button
                   onClick={sendMessage}
                   disabled={!inputMessage.trim() || isLoading}
-                  className="p-4 bg-gradient-to-r from-purple-600 to-blue-600 text-white rounded-2xl hover:from-purple-700 hover:to-blue-700 disabled:opacity-30 disabled:cursor-not-allowed transition-all duration-200 transform hover:scale-105 active:scale-95 shadow-lg"
+                  className="p-2 sm:p-3 bg-black text-white rounded-xl hover:bg-gray-800 disabled:opacity-30 disabled:cursor-not-allowed transition-all duration-200 transform hover:scale-105 active:scale-95 relative overflow-hidden"
                   style={{
-                    boxShadow: '0 8px 25px rgba(147, 51, 234, 0.3)'
+                    borderRadius: '18px 15px 18px 15px',
+                    boxShadow: '4px 4px 0px 0px rgba(0,0,0,0.1)',
                   }}
                 >
-                  <Send className="w-5 h-5" />
+                  <Send className="w-4 h-4 sm:w-5 sm:h-5 relative z-10" />
                 </button>
               </div>
-              <p className="text-xs text-gray-500 dark:text-gray-400 mt-3 text-center font-medium opacity-70 flex items-center justify-center gap-2">
-                <GeminiIcon className="w-3 h-3" size={12} />
-                Powered by AI • Information based on Kunal's portfolio
+              
+              <p className="text-xs text-gray-500 mt-2 sm:mt-3 text-center flex items-center justify-center gap-2 relative">
+                <img src="/gemini.png" alt="Gemini AI" className="w-3 h-3 sm:w-5 sm:h-5 object-contain animate-spin" style={{ animationDuration: '6s' }} />
+                <span>Powered by AI</span>
+                <div className="w-1 h-1 bg-gray-400 rounded-full"></div>
+                <span className="hidden sm:inline">Information based on Kunal's portfolio</span>
+                <span className="sm:hidden">Kunal's portfolio</span>
               </p>
             </div>
           </div>

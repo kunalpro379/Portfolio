@@ -125,7 +125,7 @@ export default function LearningsPage() {
 
         switch (activeTab) {
           case 'projects':
-            const projectsRes = await fetch(API_ENDPOINTS.projects);
+            const projectsRes = await fetch(`${API_BASE_URL}${API_ENDPOINTS.projects}`);
             if (!projectsRes.ok) throw new Error('Failed to fetch projects');
             const projectsData = await projectsRes.json();
             const transformedProjects = projectsData.projects
@@ -151,14 +151,14 @@ export default function LearningsPage() {
             break;
 
           case 'blogs':
-            const blogsRes = await fetch(API_ENDPOINTS.blogs);
+            const blogsRes = await fetch(`${API_BASE_URL}${API_ENDPOINTS.blogs}`);
             if (!blogsRes.ok) throw new Error('Failed to fetch blogs');
             const blogsData = await blogsRes.json();
             setBlogs(blogsData.blogs);
             break;
 
           case 'notes':
-            const notesRes = await fetch(`${API_ENDPOINTS.notes}/folders`);
+            const notesRes = await fetch(`${API_BASE_URL}${API_ENDPOINTS.notes}/folders`);
             if (!notesRes.ok) throw new Error('Failed to fetch notes');
             const notesData = await notesRes.json();
             console.log('Notes data received:', notesData.folders);
@@ -169,14 +169,14 @@ export default function LearningsPage() {
             break;
 
           case 'documentation':
-            const docsRes = await fetch(API_ENDPOINTS.documentation);
+            const docsRes = await fetch(`${API_BASE_URL}${API_ENDPOINTS.documentation}`);
             if (!docsRes.ok) throw new Error('Failed to fetch documentation');
             const docsData = await docsRes.json();
             setDocumentation(docsData.docs);
             break;
 
           case 'diagrams':
-            const diagramsRes = await fetch(API_ENDPOINTS.diagrams);
+            const diagramsRes = await fetch(`${API_BASE_URL}${API_ENDPOINTS.diagrams}`);
             if (!diagramsRes.ok) throw new Error('Failed to fetch diagrams');
             const diagramsData = await diagramsRes.json();
             setDiagrams(diagramsData.canvases || []);
@@ -185,8 +185,8 @@ export default function LearningsPage() {
           case 'code':
             // Fetch both code folders and GitHub repos in parallel
             const [codeRes, githubRes] = await Promise.allSettled([
-              fetch(`${API_ENDPOINTS.code}/folders?parentPath=`),
-              fetch(API_ENDPOINTS.github.repos)
+              fetch(`${API_BASE_URL}${API_ENDPOINTS.code}/folders?parentPath=`),
+              fetch(`${API_BASE_URL}${API_ENDPOINTS.github.repos}`)
             ]);
 
             // Handle code folders
@@ -311,7 +311,7 @@ export default function LearningsPage() {
       
       // Refresh diagrams list
       if (activeTab === 'diagrams') {
-        const diagramsRes = await fetch(API_ENDPOINTS.diagrams);
+        const diagramsRes = await fetch(`${API_BASE_URL}${API_ENDPOINTS.diagrams}`);
         if (diagramsRes.ok) {
           const diagramsData = await diagramsRes.json();
           setDiagrams(diagramsData.canvases || []);
