@@ -1,10 +1,9 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import { ArrowLeft, FileText, Folder as FolderIcon, ChevronRight, ChevronDown, Menu, X, Code2, Github } from 'lucide-react';
+import { ArrowLeft, Folder as FolderIcon, ChevronRight, ChevronDown, Menu, X, Code2, Github, File, ExternalLink } from 'lucide-react';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { vscDarkPlus } from 'react-syntax-highlighter/dist/esm/styles/prism';
 import { API_ENDPOINTS } from '../config/api';
-import PageShimmer from '../components/PageShimmer';
 
 interface CodeFile {
   _id: string;
@@ -61,22 +60,23 @@ export default function CodePage() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const folderFromUrl = searchParams.get('folder');
+  const repoFromUrl = searchParams.get('repo');
   
-  // Local files state
+  // State
+  const [activeView, setActiveView] = useState<'local' | 'github'>('local');
   const [rootFolders, setRootFolders] = useState<CodeFolder[]>([]);
+  const [githubRepos, setGithubRepos] = useState<GitHubRepo[]>([]);
   const [selectedFile, setSelectedFile] = useState<CodeFile | null>(null);
+  const [selectedGithubFile, setSelectedGithubFile] = useState<GitHubFileContent | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [expandedFolders, setExpandedFolders] = useState<Set<string>>(new Set());
   const [sidebarOpen, setSidebarOpen] = useState(true);
 
-  // GitHub state
-  const [activeTab, setActiveTab] = useState<'local' | 'github'>('local');
-  const [githubRepos, setGithubRepos] = useState<GitHubRepo[]>([]);
+  // GitHub specific state
   const [selectedRepo, setSelectedRepo] = useState<GitHubRepo | null>(null);
   const [githubItems, setGithubItems] = useState<GitHubTreeItem[]>([]);
   const [githubPath, setGithubPath] = useState('');
-  const [selectedGithubFile, setSelectedGithubFile] = useState<GitHubFileContent | null>(null);
   const [githubLoading, setGithubLoading] = useState(false);
 
   // Helper functions
@@ -102,18 +102,96 @@ export default function CodePage() {
     return languageMap[ext] || 'text';
   };
 
-  // GitHub functions
+  const formatFileSize = (bytes: number) => {
+    if (bytes < 1024) return bytes + ' B';
+    if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(2) + ' KB';
+    return (bytes / (1024 * 1024)).toFixed(2) + ' MB';
+  };
+
+  // Fetch functions
+  const fetchLocalFolders = async () => {
+    try {
+      setLoading(true);
+      const foldersResponse = await fetch(`${API_ENDPOINTS.code}/folders?parentPath=`);
+      if (!foldersResponse.ok) throw new Error('Failed to fetch code folders');
+      const foldersData = await foldersResponse.json();
+
+      const fetchFolderContents = async (folder: CodeFolder): Promise<CodeFolder> => {
+        const filesResponse = await fetch(`${API_ENDPOINTS.code}/files?folderPath=${folder.path}`);
+        if (filesResponse.ok) {
+          const filesData = await filesResponse.json();
+          folder.files = filesData.files || [];
+        } else {
+          folder.files = [];
+        }
+
+        const subfoldersResponse = await fetch(`${API_ENDPOINTS.code}/folders?parentPath=${folder.path}`);
+        if (subfoldersResponse.ok) {
+          const subfoldersData = await subfoldersResponse.json();
+          if (subfoldersData.folders && subfoldersData.folders.length > 0) {
+            folder.subfolders = await Promise.all(
+              subfoldersData.folders.map((subfolder: CodeFolder) => fetchFolderContents(subfolder))
+            );
+          }
+        }
+
+        return folder;
+      };
+
+      const foldersWithContents = await Promise.all(
+        foldersData.folders.map((folder: CodeFolder) => fetchFolderContents(folder))
+      );
+
+      setRootFolders(foldersWithContents);
+
+      if (folderFromUrl) {
+        const targetFolder = foldersWithContents.find(f => f.path === folderFromUrl);
+        if (targetFolder) {
+          setExpandedFolders(new Set([targetFolder.folderId]));
+          if (targetFolder.files && targetFolder.files.length > 0) {
+            loadFile(targetFolder.files[0], true);
+          }
+        }
+      } else {
+        const findFirstFile = (folders: CodeFolder[]): CodeFile | null => {
+          for (const folder of folders) {
+            if (folder.files && folder.files.length > 0) {
+              setExpandedFolders(new Set([folder.folderId]));
+              return folder.files[0];
+            }
+            if (folder.subfolders) {
+              const file = findFirstFile(folder.subfolders);
+              if (file) return file;
+            }
+          }
+          return null;
+        };
+
+        const firstFile = findFirstFile(foldersWithContents);
+        if (firstFile) {
+          loadFile(firstFile, true);
+        }
+      }
+    } catch (err) {
+      console.error('Error fetching code structure:', err);
+      setError(err instanceof Error ? err.message : 'Failed to load code files');
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const fetchGithubRepos = async () => {
     try {
-      setGithubLoading(true);
+      setLoading(true);
       const response = await fetch(API_ENDPOINTS.github.repos);
+      if (!response.ok) throw new Error('Failed to fetch GitHub repos');
       const data = await response.json();
       setGithubRepos(data.repos || []);
     } catch (error) {
       console.error('Error fetching GitHub repos:', error);
       setGithubRepos([]);
     } finally {
-      setGithubLoading(false);
+      setLoading(false);
     }
   };
 
@@ -123,6 +201,7 @@ export default function CodePage() {
     try {
       setGithubLoading(true);
       const response = await fetch(API_ENDPOINTS.github.repoTree(selectedRepo._id, githubPath));
+      if (!response.ok) throw new Error('Failed to fetch repository tree');
       const data = await response.json();
       setGithubItems(data.items || []);
     } catch (error) {
@@ -139,9 +218,10 @@ export default function CodePage() {
     try {
       setGithubLoading(true);
       const response = await fetch(API_ENDPOINTS.github.repoFile(selectedRepo._id, path));
+      if (!response.ok) throw new Error('Failed to fetch file');
       const data = await response.json();
       setSelectedGithubFile(data.file);
-      setSelectedFile(null); // Clear local file selection
+      setSelectedFile(null);
     } catch (error) {
       console.error('Error fetching GitHub file:', error);
       alert('Failed to load file content');
@@ -150,6 +230,7 @@ export default function CodePage() {
     }
   };
 
+  // Navigation functions
   const navigateGithubFolder = (path: string) => {
     setGithubPath(path);
   };
@@ -159,122 +240,23 @@ export default function CodePage() {
     return githubPath.split('/').filter(Boolean);
   };
 
-  useEffect(() => {
-    if (activeTab === 'local') {
-      const fetchCodeStructure = async () => {
-        try {
-          setLoading(true);
-
-          // Fetch root folders
-          const foldersResponse = await fetch(`${API_ENDPOINTS.code}/folders?parentPath=`);
-          if (!foldersResponse.ok) throw new Error('Failed to fetch code folders');
-          const foldersData = await foldersResponse.json();
-
-          // For each folder, fetch its files and subfolders recursively
-          const fetchFolderContents = async (folder: CodeFolder): Promise<CodeFolder> => {
-            // Fetch files in this folder
-            const filesResponse = await fetch(`${API_ENDPOINTS.code}/files?folderPath=${folder.path}`);
-            if (filesResponse.ok) {
-              const filesData = await filesResponse.json();
-              folder.files = filesData.files || [];
-            } else {
-              folder.files = [];
-            }
-
-            // Fetch subfolders
-            const subfoldersResponse = await fetch(`${API_ENDPOINTS.code}/folders?parentPath=${folder.path}`);
-            if (subfoldersResponse.ok) {
-              const subfoldersData = await subfoldersResponse.json();
-              if (subfoldersData.folders && subfoldersData.folders.length > 0) {
-                folder.subfolders = await Promise.all(
-                  subfoldersData.folders.map((subfolder: CodeFolder) => fetchFolderContents(subfolder))
-                );
-              }
-            }
-
-            return folder;
-          };
-
-          const foldersWithContents = await Promise.all(
-            foldersData.folders.map((folder: CodeFolder) => fetchFolderContents(folder))
-          );
-
-          setRootFolders(foldersWithContents);
-
-          // Auto-expand folder from URL and select first file
-          if (folderFromUrl) {
-            const targetFolder = foldersWithContents.find(f => f.path === folderFromUrl);
-            if (targetFolder) {
-              setExpandedFolders(new Set([targetFolder.folderId]));
-              if (targetFolder.files && targetFolder.files.length > 0) {
-                loadFile(targetFolder.files[0], true);
-              }
-            }
-          } else {
-            // Find first file in any folder
-            const findFirstFile = (folders: CodeFolder[]): CodeFile | null => {
-              for (const folder of folders) {
-                if (folder.files && folder.files.length > 0) {
-                  setExpandedFolders(new Set([folder.folderId]));
-                  return folder.files[0];
-                }
-                if (folder.subfolders) {
-                  const file = findFirstFile(folder.subfolders);
-                  if (file) return file;
-                }
-              }
-              return null;
-            };
-
-            const firstFile = findFirstFile(foldersWithContents);
-            if (firstFile) {
-              loadFile(firstFile, true);
-            }
-          }
-        } catch (err) {
-          console.error('Error fetching code structure:', err);
-          setError(err instanceof Error ? err.message : 'Failed to load code files');
-        } finally {
-          setLoading(false);
-        }
-      };
-
-      fetchCodeStructure();
-    } else {
-      fetchGithubRepos();
-    }
-  }, [folderFromUrl, activeTab]);
-
-  useEffect(() => {
-    if (selectedRepo) {
-      fetchGithubTree();
-    }
-  }, [selectedRepo, githubPath]);
-
+  // Load functions
   const loadFile = async (file: CodeFile, isInitialLoad: boolean = false) => {
     try {
-      console.log('Loading file:', file.filename, file.fileId);
-
-      // Clear GitHub selections when loading local file
       setSelectedGithubFile(null);
-
-      // Close sidebar on mobile after selecting file
+      
       if (!isInitialLoad) {
         setSidebarOpen(false);
       }
 
-      // For non-text files, just set the file directly
       if (!isTextFile(file.filename)) {
-        console.log('Setting non-text file directly');
         setSelectedFile(file);
         return;
       }
 
-      // For text files, fetch the content
       const response = await fetch(`${API_ENDPOINTS.code}/files/${file.fileId}/content`);
       if (!response.ok) throw new Error('Failed to load file content');
       const data = await response.json();
-      console.log('File content loaded');
       setSelectedFile({ ...file, content: data.content });
     } catch (err) {
       console.error('Error loading file:', err);
@@ -294,13 +276,42 @@ export default function CodePage() {
     });
   };
 
+  // Effects
+  useEffect(() => {
+    // If repo parameter is provided, fetch GitHub repos and load that specific repo
+    if (repoFromUrl) {
+      fetchGithubRepos().then(() => {
+        // This will be handled in the second useEffect when githubRepos is updated
+      });
+    } else {
+      // Load local folders for folder browsing
+      fetchLocalFolders();
+    }
+  }, [folderFromUrl, repoFromUrl]);
+
+  // Separate effect to handle repo selection after repos are loaded
+  useEffect(() => {
+    if (repoFromUrl && githubRepos.length > 0) {
+      const repo = githubRepos.find(r => r._id === repoFromUrl);
+      if (repo) {
+        setSelectedRepo(repo);
+      }
+    }
+  }, [repoFromUrl, githubRepos]);
+
+  useEffect(() => {
+    if (selectedRepo) {
+      fetchGithubTree();
+    }
+  }, [selectedRepo, githubPath]);
+
+  // Render functions
   const renderFolderTree = (folder: CodeFolder, level: number = 0) => {
     const isExpanded = expandedFolders.has(folder.folderId);
     const hasChildren = (folder.subfolders && folder.subfolders.length > 0) || (folder.files && folder.files.length > 0);
 
     return (
       <div key={folder.folderId}>
-        {/* Folder Header */}
         <button
           onClick={() => toggleFolder(folder.folderId)}
           className="w-full text-left flex items-center gap-2 p-2 hover:bg-gray-100 rounded-lg transition-all"
@@ -316,10 +327,8 @@ export default function CodePage() {
           <span className="text-sm font-bold truncate">{folder.name}</span>
         </button>
 
-        {/* Folder Contents */}
         {isExpanded && (
           <div>
-            {/* Files in this folder */}
             {folder.files && folder.files.map((file) => (
               <button
                 key={file.fileId}
@@ -335,7 +344,6 @@ export default function CodePage() {
               </button>
             ))}
 
-            {/* Subfolders */}
             {folder.subfolders && folder.subfolders.map((subfolder) =>
               renderFolderTree(subfolder, level + 1)
             )}
@@ -345,21 +353,32 @@ export default function CodePage() {
     );
   };
 
-  const formatFileSize = (bytes: number) => {
-    if (bytes < 1024) return bytes + ' B';
-    if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(2) + ' KB';
-    return (bytes / (1024 * 1024)).toFixed(2) + ' MB';
-  };
-
   if (loading) {
-    return <PageShimmer />;
+    return (
+      <div className="min-h-screen bg-white flex items-center justify-center">
+        <div className="relative w-32 h-32">
+          <div className="absolute inset-0 animate-spin">
+            <svg className="w-32 h-32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <path
+                d="M4 12a8 8 0 0 1 8-8V2.5L14.5 5 12 7.5V6a6 6 0 0 0-6 6h-2z"
+                className="text-black"
+              />
+              <path
+                d="M20 12a8 8 0 0 1-8 8v1.5L9.5 19 12 16.5V18a6 6 0 0 0 6-6h2z"
+                className="text-black"
+              />
+            </svg>
+          </div>
+        </div>
+      </div>
+    );
   }
 
-  if (error || rootFolders.length === 0) {
+  if (error) {
     return (
       <div className="min-h-screen bg-white flex items-center justify-center">
         <div className="text-center">
-          <p className="text-red-600 text-xl mb-4 font-bold">{error || 'No code files found'}</p>
+          <p className="text-red-600 text-xl mb-4 font-bold">{error}</p>
           <button
             onClick={() => navigate('/learnings?tab=code')}
             className="px-6 py-3 bg-black text-white border-3 border-black rounded-xl font-bold hover:bg-gray-800 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]"
@@ -377,7 +396,6 @@ export default function CodePage() {
       <div className="bg-white border-b-4 border-black p-4">
         <div className="flex items-center justify-between gap-3">
           <div className="flex items-center gap-3">
-            {/* Mobile Menu Toggle */}
             <button
               onClick={() => setSidebarOpen(!sidebarOpen)}
               className="md:hidden p-2 hover:bg-gray-100 rounded-lg border-2 border-black"
@@ -394,21 +412,23 @@ export default function CodePage() {
             </button>
           </div>
           
-          {selectedFile && (
-            <div className="flex items-center gap-2 min-w-0 flex-1 justify-center">
-              <h1 className="text-sm md:text-base font-black text-black truncate">
-                {selectedFile.filename}
-              </h1>
+          <div className="flex items-center gap-2 min-w-0 flex-1 justify-center">
+            <h1 className="text-sm md:text-base font-black text-black truncate">
+              {selectedFile ? selectedFile.filename : selectedGithubFile ? selectedGithubFile.name : 'Code Explorer'}
+            </h1>
+            {(selectedFile || selectedGithubFile) && (
               <span className="px-2 py-1 bg-orange-200 border-2 border-black rounded text-[10px] font-bold flex-shrink-0">
-                {getFileExtension(selectedFile.filename).toUpperCase()}
+                {selectedFile ? getFileExtension(selectedFile.filename).toUpperCase() : 
+                 selectedGithubFile ? getFileExtension(selectedGithubFile.name).toUpperCase() : ''}
               </span>
-            </div>
-          )}
+            )}
+          </div>
           
-          {selectedFile && (
+          {(selectedFile || selectedGithubFile) && (
             <div className="flex items-center gap-2 flex-shrink-0">
               <span className="text-xs text-gray-600 font-medium hidden sm:inline">
-                {formatFileSize(selectedFile.size)}
+                {selectedFile ? formatFileSize(selectedFile.size) : 
+                 selectedGithubFile ? formatFileSize(selectedGithubFile.size) : ''}
               </span>
             </div>
           )}
@@ -436,7 +456,7 @@ export default function CodePage() {
             <div className="flex items-center justify-between mb-3">
               <div className="flex items-center gap-2">
                 <Code2 className="w-4 h-4 text-orange-600" strokeWidth={2.5} />
-                <h3 className="font-black text-sm uppercase">Code Files</h3>
+                <h3 className="font-black text-sm uppercase">Code Explorer</h3>
               </div>
               <button
                 onClick={() => setSidebarOpen(false)}
@@ -446,55 +466,22 @@ export default function CodePage() {
               </button>
             </div>
 
-            {/* Tab Navigation */}
-            <div className="flex gap-1 mb-4">
-              <button
-                onClick={() => {
-                  setActiveTab('local');
-                  setSelectedRepo(null);
-                  setGithubPath('');
-                  setSelectedGithubFile(null);
-                }}
-                className={`flex-1 px-3 py-2 border-2 border-black rounded-lg font-bold text-xs transition ${
-                  activeTab === 'local'
-                    ? 'bg-orange-200 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]'
-                    : 'bg-white hover:bg-gray-50'
-                }`}
-              >
-                <Code2 className="w-3 h-3 inline mr-1" strokeWidth={2.5} />
-                Local
-              </button>
-              <button
-                onClick={() => {
-                  setActiveTab('github');
-                  setSelectedFile(null);
-                }}
-                className={`flex-1 px-3 py-2 border-2 border-black rounded-lg font-bold text-xs transition ${
-                  activeTab === 'github'
-                    ? 'bg-orange-200 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]'
-                    : 'bg-white hover:bg-gray-50'
-                }`}
-              >
-                <Github className="w-3 h-3 inline mr-1" strokeWidth={2.5} />
-                GitHub
-              </button>
-            </div>
-
-            {/* Content based on active tab */}
-            {activeTab === 'local' ? (
-              <div>
-                {rootFolders.map(folder => renderFolderTree(folder))}
-              </div>
-            ) : (
+            {/* Content - Show appropriate content based on URL params */}
+            {repoFromUrl || selectedRepo ? (
+              /* GitHub Repository Browser */
               <div>
                 {selectedRepo ? (
-                  /* GitHub Repository Browser */
                   <div className="space-y-3">
                     {/* Repository Header */}
                     <div className="flex items-center justify-between p-2 bg-gray-50 border-2 border-black rounded-lg">
                       <div className="flex items-center gap-2 min-w-0">
                         <button
-                          onClick={() => setSelectedRepo(null)}
+                          onClick={() => {
+                            setSelectedRepo(null);
+                            setGithubPath('');
+                            setGithubItems([]);
+                            navigate('/learnings?tab=code');
+                          }}
                           className="p-1 hover:bg-gray-200 rounded"
                         >
                           <ArrowLeft className="w-3 h-3" strokeWidth={2.5} />
@@ -502,6 +489,15 @@ export default function CodePage() {
                         <Github className="w-3 h-3 flex-shrink-0" strokeWidth={2.5} />
                         <span className="text-xs font-bold truncate">{selectedRepo.name}</span>
                       </div>
+                      <a
+                        href={selectedRepo.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="p-1 hover:bg-gray-200 rounded"
+                        title="Open on GitHub"
+                      >
+                        <ExternalLink className="w-3 h-3" strokeWidth={2.5} />
+                      </a>
                     </div>
 
                     {/* GitHub Breadcrumbs */}
@@ -557,7 +553,7 @@ export default function CodePage() {
                             {item.type === 'dir' ? (
                               <FolderIcon size={14} strokeWidth={2.5} className="flex-shrink-0 text-orange-600" />
                             ) : (
-                              <Code2 size={14} strokeWidth={2.5} className="flex-shrink-0 text-blue-600" />
+                              <File size={14} strokeWidth={2.5} className="flex-shrink-0 text-blue-600" />
                             )}
                             <span className="text-sm font-medium truncate">{item.name}</span>
                           </button>
@@ -566,53 +562,32 @@ export default function CodePage() {
                     )}
                   </div>
                 ) : (
-                  /* GitHub Repository List */
-                  <div>
-                    {githubLoading ? (
-                      <div className="text-center py-4">
-                        <div className="animate-spin w-4 h-4 border-2 border-black border-t-transparent rounded-full mx-auto mb-2"></div>
-                        <p className="text-xs font-medium">Loading repositories...</p>
-                      </div>
-                    ) : githubRepos.length === 0 ? (
-                      <div className="text-center py-4">
-                        <Github className="w-8 h-8 text-gray-400 mx-auto mb-2" strokeWidth={2} />
-                        <p className="text-xs font-bold text-black mb-1">No GitHub Repositories</p>
-                        <p className="text-xs text-gray-600">Repositories will be added by the admin</p>
-                      </div>
-                    ) : (
-                      <div className="space-y-2">
-                        {githubRepos.map((repo) => (
-                          <button
-                            key={repo._id}
-                            onClick={() => setSelectedRepo(repo)}
-                            className="w-full text-left p-2 bg-white border-2 border-black rounded-lg hover:bg-gray-50 transition"
-                          >
-                            <div className="flex items-center gap-2 mb-1">
-                              <Github className="w-3 h-3 flex-shrink-0" strokeWidth={2.5} />
-                              <span className="text-xs font-bold truncate">{repo.name}</span>
-                              {repo.isPrivate && (
-                                <span className="px-1 py-0.5 bg-red-100 border border-red-300 rounded text-[10px] font-bold text-red-800">
-                                  Private
-                                </span>
-                              )}
-                            </div>
-                            {repo.description && (
-                              <p className="text-[10px] text-gray-600 truncate">{repo.description}</p>
-                            )}
-                          </button>
-                        ))}
-                      </div>
-                    )}
+                  /* Loading GitHub repo */
+                  <div className="text-center py-8">
+                    <div className="animate-spin w-6 h-6 border-2 border-black border-t-transparent rounded-full mx-auto mb-2"></div>
+                    <p className="text-xs font-medium">Loading repository...</p>
                   </div>
+                )}
+              </div>
+            ) : (
+              /* Local Files Browser */
+              <div>
+                {rootFolders.length === 0 ? (
+                  <div className="text-center py-8">
+                    <FolderIcon className="w-8 h-8 text-gray-400 mx-auto mb-2" strokeWidth={2} />
+                    <p className="text-xs font-bold text-gray-500">No local files found</p>
+                  </div>
+                ) : (
+                  rootFolders.map(folder => renderFolderTree(folder))
                 )}
               </div>
             )}
           </div>
         </div>
 
-        {/* Main Content - Always looks like a code editor */}
+        {/* Main Content - Code Editor */}
         <div className="flex-1 overflow-hidden bg-[#1E1E1E] flex flex-col min-w-0">
-          {/* Editor Header - Always visible */}
+          {/* Editor Header */}
           <div className="bg-[#2D2D30] text-white px-4 md:px-6 py-3 md:py-4 flex items-center justify-between border-b border-[#3E3E42] flex-shrink-0">
             <div className="flex items-center gap-2 md:gap-3">
               <div className="flex gap-1 md:gap-1.5">
@@ -689,22 +664,20 @@ export default function CodePage() {
                 </div>
               </div>
             ) : (
-              /* Empty editor state - looks like VS Code when no file is open */
+              /* Empty editor state */
               <div className="h-full flex flex-col">
-                {/* Tab area */}
                 <div className="bg-[#2D2D30] border-b border-[#3E3E42] px-4 py-2">
                   <div className="text-[#858585] text-xs font-medium">
                     Welcome
                   </div>
                 </div>
                 
-                {/* Main editor area */}
                 <div className="flex-1 flex items-center justify-center">
                   <div className="text-center max-w-md">
                     <div className="w-24 h-24 bg-[#2D2D30] border border-[#3E3E42] rounded-2xl flex items-center justify-center mx-auto mb-6">
                       <Code2 size={48} strokeWidth={2} className="text-[#858585]" />
                     </div>
-                    <h3 className="text-[#CCCCCC] text-xl font-semibold mb-3">Code Editor</h3>
+                    <h3 className="text-[#CCCCCC] text-xl font-semibold mb-3">Code Explorer</h3>
                     <p className="text-[#858585] text-sm mb-6 leading-relaxed">
                       Select a file from the sidebar to start viewing code with syntax highlighting and line numbers.
                     </p>
@@ -728,19 +701,25 @@ export default function CodePage() {
             )}
           </div>
 
-          {/* Status Bar - Always visible like VS Code */}
+          {/* Status Bar */}
           <div className="bg-[#007ACC] px-2 md:px-4 py-2 flex items-center justify-between text-xs md:text-sm text-white flex-shrink-0">
             <div className="flex items-center gap-2 md:gap-6">
-              {selectedFile ? (
+              {(selectedFile || selectedGithubFile) ? (
                 <>
                   <div className="flex items-center gap-1">
-                    <span className="font-medium">Ln {selectedFile.content ? selectedFile.content.split('\n').length : 0}</span>
+                    <span className="font-medium">Ln {
+                      selectedFile ? (selectedFile.content ? selectedFile.content.split('\n').length : 0) :
+                      selectedGithubFile ? (selectedGithubFile.content ? selectedGithubFile.content.split('\n').length : 0) : 0
+                    }</span>
                     <span className="text-[#CCE7FF] hidden sm:inline">•</span>
                     <span className="font-medium hidden sm:inline">Col 1</span>
                   </div>
                   <span className="hidden md:inline">UTF-8</span>
                   <span className="hidden lg:inline">LF</span>
-                  <span className="capitalize font-medium">{getLanguageFromExtension(selectedFile.filename)}</span>
+                  <span className="capitalize font-medium">{
+                    selectedFile ? getLanguageFromExtension(selectedFile.filename) :
+                    selectedGithubFile ? getLanguageFromExtension(selectedGithubFile.name) : 'text'
+                  }</span>
                 </>
               ) : (
                 <>
@@ -752,11 +731,20 @@ export default function CodePage() {
             </div>
             
             <div className="flex items-center gap-2 md:gap-6">
-              {selectedFile && (
+              {(selectedFile || selectedGithubFile) && (
                 <>
-                  <span className="hidden sm:inline">{selectedFile.content ? selectedFile.content.split('\n').length : 0} lines</span>
-                  <span className="hidden md:inline">{selectedFile.content ? selectedFile.content.length : 0} chars</span>
-                  <span className="hidden lg:inline">{selectedFile.size} bytes</span>
+                  <span className="hidden sm:inline">{
+                    selectedFile ? (selectedFile.content ? selectedFile.content.split('\n').length : 0) :
+                    selectedGithubFile ? (selectedGithubFile.content ? selectedGithubFile.content.split('\n').length : 0) : 0
+                  } lines</span>
+                  <span className="hidden md:inline">{
+                    selectedFile ? (selectedFile.content ? selectedFile.content.length : 0) :
+                    selectedGithubFile ? (selectedGithubFile.content ? selectedGithubFile.content.length : 0) : 0
+                  } chars</span>
+                  <span className="hidden lg:inline">{
+                    selectedFile ? selectedFile.size :
+                    selectedGithubFile ? selectedGithubFile.size : 0
+                  } bytes</span>
                 </>
               )}
               <div className="flex items-center gap-1">

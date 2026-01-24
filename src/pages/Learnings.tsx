@@ -1,9 +1,8 @@
-import { Clock, Calendar, ArrowLeft, FolderOpen, FileText, BookOpen, Code, FileImage, Plus } from "lucide-react";
+import { Clock, Calendar, ArrowLeft, FolderOpen, FileText, BookOpen, Code, FileImage, Plus, Github } from "lucide-react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { API_ENDPOINTS, API_BASE_URL } from "@/config/api";
 import ExcalidrawCanvas from "@/components/ExcalidrawCanvas";
-import PageShimmer from "@/components/PageShimmer";
 
 interface ProjectData {
   size?: "big" | "small" | "large" | "medium";
@@ -63,6 +62,18 @@ interface Documentation {
   createdAt: string;
 }
 
+interface GitHubRepo {
+  _id: string;
+  name: string;
+  owner: string;
+  fullName: string;
+  description: string;
+  url: string;
+  defaultBranch: string;
+  isPrivate: boolean;
+  createdAt: string;
+}
+
 export default function LearningsPage() {
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
@@ -76,6 +87,7 @@ export default function LearningsPage() {
   const [documentation, setDocumentation] = useState<Documentation[]>([]);
   const [diagrams, setDiagrams] = useState<any[]>([]);
   const [codeFiles, setCodeFiles] = useState<CodeFolder[]>([]);
+  const [githubRepos, setGithubRepos] = useState<GitHubRepo[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -171,11 +183,29 @@ export default function LearningsPage() {
             break;
 
           case 'code':
-            // Fetch code folders from root
-            const codeRes = await fetch(`${API_ENDPOINTS.code}/folders?parentPath=`);
-            if (!codeRes.ok) throw new Error('Failed to fetch code');
-            const codeData = await codeRes.json();
-            setCodeFiles(codeData.folders || []);
+            // Fetch both code folders and GitHub repos in parallel
+            const [codeRes, githubRes] = await Promise.allSettled([
+              fetch(`${API_ENDPOINTS.code}/folders?parentPath=`),
+              fetch(API_ENDPOINTS.github.repos)
+            ]);
+
+            // Handle code folders
+            if (codeRes.status === 'fulfilled' && codeRes.value.ok) {
+              const codeData = await codeRes.value.json();
+              setCodeFiles(codeData.folders || []);
+            } else {
+              console.error('Failed to fetch code folders');
+              setCodeFiles([]);
+            }
+
+            // Handle GitHub repos
+            if (githubRes.status === 'fulfilled' && githubRes.value.ok) {
+              const githubData = await githubRes.value.json();
+              setGithubRepos(githubData.repos || []);
+            } else {
+              console.error('Failed to fetch GitHub repos');
+              setGithubRepos([]);
+            }
             break;
         }
       } catch (err) {
@@ -335,7 +365,7 @@ export default function LearningsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-100 flex flex-col">
+    <div className="h-screen bg-gray-100 flex flex-col overflow-hidden">
       {/* Background Image */}
       <div 
         className="fixed inset-0 z-0 opacity-30"
@@ -348,24 +378,49 @@ export default function LearningsPage() {
       />
       
       {/* Fixed Header */}
-      <div className="bg-gray-50/80 backdrop-blur-sm border-b-4 border-black p-4 md:p-6 sticky top-0 z-50 shadow-lg relative flex-shrink-0">
+      <div className="bg-gray-50/80 backdrop-blur-sm border-b-4 border-black p-4 md:p-6 z-50 shadow-lg relative flex-shrink-0">
         <div className="max-w-7xl mx-auto">
-          <button
-            onClick={() => navigate('/')}
-            className="flex items-center gap-2 text-gray-600 hover:text-black mb-3 md:mb-4 font-bold text-sm md:text-base transition-all hover:gap-3"
-          >
-            <ArrowLeft className="w-4 h-4 md:w-5 md:h-5" strokeWidth={2.5} />
-            Back to Home
-          </button>
+          {/* Mobile Layout - Original */}
+          <div className="block md:hidden">
+            <button
+              onClick={() => navigate('/')}
+              className="flex items-center gap-2 text-gray-600 hover:text-black mb-3 font-bold text-sm transition-all hover:gap-3"
+            >
+              <ArrowLeft className="w-4 h-4" strokeWidth={2.5} />
+              Back to Home
+            </button>
 
-          <div className="flex items-center justify-between mb-4">
-            <div>
-              <h1 className="text-3xl md:text-5xl font-black text-black mb-2" style={{ fontFamily: 'Comic Sans MS, cursive' }}>
+            <div className="mb-4">
+              <h1 className="text-3xl font-black text-black mb-2" style={{ fontFamily: 'Comic Sans MS, cursive' }}>
                 My Learnings
               </h1>
-              <p className="text-sm md:text-base text-gray-600 font-medium">
+              <p className="text-sm text-gray-600 font-medium">
                 Explore my journey through code, design, and documentation
               </p>
+            </div>
+          </div>
+
+          {/* Desktop Layout - New */}
+          <div className="hidden md:block">
+            <div className="flex items-start justify-between mb-4">
+              <div className="flex flex-col gap-4">
+                <button
+                  onClick={() => navigate('/')}
+                  className="flex items-center gap-2 text-gray-600 hover:text-black font-bold text-base transition-all hover:gap-3 self-start"
+                >
+                  <ArrowLeft className="w-5 h-5" strokeWidth={2.5} />
+                  Back to Home
+                </button>
+                <p className="text-base text-black font-medium">
+                  Explore my journey through code, design, and documentation
+                </p>
+              </div>
+              
+              <div className="flex-shrink-0">
+                <h1 className="text-4xl font-black text-black" style={{ fontFamily: 'Comic Sans MS, cursive' }}>
+                  My Learnings
+                </h1>
+              </div>
             </div>
           </div>
 
@@ -451,7 +506,24 @@ export default function LearningsPage() {
       <main className="flex-1 overflow-y-auto bg-transparent p-4 md:p-6 relative z-10">
         <div className="max-w-7xl mx-auto">
           {/* Loading State */}
-          {loading && <PageShimmer />}
+          {loading && (
+            <div className="flex items-center justify-center py-20">
+              <div className="relative w-32 h-32">
+                <div className="absolute inset-0 animate-spin">
+                  <svg className="w-32 h-32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <path
+                      d="M4 12a8 8 0 0 1 8-8V2.5L14.5 5 12 7.5V6a6 6 0 0 0-6 6h-2z"
+                      className="text-black"
+                    />
+                    <path
+                      d="M20 12a8 8 0 0 1-8 8v1.5L9.5 19 12 16.5V18a6 6 0 0 0 6-6h2z"
+                      className="text-black"
+                    />
+                  </svg>
+                </div>
+              </div>
+            </div>
+          )}
 
           {/* Error State */}
           {error && !loading && (
@@ -695,32 +767,70 @@ export default function LearningsPage() {
               {/* CODE TAB */}
               {activeTab === 'code' && (
                 <>
-                  <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3 md:gap-4">
-                    {codeFiles.length === 0 ? (
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+                    {/* Local Code Folders */}
+                    {codeFiles.map((folder) => (
+                      <div
+                        key={folder.folderId}
+                        onClick={() => {
+                          navigate(`/learnings/code?folder=${encodeURIComponent(folder.path)}`);
+                        }}
+                        className="bg-gray-50/70 backdrop-blur-sm border-3 border-black rounded-xl p-4 hover:shadow-[5px_5px_0px_0px_rgba(0,0,0,1)] transition-all cursor-pointer hover:-translate-y-1 group"
+                        style={{ borderRadius: '12px 15px 13px 14px' }}
+                      >
+                        <div className="flex items-start gap-3">
+                          <div className="p-2.5 bg-orange-300 border-2 border-black rounded-lg group-hover:rotate-6 transition-transform flex-shrink-0" style={{ borderRadius: '8px 10px 9px 11px' }}>
+                            <Code size={20} strokeWidth={2.5} />
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <h3 className="text-sm font-black text-black mb-1">{folder.name}</h3>
+                            <p className="text-xs text-gray-600">Local Folder</p>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+
+                    {/* GitHub Repositories */}
+                    {githubRepos.map((repo) => (
+                      <div
+                        key={repo._id}
+                        onClick={() => {
+                          navigate(`/learnings/code?repo=${repo._id}`);
+                        }}
+                        className="bg-gray-50/70 backdrop-blur-sm border-3 border-black rounded-xl p-4 hover:shadow-[5px_5px_0px_0px_rgba(0,0,0,1)] transition-all cursor-pointer hover:-translate-y-1 group"
+                        style={{ borderRadius: '12px 15px 13px 14px' }}
+                      >
+                        <div className="flex items-start gap-3">
+                          <div className="p-2.5 bg-gray-300 border-2 border-black rounded-lg group-hover:rotate-6 transition-transform flex-shrink-0" style={{ borderRadius: '8px 10px 9px 11px' }}>
+                            <Github size={20} strokeWidth={2.5} />
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <div className="flex items-center gap-2 mb-1">
+                              <h3 className="text-sm font-black text-black truncate">{repo.name}</h3>
+                              {repo.isPrivate && (
+                                <span className="px-1 py-0.5 bg-red-100 border border-red-300 rounded text-[8px] font-bold text-red-800">
+                                  Private
+                                </span>
+                              )}
+                            </div>
+                            {repo.description ? (
+                              <p className="text-xs text-gray-600 line-clamp-2">{repo.description}</p>
+                            ) : (
+                              <p className="text-xs text-gray-600">{repo.fullName}</p>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+
+                    {/* Empty State */}
+                    {codeFiles.length === 0 && githubRepos.length === 0 && (
                       <div className="col-span-full text-center py-16">
                         <div className="bg-gray-50/70 backdrop-blur-sm border-3 border-black rounded-2xl p-10 inline-block shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]">
                           <Code size={48} strokeWidth={2.5} className="mx-auto mb-3 text-orange-500" />
-                          <p className="text-gray-600 text-base font-bold">No code folders yet</p>
+                          <p className="text-gray-600 text-base font-bold">No code files or repositories found</p>
                         </div>
                       </div>
-                    ) : (
-                      codeFiles.map((folder) => (
-                        <div
-                          key={folder.folderId}
-                          onClick={() => {
-                            navigate(`/learnings/code?folder=${encodeURIComponent(folder.path)}`);
-                          }}
-                          className="bg-gray-50/70 backdrop-blur-sm border-3 border-black rounded-xl p-4 hover:shadow-[5px_5px_0px_0px_rgba(0,0,0,1)] transition-all cursor-pointer hover:-translate-y-1 group"
-                          style={{ borderRadius: '12px 15px 13px 14px' }}
-                        >
-                          <div className="flex flex-col items-center text-center gap-2">
-                            <div className="p-2.5 bg-orange-300 border-2 border-black rounded-lg group-hover:rotate-6 transition-transform" style={{ borderRadius: '8px 10px 9px 11px' }}>
-                              <Code size={24} strokeWidth={2.5} />
-                            </div>
-                            <h3 className="text-sm font-black text-black line-clamp-2">{folder.name}</h3>
-                          </div>
-                        </div>
-                      ))
                     )}
                   </div>
                 </>
