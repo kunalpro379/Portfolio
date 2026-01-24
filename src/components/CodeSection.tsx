@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Code2, Folder, File, ExternalLink, ChevronRight, Github } from 'lucide-react';
+import { API_ENDPOINTS } from '../config/api';
 
 interface CodeFolder {
   _id: string;
@@ -124,7 +125,7 @@ export default function CodeSection() {
   const fetchGithubRepos = async () => {
     try {
       setGithubLoading(true);
-      const response = await fetch('https://api.kunalpatil.me/api/github/repos');
+      const response = await fetch(API_ENDPOINTS.github.repos);
       const data = await response.json();
       setGithubRepos(data.repos || []);
     } catch (error) {
@@ -140,7 +141,7 @@ export default function CodeSection() {
     
     try {
       setGithubLoading(true);
-      const response = await fetch(`https://api.kunalpatil.me/api/github/repos/${selectedRepo._id}/tree?path=${encodeURIComponent(githubPath)}`);
+      const response = await fetch(API_ENDPOINTS.github.repoTree(selectedRepo._id, githubPath));
       const data = await response.json();
       setGithubItems(data.items || []);
     } catch (error) {
@@ -156,7 +157,7 @@ export default function CodeSection() {
     
     try {
       setGithubLoading(true);
-      const response = await fetch(`https://api.kunalpatil.me/api/github/repos/${selectedRepo._id}/file?path=${encodeURIComponent(path)}`);
+      const response = await fetch(API_ENDPOINTS.github.repoFile(selectedRepo._id, path));
       const data = await response.json();
       setSelectedGithubFile(data.file);
     } catch (error) {

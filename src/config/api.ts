@@ -12,4 +12,10 @@ export const API_ENDPOINTS = {
   code: `https://api.kunalpatil.me/api/code`,
   todos: `https://api.kunalpatil.me/api/todos`,
   diagrams: `https://api.kunalpatil.me/api/diagrams`,
+  github: {
+    repos: `https://api.kunalpatil.me/api/github/repos`,
+    repoById: (id: string) => `https://api.kunalpatil.me/api/github/repos/${id}`,
+    repoTree: (id: string, path: string = '') => `https://api.kunalpatil.me/api/github/repos/${id}/tree?path=${encodeURIComponent(path)}`,
+    repoFile: (id: string, path: string) => `https://api.kunalpatil.me/api/github/repos/${id}/file?path=${encodeURIComponent(path)}`,
+  },
 };
