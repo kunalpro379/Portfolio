@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { MessageCircle, X, Send, Loader2, Bot, User } from 'lucide-react';
+import { MessageCircle, X, Send, Loader2, Bot, User, Sparkles } from 'lucide-react';
+import { API_CONFIG } from '../config/api';
 
 interface ChatMessage {
   id: string;
@@ -54,7 +55,8 @@ const AIChatButton: React.FC = () => {
     setIsLoading(true);
 
     try {
-      const response = await fetch('/api/ai-chat/chat', {
+      // Use the correct API base URL from config
+      const response = await fetch(`${API_CONFIG.BASE_URL}${API_CONFIG.ENDPOINTS.AI_CHAT}/chat`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -105,86 +107,94 @@ const AIChatButton: React.FC = () => {
 
   return (
     <>
-      {/* Chat Button */}
+      {/* Chat Button - Artistic Design */}
       <button
         onClick={() => setIsOpen(true)}
-        className={`fixed bottom-6 right-6 z-40 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white p-4 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 ${
+        className={`fixed bottom-6 right-6 z-40 group ${
           isOpen ? 'hidden' : 'flex'
-        } items-center gap-2 group`}
+        } items-center gap-3 bg-black dark:bg-white text-white dark:text-black px-6 py-4 rounded-full shadow-2xl hover:shadow-3xl transition-all duration-500 transform hover:scale-105 hover:-translate-y-1 border border-gray-800 dark:border-gray-200`}
         aria-label="Ask about Kunal"
       >
-        <Bot className="w-6 h-6" />
-        <span className="hidden sm:block font-medium">Ask about me</span>
-        <div className="absolute -top-1 -right-1 w-3 h-3 bg-green-400 rounded-full animate-pulse"></div>
+        <div className="relative">
+          <Bot className="w-6 h-6 transition-transform duration-300 group-hover:rotate-12" />
+          <div className="absolute -top-1 -right-1 w-3 h-3 bg-white dark:bg-black rounded-full animate-pulse">
+            <div className="w-full h-full bg-black dark:bg-white rounded-full animate-ping"></div>
+          </div>
+        </div>
+        <span className="hidden sm:block font-medium tracking-wide">Ask about me</span>
+        <Sparkles className="w-4 h-4 opacity-60 animate-pulse" />
       </button>
 
-      {/* Chat Modal */}
+      {/* Chat Modal - Minimalist Artistic Design */}
       {isOpen && (
         <div className="fixed inset-0 z-50 flex items-end justify-end p-4 sm:p-6">
           {/* Backdrop */}
           <div 
-            className="absolute inset-0 bg-black/20 backdrop-blur-sm"
+            className="absolute inset-0 bg-black/10 dark:bg-white/10 backdrop-blur-md"
             onClick={() => setIsOpen(false)}
           />
           
           {/* Chat Window */}
-          <div className="relative bg-white dark:bg-gray-900 rounded-2xl shadow-2xl w-full max-w-md h-[600px] max-h-[80vh] flex flex-col border border-gray-200 dark:border-gray-700">
+          <div className="relative bg-white dark:bg-black rounded-3xl shadow-2xl w-full max-w-md h-[600px] max-h-[80vh] flex flex-col border border-gray-200 dark:border-gray-800 overflow-hidden">
             {/* Header */}
-            <div className="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-t-2xl">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center">
-                  <Bot className="w-6 h-6" />
+            <div className="flex items-center justify-between p-6 border-b border-gray-100 dark:border-gray-900 bg-gradient-to-r from-gray-50 to-white dark:from-gray-950 dark:to-black">
+              <div className="flex items-center gap-4">
+                <div className="relative">
+                  <div className="w-12 h-12 bg-black dark:bg-white rounded-full flex items-center justify-center">
+                    <Bot className="w-6 h-6 text-white dark:text-black" />
+                  </div>
+                  <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-green-500 rounded-full border-2 border-white dark:border-black"></div>
                 </div>
                 <div>
-                  <h3 className="font-semibold">Kunal's AI Assistant</h3>
-                  <p className="text-sm text-white/80">Ask me anything!</p>
+                  <h3 className="font-semibold text-black dark:text-white tracking-tight">Kunal's AI Assistant</h3>
+                  <p className="text-sm text-gray-600 dark:text-gray-400 font-light">Ask me anything</p>
                 </div>
               </div>
               <button
                 onClick={() => setIsOpen(false)}
-                className="p-2 hover:bg-white/20 rounded-lg transition-colors"
+                className="p-2 hover:bg-gray-100 dark:hover:bg-gray-900 rounded-full transition-colors duration-200"
               >
-                <X className="w-5 h-5" />
+                <X className="w-5 h-5 text-gray-600 dark:text-gray-400" />
               </button>
             </div>
 
             {/* Messages */}
-            <div className="flex-1 overflow-y-auto p-4 space-y-4">
+            <div className="flex-1 overflow-y-auto p-6 space-y-6 bg-gradient-to-b from-gray-50/50 to-white dark:from-gray-950/50 dark:to-black">
               {messages.map((message) => (
                 <div
                   key={message.id}
-                  className={`flex gap-3 ${
+                  className={`flex gap-4 ${
                     message.type === 'user' ? 'justify-end' : 'justify-start'
                   }`}
                 >
                   {message.type === 'ai' && (
-                    <div className="w-8 h-8 bg-gradient-to-r from-blue-600 to-purple-600 rounded-full flex items-center justify-center flex-shrink-0">
-                      <Bot className="w-4 h-4 text-white" />
+                    <div className="w-8 h-8 bg-black dark:bg-white rounded-full flex items-center justify-center flex-shrink-0 mt-1">
+                      <Bot className="w-4 h-4 text-white dark:text-black" />
                     </div>
                   )}
                   
                   <div className={`max-w-[80%] ${message.type === 'user' ? 'order-1' : ''}`}>
                     <div
-                      className={`p-3 rounded-2xl ${
+                      className={`p-4 rounded-2xl ${
                         message.type === 'user'
-                          ? 'bg-gradient-to-r from-blue-600 to-purple-600 text-white'
-                          : 'bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-gray-100'
+                          ? 'bg-black dark:bg-white text-white dark:text-black ml-auto'
+                          : 'bg-gray-100 dark:bg-gray-900 text-black dark:text-white border border-gray-200 dark:border-gray-800'
                       }`}
                     >
-                      <p className="text-sm whitespace-pre-wrap">{message.content}</p>
+                      <p className="text-sm leading-relaxed whitespace-pre-wrap font-light">{message.content}</p>
                     </div>
                     
                     {/* Sources */}
                     {message.sources && message.sources.length > 0 && (
-                      <div className="mt-2 text-xs text-gray-500 dark:text-gray-400">
-                        <p className="font-medium mb-1">Sources:</p>
-                        <div className="space-y-1">
+                      <div className="mt-3 text-xs text-gray-500 dark:text-gray-400 space-y-1">
+                        <p className="font-medium opacity-70">Sources:</p>
+                        <div className="space-y-1 pl-2 border-l border-gray-200 dark:border-gray-800">
                           {message.sources.map((source, index) => (
-                            <div key={index} className="flex items-center gap-2">
-                              <span className="w-1.5 h-1.5 bg-blue-500 rounded-full"></span>
-                              <span>{source.section}</span>
+                            <div key={index} className="flex items-center gap-2 opacity-60">
+                              <div className="w-1 h-1 bg-black dark:bg-white rounded-full"></div>
+                              <span className="font-light">{source.section}</span>
                               {source.technologies.length > 0 && (
-                                <span className="text-gray-400">
+                                <span className="text-gray-400 dark:text-gray-600 text-xs">
                                   ({source.technologies.slice(0, 2).join(', ')})
                                 </span>
                               )}
@@ -194,28 +204,28 @@ const AIChatButton: React.FC = () => {
                       </div>
                     )}
                     
-                    <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                    <p className="text-xs text-gray-400 dark:text-gray-600 mt-2 font-light opacity-50">
                       {formatTimestamp(message.timestamp)}
                     </p>
                   </div>
 
                   {message.type === 'user' && (
-                    <div className="w-8 h-8 bg-gray-300 dark:bg-gray-600 rounded-full flex items-center justify-center flex-shrink-0">
-                      <User className="w-4 h-4 text-gray-600 dark:text-gray-300" />
+                    <div className="w-8 h-8 bg-gray-200 dark:bg-gray-800 rounded-full flex items-center justify-center flex-shrink-0 mt-1">
+                      <User className="w-4 h-4 text-gray-600 dark:text-gray-400" />
                     </div>
                   )}
                 </div>
               ))}
               
               {isLoading && (
-                <div className="flex gap-3 justify-start">
-                  <div className="w-8 h-8 bg-gradient-to-r from-blue-600 to-purple-600 rounded-full flex items-center justify-center">
-                    <Bot className="w-4 h-4 text-white" />
+                <div className="flex gap-4 justify-start">
+                  <div className="w-8 h-8 bg-black dark:bg-white rounded-full flex items-center justify-center">
+                    <Bot className="w-4 h-4 text-white dark:text-black" />
                   </div>
-                  <div className="bg-gray-100 dark:bg-gray-800 p-3 rounded-2xl">
-                    <div className="flex items-center gap-2">
-                      <Loader2 className="w-4 h-4 animate-spin text-gray-500" />
-                      <span className="text-sm text-gray-500">Thinking...</span>
+                  <div className="bg-gray-100 dark:bg-gray-900 p-4 rounded-2xl border border-gray-200 dark:border-gray-800">
+                    <div className="flex items-center gap-3">
+                      <Loader2 className="w-4 h-4 animate-spin text-gray-500 dark:text-gray-400" />
+                      <span className="text-sm text-gray-500 dark:text-gray-400 font-light">Thinking...</span>
                     </div>
                   </div>
                 </div>
@@ -223,26 +233,26 @@ const AIChatButton: React.FC = () => {
             </div>
 
             {/* Input */}
-            <div className="p-4 border-t border-gray-200 dark:border-gray-700">
-              <div className="flex gap-2">
+            <div className="p-6 border-t border-gray-100 dark:border-gray-900 bg-white dark:bg-black">
+              <div className="flex gap-3">
                 <input
                   type="text"
                   value={inputMessage}
                   onChange={(e) => setInputMessage(e.target.value)}
                   onKeyPress={handleKeyPress}
                   placeholder="Ask about Kunal's projects, skills, experience..."
-                  className="flex-1 p-3 border border-gray-300 dark:border-gray-600 rounded-xl bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="flex-1 p-4 border border-gray-200 dark:border-gray-800 rounded-2xl bg-gray-50 dark:bg-gray-950 text-black dark:text-white placeholder-gray-400 dark:placeholder-gray-600 focus:outline-none focus:ring-2 focus:ring-black dark:focus:ring-white focus:border-transparent transition-all duration-200 font-light"
                   disabled={isLoading}
                 />
                 <button
                   onClick={sendMessage}
                   disabled={!inputMessage.trim() || isLoading}
-                  className="p-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl hover:from-blue-700 hover:to-purple-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200"
+                  className="p-4 bg-black dark:bg-white text-white dark:text-black rounded-2xl hover:bg-gray-800 dark:hover:bg-gray-200 disabled:opacity-30 disabled:cursor-not-allowed transition-all duration-200 transform hover:scale-105 active:scale-95"
                 >
                   <Send className="w-5 h-5" />
                 </button>
               </div>
-              <p className="text-xs text-gray-500 dark:text-gray-400 mt-2 text-center">
+              <p className="text-xs text-gray-400 dark:text-gray-600 mt-3 text-center font-light opacity-60">
                 Powered by AI • Information based on Kunal's portfolio
               </p>
             </div>

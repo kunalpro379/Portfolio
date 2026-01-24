@@ -23,7 +23,6 @@ async function loadRoutes() {
     const { default: blogsRoutes } = await import('./routes/blogs.js');
     const { default: documentationRoutes } = await import('./routes/documentation.js');
     const { default: healthRoutes } = await import('./routes/health.js');
-    const { default: aiChatRoutes } = await import('./routes/ai-chat.js');
     
     app.use('/api/auth', authRoutes);
     app.use('/api/notes', notesRoutes);
@@ -33,7 +32,28 @@ async function loadRoutes() {
     app.use('/api/blogs', blogsRoutes);
     app.use('/api/documentation', documentationRoutes);
     app.use('/api/health', healthRoutes);
-    app.use('/api/ai-chat', aiChatRoutes);
+
+    // Load AI Chat routes with error handling
+    try {
+      const aiChatModule = await import('./routes/ai-chat.js');
+      if (aiChatModule && aiChatModule.default) {
+        app.use('/api/ai-chat', aiChatModule.default);
+        console.log('✓ AI Chat route loaded successfully');
+      } else {
+        throw new Error('AI Chat route export not found');
+      }
+    } catch (aiChatError) {
+      console.error('✗ Failed to load AI Chat route:', aiChatError.message);
+      // Add fallback route to prevent 404
+      app.use('/api/ai-chat', (req, res) => {
+        res.status(503).json({ 
+          success: false, 
+          message: 'AI Chat service not available', 
+          error: 'Service temporarily unavailable' 
+        });
+      });
+      console.log('✓ AI Chat fallback route registered');
+    }
 
     // Load GitHub routes
     try {

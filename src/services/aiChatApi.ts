@@ -1,3 +1,5 @@
+import { API_CONFIG } from '../config/api';
+
 export interface ChatMessage {
   message: string;
 }
@@ -36,7 +38,7 @@ export interface CapabilitiesResponse {
 }
 
 class AIChatAPI {
-  private baseUrl = '/api/ai-chat';
+  private baseUrl = `${API_CONFIG.BASE_URL}${API_CONFIG.ENDPOINTS.AI_CHAT}`;
 
   async sendMessage(message: string): Promise<ChatResponse> {
     const response = await fetch(`${this.baseUrl}/chat`, {

@@ -1,21 +1,24 @@
-// @ts-ignore
-import CONFIG from '../../config.shared.js';
-
-// API Configuration - always use production API
-export const API_BASE_URL = 'https://api.kunalpatil.me';
-
-export const API_ENDPOINTS = {
-  projects: `https://api.kunalpatil.me/api/projects`,
-  blogs: `https://api.kunalpatil.me/api/blogs`,
-  documentation: `https://api.kunalpatil.me/api/documentation`,
-  notes: `https://api.kunalpatil.me/api/notes`,
-  code: `https://api.kunalpatil.me/api/code`,
-  todos: `https://api.kunalpatil.me/api/todos`,
-  diagrams: `https://api.kunalpatil.me/api/diagrams`,
-  github: {
-    repos: `https://api.kunalpatil.me/api/github/repos`,
-    repoById: (id: string) => `https://api.kunalpatil.me/api/github/repos/${id}`,
-    repoTree: (id: string, path: string = '') => `https://api.kunalpatil.me/api/github/repos/${id}/tree?path=${encodeURIComponent(path)}`,
-    repoFile: (id: string, path: string) => `https://api.kunalpatil.me/api/github/repos/${id}/file?path=${encodeURIComponent(path)}`,
-  },
+// API Configuration for client-side
+const getApiBaseUrl = (): string => {
+  // Check if we're in development (localhost)
+  if (typeof window !== 'undefined') {
+    const hostname = window.location.hostname;
+    if (hostname === 'localhost' || hostname === '127.0.0.1') {
+      return 'https://api.kunalpatil.me'; // Still use production API even in dev
+    }
+  }
+  
+  // Always use production API
+  return 'https://api.kunalpatil.me';
 };
+
+export const API_CONFIG = {
+  BASE_URL: getApiBaseUrl(),
+  ENDPOINTS: {
+    AI_CHAT: '/api/ai-chat',
+    HEALTH: '/api/ai-chat/health',
+    CAPABILITIES: '/api/ai-chat/capabilities',
+  }
+};
+
+export default API_CONFIG;
