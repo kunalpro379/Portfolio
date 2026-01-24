@@ -49,3 +49,5 @@ admin/.env
 server/.env
 *.env
 !*.env.example
+.env
+server/.env

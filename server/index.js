@@ -23,6 +23,7 @@ async function loadRoutes() {
     const { default: blogsRoutes } = await import('./routes/blogs.js');
     const { default: documentationRoutes } = await import('./routes/documentation.js');
     const { default: healthRoutes } = await import('./routes/health.js');
+    const { default: aiChatRoutes } = await import('./routes/ai-chat.js');
     
     app.use('/api/auth', authRoutes);
     app.use('/api/notes', notesRoutes);
@@ -32,6 +33,7 @@ async function loadRoutes() {
     app.use('/api/blogs', blogsRoutes);
     app.use('/api/documentation', documentationRoutes);
     app.use('/api/health', healthRoutes);
+    app.use('/api/ai-chat', aiChatRoutes);
 
     // Load GitHub routes
     try {

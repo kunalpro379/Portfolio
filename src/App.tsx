@@ -8,6 +8,7 @@ import ProjectDetail from './pages/ProjectDetail';
 import BlogDetail from './pages/BlogDetail';
 import NotesDetail from './pages/NotesDetail';
 import DocumentationDetail from './pages/DocumentationDetail';
+import AIChatButton from './components/AIChatButton';
 import { trackPageView } from './lib/tracking';
 
 // Component to track page views
@@ -36,6 +37,7 @@ function App() {
         <Route path="/learnings/documentation/:docId" element={<DocumentationDetail />} />
         <Route path="*" element={<div className="min-h-screen flex items-center justify-center"><div className="text-center"><h1 className="text-2xl font-bold mb-4">404 - Page Not Found</h1><a href="/" className="text-blue-600 hover:underline">Go Home</a></div></div>} />
       </Routes>
+      <AIChatButton />
     </>
   );
 }
