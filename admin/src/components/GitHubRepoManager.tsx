@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Github, Plus, Trash2, ExternalLink, Folder, File, ChevronRight, X } from 'lucide-react';
-import config from '../config/config';
+import config, { buildUrl } from '../config/config';
 
 interface GitHubRepo {
   _id: string;
@@ -39,7 +39,7 @@ export default function GitHubRepoManager({ onRepoSelect }: GitHubRepoManagerPro
 
   const fetchRepos = async () => {
     try {
-      const response = await fetch(config.api.endpoints.githubRepos, {
+      const response = await fetch(buildUrl(config.api.endpoints.githubRepos), {
         credentials: 'include'
       });
       const data = await response.json();
@@ -57,7 +57,7 @@ export default function GitHubRepoManager({ onRepoSelect }: GitHubRepoManagerPro
 
     setAdding(true);
     try {
-      const response = await fetch(config.api.endpoints.githubRepoAdd, {
+      const response = await fetch(buildUrl(config.api.endpoints.githubRepoAdd), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
@@ -84,7 +84,7 @@ export default function GitHubRepoManager({ onRepoSelect }: GitHubRepoManagerPro
     if (!confirm('Are you sure you want to remove this repository?')) return;
 
     try {
-      const response = await fetch(config.api.endpoints.githubRepoDelete(repoId), {
+      const response = await fetch(buildUrl(config.api.endpoints.githubRepoDelete(repoId)), {
         method: 'DELETE',
         credentials: 'include'
       });

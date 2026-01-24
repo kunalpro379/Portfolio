@@ -33,6 +33,27 @@ async function loadRoutes() {
     app.use('/api/documentation', documentationRoutes);
     app.use('/api/health', healthRoutes);
 
+    // Load GitHub routes
+    try {
+      const githubModule = await import('./routes/github.js');
+      if (githubModule && githubModule.default) {
+        app.use('/api/github', githubModule.default);
+        console.log('✓ GitHub route loaded successfully');
+      } else {
+        throw new Error('GitHub route export not found');
+      }
+    } catch (githubError) {
+      console.error('✗ Failed to load GitHub route:', githubError.message);
+      if (githubError.stack) {
+        console.error('Stack trace:', githubError.stack);
+      }
+      // Add fallback route to prevent 404
+      app.use('/api/github', (req, res) => {
+        res.status(503).json({ message: 'GitHub integration not available', error: 'Service temporarily unavailable' });
+      });
+      console.log('✓ GitHub fallback route registered');
+    }
+
     // Load diagrams route with error handling
     try {
       const diagramsModule = await import('./routes/diagrams.js');
