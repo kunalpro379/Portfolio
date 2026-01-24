@@ -3,7 +3,7 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 import { ArrowLeft, Folder as FolderIcon, ChevronRight, ChevronDown, Menu, X, Code2, Github, File, ExternalLink } from 'lucide-react';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { vscDarkPlus } from 'react-syntax-highlighter/dist/esm/styles/prism';
-import { API_ENDPOINTS } from '../config/api';
+import { API_ENDPOINTS, API_BASE_URL } from '../config/api';
 
 interface CodeFile {
   _id: string;
@@ -114,26 +114,40 @@ export default function CodePage() {
   const fetchLocalFolders = async () => {
     try {
       setLoading(true);
-      const foldersResponse = await fetch(`${API_ENDPOINTS.code}/folders?parentPath=`);
+      const foldersResponse = await fetch(`${API_BASE_URL}${API_ENDPOINTS.code}/folders?parentPath=`);
       if (!foldersResponse.ok) throw new Error('Failed to fetch code folders');
+      
+      const contentType = foldersResponse.headers.get('content-type');
+      if (!contentType || !contentType.includes('application/json')) {
+        throw new Error('Server returned non-JSON response');
+      }
+      
       const foldersData = await foldersResponse.json();
 
       const fetchFolderContents = async (folder: CodeFolder): Promise<CodeFolder> => {
-        const filesResponse = await fetch(`${API_ENDPOINTS.code}/files?folderPath=${folder.path}`);
+        const filesResponse = await fetch(`${API_BASE_URL}${API_ENDPOINTS.code}/files?folderPath=${folder.path}`);
         if (filesResponse.ok) {
-          const filesData = await filesResponse.json();
-          folder.files = filesData.files || [];
+          const contentType = filesResponse.headers.get('content-type');
+          if (contentType && contentType.includes('application/json')) {
+            const filesData = await filesResponse.json();
+            folder.files = filesData.files || [];
+          } else {
+            folder.files = [];
+          }
         } else {
           folder.files = [];
         }
 
-        const subfoldersResponse = await fetch(`${API_ENDPOINTS.code}/folders?parentPath=${folder.path}`);
+        const subfoldersResponse = await fetch(`${API_BASE_URL}${API_ENDPOINTS.code}/folders?parentPath=${folder.path}`);
         if (subfoldersResponse.ok) {
-          const subfoldersData = await subfoldersResponse.json();
-          if (subfoldersData.folders && subfoldersData.folders.length > 0) {
-            folder.subfolders = await Promise.all(
-              subfoldersData.folders.map((subfolder: CodeFolder) => fetchFolderContents(subfolder))
-            );
+          const contentType = subfoldersResponse.headers.get('content-type');
+          if (contentType && contentType.includes('application/json')) {
+            const subfoldersData = await subfoldersResponse.json();
+            if (subfoldersData.folders && subfoldersData.folders.length > 0) {
+              folder.subfolders = await Promise.all(
+                subfoldersData.folders.map((subfolder: CodeFolder) => fetchFolderContents(subfolder))
+              );
+            }
           }
         }
 
@@ -185,8 +199,17 @@ export default function CodePage() {
   const fetchGithubRepos = async () => {
     try {
       setLoading(true);
-      const response = await fetch(API_ENDPOINTS.github.repos);
-      if (!response.ok) throw new Error('Failed to fetch GitHub repos');
+      const response = await fetch(`${API_BASE_URL}${API_ENDPOINTS.github.repos}`);
+      
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      
+      const contentType = response.headers.get('content-type');
+      if (!contentType || !contentType.includes('application/json')) {
+        throw new Error('Server returned non-JSON response');
+      }
+      
       const data = await response.json();
       setGithubRepos(data.repos || []);
     } catch (error) {
@@ -202,8 +225,18 @@ export default function CodePage() {
     
     try {
       setGithubLoading(true);
-      const response = await fetch(API_ENDPOINTS.github.repoTree(selectedRepo._id, githubPath));
-      if (!response.ok) throw new Error('Failed to fetch repository tree');
+      const url = `${API_BASE_URL}${API_ENDPOINTS.github.repoTree(selectedRepo._id, githubPath)}`;
+      const response = await fetch(url);
+      
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      
+      const contentType = response.headers.get('content-type');
+      if (!contentType || !contentType.includes('application/json')) {
+        throw new Error('Server returned non-JSON response');
+      }
+      
       const data = await response.json();
       setGithubItems(data.items || []);
     } catch (error) {
@@ -219,8 +252,18 @@ export default function CodePage() {
     
     try {
       setGithubLoading(true);
-      const response = await fetch(API_ENDPOINTS.github.repoFile(selectedRepo._id, path));
-      if (!response.ok) throw new Error('Failed to fetch file');
+      const url = `${API_BASE_URL}${API_ENDPOINTS.github.repoFile(selectedRepo._id, path)}`;
+      const response = await fetch(url);
+      
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      
+      const contentType = response.headers.get('content-type');
+      if (!contentType || !contentType.includes('application/json')) {
+        throw new Error('Server returned non-JSON response');
+      }
+      
       const data = await response.json();
       setSelectedGithubFile(data.file);
       setSelectedFile(null);
@@ -279,8 +322,14 @@ export default function CodePage() {
         return;
       }
 
-      const response = await fetch(`${API_ENDPOINTS.code}/files/${file.fileId}/content`);
+      const response = await fetch(`${API_BASE_URL}${API_ENDPOINTS.code}/files/${file.fileId}/content`);
       if (!response.ok) throw new Error('Failed to load file content');
+      
+      const contentType = response.headers.get('content-type');
+      if (!contentType || !contentType.includes('application/json')) {
+        throw new Error('Server returned non-JSON response');
+      }
+      
       const data = await response.json();
       setSelectedFile({ ...file, content: data.content });
     } catch (err) {

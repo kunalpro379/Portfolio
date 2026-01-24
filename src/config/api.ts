@@ -35,7 +35,11 @@ export const API_ENDPOINTS = {
   diagrams: '/api/diagrams',
   auth: '/api/auth',
   views: '/api/views',
-  github: '/api/github',
+  github: {
+    repos: '/api/github/repos',
+    repoTree: (repoId: string, path: string = '') => `/api/github/repos/${repoId}/tree${path ? `?path=${encodeURIComponent(path)}` : ''}`,
+    repoFile: (repoId: string, path: string) => `/api/github/repos/${repoId}/file?path=${encodeURIComponent(path)}`
+  },
   aiChat: '/api/ai-chat',
 };
 
