@@ -16,6 +16,7 @@
     "@uiw/react-md-editor": "^4.0.4",
     "framer-motion": "^12.24.7",
     "graphql-request": "^7.4.0",
+    "groq-sdk": "^0.37.0",
     "lucide-react": "^0.552.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",

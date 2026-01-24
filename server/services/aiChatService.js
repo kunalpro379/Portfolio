@@ -85,6 +85,8 @@ Guidelines:
 - Use a friendly, professional tone
 - Highlight relevant technologies and achievements when appropriate`;
 
+      console.log('Making Groq API call with model: llama-3.1-8b-instant');
+      
       const completion = await this.groq.chat.completions.create({
         messages: [
           {
@@ -96,12 +98,14 @@ Guidelines:
             content: userQuery
           }
         ],
-        model: "llama-3.1-70b-versatile",
+        model: "llama-3.1-8b-instant",
         temperature: 0.7,
         max_tokens: 1000,
         top_p: 1,
         stream: false
       });
+
+      console.log('Groq API call successful');
 
       return {
         response: completion.choices[0]?.message?.content || "I'm sorry, I couldn't generate a response.",
@@ -114,6 +118,12 @@ Guidelines:
       };
     } catch (error) {
       console.error('Error generating AI response:', error);
+      console.error('Error details:', {
+        message: error.message,
+        status: error.status,
+        code: error.code,
+        type: error.type
+      });
       throw new Error('Failed to generate response');
     }
   }
