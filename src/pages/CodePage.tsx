@@ -58,9 +58,11 @@ interface GitHubFileContent {
 
 export default function CodePage() {
   const navigate = useNavigate();
-  const [searchParams] = useSearchParams();
+  const [searchParams, setSearchParams] = useSearchParams();
   const folderFromUrl = searchParams.get('folder');
   const repoFromUrl = searchParams.get('repo');
+  const fileFromUrl = searchParams.get('file');
+  const githubFileFromUrl = searchParams.get('githubFile');
   
   // State
   const [activeView, setActiveView] = useState<'local' | 'github'>('local');
@@ -222,6 +224,14 @@ export default function CodePage() {
       const data = await response.json();
       setSelectedGithubFile(data.file);
       setSelectedFile(null);
+
+      // Update URL with GitHub file parameter
+      const newParams = new URLSearchParams(searchParams);
+      if (repoFromUrl) {
+        newParams.set('repo', repoFromUrl);
+      }
+      newParams.set('githubFile', path);
+      setSearchParams(newParams);
     } catch (error) {
       console.error('Error fetching GitHub file:', error);
       alert('Failed to load file content');
@@ -233,6 +243,13 @@ export default function CodePage() {
   // Navigation functions
   const navigateGithubFolder = (path: string) => {
     setGithubPath(path);
+    // Clear file parameter when navigating to folder
+    const newParams = new URLSearchParams(searchParams);
+    if (repoFromUrl) {
+      newParams.set('repo', repoFromUrl);
+    }
+    newParams.delete('githubFile');
+    setSearchParams(newParams);
   };
 
   const getGithubBreadcrumbs = () => {
@@ -248,6 +265,14 @@ export default function CodePage() {
       if (!isInitialLoad) {
         setSidebarOpen(false);
       }
+
+      // Update URL with file parameter
+      const newParams = new URLSearchParams(searchParams);
+      if (folderFromUrl) {
+        newParams.set('folder', folderFromUrl);
+      }
+      newParams.set('file', file.filename);
+      setSearchParams(newParams);
 
       if (!isTextFile(file.filename)) {
         setSelectedFile(file);
@@ -298,6 +323,36 @@ export default function CodePage() {
       }
     }
   }, [repoFromUrl, githubRepos]);
+
+  // Effect to auto-load files from URL parameters
+  useEffect(() => {
+    if (fileFromUrl && rootFolders.length > 0) {
+      // Find and load local file
+      const findFileInFolders = (folders: CodeFolder[]): CodeFile | null => {
+        for (const folder of folders) {
+          const file = folder.files?.find(f => f.filename === fileFromUrl);
+          if (file) return file;
+          if (folder.subfolders) {
+            const foundFile = findFileInFolders(folder.subfolders);
+            if (foundFile) return foundFile;
+          }
+        }
+        return null;
+      };
+
+      const file = findFileInFolders(rootFolders);
+      if (file) {
+        loadFile(file, true);
+      }
+    }
+  }, [fileFromUrl, rootFolders]);
+
+  // Effect to auto-load GitHub files from URL parameters
+  useEffect(() => {
+    if (githubFileFromUrl && selectedRepo) {
+      fetchGithubFile(githubFileFromUrl);
+    }
+  }, [githubFileFromUrl, selectedRepo]);
 
   useEffect(() => {
     if (selectedRepo) {
