@@ -1,5 +1,6 @@
 import Groq from 'groq-sdk';
-import { QdrantClient } from '@qdrant/js-client-rest';
+import { KnowledgeBase } from '../models/KnowledgeBase.js';
+import { BlobServiceClient } from '@azure/storage-blob';
 
 class AIChatService {
   constructor() {
@@ -7,55 +8,102 @@ class AIChatService {
       apiKey: process.env.GROQ_API_KEY
     });
     
-    this.qdrant = new QdrantClient({
-      url: process.env.QDRANT_URL,
-      apiKey: process.env.QDRANT_API_KEY,
-    });
-    
-    this.collectionName = process.env.QDRANT_COLLECTION_NAME;
-  }
-
-  // Generate embeddings using the same hash-based approach as vectordb.js
-  async generateEmbedding(text) {
-    const words = text.toLowerCase().split(/\s+/);
-    const embedding = new Array(384).fill(0);
-    
-    for (let i = 0; i < words.length; i++) {
-      const word = words[i];
-      for (let j = 0; j < word.length; j++) {
-        const charCode = word.charCodeAt(j);
-        embedding[i % 384] += charCode / (j + 1);
+    // Initialize Azure Blob Service for reading uploaded files
+    this.blobServiceClient = null;
+    if (process.env.AZURE_STORAGE_CONNECTION_STRING) {
+      try {
+        this.blobServiceClient = BlobServiceClient.fromConnectionString(process.env.AZURE_STORAGE_CONNECTION_STRING);
+      } catch (error) {
+        console.warn('Azure Blob Service not available:', error.message);
       }
     }
     
-    // Normalize the embedding
-    const magnitude = Math.sqrt(embedding.reduce((sum, val) => sum + val * val, 0));
-    return embedding.map(val => val / magnitude);
+    this.containerName = 'knowledge-base';
   }
 
-  // Search the vector database for relevant context
+  // Search the knowledge base using text search through uploaded files
   async searchKnowledgeBase(query, limit = 5) {
     try {
-      const embedding = await this.generateEmbedding(query);
+      // Get all completed files from MongoDB
+      const files = await KnowledgeBase.find({ 
+        status: 'completed' 
+      }).sort({ createdAt: -1 });
       
-      const results = await this.qdrant.search(this.collectionName, {
-        vector: embedding,
-        limit: limit,
-        with_payload: true,
-        score_threshold: 0.1 // Only return results with decent similarity
-      });
-
-      return results.map(result => ({
-        content: result.payload.content,
-        section: result.payload.section_title,
-        type: result.payload.type,
-        technologies: result.payload.technologies || [],
-        score: result.score
-      }));
+      if (files.length === 0) {
+        console.log('No completed files found in knowledge base');
+        return [];
+      }
+      
+      const results = [];
+      const queryLower = query.toLowerCase();
+      
+      // Search through each file's content
+      for (const file of files) {
+        try {
+          // Download file content from Azure Blob Storage
+          if (!this.blobServiceClient) continue;
+          
+          const containerClient = this.blobServiceClient.getContainerClient(this.containerName);
+          const blockBlobClient = containerClient.getBlockBlobClient(file.azureBlobPath);
+          
+          const downloadResponse = await blockBlobClient.download();
+          const content = await this.streamToString(downloadResponse.readableStreamBody);
+          
+          // Simple text search - check if query terms appear in content
+          const contentLower = content.toLowerCase();
+          const queryWords = queryLower.split(/\s+/).filter(word => word.length > 2);
+          
+          let matchScore = 0;
+          for (const word of queryWords) {
+            const matches = (contentLower.match(new RegExp(word, 'g')) || []).length;
+            matchScore += matches;
+          }
+          
+          if (matchScore > 0) {
+            // Extract relevant snippet around the first match
+            const firstMatch = queryWords.find(word => contentLower.includes(word));
+            const matchIndex = contentLower.indexOf(firstMatch);
+            const snippetStart = Math.max(0, matchIndex - 200);
+            const snippetEnd = Math.min(content.length, matchIndex + 200);
+            const snippet = content.substring(snippetStart, snippetEnd);
+            
+            results.push({
+              content: snippet,
+              section: file.fileName,
+              type: file.fileType,
+              technologies: [],
+              score: matchScore / queryWords.length,
+              fullContent: content
+            });
+          }
+        } catch (fileError) {
+          console.warn(`Error reading file ${file.fileName}:`, fileError.message);
+        }
+      }
+      
+      // Sort by score and return top results
+      return results
+        .sort((a, b) => b.score - a.score)
+        .slice(0, limit);
+        
     } catch (error) {
       console.error('Error searching knowledge base:', error);
       return [];
     }
+  }
+  
+  // Helper function to convert stream to string
+  async streamToString(readableStream) {
+    return new Promise((resolve, reject) => {
+      const chunks = [];
+      readableStream.on('data', (data) => {
+        chunks.push(data.toString());
+      });
+      readableStream.on('end', () => {
+        resolve(chunks.join(''));
+      });
+      readableStream.on('error', reject);
+    });
   }
 
   // Generate AI response using Groq with RAG context
@@ -158,17 +206,19 @@ Guidelines:
   // Health check method
   async healthCheck() {
     try {
-      const collections = await this.qdrant.getCollections();
-      const hasCollection = collections.collections.some(c => c.name === this.collectionName);
+      const fileCount = await KnowledgeBase.countDocuments({ status: 'completed' });
       
       return {
-        qdrant: hasCollection ? 'connected' : 'collection_not_found',
-        groq: 'connected'
+        knowledgeBase: fileCount > 0 ? 'files_available' : 'no_files',
+        groq: 'connected',
+        azure: this.blobServiceClient ? 'connected' : 'not_configured',
+        fileCount
       };
     } catch (error) {
       return {
-        qdrant: 'error',
+        knowledgeBase: 'error',
         groq: 'unknown',
+        azure: 'unknown',
         error: error.message
       };
     }
