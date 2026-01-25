@@ -116,7 +116,8 @@ async function uploadDocumentToQdrant(content = null, metadata = {}) {
         let documentContent = content;
         if (!documentContent) {
             console.log('📖 Reading document from AI/md.md...');
-            const documentPath = path.join(process.cwd(), 'AI', 'md.md');
+            // Go up one directory from server to root, then into AI folder
+            const documentPath = path.join(process.cwd(), '..', 'AI', 'md.md');
             documentContent = fs.readFileSync(documentPath, 'utf-8');
         }
         
@@ -282,15 +283,3 @@ export {
     chunkText,
     client
 };
-
-// Run the upload if this file is executed directly
-console.log('🎯 Starting vectordb.js execution...');
-uploadDocumentToQdrant()
-    .then(() => {
-        console.log('\n✅ All operations completed successfully!');
-        process.exit(0);
-    })
-    .catch((error) => {
-        console.error('\n❌ Operation failed:', error);
-        process.exit(1);
-    });

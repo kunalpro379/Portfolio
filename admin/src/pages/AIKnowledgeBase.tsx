@@ -13,7 +13,7 @@ import {
   FileJson,
   FileCode
 } from 'lucide-react';
-import config from '../config/config';
+import config, { buildUrl } from '../config/config';
 
 interface KnowledgeBaseFile {
   _id: string;
@@ -61,7 +61,7 @@ const AIKnowledgeBase: React.FC = () => {
 
   const fetchFiles = async () => {
     try {
-      const response = await fetch(config.api.endpoints.knowledgeBaseFiles);
+      const response = await fetch(buildUrl(config.api.endpoints.knowledgeBaseFiles));
       
       if (!response.ok) {
         throw new Error(`HTTP ${response.status}: ${response.statusText}`);
@@ -91,7 +91,7 @@ const AIKnowledgeBase: React.FC = () => {
 
   const fetchStats = async () => {
     try {
-      const response = await fetch(config.api.endpoints.knowledgeBaseStats);
+      const response = await fetch(buildUrl(config.api.endpoints.knowledgeBaseStats));
       
       if (!response.ok) {
         console.warn('Stats service unavailable:', response.status);
@@ -139,7 +139,7 @@ const AIKnowledgeBase: React.FC = () => {
       const formData = new FormData();
       formData.append('file', file);
 
-      const response = await fetch(config.api.endpoints.knowledgeBaseUpload, {
+      const response = await fetch(buildUrl(config.api.endpoints.knowledgeBaseUpload), {
         method: 'POST',
         body: formData,
       });
@@ -195,7 +195,7 @@ const AIKnowledgeBase: React.FC = () => {
     if (!confirm('Are you sure you want to delete this file?')) return;
 
     try {
-      const response = await fetch(config.api.endpoints.knowledgeBaseFileById(fileId), {
+      const response = await fetch(buildUrl(config.api.endpoints.knowledgeBaseFileById(fileId)), {
         method: 'DELETE',
       });
 
@@ -274,49 +274,15 @@ const AIKnowledgeBase: React.FC = () => {
           </div>
         )}
 
-        {/* Stats Cards */}
+        {/* Stats Display */}
         {stats && (
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-            <div className="bg-white p-6 rounded-lg shadow-sm border">
-              <div className="flex items-center gap-3">
-                <FileText className="w-8 h-8 text-blue-600" />
-                <div>
-                  <p className="text-sm text-gray-600">Total Files</p>
-                  <p className="text-2xl font-bold text-gray-900">{stats.totalFiles}</p>
-                </div>
-              </div>
-            </div>
-            
-            <div className="bg-white p-6 rounded-lg shadow-sm border">
-              <div className="flex items-center gap-3">
-                <CheckCircle className="w-8 h-8 text-green-600" />
-                <div>
-                  <p className="text-sm text-gray-600">Completed</p>
-                  <p className="text-2xl font-bold text-gray-900">{stats.completedFiles}</p>
-                </div>
-              </div>
-            </div>
-            
-            <div className="bg-white p-6 rounded-lg shadow-sm border">
-              <div className="flex items-center gap-3">
-                <XCircle className="w-8 h-8 text-red-600" />
-                <div>
-                  <p className="text-sm text-gray-600">Failed</p>
-                  <p className="text-2xl font-bold text-gray-900">{stats.failedFiles}</p>
-                </div>
-              </div>
-            </div>
-            
-            <div className="bg-white p-6 rounded-lg shadow-sm border">
-              <div className="flex items-center gap-3">
-                <BarChart3 className="w-8 h-8 text-purple-600" />
-                <div>
-                  <p className="text-sm text-gray-600">Vector Points</p>
-                  <p className="text-2xl font-bold text-gray-900">
-                    {stats.vectorStats?.points_count || 0}
-                  </p>
-                </div>
-              </div>
+          <div className="mb-8 p-4 bg-white rounded-lg shadow-sm border">
+            <h2 className="text-lg font-semibold text-gray-900 mb-3">Knowledge Base Statistics</h2>
+            <div className="text-sm text-gray-600 flex gap-6">
+              <span>Total Files: <span className="font-medium text-gray-900">{stats.totalFiles}</span></span>
+              <span>Completed: <span className="font-medium text-green-600">{stats.completedFiles}</span></span>
+              <span>Failed: <span className="font-medium text-red-600">{stats.failedFiles}</span></span>
+              <span>Vector Points: <span className="font-medium text-purple-600">{stats.vectorStats?.points_count || 0}</span></span>
             </div>
           </div>
         )}

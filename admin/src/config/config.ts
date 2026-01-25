@@ -2,32 +2,35 @@
 // @ts-ignore
 import CONFIG from '../../../config.shared.js';
 
-// Determine API base URL based on environment
+// Environment-aware API base URL
 const getApiBaseUrl = (): string => {
-  // Check if we're in development (localhost)
   if (typeof window !== 'undefined') {
-    const hostname = window.location.hostname;
-    if (hostname === 'localhost' || hostname === '127.0.0.1') {
-      // Use local server for development
+    if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
       return 'http://localhost:5000';
     }
   }
-  
-  // Use production API for deployed version
   return 'https://api.kunalpatil.me';
 };
 
-const API_BASE_URL = getApiBaseUrl();
-
 const config = {
-  // API Base URL - automatically detects environment
+  // API Base URL - detects environment
   api: {
-    baseUrl: API_BASE_URL,
+    baseUrl: getApiBaseUrl(),
     endpoints: {
       // Auth
       auth: '/api/auth',
       login: '/api/auth/login',
       verify: '/api/auth/verify',
+      
+      // Knowledge Base
+      knowledgeBaseFiles: '/api/knowledge-base/files',
+      knowledgeBaseStats: '/api/knowledge-base/stats',
+      knowledgeBaseUpload: '/api/knowledge-base/upload',
+      knowledgeBaseFileById: (id: string) => `/api/knowledge-base/files/${id}`,
+      
+      // AI Chat
+      aiChat: '/api/ai-chat',
+      aiChatHistory: '/api/ai-chat/history',
       
       // Projects
       projects: '/api/projects',
@@ -54,18 +57,17 @@ const config = {
       blogAssetName: (id: string, index: number) => `/api/blogs/${id}/assets/${index}/name`,
       
       // Documentation
-      documentation: '/api/documentation/admin/all',
-      docById: (id: string) => `/api/documentation/admin/${id}`,
+      documentation: '/api/documentation',
+      docById: (id: string) => `/api/documentation/${id}`,
       docCreate: '/api/documentation/create',
       docUploadAsset: '/api/documentation/upload-asset',
       docAsset: (id: string, name: string) => `/api/documentation/asset/${id}/${name}`,
-      docFiles: (id: string) => `/api/documentation/admin/${id}/files`,
-      docFileById: (docId: string, fileId: string) => `/api/documentation/admin/${docId}/files/${fileId}`,
+      docFiles: (id: string) => `/api/documentation/${id}/files`,
+      docFileById: (docId: string, fileId: string) => `/api/documentation/${docId}/files/${fileId}`,
       docAttachments: (id: string) => `/api/documentation/${id}/attachments`,
       docAttachmentsInit: (id: string) => `/api/documentation/${id}/attachments/init`,
       docAttachmentsChunk: (id: string) => `/api/documentation/${id}/attachments/chunk`,
       docAttachmentsComplete: (id: string) => `/api/documentation/${id}/attachments/complete`,
-      docDiagram: (id: string) => `/api/documentation/admin/${id}/diagram`,
       
       // Notes
       notesFolders: (parentPath: string) => `/api/notes/folders?parentPath=${parentPath}`,
@@ -107,13 +109,6 @@ const config = {
       // Views
       views: '/api/views',
       viewsStats: '/api/views/stats',
-      
-      // Knowledge Base
-      knowledgeBase: '/api/knowledge-base',
-      knowledgeBaseUpload: '/api/knowledge-base/upload',
-      knowledgeBaseFiles: '/api/knowledge-base/files',
-      knowledgeBaseStats: '/api/knowledge-base/stats',
-      knowledgeBaseFileById: (fileId: string) => `/api/knowledge-base/files/${fileId}`,
     }
   },
 
