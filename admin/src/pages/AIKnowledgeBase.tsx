@@ -61,7 +61,7 @@ const AIKnowledgeBase: React.FC = () => {
 
   const fetchFiles = async () => {
     try {
-      const response = await fetch(buildUrl(config.api.endpoints.knowledgeBaseFiles));
+      const response = await fetch(config.api.endpoints.knowledgeBaseFiles);
       
       if (!response.ok) {
         throw new Error(`HTTP ${response.status}: ${response.statusText}`);
@@ -91,7 +91,7 @@ const AIKnowledgeBase: React.FC = () => {
 
   const fetchStats = async () => {
     try {
-      const response = await fetch(buildUrl(config.api.endpoints.knowledgeBaseStats));
+      const response = await fetch(config.api.endpoints.knowledgeBaseStats);
       
       if (!response.ok) {
         console.warn('Stats service unavailable:', response.status);
@@ -139,7 +139,7 @@ const AIKnowledgeBase: React.FC = () => {
       const formData = new FormData();
       formData.append('file', file);
 
-      const response = await fetch(buildUrl(config.api.endpoints.knowledgeBaseUpload), {
+      const response = await fetch(config.api.endpoints.knowledgeBaseUpload, {
         method: 'POST',
         body: formData,
       });
@@ -195,7 +195,7 @@ const AIKnowledgeBase: React.FC = () => {
     if (!confirm('Are you sure you want to delete this file?')) return;
 
     try {
-      const response = await fetch(buildUrl(config.api.endpoints.knowledgeBaseFileById(fileId)), {
+      const response = await fetch(config.api.endpoints.knowledgeBaseFileById(fileId), {
         method: 'DELETE',
       });
 
