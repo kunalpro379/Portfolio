@@ -1,12 +1,28 @@
-import { QdrantClient } from '@qdrant/js-client-rest';
 import fs from 'fs';
 import path from 'path';
 
-// Initialize Qdrant client
-const client = new QdrantClient({
-    url: 'https://c0235c7b-a838-4d70-a6bd-560d3baaaea2.us-east4-0.gcp.cloud.qdrant.io:6333',
-    apiKey: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhY2Nlc3MiOiJtIn0.zcqrYkhc3IXkBdwrGDmPil85DjVljwWlN0Msft-Y6Kg',
-});
+// Vector database functionality with graceful fallback
+let QdrantClient;
+let client;
+
+// Try to import and initialize Qdrant client
+(async () => {
+  try {
+    const qdrantModule = await import('@qdrant/js-client-rest');
+    QdrantClient = qdrantModule.QdrantClient;
+    
+    // Initialize Qdrant client
+    client = new QdrantClient({
+        url: 'https://c0235c7b-a838-4d70-a6bd-560d3baaaea2.us-east4-0.gcp.cloud.qdrant.io:6333',
+        apiKey: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhY2Nlc3MiOiJtIn0.zcqrYkhc3IXkBdwrGDmPil85DjVljwWlN0Msft-Y6Kg',
+    });
+    
+    console.log('✅ Qdrant client initialized successfully');
+  } catch (error) {
+    console.warn('⚠️ Qdrant client not available:', error.message);
+    console.warn('⚠️ Vector database features will be disabled');
+  }
+})();
 
 // Collection name for the knowledge base
 const COLLECTION_NAME = 'Portfolio';
@@ -110,6 +126,11 @@ function extractMetadata(chunk, index, section = '') {
 // Main function to upload document to Qdrant
 async function uploadDocumentToQdrant(content = null, metadata = {}) {
     try {
+        // Check if Qdrant client is available
+        if (!client) {
+            throw new Error('Qdrant client not available - vector database features are disabled');
+        }
+        
         console.log('🚀 Starting document upload to Qdrant...');
         
         // Use provided content or default to md.md file
@@ -230,6 +251,11 @@ async function uploadDocumentToQdrant(content = null, metadata = {}) {
 // Function to search the knowledge base
 async function searchKnowledgeBase(query, limit = 5) {
     try {
+        // Check if Qdrant client is available
+        if (!client) {
+            throw new Error('Qdrant client not available - vector database features are disabled');
+        }
+        
         console.log(`🔍 Searching for: "${query}"`);
         
         const embedding = await generateEmbedding(query);
@@ -258,6 +284,15 @@ async function searchKnowledgeBase(query, limit = 5) {
 // Function to get collection statistics
 async function getCollectionStats() {
     try {
+        // Check if Qdrant client is available
+        if (!client) {
+            return {
+                available: false,
+                message: 'Qdrant client not available - vector database features are disabled',
+                points_count: 0
+            };
+        }
+        
         const collections = await client.getCollections();
         console.log('📊 Available collections:', collections.collections.map(c => c.name));
         

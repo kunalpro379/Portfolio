@@ -209,59 +209,30 @@ router.post('/upload', upload.single('file'), async (req, res) => {
 
     await knowledgeBaseEntry.save();
     
-    // Step 4: Upload to vector database
+    // Step 4: Processing complete
     res.write(`data: ${JSON.stringify({ 
-      step: 'vector', 
-      message: 'Uploading to vector database...', 
-      progress: 80 
+      step: 'processing', 
+      message: 'Processing complete...', 
+      progress: 90 
     })}\n\n`);
 
-    try {
-      // Try to import and use vector database functions
-      const { uploadDocumentToQdrant } = await import('../../vectordb.js');
+    // Update status to completed (skip vector database entirely)
+    knowledgeBaseEntry.status = 'completed';
+    knowledgeBaseEntry.vectorStatus = 'skipped';
+    knowledgeBaseEntry.updatedAt = new Date();
+    await knowledgeBaseEntry.save();
+    
+    console.log('✅ File processed successfully (vector database skipped)');
       
-      // Upload to Qdrant vector database
-      await uploadDocumentToQdrant(processedContent, {
-        fileName: originalname,
-        fileId,
-        fileType: metadata.fileType,
-        uploadedAt: metadata.uploadedAt
-      });
-      
-      // Update status to completed
-      knowledgeBaseEntry.status = 'completed';
-      knowledgeBaseEntry.vectorStatus = 'uploaded';
-      knowledgeBaseEntry.updatedAt = new Date();
-      await knowledgeBaseEntry.save();
-      
-      // Step 5: Complete
-      res.write(`data: ${JSON.stringify({ 
-        step: 'complete', 
-        message: 'Knowledge base updated successfully!', 
-        progress: 100,
-        success: true,
-        fileId,
-        fileName: originalname
-      })}\n\n`);
-      
-    } catch (vectorError) {
-      console.error('Vector database error:', vectorError);
-      
-      // Update status to failed
-      knowledgeBaseEntry.status = 'failed';
-      knowledgeBaseEntry.vectorStatus = 'failed';
-      knowledgeBaseEntry.error = vectorError.message;
-      knowledgeBaseEntry.updatedAt = new Date();
-      await knowledgeBaseEntry.save();
-      
-      res.write(`data: ${JSON.stringify({ 
-        step: 'error', 
-        message: 'Failed to upload to vector database: ' + vectorError.message, 
-        progress: 100,
-        success: false,
-        error: vectorError.message
-      })}\n\n`);
-    }
+    // Step 5: Complete
+    res.write(`data: ${JSON.stringify({ 
+      step: 'complete', 
+      message: 'Knowledge base updated successfully!', 
+      progress: 100,
+      success: true,
+      fileId,
+      fileName: originalname
+    })}\n\n`);
     
     res.end();
     
@@ -316,17 +287,9 @@ router.get('/test', (req, res) => {
   });
 });
 
-// Get vector database statistics
+// Get knowledge base statistics
 router.get('/stats', async (req, res) => {
   try {
-    let vectorStats = null;
-    try {
-      const { getCollectionStats } = await import('../../vectordb.js');
-      vectorStats = await getCollectionStats();
-    } catch (vectorError) {
-      console.warn('Vector database not available:', vectorError.message);
-    }
-    
     const totalFiles = await KnowledgeBase.countDocuments();
     const completedFiles = await KnowledgeBase.countDocuments({ status: 'completed' });
     const failedFiles = await KnowledgeBase.countDocuments({ status: 'failed' });
@@ -337,7 +300,7 @@ router.get('/stats', async (req, res) => {
         totalFiles,
         completedFiles,
         failedFiles,
-        vectorStats
+        vectorPoints: 0 // Vector database disabled
       }
     });
   } catch (error) {
