@@ -125,7 +125,9 @@ export const apiCall = async (
   endpoint: string,
   options?: RequestInit
 ): Promise<Response> => {
-  const url = buildUrl(endpoint);
+  // If endpoint already starts with http, use it directly
+  // Otherwise, build the full URL
+  const url = endpoint.startsWith('http') ? endpoint : buildUrl(endpoint);
   return fetch(url, options);
 };
 
