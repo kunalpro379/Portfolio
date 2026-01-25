@@ -38,7 +38,7 @@ const knowledgeBaseSchema = new mongoose.Schema({
   },
   vectorStatus: {
     type: String,
-    enum: ['pending', 'uploaded', 'failed'],
+    enum: ['pending', 'uploaded', 'failed', 'skipped'],
     default: 'pending'
   },
   error: {
