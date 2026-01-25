@@ -11,7 +11,7 @@
     {
       "name": "GitHub",
       "icon": "github",
-      "url": "https://github.com/kunalpatil26",
+      "url": "https://github.com/kunalpro379",
       "color": "hover:text-gray-400"
     },
     {
@@ -43,6 +43,24 @@
       "icon": "medium",
       "url": "https://medium.com/@kunaldp379",
       "color": "hover:text-white"
+    },
+    {
+      "name": "WhatsApp",
+      "icon": "whatsapp",
+      "url": "https://wa.me/919892885090",
+      "color": "hover:text-green-500"
+    },
+    {
+      "name": "Call",
+      "icon": "phone",
+      "url": "tel:+919892885090",
+      "color": "hover:text-blue-500"
+    },
+    {
+      "name": "Email",
+      "icon": "mail",
+      "url": "mailto:kunaldp379@gmail.com",
+      "color": "hover:text-red-500"
     }
   ]
 }

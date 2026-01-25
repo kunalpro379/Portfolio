@@ -1,6 +1,6 @@
 import { motion } from "framer-motion";
 import { Phone, Mail, MapPin, Clock, Download, Instagram, Linkedin, Twitter, Github, Eye } from "lucide-react";
-import { FaThreads } from "react-icons/fa6";
+import { FaThreads, FaWhatsapp } from "react-icons/fa6";
 import contactData from "@/data/contact.json";
 import backgroundsData from "@/data/backgrounds.json";
 
@@ -13,7 +13,10 @@ export default function ContactSection() {
       linkedin: Linkedin,
       twitter: Twitter,
       threads: FaThreads,
-      medium: null // Will use custom image
+      medium: null, // Will use custom image
+      whatsapp: FaWhatsapp,
+      phone: Phone,
+      mail: Mail
     };
     return iconMap[iconName];
   };
@@ -169,6 +172,19 @@ export default function ContactSection() {
                     <p className="text-white/60 text-sm uppercase tracking-wider mb-2">Email</p>
                     <a href={`mailto:${contactData.email}`} className="text-xl md:text-2xl font-medium hover:text-sky-400 transition-colors break-all">
                       {contactData.email}
+                    </a>
+                  </div>
+                </div>
+
+                {/* GitHub */}
+                <div className="flex items-start gap-4 group">
+                  <div className="mt-1">
+                    <Github size={28} className="text-white/80 group-hover:text-sky-400 transition-colors" />
+                  </div>
+                  <div>
+                    <p className="text-white/60 text-sm uppercase tracking-wider mb-2">GitHub</p>
+                    <a href="https://github.com/kunalpro379" target="_blank" rel="noopener noreferrer" className="text-xl md:text-2xl font-medium hover:text-sky-400 transition-colors break-all">
+                      github.com/kunalpro379
                     </a>
                   </div>
                 </div>

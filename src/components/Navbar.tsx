@@ -1,4 +1,4 @@
-import { Home as HomeIcon, FolderKanban, Briefcase, BookOpen, Mail, User, FileText, Book, FolderOpen } from "lucide-react";
+import { Home as HomeIcon, FolderKanban, Briefcase, BookOpen, Mail, User, FileText, Book, FolderOpen, Github } from "lucide-react";
 import { useLocation, useNavigate } from "react-router-dom";
 
 interface NavbarProps {
@@ -114,34 +114,40 @@ export default function Navbar({ scrollToSection }: NavbarProps) {
 
   return (
     <div className="fixed top-4 md:top-6 left-1/2 -translate-x-1/2 z-[1000] w-auto max-w-[95%] will-change-auto">
-      {/* Mobile Navbar - 3 Sections */}
-      <div className="flex md:hidden gap-2 items-center">
+      {/* Mobile Navbar - 4 Sections - Optimized for small screens */}
+      <div className="flex md:hidden gap-2 items-center max-w-full overflow-hidden">
         {/* Home */}
-        <div onClick={() => scrollToSection('home')} className="flex flex-col items-center justify-center p-3 bg-white/90 backdrop-blur-md border-2 border-black rounded-md shadow-lg cursor-pointer active:scale-95 min-w-[70px]">
+        <div onClick={() => scrollToSection('home')} className="flex flex-col items-center justify-center p-3 bg-white/90 backdrop-blur-md border-2 border-black rounded-md shadow-lg cursor-pointer active:scale-95 min-w-[65px] flex-shrink-0">
           <HomeIcon size={18} className="mb-1" />
           <span className="text-[8px] font-bold uppercase">Home</span>
         </div>
 
         {/* Middle - Projects, Experience, Blogs */}
-        <div className="flex gap-2 bg-white/90 backdrop-blur-md border-2 border-black rounded-md shadow-lg p-2">
-          <div onClick={() => scrollToSection('projects')} className="flex flex-col items-center justify-center px-2 py-1 cursor-pointer rounded active:scale-95 active:bg-black/5 min-w-[60px]">
+        <div className="flex gap-2 bg-white/90 backdrop-blur-md border-2 border-black rounded-md shadow-lg p-2 flex-shrink-0">
+          <div onClick={() => scrollToSection('projects')} className="flex flex-col items-center justify-center px-2 py-1 cursor-pointer rounded active:scale-95 active:bg-black/5 min-w-[55px]">
             <FolderKanban size={18} className="mb-1" />
             <span className="text-[8px] font-bold uppercase">Projects</span>
           </div>
-          <div onClick={() => scrollToSection('experience')} className="flex flex-col items-center justify-center px-2 py-1 cursor-pointer rounded active:scale-95 active:bg-black/5 min-w-[60px]">
+          <div onClick={() => scrollToSection('experience')} className="flex flex-col items-center justify-center px-2 py-1 cursor-pointer rounded active:scale-95 active:bg-black/5 min-w-[55px]">
             <Briefcase size={18} className="mb-1" />
-            <span className="text-[8px] font-bold uppercase">Experience</span>
+            <span className="text-[8px] font-bold uppercase">Exp</span>
           </div>
-          <div onClick={() => navigate('/learnings?tab=blogs')} className="flex flex-col items-center justify-center px-2 py-1 cursor-pointer rounded active:scale-95 active:bg-black/5 min-w-[60px]">
+          <div onClick={() => navigate('/learnings?tab=blogs')} className="flex flex-col items-center justify-center px-2 py-1 cursor-pointer rounded active:scale-95 active:bg-black/5 min-w-[55px]">
             <BookOpen size={18} className="mb-1" />
             <span className="text-[8px] font-bold uppercase">Blogs</span>
           </div>
         </div>
 
         {/* Contact */}
-        <div onClick={() => scrollToSection('contact')} className="flex flex-col items-center justify-center p-3 bg-white/90 backdrop-blur-md border-2 border-black rounded-md shadow-lg cursor-pointer active:scale-95 min-w-[70px]">
+        <div onClick={() => scrollToSection('contact')} className="flex flex-col items-center justify-center p-3 bg-white/90 backdrop-blur-md border-2 border-black rounded-md shadow-lg cursor-pointer active:scale-95 min-w-[65px] flex-shrink-0">
           <Mail size={18} className="mb-1" />
           <span className="text-[8px] font-bold uppercase">Contact</span>
+        </div>
+
+        {/* GitHub */}
+        <div onClick={() => window.open('https://github.com/kunalpro379', '_blank')} className="flex flex-col items-center justify-center p-3 bg-white/90 backdrop-blur-md border-2 border-black rounded-md shadow-lg cursor-pointer active:scale-95 min-w-[65px] flex-shrink-0">
+          <Github size={18} className="mb-1" />
+          <span className="text-[8px] font-bold uppercase">GitHub</span>
         </div>
       </div>
 
@@ -193,6 +199,16 @@ export default function Navbar({ scrollToSection }: NavbarProps) {
             <Mail size={24} className="mb-2 text-black/70 group-hover:text-sky-500 transition-colors" />
             <span className="text-xs font-bold uppercase tracking-wider text-black/70 group-hover:text-black transition-colors">
               Contact
+            </span>
+          </div>
+        </div>
+
+        {/* GitHub Section */}
+        <div className="bg-white/90 backdrop-blur-2xl border-2 border-black rounded-lg shadow-lg px-6 py-4">
+          <div onClick={() => window.open('https://github.com/kunalpro379', '_blank')} className="flex flex-col items-center justify-center cursor-pointer group">
+            <Github size={24} className="mb-2 text-black/70 group-hover:text-gray-600 transition-colors" />
+            <span className="text-xs font-bold uppercase tracking-wider text-black/70 group-hover:text-black transition-colors">
+              GitHub
             </span>
           </div>
         </div>
