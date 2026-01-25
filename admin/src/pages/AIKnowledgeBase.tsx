@@ -62,16 +62,28 @@ const AIKnowledgeBase: React.FC = () => {
   const fetchFiles = async () => {
     try {
       const response = await fetch(config.api.endpoints.knowledgeBaseFiles);
+      
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+      }
+      
       const data = await response.json();
       
       if (data.success) {
-        setFiles(data.files);
+        setFiles(data.files || []);
+        if (data.message) {
+          console.warn('Knowledge Base service message:', data.message);
+        }
       } else {
-        setError('Failed to fetch files');
+        setError(data.message || 'Failed to fetch files');
       }
     } catch (error) {
       console.error('Error fetching files:', error);
-      setError('Failed to fetch files');
+      if (error.message.includes('503')) {
+        setError('Knowledge Base service is temporarily unavailable. Please try again later.');
+      } else {
+        setError('Failed to fetch files: ' + error.message);
+      }
     } finally {
       setLoading(false);
     }
@@ -80,13 +92,23 @@ const AIKnowledgeBase: React.FC = () => {
   const fetchStats = async () => {
     try {
       const response = await fetch(config.api.endpoints.knowledgeBaseStats);
+      
+      if (!response.ok) {
+        console.warn('Stats service unavailable:', response.status);
+        return;
+      }
+      
       const data = await response.json();
       
       if (data.success) {
         setStats(data.stats);
+        if (data.message) {
+          console.warn('Knowledge Base stats message:', data.message);
+        }
       }
     } catch (error) {
       console.error('Error fetching stats:', error);
+      // Don't show error for stats, just log it
     }
   };
 

@@ -92,7 +92,36 @@ async function loadRoutes() {
       }
       // Add fallback route to prevent 404
       app.use('/api/knowledge-base', (req, res) => {
-        res.status(503).json({ message: 'Knowledge Base service not available', error: 'Service temporarily unavailable' });
+        if (req.path === '/health') {
+          res.json({ 
+            success: true, 
+            message: 'Knowledge Base service fallback',
+            error: 'Service temporarily unavailable' 
+          });
+        } else if (req.path === '/files') {
+          res.json({ 
+            success: true, 
+            files: [],
+            message: 'Knowledge Base service not available' 
+          });
+        } else if (req.path === '/stats') {
+          res.json({ 
+            success: true, 
+            stats: {
+              totalFiles: 0,
+              completedFiles: 0,
+              failedFiles: 0,
+              vectorStats: null
+            },
+            message: 'Knowledge Base service not available' 
+          });
+        } else {
+          res.status(503).json({ 
+            success: false,
+            message: 'Knowledge Base service not available', 
+            error: 'Service temporarily unavailable' 
+          });
+        }
       });
       console.log('✓ Knowledge Base fallback route registered');
     }

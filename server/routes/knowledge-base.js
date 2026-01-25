@@ -2,14 +2,25 @@ import express from 'express';
 import multer from 'multer';
 import { BlobServiceClient } from '@azure/storage-blob';
 import { KnowledgeBase } from '../models/KnowledgeBase.js';
-import { uploadDocumentToQdrant, getCollectionStats } from '../../vectordb.js';
 
 const router = express.Router();
 
-const blobServiceClient = BlobServiceClient.fromConnectionString(
-  process.env.AZURE_STORAGE_CONNECTION_STRING
-);
+// Check if required environment variables exist
+const AZURE_STORAGE_CONNECTION_STRING = process.env.AZURE_STORAGE_CONNECTION_STRING;
 const containerName = 'knowledge-base';
+
+if (!AZURE_STORAGE_CONNECTION_STRING) {
+  console.warn('⚠️ AZURE_STORAGE_CONNECTION_STRING not found - Knowledge Base features will be limited');
+}
+
+let blobServiceClient;
+try {
+  if (AZURE_STORAGE_CONNECTION_STRING) {
+    blobServiceClient = BlobServiceClient.fromConnectionString(AZURE_STORAGE_CONNECTION_STRING);
+  }
+} catch (error) {
+  console.error('❌ Error initializing Azure Blob Service:', error.message);
+}
 
 const storage = multer.memoryStorage();
 const upload = multer({ 
@@ -42,13 +53,19 @@ function generateId() {
 // Initialize Azure container
 async function initializeContainer() {
   try {
+    if (!blobServiceClient) {
+      console.warn('⚠️ Azure Blob Service not initialized - skipping container creation');
+      return false;
+    }
     const containerClient = blobServiceClient.getContainerClient(containerName);
     await containerClient.createIfNotExists({
       access: 'blob'
     });
     console.log('✓ Knowledge base container initialized');
+    return true;
   } catch (error) {
     console.error('Error initializing knowledge base container:', error);
+    return false;
   }
 }
 
@@ -58,6 +75,9 @@ initializeContainer();
 // Upload file to Azure Blob Storage
 const uploadFileToAzure = async (fileBuffer, fileName, fileId) => {
   try {
+    if (!blobServiceClient) {
+      throw new Error('Azure Blob Service not initialized');
+    }
     const containerClient = blobServiceClient.getContainerClient(containerName);
     const blobPath = `files/${fileId}-${fileName}`;
     const blockBlobClient = containerClient.getBlockBlobClient(blobPath);
@@ -130,6 +150,15 @@ router.post('/upload', upload.single('file'), async (req, res) => {
     const { originalname, buffer, size } = req.file;
     const fileId = generateId();
     
+    // Set headers for Server-Sent Events
+    res.writeHead(200, {
+      'Content-Type': 'text/plain',
+      'Cache-Control': 'no-cache',
+      'Connection': 'keep-alive',
+      'Access-Control-Allow-Origin': '*',
+      'Access-Control-Allow-Headers': 'Cache-Control'
+    });
+    
     // Step 1: Upload to Azure Blob Storage
     res.write(`data: ${JSON.stringify({ 
       step: 'upload', 
@@ -137,7 +166,17 @@ router.post('/upload', upload.single('file'), async (req, res) => {
       progress: 20 
     })}\n\n`);
 
-    const { blobPath, blobUrl } = await uploadFileToAzure(buffer, originalname, fileId);
+    let blobPath, blobUrl;
+    try {
+      const uploadResult = await uploadFileToAzure(buffer, originalname, fileId);
+      blobPath = uploadResult.blobPath;
+      blobUrl = uploadResult.blobUrl;
+    } catch (azureError) {
+      console.error('Azure upload failed:', azureError);
+      // Continue without Azure storage
+      blobPath = `local/${fileId}-${originalname}`;
+      blobUrl = `local://files/${fileId}`;
+    }
     
     // Step 2: Process file content
     res.write(`data: ${JSON.stringify({ 
@@ -178,6 +217,9 @@ router.post('/upload', upload.single('file'), async (req, res) => {
     })}\n\n`);
 
     try {
+      // Try to import and use vector database functions
+      const { uploadDocumentToQdrant } = await import('../../vectordb.js');
+      
       // Upload to Qdrant vector database
       await uploadDocumentToQdrant(processedContent, {
         fileName: originalname,
@@ -243,14 +285,48 @@ router.get('/files', async (req, res) => {
     res.json({ success: true, files });
   } catch (error) {
     console.error('Get files error:', error);
-    res.status(500).json({ success: false, message: 'Server error' });
+    res.status(500).json({ success: false, message: 'Server error', error: error.message });
   }
+});
+
+// Health check route
+router.get('/health', async (req, res) => {
+  try {
+    res.json({ 
+      success: true, 
+      message: 'Knowledge Base service is running',
+      timestamp: new Date().toISOString(),
+      features: {
+        azureStorage: !!blobServiceClient,
+        database: true,
+        vectorDatabase: false // Will be checked dynamically
+      }
+    });
+  } catch (error) {
+    res.status(500).json({ success: false, message: 'Health check failed' });
+  }
+});
+
+// Test route
+router.get('/test', (req, res) => {
+  res.json({ 
+    success: true, 
+    message: 'Knowledge Base route is working',
+    timestamp: new Date().toISOString()
+  });
 });
 
 // Get vector database statistics
 router.get('/stats', async (req, res) => {
   try {
-    const stats = await getCollectionStats();
+    let vectorStats = null;
+    try {
+      const { getCollectionStats } = await import('../../vectordb.js');
+      vectorStats = await getCollectionStats();
+    } catch (vectorError) {
+      console.warn('Vector database not available:', vectorError.message);
+    }
+    
     const totalFiles = await KnowledgeBase.countDocuments();
     const completedFiles = await KnowledgeBase.countDocuments({ status: 'completed' });
     const failedFiles = await KnowledgeBase.countDocuments({ status: 'failed' });
@@ -261,7 +337,7 @@ router.get('/stats', async (req, res) => {
         totalFiles,
         completedFiles,
         failedFiles,
-        vectorStats: stats
+        vectorStats
       }
     });
   } catch (error) {
@@ -282,9 +358,11 @@ router.delete('/files/:fileId', async (req, res) => {
     
     // Delete from Azure Blob Storage
     try {
-      const containerClient = blobServiceClient.getContainerClient(containerName);
-      const blockBlobClient = containerClient.getBlockBlobClient(file.azureBlobPath);
-      await blockBlobClient.deleteIfExists();
+      if (blobServiceClient) {
+        const containerClient = blobServiceClient.getContainerClient(containerName);
+        const blockBlobClient = containerClient.getBlockBlobClient(file.azureBlobPath);
+        await blockBlobClient.deleteIfExists();
+      }
     } catch (azureError) {
       console.error('Error deleting from Azure:', azureError);
     }
