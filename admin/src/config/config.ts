@@ -4,11 +4,7 @@ import CONFIG from '../../../config.shared.js';
 
 // Environment-aware API base URL
 const getApiBaseUrl = (): string => {
-  if (typeof window !== 'undefined') {
-    if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
-      return 'http://localhost:5000';
-    }
-  }
+  // Always use the production API URL
   return 'https://api.kunalpatil.me';
 };
 
@@ -18,97 +14,97 @@ const config = {
     baseUrl: getApiBaseUrl(),
     endpoints: {
       // Auth
-      auth: '/api/auth',
-      login: '/api/auth/login',
-      verify: '/api/auth/verify',
+      auth: `${getApiBaseUrl()}/api/auth`,
+      login: `${getApiBaseUrl()}/api/auth/login`,
+      verify: `${getApiBaseUrl()}/api/auth/verify`,
       
       // Knowledge Base
-      knowledgeBaseFiles: '/api/knowledge-base/files',
-      knowledgeBaseStats: '/api/knowledge-base/stats',
-      knowledgeBaseUpload: '/api/knowledge-base/upload',
-      knowledgeBaseFileById: (id: string) => `/api/knowledge-base/files/${id}`,
+      knowledgeBaseFiles: `${getApiBaseUrl()}/api/knowledge-base/files`,
+      knowledgeBaseStats: `${getApiBaseUrl()}/api/knowledge-base/stats`,
+      knowledgeBaseUpload: `${getApiBaseUrl()}/api/knowledge-base/upload`,
+      knowledgeBaseFileById: (id: string) => `${getApiBaseUrl()}/api/knowledge-base/files/${id}`,
       
       // AI Chat
-      aiChat: '/api/ai-chat',
-      aiChatHistory: '/api/ai-chat/history',
+      aiChat: `${getApiBaseUrl()}/api/ai-chat`,
+      aiChatHistory: `${getApiBaseUrl()}/api/ai-chat/history`,
       
       // Projects
-      projects: '/api/projects',
-      projectById: (id: string) => `/api/projects/${id}`,
-      projectCreate: '/api/projects/create',
-      projectReorder: '/api/projects/reorder',
-      projectMdContent: (id: string) => `/api/projects/${id}/md-content`,
-      projectMdFile: (id: string) => `/api/projects/${id}/md-file`,
-      projectAssets: (id: string) => `/api/projects/${id}/assets`,
-      projectCardAssets: (id: string) => `/api/projects/${id}/cardassets`,
-      projectAssetByIndex: (id: string, index: number) => `/api/projects/${id}/assets/${index}`,
-      projectAssetName: (id: string, index: number) => `/api/projects/${id}/assets/${index}/name`,
-      projectCardAssetByIndex: (id: string, index: number) => `/api/projects/${id}/cardassets/${index}`,
+      projects: `${getApiBaseUrl()}/api/projects`,
+      projectById: (id: string) => `${getApiBaseUrl()}/api/projects/${id}`,
+      projectCreate: `${getApiBaseUrl()}/api/projects/create`,
+      projectReorder: `${getApiBaseUrl()}/api/projects/reorder`,
+      projectMdContent: (id: string) => `${getApiBaseUrl()}/api/projects/${id}/md-content`,
+      projectMdFile: (id: string) => `${getApiBaseUrl()}/api/projects/${id}/md-file`,
+      projectAssets: (id: string) => `${getApiBaseUrl()}/api/projects/${id}/assets`,
+      projectCardAssets: (id: string) => `${getApiBaseUrl()}/api/projects/${id}/cardassets`,
+      projectAssetByIndex: (id: string, index: number) => `${getApiBaseUrl()}/api/projects/${id}/assets/${index}`,
+      projectAssetName: (id: string, index: number) => `${getApiBaseUrl()}/api/projects/${id}/assets/${index}/name`,
+      projectCardAssetByIndex: (id: string, index: number) => `${getApiBaseUrl()}/api/projects/${id}/cardassets/${index}`,
       
       // Blogs
-      blogs: '/api/blogs',
-      blogById: (id: string) => `/api/blogs/${id}`,
-      blogCreate: '/api/blogs/create',
-      blogMdContent: (id: string) => `/api/blogs/${id}/md-content`,
-      blogMdFile: (id: string) => `/api/blogs/${id}/md-file`,
-      blogAssets: (id: string) => `/api/blogs/${id}/assets`,
-      blogCover: (id: string) => `/api/blogs/${id}/cover`,
-      blogAssetByIndex: (id: string, index: number) => `/api/blogs/${id}/assets/${index}`,
-      blogAssetName: (id: string, index: number) => `/api/blogs/${id}/assets/${index}/name`,
+      blogs: `${getApiBaseUrl()}/api/blogs`,
+      blogById: (id: string) => `${getApiBaseUrl()}/api/blogs/${id}`,
+      blogCreate: `${getApiBaseUrl()}/api/blogs/create`,
+      blogMdContent: (id: string) => `${getApiBaseUrl()}/api/blogs/${id}/md-content`,
+      blogMdFile: (id: string) => `${getApiBaseUrl()}/api/blogs/${id}/md-file`,
+      blogAssets: (id: string) => `${getApiBaseUrl()}/api/blogs/${id}/assets`,
+      blogCover: (id: string) => `${getApiBaseUrl()}/api/blogs/${id}/cover`,
+      blogAssetByIndex: (id: string, index: number) => `${getApiBaseUrl()}/api/blogs/${id}/assets/${index}`,
+      blogAssetName: (id: string, index: number) => `${getApiBaseUrl()}/api/blogs/${id}/assets/${index}/name`,
       
       // Documentation
-      documentation: '/api/documentation',
-      docById: (id: string) => `/api/documentation/${id}`,
-      docCreate: '/api/documentation/create',
-      docUploadAsset: '/api/documentation/upload-asset',
-      docAsset: (id: string, name: string) => `/api/documentation/asset/${id}/${name}`,
-      docFiles: (id: string) => `/api/documentation/${id}/files`,
-      docFileById: (docId: string, fileId: string) => `/api/documentation/${docId}/files/${fileId}`,
-      docAttachments: (id: string) => `/api/documentation/${id}/attachments`,
-      docAttachmentsInit: (id: string) => `/api/documentation/${id}/attachments/init`,
-      docAttachmentsChunk: (id: string) => `/api/documentation/${id}/attachments/chunk`,
-      docAttachmentsComplete: (id: string) => `/api/documentation/${id}/attachments/complete`,
+      documentation: `${getApiBaseUrl()}/api/documentation`,
+      docById: (id: string) => `${getApiBaseUrl()}/api/documentation/${id}`,
+      docCreate: `${getApiBaseUrl()}/api/documentation/create`,
+      docUploadAsset: `${getApiBaseUrl()}/api/documentation/upload-asset`,
+      docAsset: (id: string, name: string) => `${getApiBaseUrl()}/api/documentation/asset/${id}/${name}`,
+      docFiles: (id: string) => `${getApiBaseUrl()}/api/documentation/${id}/files`,
+      docFileById: (docId: string, fileId: string) => `${getApiBaseUrl()}/api/documentation/${docId}/files/${fileId}`,
+      docAttachments: (id: string) => `${getApiBaseUrl()}/api/documentation/${id}/attachments`,
+      docAttachmentsInit: (id: string) => `${getApiBaseUrl()}/api/documentation/${id}/attachments/init`,
+      docAttachmentsChunk: (id: string) => `${getApiBaseUrl()}/api/documentation/${id}/attachments/chunk`,
+      docAttachmentsComplete: (id: string) => `${getApiBaseUrl()}/api/documentation/${id}/attachments/complete`,
       
       // Notes
-      notesFolders: (parentPath: string) => `/api/notes/folders?parentPath=${parentPath}`,
-      notesFiles: (folderPath: string) => `/api/notes/files?folderPath=${folderPath}`,
-      notesCreateFolder: '/api/notes/folder/create',
-      notesUploadFiles: '/api/notes/files/upload',
-      notesUploadInit: '/api/notes/files/upload/init',
-      notesUploadChunk: '/api/notes/files/upload/chunk',
-      notesUploadFinalize: '/api/notes/files/upload/finalize',
-      notesFileById: (id: string) => `/api/notes/files/${id}`,
-      notesFolderById: (id: string) => `/api/notes/folders/${id}`,
+      notesFolders: (parentPath: string) => `${getApiBaseUrl()}/api/notes/folders?parentPath=${parentPath}`,
+      notesFiles: (folderPath: string) => `${getApiBaseUrl()}/api/notes/files?folderPath=${folderPath}`,
+      notesCreateFolder: `${getApiBaseUrl()}/api/notes/folder/create`,
+      notesUploadFiles: `${getApiBaseUrl()}/api/notes/files/upload`,
+      notesUploadInit: `${getApiBaseUrl()}/api/notes/files/upload/init`,
+      notesUploadChunk: `${getApiBaseUrl()}/api/notes/files/upload/chunk`,
+      notesUploadFinalize: `${getApiBaseUrl()}/api/notes/files/upload/finalize`,
+      notesFileById: (id: string) => `${getApiBaseUrl()}/api/notes/files/${id}`,
+      notesFolderById: (id: string) => `${getApiBaseUrl()}/api/notes/folders/${id}`,
       
       // Code
-      codeFolders: (parentPath: string) => `/api/code/folders?parentPath=${parentPath}`,
-      codeFiles: (folderPath: string) => `/api/code/files?folderPath=${folderPath}`,
-      codeCreateFolder: '/api/code/folder/create',
-      codeCreateFile: '/api/code/file/create',
-      codeFileById: (id: string) => `/api/code/files/${id}`,
-      codeFileContent: (id: string) => `/api/code/files/${id}/content`,
-      codeFolderById: (id: string) => `/api/code/folders/${id}`,
+      codeFolders: (parentPath: string) => `${getApiBaseUrl()}/api/code/folders?parentPath=${parentPath}`,
+      codeFiles: (folderPath: string) => `${getApiBaseUrl()}/api/code/files?folderPath=${folderPath}`,
+      codeCreateFolder: `${getApiBaseUrl()}/api/code/folder/create`,
+      codeCreateFile: `${getApiBaseUrl()}/api/code/file/create`,
+      codeFileById: (id: string) => `${getApiBaseUrl()}/api/code/files/${id}`,
+      codeFileContent: (id: string) => `${getApiBaseUrl()}/api/code/files/${id}/content`,
+      codeFolderById: (id: string) => `${getApiBaseUrl()}/api/code/folders/${id}`,
       
       // GitHub Integration
-      githubRepos: '/api/github/repos',
-      githubRepoAdd: '/api/github/repos/add',
-      githubRepoById: (id: string) => `/api/github/repos/${id}`,
-      githubRepoTree: (id: string, path: string = '') => `/api/github/repos/${id}/tree?path=${encodeURIComponent(path)}`,
-      githubRepoFile: (id: string, path: string) => `/api/github/repos/${id}/file?path=${encodeURIComponent(path)}`,
-      githubRepoDelete: (id: string) => `/api/github/repos/${id}`,
+      githubRepos: `${getApiBaseUrl()}/api/github/repos`,
+      githubRepoAdd: `${getApiBaseUrl()}/api/github/repos/add`,
+      githubRepoById: (id: string) => `${getApiBaseUrl()}/api/github/repos/${id}`,
+      githubRepoTree: (id: string, path: string = '') => `${getApiBaseUrl()}/api/github/repos/${id}/tree?path=${encodeURIComponent(path)}`,
+      githubRepoFile: (id: string, path: string) => `${getApiBaseUrl()}/api/github/repos/${id}/file?path=${encodeURIComponent(path)}`,
+      githubRepoDelete: (id: string) => `${getApiBaseUrl()}/api/github/repos/${id}`,
       
       // Todos
-      todos: '/api/todos',
-      todoById: (id: string) => `/api/todos/${id}`,
-      todoCreate: '/api/todos/create',
+      todos: `${getApiBaseUrl()}/api/todos`,
+      todoById: (id: string) => `${getApiBaseUrl()}/api/todos/${id}`,
+      todoCreate: `${getApiBaseUrl()}/api/todos/create`,
       
       // Diagrams
-      diagrams: '/api/diagrams',
-      diagramById: (id: string) => `/api/diagrams/${id}`,
+      diagrams: `${getApiBaseUrl()}/api/diagrams`,
+      diagramById: (id: string) => `${getApiBaseUrl()}/api/diagrams/${id}`,
       
       // Views
-      views: '/api/views',
-      viewsStats: '/api/views/stats',
+      views: `${getApiBaseUrl()}/api/views`,
+      viewsStats: `${getApiBaseUrl()}/api/views/stats`,
     }
   },
 
