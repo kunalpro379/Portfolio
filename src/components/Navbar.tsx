@@ -114,40 +114,40 @@ export default function Navbar({ scrollToSection }: NavbarProps) {
 
   return (
     <div className="fixed top-4 md:top-6 left-1/2 -translate-x-1/2 z-[1000] w-auto max-w-[95%] will-change-auto">
-      {/* Mobile Navbar - 4 Sections - Optimized for small screens */}
-      <div className="flex md:hidden gap-2 items-center max-w-full overflow-hidden">
+      {/* Mobile Navbar - 4 Sections - Fit to screen */}
+      <div className="flex md:hidden gap-1.5 items-center w-full max-w-[95vw] overflow-hidden px-2">
         {/* Home */}
-        <div onClick={() => scrollToSection('home')} className="flex flex-col items-center justify-center p-3 bg-white/90 backdrop-blur-md border-2 border-black rounded-md shadow-lg cursor-pointer active:scale-95 min-w-[65px] flex-shrink-0">
-          <HomeIcon size={18} className="mb-1" />
-          <span className="text-[8px] font-bold uppercase">Home</span>
+        <div onClick={() => scrollToSection('home')} className="flex flex-col items-center justify-center p-2.5 bg-white/90 backdrop-blur-md border-2 border-black rounded-md shadow-lg cursor-pointer active:scale-95 min-w-[58px] flex-shrink-0">
+          <HomeIcon size={17} className="mb-1" />
+          <span className="text-[7.5px] font-bold uppercase">Home</span>
         </div>
 
         {/* Middle - Projects, Experience, Blogs */}
-        <div className="flex gap-2 bg-white/90 backdrop-blur-md border-2 border-black rounded-md shadow-lg p-2 flex-shrink-0">
-          <div onClick={() => scrollToSection('projects')} className="flex flex-col items-center justify-center px-2 py-1 cursor-pointer rounded active:scale-95 active:bg-black/5 min-w-[55px]">
-            <FolderKanban size={18} className="mb-1" />
-            <span className="text-[8px] font-bold uppercase">Projects</span>
+        <div className="flex gap-1.5 bg-white/90 backdrop-blur-md border-2 border-black rounded-md shadow-lg p-1.5 flex-shrink-0">
+          <div onClick={() => scrollToSection('projects')} className="flex flex-col items-center justify-center px-1.5 py-1 cursor-pointer rounded active:scale-95 active:bg-black/5 min-w-[52px]">
+            <FolderKanban size={17} className="mb-1" />
+            <span className="text-[7.5px] font-bold uppercase">Projects</span>
           </div>
-          <div onClick={() => scrollToSection('experience')} className="flex flex-col items-center justify-center px-2 py-1 cursor-pointer rounded active:scale-95 active:bg-black/5 min-w-[55px]">
-            <Briefcase size={18} className="mb-1" />
-            <span className="text-[8px] font-bold uppercase">Exp</span>
+          <div onClick={() => scrollToSection('experience')} className="flex flex-col items-center justify-center px-1.5 py-1 cursor-pointer rounded active:scale-95 active:bg-black/5 min-w-[52px]">
+            <Briefcase size={17} className="mb-1" />
+            <span className="text-[7.5px] font-bold uppercase">Exp</span>
           </div>
-          <div onClick={() => navigate('/learnings?tab=blogs')} className="flex flex-col items-center justify-center px-2 py-1 cursor-pointer rounded active:scale-95 active:bg-black/5 min-w-[55px]">
-            <BookOpen size={18} className="mb-1" />
-            <span className="text-[8px] font-bold uppercase">Blogs</span>
+          <div onClick={() => navigate('/learnings?tab=blogs')} className="flex flex-col items-center justify-center px-1.5 py-1 cursor-pointer rounded active:scale-95 active:bg-black/5 min-w-[52px]">
+            <BookOpen size={17} className="mb-1" />
+            <span className="text-[7.5px] font-bold uppercase">Blogs</span>
           </div>
         </div>
 
         {/* Contact */}
-        <div onClick={() => scrollToSection('contact')} className="flex flex-col items-center justify-center p-3 bg-white/90 backdrop-blur-md border-2 border-black rounded-md shadow-lg cursor-pointer active:scale-95 min-w-[65px] flex-shrink-0">
-          <Mail size={18} className="mb-1" />
-          <span className="text-[8px] font-bold uppercase">Contact</span>
+        <div onClick={() => scrollToSection('contact')} className="flex flex-col items-center justify-center p-2.5 bg-white/90 backdrop-blur-md border-2 border-black rounded-md shadow-lg cursor-pointer active:scale-95 min-w-[58px] flex-shrink-0">
+          <Mail size={17} className="mb-1" />
+          <span className="text-[7.5px] font-bold uppercase">Contact</span>
         </div>
 
         {/* GitHub */}
-        <div onClick={() => window.open('https://github.com/kunalpro379', '_blank')} className="flex flex-col items-center justify-center p-3 bg-white/90 backdrop-blur-md border-2 border-black rounded-md shadow-lg cursor-pointer active:scale-95 min-w-[65px] flex-shrink-0">
-          <Github size={18} className="mb-1" />
-          <span className="text-[8px] font-bold uppercase">GitHub</span>
+        <div onClick={() => window.open('https://github.com/kunalpro379', '_blank')} className="flex flex-col items-center justify-center p-2.5 bg-white/90 backdrop-blur-md border-2 border-black rounded-md shadow-lg cursor-pointer active:scale-95 min-w-[58px] flex-shrink-0">
+          <Github size={17} className="mb-1" />
+          <span className="text-[7.5px] font-bold uppercase">GitHub</span>
         </div>
       </div>
 
