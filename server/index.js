@@ -76,6 +76,27 @@ async function loadRoutes() {
       console.log('✓ GitHub fallback route registered');
     }
 
+    // Load Knowledge Base routes
+    try {
+      const knowledgeBaseModule = await import('./routes/knowledge-base.js');
+      if (knowledgeBaseModule && knowledgeBaseModule.default) {
+        app.use('/api/knowledge-base', knowledgeBaseModule.default);
+        console.log('✓ Knowledge Base route loaded successfully');
+      } else {
+        throw new Error('Knowledge Base route export not found');
+      }
+    } catch (knowledgeBaseError) {
+      console.error('✗ Failed to load Knowledge Base route:', knowledgeBaseError.message);
+      if (knowledgeBaseError.stack) {
+        console.error('Stack trace:', knowledgeBaseError.stack);
+      }
+      // Add fallback route to prevent 404
+      app.use('/api/knowledge-base', (req, res) => {
+        res.status(503).json({ message: 'Knowledge Base service not available', error: 'Service temporarily unavailable' });
+      });
+      console.log('✓ Knowledge Base fallback route registered');
+    }
+
     // Load diagrams route with error handling
     try {
       const diagramsModule = await import('./routes/diagrams.js');

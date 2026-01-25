@@ -219,12 +219,29 @@ router.post('/create', async (req, res) => {
   }
 });
 
+// PUBLIC ROUTES - Only return public documentation for client-side
+
 router.get('/', async (req, res) => {
   try {
-    const docs = await Documentation.find().sort({ createdAt: -1 });
+    // Only return public documentation for client-side requests
+    const docs = await Documentation.find({ isPublic: true }).sort({ createdAt: -1 });
     res.json({ docs });
   } catch (error) {
     console.error('Get documentation error:', error);
+    res.status(500).json({ message: 'Server error' });
+  }
+});
+
+// ADMIN ROUTES - Return all documentation (public and private) for admin panel
+
+// Admin route to get all documentation (public and private)
+router.get('/admin/all', async (req, res) => {
+  try {
+    // Return all documentation for admin panel
+    const docs = await Documentation.find().sort({ createdAt: -1 });
+    res.json({ docs });
+  } catch (error) {
+    console.error('Get all documentation error:', error);
     res.status(500).json({ message: 'Server error' });
   }
 });
@@ -233,6 +250,49 @@ router.get('/:docId', async (req, res) => {
   try {
     const { docId } = req.params;
     
+    // Only return public documentation for client-side requests
+    const doc = await Documentation.findOne({ docId, isPublic: true });
+    if (!doc) {
+      return res.status(404).json({ message: 'Documentation not found or not public' });
+    }
+
+    let content = await getDocFromAzure(doc.azureBlobPath);
+    
+    // If blob doesn't exist, return empty content
+    if (content === null) {
+      content = '';
+    }
+
+    const docObject = doc.toObject();
+    const assetsObject = {};
+    if (doc.assets && doc.assets.size > 0) {
+      doc.assets.forEach((url, name) => {
+        assetsObject[name] = url;
+        const escapedUrl = escapeRegex(url);
+        const urlPattern = new RegExp(`\\(${escapedUrl}\\)`, 'g');
+        content = content.replace(urlPattern, `({{${name}}})`);
+      });
+    }
+
+    res.json({
+      doc: {
+        ...docObject,
+        assets: assetsObject,
+        content
+      }
+    });
+  } catch (error) {
+    console.error('Get documentation error:', error);
+    res.status(500).json({ message: 'Server error' });
+  }
+});
+
+// Admin route to get any documentation (public or private)
+router.get('/admin/:docId', async (req, res) => {
+  try {
+    const { docId } = req.params;
+    
+    // Return any documentation for admin panel (no isPublic filter)
     const doc = await Documentation.findOne({ docId });
     if (!doc) {
       return res.status(404).json({ message: 'Documentation not found' });
@@ -439,8 +499,47 @@ router.post('/:docId/diagram', async (req, res) => {
   }
 });
 
-// Get diagram data
+// Get diagram data (public only)
 router.get('/:docId/diagram', async (req, res) => {
+  try {
+    const { docId } = req.params;
+    
+    const doc = await Documentation.findOne({ docId, isPublic: true });
+    if (!doc) {
+      return res.status(404).json({ message: 'Documentation not found or not public' });
+    }
+
+    if (!doc.diagramPath) {
+      return res.json({ exists: false, diagramData: null });
+    }
+
+    // Fetch diagram from Azure
+    const diagramContent = await getDocFromAzure(doc.diagramPath);
+    
+    // If blob doesn't exist, return empty diagram
+    if (diagramContent === null) {
+      return res.json({ 
+        exists: false, 
+        diagramData: null,
+        warning: 'Diagram file not found in Azure Blob Storage'
+      });
+    }
+    
+    const diagramData = JSON.parse(diagramContent);
+
+    res.json({
+      exists: true,
+      diagramData,
+      diagramUrl: doc.diagramUrl
+    });
+  } catch (error) {
+    console.error('Get diagram error:', error);
+    res.status(500).json({ message: 'Server error', error: error.message });
+  }
+});
+
+// Admin route to get diagram data from any document
+router.get('/admin/:docId/diagram', async (req, res) => {
   try {
     const { docId } = req.params;
     
@@ -555,8 +654,25 @@ router.post('/:docId/files', async (req, res) => {
   }
 });
 
-// Get all files for a document
+// Get all files for a document (public only)
 router.get('/:docId/files', async (req, res) => {
+  try {
+    const { docId } = req.params;
+    
+    const doc = await Documentation.findOne({ docId, isPublic: true });
+    if (!doc) {
+      return res.status(404).json({ message: 'Documentation not found or not public' });
+    }
+
+    res.json({ files: doc.files || [] });
+  } catch (error) {
+    console.error('Get files error:', error);
+    res.status(500).json({ message: 'Server error' });
+  }
+});
+
+// Admin route to get all files for any document
+router.get('/admin/:docId/files', async (req, res) => {
   try {
     const { docId } = req.params;
     
@@ -572,8 +688,59 @@ router.get('/:docId/files', async (req, res) => {
   }
 });
 
-// Get single file content
+// Get single file content (public only)
 router.get('/:docId/files/:fileId', async (req, res) => {
+  try {
+    const { docId, fileId } = req.params;
+    
+    const doc = await Documentation.findOne({ docId, isPublic: true });
+    if (!doc) {
+      return res.status(404).json({ message: 'Documentation not found or not public' });
+    }
+
+    const file = doc.files?.find(f => f.fileId === fileId);
+    if (!file) {
+      return res.status(404).json({ message: 'File not found' });
+    }
+
+    // Fetch content from Azure
+    const content = await getDocFromAzure(file.azurePath);
+    
+    // If blob doesn't exist, return empty content
+    if (content === null) {
+      return res.json({ 
+        file: {
+          fileId: file.fileId,
+          name: file.name,
+          type: file.type,
+          azurePath: file.azurePath,
+          azureUrl: file.azureUrl,
+          createdAt: file.createdAt,
+          content: file.type === 'diagram' ? {} : '',
+          warning: 'File content not found in Azure Blob Storage'
+        }
+      });
+    }
+    
+    res.json({ 
+      file: {
+        fileId: file.fileId,
+        name: file.name,
+        type: file.type,
+        azurePath: file.azurePath,
+        azureUrl: file.azureUrl,
+        createdAt: file.createdAt,
+        content: file.type === 'diagram' ? JSON.parse(content) : content
+      }
+    });
+  } catch (error) {
+    console.error('Get file error:', error);
+    res.status(500).json({ message: 'Server error' });
+  }
+});
+
+// Admin route to get single file content from any document
+router.get('/admin/:docId/files/:fileId', async (req, res) => {
   try {
     const { docId, fileId } = req.params;
     

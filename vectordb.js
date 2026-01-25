@@ -108,13 +108,17 @@ function extractMetadata(chunk, index, section = '') {
 }
 
 // Main function to upload document to Qdrant
-async function uploadDocumentToQdrant() {
+async function uploadDocumentToQdrant(content = null, metadata = {}) {
     try {
         console.log('🚀 Starting document upload to Qdrant...');
         
-        // Read the document
-        const documentPath = path.join(process.cwd(), 'AI', 'md.md');
-        const documentContent = fs.readFileSync(documentPath, 'utf-8');
+        // Use provided content or default to md.md file
+        let documentContent = content;
+        if (!documentContent) {
+            console.log('📖 Reading document from AI/md.md...');
+            const documentPath = path.join(process.cwd(), 'AI', 'md.md');
+            documentContent = fs.readFileSync(documentPath, 'utf-8');
+        }
         
         console.log(`📄 Document loaded: ${documentContent.length} characters`);
         
@@ -158,7 +162,16 @@ async function uploadDocumentToQdrant() {
                 const embedding = await generateEmbedding(chunk);
                 
                 // Extract metadata
-                const metadata = extractMetadata(chunk, totalPoints, sectionTitle);
+                const chunkMetadata = extractMetadata(chunk, totalPoints, sectionTitle);
+                
+                // Merge with provided metadata
+                const finalMetadata = {
+                    ...chunkMetadata,
+                    ...metadata,
+                    section_title: sectionTitle,
+                    section_index: sectionIndex,
+                    chunk_index: chunkIndex,
+                };
                 
                 // Create point
                 const point = {
@@ -166,10 +179,7 @@ async function uploadDocumentToQdrant() {
                     vector: embedding,
                     payload: {
                         content: chunk,
-                        section_title: sectionTitle,
-                        section_index: sectionIndex,
-                        chunk_index: chunkIndex,
-                        ...metadata
+                        ...finalMetadata
                     }
                 };
                 
@@ -204,25 +214,11 @@ async function uploadDocumentToQdrant() {
         console.log(`📈 Collection status:`, collectionInfo.status);
         console.log(`🔢 Points count in collection:`, collectionInfo.points_count);
         
-        // Test search functionality
-        console.log('\n🔍 Testing search functionality...');
-        const testQuery = 'machine learning projects';
-        const testEmbedding = await generateEmbedding(testQuery);
-        
-        const searchResults = await client.search(COLLECTION_NAME, {
-            vector: testEmbedding,
-            limit: 3,
-            with_payload: true
-        });
-        
-        console.log(`🎯 Search results for "${testQuery}":`);
-        searchResults.forEach((result, index) => {
-            console.log(`   ${index + 1}. Score: ${result.score.toFixed(4)}`);
-            console.log(`      Section: ${result.payload.section_title}`);
-            console.log(`      Type: ${result.payload.type}`);
-            console.log(`      Preview: ${result.payload.content.substring(0, 100)}...`);
-            console.log('');
-        });
+        return {
+            success: true,
+            totalPoints,
+            collectionInfo
+        };
         
     } catch (error) {
         console.error('❌ Error uploading document:', error);
@@ -282,6 +278,8 @@ export {
     uploadDocumentToQdrant,
     searchKnowledgeBase,
     getCollectionStats,
+    generateEmbedding,
+    chunkText,
     client
 };
 

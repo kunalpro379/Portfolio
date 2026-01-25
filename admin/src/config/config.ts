@@ -37,17 +37,18 @@ const config = {
       blogAssetName: (id: string, index: number) => `https://api.kunalpatil.me/api/blogs/${id}/assets/${index}/name`,
       
       // Documentation
-      documentation: `https://api.kunalpatil.me/api/documentation`,
-      docById: (id: string) => `https://api.kunalpatil.me/api/documentation/${id}`,
+      documentation: `https://api.kunalpatil.me/api/documentation/admin/all`,
+      docById: (id: string) => `https://api.kunalpatil.me/api/documentation/admin/${id}`,
       docCreate: `https://api.kunalpatil.me/api/documentation/create`,
       docUploadAsset: `https://api.kunalpatil.me/api/documentation/upload-asset`,
       docAsset: (id: string, name: string) => `https://api.kunalpatil.me/api/documentation/asset/${id}/${name}`,
-      docFiles: (id: string) => `https://api.kunalpatil.me/api/documentation/${id}/files`,
-      docFileById: (docId: string, fileId: string) => `https://api.kunalpatil.me/api/documentation/${docId}/files/${fileId}`,
+      docFiles: (id: string) => `https://api.kunalpatil.me/api/documentation/admin/${id}/files`,
+      docFileById: (docId: string, fileId: string) => `https://api.kunalpatil.me/api/documentation/admin/${docId}/files/${fileId}`,
       docAttachments: (id: string) => `https://api.kunalpatil.me/api/documentation/${id}/attachments`,
       docAttachmentsInit: (id: string) => `https://api.kunalpatil.me/api/documentation/${id}/attachments/init`,
       docAttachmentsChunk: (id: string) => `https://api.kunalpatil.me/api/documentation/${id}/attachments/chunk`,
       docAttachmentsComplete: (id: string) => `https://api.kunalpatil.me/api/documentation/${id}/attachments/complete`,
+      docDiagram: (id: string) => `https://api.kunalpatil.me/api/documentation/admin/${id}/diagram`,
       
       // Notes
       notesFolders: (parentPath: string) => `https://api.kunalpatil.me/api/notes/folders?parentPath=${parentPath}`,
@@ -89,6 +90,13 @@ const config = {
       // Views
       views: `https://api.kunalpatil.me/api/views`,
       viewsStats: `https://api.kunalpatil.me/api/views/stats`,
+      
+      // Knowledge Base
+      knowledgeBase: `https://api.kunalpatil.me/api/knowledge-base`,
+      knowledgeBaseUpload: `https://api.kunalpatil.me/api/knowledge-base/upload`,
+      knowledgeBaseFiles: `https://api.kunalpatil.me/api/knowledge-base/files`,
+      knowledgeBaseStats: `https://api.kunalpatil.me/api/knowledge-base/stats`,
+      knowledgeBaseFileById: (fileId: string) => `https://api.kunalpatil.me/api/knowledge-base/files/${fileId}`,
     }
   },
 

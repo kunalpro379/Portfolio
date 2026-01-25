@@ -17,6 +17,7 @@ import Code from './pages/Code';
 import CodeEditor from './pages/CodeEditor';
 import TodoEditor from './pages/TodoEditor';
 import Views from './pages/Views';
+import AIKnowledgeBase from './pages/AIKnowledgeBase';
 import Layout from './components/Layout';
 import { AuthProvider, useAuth } from './context/AuthContext';
 
@@ -176,6 +177,14 @@ function App() {
             element={
               <PrivateRoute>
                 <Views />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/ai-knowledge-base"
+            element={
+              <PrivateRoute>
+                <AIKnowledgeBase />
               </PrivateRoute>
             }
           />
