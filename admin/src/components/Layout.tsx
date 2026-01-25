@@ -52,6 +52,11 @@ export default function Layout({ children }: LayoutProps) {
               <span className="text-lg font-black">K</span>
             </div>
             <span className="text-lg font-black" style={{ fontFamily: 'Comic Sans MS, cursive' }}>Admin</span>
+            {window.location.hostname === 'localhost' && (
+              <span className="text-xs bg-green-100 text-green-800 px-2 py-1 rounded-full border border-green-300">
+                DEV
+              </span>
+            )}
           </div>
 
           {/* User Info - Right side - Compact on mobile */}

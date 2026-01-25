@@ -6,7 +6,11 @@
   "scripts": {
     "dev": "vite --port 3001",
     "build": "vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "start-server": "node start-local-server.js",
+    "check-server": "node check-server.js",
+    "dev-full": "concurrently \"npm run start-server\" \"npm run dev\"",
+    "admin": "cd admin && npm run dev"
   },
   "dependencies": {
     "@excalidraw/excalidraw": "^0.17.6",
