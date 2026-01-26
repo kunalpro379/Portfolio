@@ -1,0 +1,145 @@
+{
+  "college": "Vivekanand Education Society Institute of Technology (VESIT)",
+  "branch": "Artificial Intelligence and Data Science (AIDS)",
+  "class_division": "D16AD A",
+  "timetable": {
+    "Monday": [
+      {
+        "time": "08:30-09:30",
+        "subject": "Data Structures",
+        "room": "B75",
+        "teacher": "Dr. Kumar",
+        "note": "Bring your laptop for practical session"
+      },
+      {
+        "time": "09:30-10:30",
+        "subject": "Machine Learning",
+        "room": "B76",
+        "teacher": "Prof. Sharma",
+        "note": "Quiz on linear regression"
+      },
+      {
+        "time": "10:30-11:30",
+        "subject": "Database Management",
+        "room": "B77",
+        "teacher": "Dr. Patel",
+        "note": "SQL assignment due"
+      }
+    ],
+    "Tuesday": [
+      {
+        "time": "08:30-09:30",
+        "subject": "Algorithms",
+        "room": "B78",
+        "teacher": "Prof. Desai",
+        "note": "Complete homework on sorting algorithms"
+      },
+      {
+        "time": "09:30-10:30",
+        "subject": "Web Development",
+        "room": "B79",
+        "teacher": "Mr. Singh",
+        "note": "React.js project presentation"
+      },
+      {
+        "time": "10:30-11:30",
+        "subject": "Statistics",
+        "room": "B80",
+        "teacher": "Dr. Mehta",
+        "note": "Probability distributions chapter"
+      }
+    ],
+    "Wednesday": [
+      {
+        "time": "08:30-09:30",
+        "subject": "Computer Networks",
+        "room": "B81",
+        "teacher": "Prof. Gupta",
+        "note": "OSI model discussion"
+      },
+      {
+        "time": "09:30-10:30",
+        "subject": "Artificial Intelligence",
+        "room": "B82",
+        "teacher": "Dr. Joshi",
+        "note": "Neural networks lab"
+      },
+      {
+        "time": "10:30-11:30",
+        "subject": "Software Engineering",
+        "room": "B83",
+        "teacher": "Prof. Agarwal",
+        "note": "SDLC methodologies"
+      }
+    ],
+    "Thursday": [
+      {
+        "time": "08:30-09:30",
+        "subject": "Operating Systems",
+        "room": "B84",
+        "teacher": "Dr. Verma",
+        "note": "Process scheduling algorithms"
+      },
+      {
+        "time": "09:30-10:30",
+        "subject": "Data Mining",
+        "room": "B85",
+        "teacher": "Prof. Rao",
+        "note": "Association rule mining"
+      },
+      {
+        "time": "10:30-11:30",
+        "subject": "Computer Graphics",
+        "room": "B86",
+        "teacher": "Mr. Pandey",
+        "note": "3D transformations practical"
+      }
+    ],
+    "Friday": [
+      {
+        "time": "08:30-09:30",
+        "subject": "Deep Learning",
+        "room": "B87",
+        "teacher": "Dr. Shah",
+        "note": "CNN architecture implementation"
+      },
+      {
+        "time": "09:30-10:30",
+        "subject": "Cloud Computing",
+        "room": "B88",
+        "teacher": "Prof. Nair",
+        "note": "AWS services overview"
+      },
+      {
+        "time": "10:30-11:30",
+        "subject": "Project Work",
+        "room": "B89",
+        "teacher": "Dr. Kumar",
+        "note": "Final project presentations"
+      }
+    ],
+    "Saturday": [
+      {
+        "time": "08:30-09:30",
+        "subject": "Seminar",
+        "room": "Auditorium",
+        "teacher": "Guest Speaker",
+        "note": "Industry expert talk on AI trends"
+      },
+      {
+        "time": "09:30-10:30",
+        "subject": "Lab Session",
+        "room": "Computer Lab 1",
+        "teacher": "Lab Assistant",
+        "note": "Open lab for project work"
+      },
+      {
+        "time": "10:30-11:30",
+        "subject": "Extra Classes",
+        "room": "B90",
+        "teacher": "Various",
+        "note": "Doubt clearing session"
+      }
+    ]
+  }
+}
