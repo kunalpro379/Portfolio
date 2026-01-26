@@ -36,13 +36,6 @@
         "teacher": "H"
       },
       {
-        "time": "12:30-13:30",
-        "subject": "SMA",
-        "room": "B76",
-        "teacher": "OMK",
-        "note": "Parallel group session"
-      },
-      {
         "time": "13:30-14:30",
         "subject": "Break",
         "room": null,
@@ -50,69 +43,12 @@
       },
       {
         "time": "14:30-15:30",
-        "subject": "ILOC Practical",
-        "room": "Multiple Rooms",
-        "teacher": "Multiple Faculty",
-        "sessions": [
-          {
-            "teacher": "EM/AMUDHA",
-            "subject": "AIDS + AURO",
-            "room": "213"
-          },
-          {
-            "teacher": "EM/GS",
-            "subject": "D17A + D17C",
-            "room": "515"
-          },
-          {
-            "teacher": "FM/AC",
-            "subject": "AIDS",
-            "room": "413"
-          },
-          {
-            "teacher": "FM/SG",
-            "subject": "ECS + AURO",
-            "room": "412"
-          },
-          {
-            "teacher": "FM/MD",
-            "subject": "CMPN",
-            "room": "B31"
-          },
-          {
-            "teacher": "EM/KG",
-            "subject": "INFT + D19B + ECS",
-            "room": "B52"
-          },
-          {
-            "teacher": "EM/NK",
-            "subject": "D19A",
-            "room": "514"
-          },
-          {
-            "teacher": "FM/CJ",
-            "subject": "EXTC + INFT",
-            "room": "B42"
-          },
-          {
-            "teacher": "PM/PK",
-            "subject": "EXTC + CMPN",
-            "room": "B75"
-          },
-          {
-            "teacher": "PM/SKG",
-            "subject": "INFT (D20A) + AIDS",
-            "room": "B21"
-          },
-          {
-            "teacher": "PM/VP",
-            "subject": "INFT (D20B + D20C) + AURO",
-            "room": "516"
-          }
-        ]
+        "subject": "ILOC Practical - AIDS",
+        "room": "213",
+        "teacher": "EM/AMUDHA",
+        "note": "AIDS branch practical session"
       }
     ],
-
     "Tuesday": [
       {
         "time": "08:30-09:30",
@@ -152,101 +88,19 @@
       },
       {
         "time": "14:30-15:30",
-        "subject": "ILOC Practical",
-        "room": "Multiple Rooms",
-        "teacher": "Multiple Faculty",
-        "sessions": [
-          {
-            "teacher": "EM/AMUDHA",
-            "subject": "AIDS + ECS",
-            "room": "B51"
-          },
-          {
-            "teacher": "EM/GS",
-            "subject": "D17A + D17C",
-            "room": "515"
-          },
-          {
-            "teacher": "FM/AC",
-            "subject": "AIDS",
-            "room": "413"
-          },
-          {
-            "teacher": "FM/SG",
-            "subject": "ECS + AURO",
-            "room": "412"
-          },
-          {
-            "teacher": "FM/MD",
-            "subject": "CMPN",
-            "room": "B31"
-          },
-          {
-            "teacher": "EM/KG",
-            "subject": "AURO + INFT",
-            "room": "B52"
-          },
-          {
-            "teacher": "EM/NK",
-            "subject": "D17B",
-            "room": "514"
-          },
-          {
-            "teacher": "FM/CJ",
-            "subject": "EXTC + INFT",
-            "room": "B42"
-          },
-          {
-            "teacher": "PM/PK",
-            "subject": "EXTC + CMPN",
-            "room": "415"
-          },
-          {
-            "teacher": "PM/SKG",
-            "subject": "INFT (D20A) + AIDS",
-            "room": "B21"
-          },
-          {
-            "teacher": "PM/VP",
-            "subject": "INFT (D20B + D20C) + AURO",
-            "room": "516"
-          }
-        ]
+        "subject": "ILOC Practical - AIDS",
+        "room": "B51",
+        "teacher": "EM/AMUDHA",
+        "note": "AIDS branch practical session"
       }
     ],
-
     "Wednesday": [
       {
         "time": "08:30-09:30",
-        "subject": "BE Minor Block",
-        "room": "Multiple Rooms",
-        "sessions": [
-          {
-            "subject": "AIML",
-            "teacher": "Dhanamma",
-            "room": "414"
-          },
-          {
-            "subject": "BC/LF",
-            "teacher": null,
-            "room": "B32"
-          },
-          {
-            "subject": "CS/ARS",
-            "teacher": null,
-            "room": "B42"
-          },
-          {
-            "subject": "DS",
-            "teacher": "Meenalshi G",
-            "room": "214"
-          },
-          {
-            "subject": "IA/SP",
-            "teacher": null,
-            "room": "119"
-          }
-        ]
+        "subject": "BE Minor Block - AIML",
+        "room": "414",
+        "teacher": "Dhanamma",
+        "note": "AI/ML minor subject for AIDS branch"
       },
       {
         "time": "09:30-10:30",
@@ -267,37 +121,69 @@
         "teacher": "HJ"
       },
       {
-        "time": "11:30-12:30",
-        "subject": "SMA",
-        "room": "516",
-        "teacher": "OMK",
-        "note": "Parallel session"
-      },
-      {
         "time": "12:30-13:30",
         "subject": "Break",
-        "room": null
+        "room": null,
+        "teacher": null
       },
       {
         "time": "14:30-15:30",
         "subject": "RS/A13",
         "room": "207",
         "teacher": "HJ"
+      }
+    ],
+    "Thursday": [
+      {
+        "time": "08:30-09:30",
+        "subject": "No Lecture",
+        "room": null,
+        "teacher": null
+      },
+      {
+        "time": "09:30-10:30",
+        "subject": "No Lecture",
+        "room": null,
+        "teacher": null
+      },
+      {
+        "time": "10:30-11:30",
+        "subject": "No Lecture",
+        "room": null,
+        "teacher": null
+      },
+      {
+        "time": "11:30-12:30",
+        "subject": "No Lecture",
+        "room": null,
+        "teacher": null
+      },
+      {
+        "time": "12:30-13:30",
+        "subject": "No Lecture",
+        "room": null,
+        "teacher": null
+      },
+      {
+        "time": "13:30-14:30",
+        "subject": "Break",
+        "room": null,
+        "teacher": null
       },
       {
         "time": "14:30-15:30",
-        "subject": "SMA/B22",
-        "room": "B61",
-        "teacher": "OMK",
-        "note": "Parallel session"
+        "subject": "No Lecture",
+        "room": null,
+        "teacher": null
       }
     ],
-
     "Friday": [
       {
         "time": "08:30-09:30",
         "subject": "Project Session",
-        "room": null
+        "room": null,
+        "teacher": null,
+        "note": "AIDS branch project work"
       },
       {
         "time": "09:30-10:30",
@@ -318,51 +204,26 @@
         "teacher": "POV"
       },
       {
-        "time": "11:30-12:30",
-        "subject": "AAI/C/SO + PROJECT/C",
-        "room": "211",
-        "teacher": "SO"
+        "time": "12:30-13:30",
+        "subject": "Break",
+        "room": null,
+        "teacher": null
       },
       {
         "time": "14:30-15:30",
-        "subject": "BE Minor Block",
-        "room": "Multiple Rooms",
-        "sessions": [
-          {
-            "subject": "AIML",
-            "teacher": "Dhanamma",
-            "room": "415"
-          },
-          {
-            "subject": "BC/LF",
-            "teacher": null,
-            "room": "412"
-          },
-          {
-            "subject": "CS/ARS",
-            "teacher": null,
-            "room": "B42"
-          },
-          {
-            "subject": "DS",
-            "teacher": "Meenalshi G",
-            "room": "B51"
-          },
-          {
-            "subject": "IA/SP",
-            "teacher": null,
-            "room": "413"
-          }
-        ]
+        "subject": "BE Minor Block - AIML",
+        "room": "415",
+        "teacher": "Dhanamma",
+        "note": "AI/ML minor subject for AIDS branch"
       }
     ],
-
     "Saturday": [
       {
         "time": "Online",
-        "subject": "Mini Project + Major/Minor Project Work",
+        "subject": "Mini Project + Major Project Work",
         "room": "Online",
-        "teacher": null
+        "teacher": null,
+        "note": "AIDS branch project work - online session"
       }
     ]
   }

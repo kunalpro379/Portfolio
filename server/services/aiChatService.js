@@ -75,9 +75,10 @@ class AIChatService {
           },
           {
             "time": "14:30-15:30",
-            "subject": "ILOC Practical",
-            "room": "Multiple Rooms",
-            "teacher": "Multiple Faculty"
+            "subject": "ILOC Practical - AIDS",
+            "room": "213",
+            "teacher": "EM/AMUDHA",
+            "note": "AIDS branch practical session"
           }
         ],
         "Tuesday": [
@@ -119,16 +120,19 @@ class AIChatService {
           },
           {
             "time": "14:30-15:30",
-            "subject": "ILOC Practical",
-            "room": "Multiple Rooms",
-            "teacher": "Multiple Faculty"
+            "subject": "ILOC Practical - AIDS",
+            "room": "B51",
+            "teacher": "EM/AMUDHA",
+            "note": "AIDS branch practical session"
           }
         ],
         "Wednesday": [
           {
             "time": "08:30-09:30",
-            "subject": "BE Minor Block",
-            "room": "Multiple Rooms"
+            "subject": "BE Minor Block - AIML",
+            "room": "414",
+            "teacher": "Dhanamma",
+            "note": "AI/ML minor subject for AIDS branch"
           },
           {
             "time": "09:30-10:30",
@@ -151,7 +155,8 @@ class AIChatService {
           {
             "time": "12:30-13:30",
             "subject": "Break",
-            "room": null
+            "room": null,
+            "teacher": null
           },
           {
             "time": "14:30-15:30",
@@ -160,11 +165,57 @@ class AIChatService {
             "teacher": "HJ"
           }
         ],
+        "Thursday": [
+          {
+            "time": "08:30-09:30",
+            "subject": "No Lecture",
+            "room": null,
+            "teacher": null
+          },
+          {
+            "time": "09:30-10:30",
+            "subject": "No Lecture",
+            "room": null,
+            "teacher": null
+          },
+          {
+            "time": "10:30-11:30",
+            "subject": "No Lecture",
+            "room": null,
+            "teacher": null
+          },
+          {
+            "time": "11:30-12:30",
+            "subject": "No Lecture",
+            "room": null,
+            "teacher": null
+          },
+          {
+            "time": "12:30-13:30",
+            "subject": "No Lecture",
+            "room": null,
+            "teacher": null
+          },
+          {
+            "time": "13:30-14:30",
+            "subject": "Break",
+            "room": null,
+            "teacher": null
+          },
+          {
+            "time": "14:30-15:30",
+            "subject": "No Lecture",
+            "room": null,
+            "teacher": null
+          }
+        ],
         "Friday": [
           {
             "time": "08:30-09:30",
             "subject": "Project Session",
-            "room": null
+            "room": null,
+            "teacher": null,
+            "note": "AIDS branch project work"
           },
           {
             "time": "09:30-10:30",
@@ -185,17 +236,26 @@ class AIChatService {
             "teacher": "POV"
           },
           {
+            "time": "12:30-13:30",
+            "subject": "Break",
+            "room": null,
+            "teacher": null
+          },
+          {
             "time": "14:30-15:30",
-            "subject": "BE Minor Block",
-            "room": "Multiple Rooms"
+            "subject": "BE Minor Block - AIML",
+            "room": "415",
+            "teacher": "Dhanamma",
+            "note": "AI/ML minor subject for AIDS branch"
           }
         ],
         "Saturday": [
           {
             "time": "Online",
-            "subject": "Mini Project + Major/Minor Project Work",
+            "subject": "Mini Project + Major Project Work",
             "room": "Online",
-            "teacher": null
+            "teacher": null,
+            "note": "AIDS branch project work - online session"
           }
         ]
       }
