@@ -303,4 +303,171 @@ router.delete('/repos/:id', async (req, res) => {
   }
 });
 
+// POST /api/github/repos/:id/push-code - Push local code to GitHub repository
+router.post('/repos/:id/push-code', async (req, res) => {
+  try {
+    const { folderPath, commitMessage = 'Update code from admin panel' } = req.body;
+    
+    if (!folderPath) {
+      return res.status(400).json({ message: 'Folder path is required' });
+    }
+
+    const { client, db } = await getDatabase();
+    
+    // Get repository info
+    const repo = await db.collection('github_repos').findOne({ 
+      _id: new ObjectId(req.params.id) 
+    });
+    
+    if (!repo) {
+      await client.close();
+      return res.status(404).json({ message: 'Repository not found' });
+    }
+
+    // Get all files in the specified folder
+    const files = await db.collection('codeFiles').find({ 
+      folderPath: { $regex: `^${folderPath}` } 
+    }).toArray();
+    
+    await client.close();
+
+    if (files.length === 0) {
+      return res.status(400).json({ message: 'No files found in the specified folder' });
+    }
+
+    // Get the current commit SHA of the default branch
+    const refQuery = `
+      query($owner: String!, $repo: String!, $ref: String!) {
+        repository(owner: $owner, name: $repo) {
+          ref(qualifiedName: $ref) {
+            target {
+              ... on Commit {
+                oid
+                tree {
+                  oid
+                }
+              }
+            }
+          }
+        }
+      }
+    `;
+
+    const refData = await githubClient.request(refQuery, { 
+      owner: repo.owner, 
+      repo: repo.name, 
+      ref: `refs/heads/${repo.defaultBranch}` 
+    });
+
+    const currentCommitSha = refData.repository.ref.target.oid;
+    const currentTreeSha = refData.repository.ref.target.tree.oid;
+
+    // Create blobs for each file
+    const blobs = [];
+    for (const file of files) {
+      const createBlobMutation = `
+        mutation($input: CreateBlobInput!) {
+          createBlob(input: $input) {
+            blob {
+              oid
+            }
+          }
+        }
+      `;
+
+      const blobResult = await githubClient.request(createBlobMutation, {
+        input: {
+          repositoryId: repo.id || `${repo.owner}/${repo.name}`,
+          content: Buffer.from(file.content).toString('base64'),
+          encoding: 'BASE64'
+        }
+      });
+
+      // Calculate relative path from folder structure
+      const relativePath = file.folderPath.replace(folderPath, '').replace(/^\//, '');
+      const fullPath = relativePath ? `${relativePath}/${file.filename}` : file.filename;
+
+      blobs.push({
+        path: fullPath,
+        mode: '100644',
+        type: 'blob',
+        sha: blobResult.createBlob.blob.oid
+      });
+    }
+
+    // Create a new tree
+    const createTreeMutation = `
+      mutation($input: CreateTreeInput!) {
+        createTree(input: $input) {
+          tree {
+            oid
+          }
+        }
+      }
+    `;
+
+    const treeResult = await githubClient.request(createTreeMutation, {
+      input: {
+        repositoryId: repo.id || `${repo.owner}/${repo.name}`,
+        baseTreeSha: currentTreeSha,
+        entries: blobs
+      }
+    });
+
+    // Create a new commit
+    const createCommitMutation = `
+      mutation($input: CreateCommitInput!) {
+        createCommit(input: $input) {
+          commit {
+            oid
+          }
+        }
+      }
+    `;
+
+    const commitResult = await githubClient.request(createCommitMutation, {
+      input: {
+        repositoryId: repo.id || `${repo.owner}/${repo.name}`,
+        message: commitMessage,
+        tree: treeResult.createTree.tree.oid,
+        parents: [currentCommitSha]
+      }
+    });
+
+    // Update the reference
+    const updateRefMutation = `
+      mutation($input: UpdateRefInput!) {
+        updateRef(input: $input) {
+          ref {
+            target {
+              oid
+            }
+          }
+        }
+      }
+    `;
+
+    await githubClient.request(updateRefMutation, {
+      input: {
+        repositoryId: repo.id || `${repo.owner}/${repo.name}`,
+        ref: `refs/heads/${repo.defaultBranch}`,
+        oid: commitResult.createCommit.commit.oid
+      }
+    });
+
+    res.json({ 
+      message: 'Code pushed to GitHub successfully',
+      commitSha: commitResult.createCommit.commit.oid,
+      filesCount: files.length
+    });
+
+  } catch (error) {
+    console.error('Error pushing code to GitHub:', error);
+    res.status(500).json({ 
+      message: 'Failed to push code to GitHub',
+      error: error.message 
+    });
+  }
+});
+
 export default router;

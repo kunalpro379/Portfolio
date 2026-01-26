@@ -2,6 +2,9 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Import mobile PDF optimizations */
+@import './styles/pdf-mobile.css';
+
 
 /* Preload Kalam font with font-display: optional for better performance */
 @font-face {

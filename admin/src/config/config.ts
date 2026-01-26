@@ -92,6 +92,7 @@ const config = {
       githubRepoTree: (id: string, path: string = '') => `${getApiBaseUrl()}/api/github/repos/${id}/tree?path=${encodeURIComponent(path)}`,
       githubRepoFile: (id: string, path: string) => `${getApiBaseUrl()}/api/github/repos/${id}/file?path=${encodeURIComponent(path)}`,
       githubRepoDelete: (id: string) => `${getApiBaseUrl()}/api/github/repos/${id}`,
+      githubRepoPushCode: (id: string) => `${getApiBaseUrl()}/api/github/repos/${id}/push-code`,
       
       // Todos
       todos: `${getApiBaseUrl()}/api/todos`,

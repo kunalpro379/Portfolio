@@ -1,0 +1,37 @@
+/* Mobile PDF Viewer Optimizations */
+
+/* Ensure PDF iframe works well on mobile */
+@media (max-width: 768px) {
+  /* Fix iOS Safari viewport issues */
+  iframe[title*=".pdf"] {
+    -webkit-overflow-scrolling: touch;
+    overflow: auto;
+  }
+  
+  /* Improve touch interactions */
+  .pdf-container {
+    touch-action: pan-x pan-y pinch-zoom;
+  }
+  
+  /* Better mobile height calculation */
+  .mobile-pdf-height {
+    height: calc(100vh - 120px);
+    min-height: 400px;
+  }
+}
+
+/* Tablet optimizations */
+@media (min-width: 769px) and (max-width: 1024px) {
+  iframe[title*=".pdf"] {
+    height: calc(100vh - 140px);
+  }
+}
+
+/* Fallback for browsers that don't support PDF viewing */
+@supports not (display: -webkit-box) {
+  .pdf-fallback {
+    display: flex !important;
+    opacity: 1 !important;
+    pointer-events: auto !important;
+  }
+}

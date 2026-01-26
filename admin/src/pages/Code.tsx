@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { FolderPlus, FilePlus, Folder, File, Trash2, Edit3, ChevronRight, Code2, Github } from 'lucide-react';
+import { FolderPlus, FilePlus, Folder, File, Trash2, Edit3, ChevronRight, Code2, Github, Upload } from 'lucide-react';
 import config from '../config/config';
 import GitHubRepoManager from '../components/GitHubRepoManager';
 import GitHubRepoBrowser from '../components/GitHubRepoBrowser';
@@ -52,10 +52,15 @@ export default function Code() {
   // GitHub integration state
   const [activeTab, setActiveTab] = useState<'local' | 'github'>('local');
   const [selectedRepo, setSelectedRepo] = useState<GitHubRepo | null>(null);
+  const [githubRepos, setGithubRepos] = useState<GitHubRepo[]>([]);
+  const [showPushModal, setShowPushModal] = useState(false);
+  const [selectedRepoForPush, setSelectedRepoForPush] = useState<GitHubRepo | null>(null);
+  const [commitMessage, setCommitMessage] = useState('Update code from admin panel');
 
   useEffect(() => {
     fetchFolders();
     fetchFiles();
+    fetchGithubRepos();
   }, [currentPath]);
 
   const fetchFolders = async () => {
@@ -83,6 +88,18 @@ export default function Code() {
       setFiles(data.files || []);
     } catch (error) {
       console.error('Error fetching files:', error);
+    }
+  };
+
+  const fetchGithubRepos = async () => {
+    try {
+      const response = await fetch(config.api.endpoints.githubRepos, {
+        credentials: 'include'
+      });
+      const data = await response.json();
+      setGithubRepos(data.repos || []);
+    } catch (error) {
+      console.error('Error fetching GitHub repos:', error);
     }
   };
 
@@ -237,6 +254,38 @@ export default function Code() {
     setSelectedRepo(null);
   };
 
+  const pushCodeToGithub = async () => {
+    if (!selectedRepoForPush || !currentPath) return;
+
+    setLoading(true);
+    try {
+      const response = await fetch(config.api.endpoints.githubRepoPushCode(selectedRepoForPush._id), {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({
+          folderPath: currentPath,
+          commitMessage
+        })
+      });
+
+      const data = await response.json();
+      
+      if (response.ok) {
+        alert(`Successfully pushed ${data.filesCount} files to ${selectedRepoForPush.fullName}!`);
+        setShowPushModal(false);
+        setCommitMessage('Update code from admin panel');
+      } else {
+        alert(`Error: ${data.message}`);
+      }
+    } catch (error) {
+      console.error('Error pushing to GitHub:', error);
+      alert('Failed to push code to GitHub');
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <div className="p-3 sm:p-4 md:p-6 lg:p-8">
       <div className="max-w-7xl mx-auto">
@@ -295,6 +344,15 @@ export default function Code() {
                 >
                   <FilePlus className="w-4 h-4 lg:w-5 lg:h-5" strokeWidth={2.5} />
                   <span className="whitespace-nowrap">New File</span>
+                </button>
+              )}
+              {currentPath && files.length > 0 && githubRepos.length > 0 && (
+                <button
+                  onClick={() => setShowPushModal(true)}
+                  className="flex items-center justify-center gap-1.5 sm:gap-2 px-3 sm:px-4 md:px-5 lg:px-6 py-2 sm:py-2.5 lg:py-3 bg-purple-200 border-2 lg:border-3 border-black rounded-lg lg:rounded-xl font-bold text-xs sm:text-sm lg:text-base hover:bg-purple-300 transition shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] lg:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] lg:hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] active:translate-x-[1px] active:translate-y-[1px] active:shadow-[1px_1px_0px_0px_rgba(0,0,0,1)] sm:hover:translate-x-[-1px] sm:hover:translate-y-[-1px] lg:hover:translate-x-[-2px] lg:hover:translate-y-[-2px]"
+                >
+                  <Upload className="w-4 h-4 lg:w-5 lg:h-5" strokeWidth={2.5} />
+                  <span className="whitespace-nowrap">Push to GitHub</span>
                 </button>
               )}
             </div>
@@ -537,6 +595,78 @@ export default function Code() {
                   className="flex-1 px-4 py-2 sm:py-2.5 lg:py-3 bg-black text-white border-2 lg:border-3 border-black rounded-lg lg:rounded-xl font-bold text-xs sm:text-sm lg:text-base hover:bg-gray-800 transition shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] lg:shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {loading ? 'Creating...' : 'Create'}
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Push to GitHub Modal */}
+        {showPushModal && (
+          <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-3 sm:p-4">
+            <div className="bg-white border-2 sm:border-3 lg:border-4 border-black rounded-lg sm:rounded-xl lg:rounded-2xl p-4 sm:p-5 lg:p-8 max-w-md w-full mx-3 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] sm:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] lg:shadow-[12px_12px_0px_0px_rgba(0,0,0,1)]">
+              <h2 className="text-xl sm:text-2xl lg:text-3xl font-black text-black mb-3 sm:mb-4 lg:mb-6" style={{ fontFamily: 'Comic Sans MS, cursive' }}>
+                Push Code to GitHub
+              </h2>
+
+              <div className="space-y-2.5 sm:space-y-3 lg:space-y-4 mb-4 sm:mb-5 lg:mb-6">
+                <div>
+                  <label className="block text-[10px] sm:text-xs lg:text-sm font-black text-black mb-1.5 sm:mb-2 uppercase">
+                    Select Repository *
+                  </label>
+                  <select
+                    value={selectedRepoForPush?._id || ''}
+                    onChange={(e) => {
+                      const repo = githubRepos.find(r => r._id === e.target.value);
+                      setSelectedRepoForPush(repo || null);
+                    }}
+                    className="w-full px-3 sm:px-3 lg:px-4 py-2 sm:py-2.5 lg:py-3 bg-white border-2 lg:border-3 border-black rounded-lg lg:rounded-xl text-xs sm:text-sm lg:text-base font-medium focus:outline-none focus:ring-4 focus:ring-black/20 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] lg:shadow-[3px_3px_0px_0px_rgba(0,0,0,1)]"
+                  >
+                    <option value="">Choose a repository...</option>
+                    {githubRepos.map((repo) => (
+                      <option key={repo._id} value={repo._id}>
+                        {repo.fullName}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block text-[10px] sm:text-xs lg:text-sm font-black text-black mb-1.5 sm:mb-2 uppercase">
+                    Commit Message *
+                  </label>
+                  <input
+                    type="text"
+                    value={commitMessage}
+                    onChange={(e) => setCommitMessage(e.target.value)}
+                    className="w-full px-3 sm:px-3 lg:px-4 py-2 sm:py-2.5 lg:py-3 bg-white border-2 lg:border-3 border-black rounded-lg lg:rounded-xl text-xs sm:text-sm lg:text-base font-medium focus:outline-none focus:ring-4 focus:ring-black/20 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] lg:shadow-[3px_3px_0px_0px_rgba(0,0,0,1)]"
+                    placeholder="Update code from admin panel"
+                  />
+                </div>
+
+                <div className="p-2 sm:p-2.5 lg:p-3 bg-purple-50 border-2 border-black rounded-md lg:rounded-lg">
+                  <p className="text-[10px] sm:text-xs lg:text-sm font-medium text-gray-700">
+                    Pushing from: <span className="font-black text-black break-all">{currentPath}</span>
+                  </p>
+                  <p className="text-[10px] sm:text-xs lg:text-sm font-medium text-gray-700 mt-1">
+                    Files to push: <span className="font-black text-black">{files.length}</span>
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex flex-col sm:flex-row gap-2 lg:gap-3">
+                <button
+                  onClick={() => setShowPushModal(false)}
+                  className="flex-1 px-4 py-2 sm:py-2.5 lg:py-3 bg-white border-2 lg:border-3 border-black rounded-lg lg:rounded-xl font-bold text-xs sm:text-sm lg:text-base hover:bg-gray-50 transition shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] lg:shadow-[3px_3px_0px_0px_rgba(0,0,0,1)]"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={pushCodeToGithub}
+                  disabled={loading || !selectedRepoForPush || !commitMessage}
+                  className="flex-1 px-4 py-2 sm:py-2.5 lg:py-3 bg-purple-600 text-white border-2 lg:border-3 border-black rounded-lg lg:rounded-xl font-bold text-xs sm:text-sm lg:text-base hover:bg-purple-700 transition shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] lg:shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  {loading ? 'Pushing...' : 'Push to GitHub'}
                 </button>
               </div>
             </div>
