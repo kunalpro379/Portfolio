@@ -1,12 +1,18 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
-
 /* Import mobile PDF optimizations */
 @import './styles/pdf-mobile.css';
 
 /* Import mobile Excalidraw optimizations */
 @import './styles/excalidraw-mobile.css';
+
+/* Import comprehensive responsive fixes */
+@import './styles/responsive-fixes.css';
+
+/* Import card-specific responsive fixes */
+@import './styles/card-responsive.css';
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
 
 /* Preload Kalam font with font-display: optional for better performance */

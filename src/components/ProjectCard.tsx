@@ -69,16 +69,16 @@ const ProjectCard = memo(function ProjectCard({
   };
 
   const sizeHeight = {
-    big: "lg:h-[650px]",
-    "big-width": "lg:h-[380px]",
-    large: "lg:h-[650px]",
-    medium: "lg:h-[380px]",
-    small: "lg:h-[310px]"
+    big: "h-[280px] md:h-[320px] lg:h-[650px]",
+    "big-width": "h-[280px] md:h-[320px] lg:h-[380px]",
+    large: "h-[280px] md:h-[320px] lg:h-[650px]",
+    medium: "h-[280px] md:h-[320px] lg:h-[380px]",
+    small: "h-[280px] md:h-[320px] lg:h-[310px]"
   };
 
   return (
     <div
-      className={`relative ${sizeClasses[size]} h-[280px] ${sizeHeight[size]} cursor-pointer`}
+      className={`relative ${sizeClasses[size]} ${sizeHeight[size]} cursor-pointer`}
       style={{ perspective: "1000px" }}
       onClick={handleCardClick}
       onMouseEnter={() => setIsFlipped(true)}
@@ -93,7 +93,7 @@ const ProjectCard = memo(function ProjectCard({
       >
         {/* FRONT SIDE */}
         <div
-          className="absolute inset-0 rounded-2xl md:rounded-3xl border border-zinc-700 bg-gradient-to-br from-zinc-900 via-black to-zinc-900 overflow-hidden group"
+          className="project-card absolute inset-0 rounded-2xl md:rounded-3xl border border-zinc-700 bg-gradient-to-br from-zinc-900 via-black to-zinc-900 overflow-hidden group"
           style={{ backfaceVisibility: "hidden" }}
         >
           {image && (
@@ -116,13 +116,13 @@ const ProjectCard = memo(function ProjectCard({
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(0,163,255,0.08)_0%,transparent_60%)] opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
 
           {/* Mobile Layout - Title at Bottom Center + Read More Button */}
-          <div className="md:hidden relative z-10 h-full flex flex-col justify-end p-4">
-            <h3 className="text-xl font-black uppercase tracking-tight text-white text-center leading-tight mb-3">
+          <div className="md:hidden relative z-10 h-full flex flex-col justify-end p-3 md:p-4">
+            <h3 className="card-title text-lg md:text-xl font-black uppercase tracking-tight text-white text-center leading-tight mb-3 line-clamp-2">
               {title}
             </h3>
             <button 
               onClick={handleCardClick}
-              className="ml-auto flex items-center gap-2 px-4 py-2 bg-white text-black rounded-lg text-xs font-bold uppercase tracking-wider hover:bg-gray-100 transition-all shadow-lg"
+              className="ml-auto flex items-center gap-2 px-3 py-2 md:px-4 md:py-2 bg-white text-black rounded-lg text-xs font-bold uppercase tracking-wider hover:bg-gray-100 transition-all shadow-lg"
             >
               Read More
               <ArrowRight size={14} />
@@ -130,12 +130,12 @@ const ProjectCard = memo(function ProjectCard({
           </div>
 
           {/* Desktop Layout - Title at Bottom */}
-          <div className="hidden md:block relative z-10 h-full p-6 md:p-8">
+          <div className="hidden md:block relative z-10 h-full p-4 md:p-6 lg:p-8">
             <div className="h-full flex flex-col justify-end">
-              <div className="space-y-3">
+              <div className="space-y-2 md:space-y-3">
                 <div>
                   <h3
-                    className={`text-2xl md:text-3xl font-black uppercase tracking-tight ${titleColor === "black" ? "text-black" : "text-white"} leading-none mb-2`}
+                    className={`card-title text-xl md:text-2xl lg:text-3xl font-black uppercase tracking-tight ${titleColor === "black" ? "text-black" : "text-white"} leading-none mb-2 line-clamp-2`}
                     style={{
                       WebkitTextStroke: titleColor === "black" ? "1.5px white" : "1.5px black",
                       paintOrder: "stroke fill"
@@ -143,11 +143,11 @@ const ProjectCard = memo(function ProjectCard({
                   >
                     {title}
                   </h3>
-                  <div className="h-[2px] w-12 bg-sky-500/60" />
+                  <div className="h-[2px] w-8 md:w-12 bg-sky-500/60" />
                 </div>
 
                 <p
-                  className={`${descriptionColor === "black" ? "text-black/70" : "text-white/70"} text-xs md:text-sm font-medium leading-relaxed max-w-lg`}
+                  className={`card-description ${descriptionColor === "black" ? "text-black/70" : "text-white/70"} text-xs md:text-sm font-medium leading-relaxed max-w-lg line-clamp-3`}
                 >
                   {tagline}
                 </p>

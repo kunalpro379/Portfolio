@@ -131,7 +131,7 @@ export default function BlogsSection() {
               ref={blogsScrollRef}
               className="overflow-x-auto pt-4 pb-8 -mx-6 px-6 md:-mx-12 md:px-12 scrollbar-hide"
             >
-              <div className="flex md:grid md:grid-cols-4 gap-4 md:gap-6 min-w-max md:min-w-0">
+              <div className="flex sm:grid sm:grid-cols-2 md:grid md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6 min-w-max sm:min-w-0 md:min-w-0">
                 {blogsWithColors.map((blog, idx) => (
                   <motion.div
                     key={blog.blogId}
@@ -139,11 +139,11 @@ export default function BlogsSection() {
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true }}
                     transition={{ duration: 0.6, delay: idx * 0.15 }}
-                    className="group relative block hover:-translate-y-1 transition-all duration-300 w-[220px] md:w-auto flex-shrink-0"
+                    className="group relative block hover:-translate-y-1 transition-all duration-300 w-[220px] sm:w-auto md:w-auto flex-shrink-0"
                   >
                     <Link to={`/learnings/blogs/${blog.blogId}`}>
                       <div
-                        className="relative bg-white overflow-hidden border-4 border-black rounded-2xl hover:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] transition-all duration-300 h-full flex flex-col"
+                        className="blog-card relative bg-white overflow-hidden border-4 border-black rounded-2xl hover:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] transition-all duration-300 h-full flex flex-col"
                       >
                         {blog.coverImage && (
                           <div className="relative h-32 md:h-40 overflow-hidden bg-gray-50 flex-shrink-0 border-b-4 border-black">
@@ -163,10 +163,10 @@ export default function BlogsSection() {
                           <div className="inline-block px-3 py-1 bg-pink-100 border-2 border-black rounded-lg text-[10px] md:text-xs font-bold">
                             {blog.subject}
                           </div>
-                          <h3 className="text-sm md:text-base lg:text-lg font-black leading-tight text-black line-clamp-2">
+                          <h3 className="card-title text-sm md:text-base lg:text-lg font-black leading-tight text-black line-clamp-2">
                             {blog.title}
                           </h3>
-                          <p className="text-xs md:text-sm text-gray-700 leading-relaxed line-clamp-2 font-medium">
+                          <p className="card-description text-xs md:text-sm text-gray-700 leading-relaxed line-clamp-2 font-medium">
                             {blog.shortDescription}
                           </p>
                         </div>
@@ -224,7 +224,7 @@ export default function BlogsSection() {
               ref={docsScrollRef}
               className="overflow-x-auto pt-4 pb-8 -mx-6 px-6 md:-mx-12 md:px-12 scrollbar-hide"
             >
-              <div className="flex md:grid md:grid-cols-4 gap-4 md:gap-6 min-w-max md:min-w-0">
+              <div className="flex sm:grid sm:grid-cols-2 md:grid md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6 min-w-max sm:min-w-0 md:min-w-0">
                 {docs.map((doc, idx) => (
                   <motion.div
                     key={doc.docId}
@@ -232,20 +232,20 @@ export default function BlogsSection() {
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true }}
                     transition={{ duration: 0.6, delay: idx * 0.15 }}
-                    className="group relative block hover:-translate-y-1 transition-all duration-300 w-[220px] md:w-auto flex-shrink-0"
+                    className="group relative block hover:-translate-y-1 transition-all duration-300 w-[220px] sm:w-auto md:w-auto flex-shrink-0"
                   >
                     <Link to={`/learnings/documentation/${doc.docId}`}>
                       <div
-                        className="relative bg-white overflow-hidden border-4 border-black rounded-2xl hover:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] transition-all duration-300 h-full flex flex-col min-h-[220px]"
+                        className="doc-card relative bg-white overflow-hidden border-4 border-black rounded-2xl hover:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] transition-all duration-300 h-full flex flex-col min-h-[220px]"
                       >
                         <div className="p-3 md:p-4 space-y-2 flex-grow">
                           <div className="inline-block px-3 py-1 bg-blue-100 border-2 border-black rounded-lg text-[10px] md:text-xs font-bold">
                             {doc.subject}
                           </div>
-                          <h3 className="text-sm md:text-base lg:text-lg font-black leading-tight text-black line-clamp-2">
+                          <h3 className="card-title text-sm md:text-base lg:text-lg font-black leading-tight text-black line-clamp-2">
                             {doc.title}
                           </h3>
-                          <p className="text-xs md:text-sm text-gray-700 leading-relaxed line-clamp-2 font-medium">
+                          <p className="card-description text-xs md:text-sm text-gray-700 leading-relaxed line-clamp-2 font-medium">
                             {doc.description}
                           </p>
                         </div>

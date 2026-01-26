@@ -99,17 +99,22 @@ export default function AIKnowledgeBase() {
         try {
           const projects = await responses[0].value.json();
           console.log('Projects data:', projects);
+          console.log('First project sample:', projects.projects[0]);
           
           if (projects.projects) {
             projects.projects.forEach((project: any) => {
-              if (project.mdContent && project.mdContent.trim()) {
+              // Check multiple possible content fields
+              const projectContent = project.mdContent || project.content || project.description || '';
+              console.log(`Project "${project.title}": has content = ${!!projectContent.trim()}, length = ${projectContent.length}`);
+              
+              if (projectContent.trim() || project.title) { // Include if has content OR at least a title
                 content.push({
                   _id: project._id,
                   title: project.title,
                   type: 'project',
                   fileName: `${project.title.replace(/[^a-zA-Z0-9]/g, '_')}.md`,
-                  mdContent: project.mdContent,
-                  createdAt: project.createdAt,
+                  mdContent: projectContent || `# ${project.title}\n\nProject: ${project.title}`,
+                  createdAt: project.createdAt || new Date().toISOString(),
                   selected: false
                 });
               }
@@ -125,17 +130,22 @@ export default function AIKnowledgeBase() {
         try {
           const blogs = await responses[1].value.json();
           console.log('Blogs data:', blogs);
+          console.log('First blog sample:', blogs.blogs[0]);
           
           if (blogs.blogs) {
             blogs.blogs.forEach((blog: any) => {
-              if (blog.mdContent && blog.mdContent.trim()) {
+              // Check multiple possible content fields
+              const blogContent = blog.mdContent || blog.content || blog.description || blog.excerpt || '';
+              console.log(`Blog "${blog.title}": has content = ${!!blogContent.trim()}, length = ${blogContent.length}`);
+              
+              if (blogContent.trim() || blog.title) { // Include if has content OR at least a title
                 content.push({
                   _id: blog._id,
                   title: blog.title,
                   type: 'blog',
                   fileName: `${blog.title.replace(/[^a-zA-Z0-9]/g, '_')}.md`,
-                  mdContent: blog.mdContent,
-                  createdAt: blog.createdAt,
+                  mdContent: blogContent || `# ${blog.title}\n\nBlog: ${blog.title}`,
+                  createdAt: blog.createdAt || new Date().toISOString(),
                   selected: false
                 });
               }
@@ -163,16 +173,23 @@ export default function AIKnowledgeBase() {
           }
 
           console.log('Documentation array:', documentationArray);
+          if (documentationArray.length > 0) {
+            console.log('First doc sample:', documentationArray[0]);
+          }
 
           documentationArray.forEach((doc: any) => {
-            if (doc.content && doc.content.trim()) {
+            // Check multiple possible content fields
+            const docContent = doc.content || doc.mdContent || doc.description || doc.body || '';
+            console.log(`Doc "${doc.title}": has content = ${!!docContent.trim()}, length = ${docContent.length}`);
+            
+            if (docContent.trim() || doc.title) { // Include if has content OR at least a title
               content.push({
                 _id: doc._id,
                 title: doc.title,
                 type: 'documentation',
                 fileName: `${doc.title.replace(/[^a-zA-Z0-9]/g, '_')}.md`,
-                content: doc.content,
-                createdAt: doc.createdAt,
+                content: docContent || `# ${doc.title}\n\nDocumentation: ${doc.title}`,
+                createdAt: doc.createdAt || new Date().toISOString(),
                 selected: false
               });
             }
@@ -209,7 +226,7 @@ export default function AIKnowledgeBase() {
                           type: 'code',
                           fileName: file.filename,
                           content: file.content,
-                          createdAt: file.createdAt,
+                          createdAt: file.createdAt || new Date().toISOString(),
                           selected: false
                         });
                       }
@@ -249,7 +266,7 @@ export default function AIKnowledgeBase() {
     setLoading(true);
     setShowUploadProgress(true);
     
-    const initialProgress: UploadProgress[] = Array.from(files).map((file, index) => ({
+    const initialProgress: UploadProgress[] = Array.from(files).map((file) => ({
       fileName: file.name,
       steps: [
         { id: 'validate', title: 'Validating File', description: 'Checking file format and size', status: 'pending' },
@@ -272,13 +289,13 @@ export default function AIKnowledgeBase() {
         
         // Update current file progress
         const updateProgress = (stepIndex: number, stepStatus: 'processing' | 'completed' | 'error', progress: number) => {
-          setUploadProgress(prev => prev.map((item, index) => {
-            if (index === i) {
+          setUploadProgress(prev => prev.map((item, itemIndex) => {
+            if (itemIndex === i) {
               const updatedSteps = item.steps.map((step, sIndex) => {
                 if (sIndex === stepIndex) {
                   return { ...step, status: stepStatus, progress };
                 } else if (sIndex < stepIndex) {
-                  return { ...step, status: 'completed' };
+                  return { ...step, status: 'completed' as const };
                 }
                 return step;
               });
@@ -288,7 +305,7 @@ export default function AIKnowledgeBase() {
                 steps: updatedSteps,
                 currentStep: stepIndex,
                 overallProgress: progress,
-                status: stepStatus === 'error' ? 'error' : (stepIndex === 4 && stepStatus === 'completed' ? 'completed' : 'uploading')
+                status: stepStatus === 'error' ? 'error' as const : (stepIndex === 4 && stepStatus === 'completed' ? 'completed' as const : 'uploading' as const)
               };
             }
             return item;
@@ -496,7 +513,50 @@ export default function AIKnowledgeBase() {
 
   return (
     <div className="p-3 sm:p-4 md:p-6 lg:p-8">
-      <div className="max-w-7xl mx-auto">
+      {/* Global Loading Bar */}
+      {(loading || showUploadProgress || processingExisting) && (
+        <div className="fixed top-0 left-0 right-0 z-50">
+          {/* Animated Progress Bar */}
+          <div className="relative h-1 bg-gray-200">
+            <div 
+              className="absolute top-0 left-0 h-full bg-gradient-to-r from-blue-500 to-purple-500 transition-all duration-300"
+              style={{ 
+                width: showUploadProgress 
+                  ? `${uploadProgress.reduce((acc, curr) => acc + curr.overallProgress, 0) / Math.max(uploadProgress.length, 1)}%`
+                  : processingExisting 
+                  ? `${(existingProcessSteps.filter(s => s.status === 'completed').length / Math.max(existingProcessSteps.length, 1)) * 100}%`
+                  : '50%'
+              }}
+            />
+            <div className="absolute top-0 left-0 w-full h-full bg-blue-500 opacity-30 animate-pulse"></div>
+          </div>
+          
+          {/* Status Bar */}
+          <div className="bg-white border-b-2 border-black px-4 py-2 flex items-center justify-between shadow-lg">
+            <div className="flex items-center gap-2">
+              <Loader2 className="w-4 h-4 animate-spin text-blue-500" />
+              <span className="text-sm font-bold text-black">
+                {showUploadProgress ? `Uploading ${uploadProgress.length} file${uploadProgress.length !== 1 ? 's' : ''}...` : 
+                 processingExisting ? `Processing ${existingContent.filter(c => c.selected).length} item${existingContent.filter(c => c.selected).length !== 1 ? 's' : ''}...` : 
+                 'Loading...'}
+              </span>
+            </div>
+            
+            {/* Progress Stats */}
+            <div className="text-xs font-medium text-gray-600">
+              {showUploadProgress && (
+                <span>{uploadProgress.filter(p => p.status === 'completed').length} / {uploadProgress.length} completed</span>
+              )}
+              {processingExisting && (
+                <span>{existingProcessSteps.filter(s => s.status === 'completed').length} / {existingProcessSteps.length} steps</span>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Add top padding when loading bar is visible */}
+      <div className={`max-w-7xl mx-auto ${(loading || showUploadProgress || processingExisting) ? 'pt-16' : ''}`}>
         {/* Header */}
         <div className="flex items-center justify-between mb-6">
           <div>
@@ -583,46 +643,6 @@ export default function AIKnowledgeBase() {
                 </label>
               </div>
             </div>
-
-            {/* Knowledge Base Files List */}
-            <div className="bg-white border-2 border-black rounded-xl p-6 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
-              <h2 className="text-xl font-black text-black mb-4" style={{ fontFamily: 'Comic Sans MS, cursive' }}>
-                Knowledge Base Files ({knowledgeBaseFiles.length})
-              </h2>
-
-              {knowledgeBaseFiles.length === 0 ? (
-                <div className="text-center py-8 border-2 border-dashed border-black rounded-lg">
-                  <FileText className="w-12 h-12 text-gray-400 mx-auto mb-3" strokeWidth={2} />
-                  <p className="text-base text-gray-600 font-medium">No files in knowledge base</p>
-                  <p className="text-sm text-gray-500 mt-1">Upload files to get started</p>
-                </div>
-              ) : (
-                <div className="space-y-3">
-                  {knowledgeBaseFiles.map((file) => (
-                    <div
-                      key={file._id}
-                      className="flex items-center justify-between p-4 bg-white border-2 border-black rounded-lg shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]"
-                    >
-                      <div className="flex items-center gap-3 flex-1 min-w-0">
-                        <FileText className="w-5 h-5 text-black flex-shrink-0" strokeWidth={2.5} />
-                        <div className="flex-1 min-w-0">
-                          <p className="font-bold text-black text-sm truncate">{file.fileName}</p>
-                          <p className="text-xs text-gray-600 font-medium">
-                            {file.fileType} • {formatFileSize(file.fileSize)} • {new Date(file.createdAt).toLocaleDateString()}
-                          </p>
-                        </div>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        {getStatusIcon(file.status, file.vectorStatus)}
-                        <span className="text-xs font-medium text-gray-600 capitalize">
-                          {file.vectorStatus === 'uploaded' ? 'Ready' : file.status}
-                        </span>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
           </div>
         )}
 
@@ -630,66 +650,131 @@ export default function AIKnowledgeBase() {
         {activeTab === 'existing' && (
           <div className="space-y-6">
             <div className="bg-white border-2 border-black rounded-xl p-6 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
-              <div className="flex items-center justify-between mb-4">
-                <h2 className="text-xl font-black text-black" style={{ fontFamily: 'Comic Sans MS, cursive' }}>
-                  Existing Content
-                </h2>
+              <h2 className="text-xl font-black text-black mb-4" style={{ fontFamily: 'Comic Sans MS, cursive' }}>
+                Push Existing Content
+              </h2>
+
+              <p className="text-sm text-gray-600 font-medium mb-6">
+                Push your existing projects, blogs, documentation, and code files to the knowledge base
+              </p>
+
+              {/* Content Summary */}
+              {existingContent.length > 0 && (
+                <div className="mb-6 p-4 bg-gray-50 border-2 border-gray-300 rounded-lg">
+                  <p className="text-sm font-bold text-gray-700 mb-3">Content Summary:</p>
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
+                    <div className="flex items-center gap-2">
+                      <FolderOpen className="w-4 h-4 text-blue-500" />
+                      <span><strong>Projects:</strong> {existingContent.filter(c => c.type === 'project').length}</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <FileText className="w-4 h-4 text-green-500" />
+                      <span><strong>Blogs:</strong> {existingContent.filter(c => c.type === 'blog').length}</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <BookOpen className="w-4 h-4 text-purple-500" />
+                      <span><strong>Docs:</strong> {existingContent.filter(c => c.type === 'documentation').length}</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Code className="w-4 h-4 text-orange-500" />
+                      <span><strong>Code:</strong> {existingContent.filter(c => c.type === 'code').length}</span>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* Action Buttons */}
+              <div className="flex flex-col sm:flex-row gap-3 justify-center">
                 <button
-                  onClick={() => setShowExistingModal(true)}
+                  onClick={() => {
+                    if (existingContent.length === 0) {
+                      fetchExistingContent();
+                    } else {
+                      setShowExistingModal(true);
+                    }
+                  }}
                   disabled={loading}
-                  className="flex items-center gap-2 px-4 py-2 bg-green-200 border-2 border-black rounded-lg font-bold text-sm hover:bg-green-300 transition shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] disabled:opacity-50"
+                  className="flex items-center justify-center gap-2 px-6 py-3 bg-green-200 border-2 border-black rounded-lg font-bold text-sm hover:bg-green-300 transition shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] disabled:opacity-50"
                 >
                   {loading ? (
                     <Loader2 className="w-4 h-4 animate-spin" />
                   ) : (
                     <Database className="w-4 h-4" strokeWidth={2.5} />
                   )}
-                  Select & Push Content
+                  {existingContent.length === 0 ? 'Load Content' : 'Select & Push Content'}
                 </button>
+
+                {existingContent.length > 0 && (
+                  <button
+                    onClick={() => {
+                      // Select all and process directly
+                      const allSelected = existingContent.map(item => ({ ...item, selected: true }));
+                      setExistingContent(allSelected);
+                      processSelectedContent();
+                    }}
+                    disabled={processingExisting}
+                    className="flex items-center justify-center gap-2 px-6 py-3 bg-purple-200 border-2 border-black rounded-lg font-bold text-sm hover:bg-purple-300 transition shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] disabled:opacity-50"
+                  >
+                    {processingExisting ? (
+                      <Loader2 className="w-4 h-4 animate-spin" />
+                    ) : (
+                      <Upload className="w-4 h-4" strokeWidth={2.5} />
+                    )}
+                    Push All Content
+                  </button>
+                )}
               </div>
 
-              <p className="text-sm text-gray-600 font-medium mb-4">
-                Push your existing projects, blogs, documentation, and code files to the knowledge base
-              </p>
-
-              {/* Debug Info */}
-              {existingContent.length > 0 && (
-                <div className="mb-4 p-3 bg-gray-50 border-2 border-gray-300 rounded-lg">
-                  <p className="text-xs font-bold text-gray-700 mb-2">Content Summary:</p>
-                  <div className="grid grid-cols-4 gap-2 text-xs">
-                    <div>Projects: {existingContent.filter(c => c.type === 'project').length}</div>
-                    <div>Blogs: {existingContent.filter(c => c.type === 'blog').length}</div>
-                    <div>Docs: {existingContent.filter(c => c.type === 'documentation').length}</div>
-                    <div>Code: {existingContent.filter(c => c.type === 'code').length}</div>
-                  </div>
+              {/* Loading State */}
+              {loading && existingContent.length === 0 && (
+                <div className="text-center py-8">
+                  <Loader2 className="w-8 h-8 animate-spin text-blue-500 mx-auto mb-3" />
+                  <p className="text-sm text-gray-600 font-medium">Loading existing content...</p>
                 </div>
               )}
-
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                <div className="bg-blue-50 border-2 border-black rounded-lg p-4 text-center">
-                  <FolderOpen className="w-8 h-8 text-blue-500 mx-auto mb-2" strokeWidth={2.5} />
-                  <p className="font-bold text-black text-sm">Projects</p>
-                  <p className="text-xs text-gray-600">Portfolio projects</p>
-                </div>
-                <div className="bg-green-50 border-2 border-black rounded-lg p-4 text-center">
-                  <FileText className="w-8 h-8 text-green-500 mx-auto mb-2" strokeWidth={2.5} />
-                  <p className="font-bold text-black text-sm">Blogs</p>
-                  <p className="text-xs text-gray-600">Blog articles</p>
-                </div>
-                <div className="bg-purple-50 border-2 border-black rounded-lg p-4 text-center">
-                  <BookOpen className="w-8 h-8 text-purple-500 mx-auto mb-2" strokeWidth={2.5} />
-                  <p className="font-bold text-black text-sm">Documentation</p>
-                  <p className="text-xs text-gray-600">Technical docs</p>
-                </div>
-                <div className="bg-orange-50 border-2 border-black rounded-lg p-4 text-center">
-                  <Code className="w-8 h-8 text-orange-500 mx-auto mb-2" strokeWidth={2.5} />
-                  <p className="font-bold text-black text-sm">Code Files</p>
-                  <p className="text-xs text-gray-600">Source code</p>
-                </div>
-              </div>
             </div>
           </div>
         )}
+
+        {/* Common Knowledge Base Files Section */}
+        <div className="bg-white border-2 border-black rounded-xl p-6 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+          <h2 className="text-xl font-black text-black mb-4" style={{ fontFamily: 'Comic Sans MS, cursive' }}>
+            Knowledge Base Files ({knowledgeBaseFiles.length})
+          </h2>
+
+          {knowledgeBaseFiles.length === 0 ? (
+            <div className="text-center py-8 border-2 border-dashed border-black rounded-lg">
+              <FileText className="w-12 h-12 text-gray-400 mx-auto mb-3" strokeWidth={2} />
+              <p className="text-base text-gray-600 font-medium">No files in knowledge base</p>
+              <p className="text-sm text-gray-500 mt-1">Upload files or push existing content to get started</p>
+            </div>
+          ) : (
+            <div className="space-y-3">
+              {knowledgeBaseFiles.map((file) => (
+                <div
+                  key={file._id}
+                  className="flex items-center justify-between p-4 bg-white border-2 border-black rounded-lg shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]"
+                >
+                  <div className="flex items-center gap-3 flex-1 min-w-0">
+                    <FileText className="w-5 h-5 text-black flex-shrink-0" strokeWidth={2.5} />
+                    <div className="flex-1 min-w-0">
+                      <p className="font-bold text-black text-sm truncate">{file.fileName}</p>
+                      <p className="text-xs text-gray-600 font-medium">
+                        {file.fileType} • {formatFileSize(file.fileSize)} • {file.createdAt ? new Date(file.createdAt).toLocaleDateString() : 'No date'}
+                      </p>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    {getStatusIcon(file.status, file.vectorStatus)}
+                    <span className="text-xs font-medium text-gray-600 capitalize">
+                      {file.vectorStatus === 'uploaded' ? 'Ready' : file.status}
+                    </span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
 
         {/* Upload Progress Modal */}
         {showUploadProgress && (
@@ -860,7 +945,7 @@ export default function AIKnowledgeBase() {
                     <div className="flex-1 min-w-0">
                       <p className="font-bold text-black text-sm truncate">{item.title}</p>
                       <p className="text-xs text-gray-600 font-medium capitalize">
-                        {item.type} • {new Date(item.createdAt).toLocaleDateString()}
+                        {item.type} • {item.createdAt ? new Date(item.createdAt).toLocaleDateString() : 'No date'}
                       </p>
                     </div>
                   </div>

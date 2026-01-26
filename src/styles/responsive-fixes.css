@@ -1,0 +1,300 @@
+/* Comprehensive Responsive Fixes for All Screen Sizes */
+
+/* ===== TABLET RESPONSIVE FIXES (768px - 1024px) ===== */
+
+/* Fix card content overflow and spacing on tablets */
+@media (min-width: 768px) and (max-width: 1023px) {
+  
+  /* Project Cards - Better tablet sizing */
+  .project-card {
+    min-height: 320px !important;
+  }
+  
+  /* Blog and Documentation Cards - Tablet optimizations */
+  .blog-card,
+  .doc-card {
+    min-height: 280px;
+    padding: 1rem !important;
+  }
+  
+  /* Card titles - Better sizing for tablets */
+  .card-title {
+    font-size: 1rem !important;
+    line-height: 1.3 !important;
+  }
+  
+  /* Card descriptions - Proper line clamping */
+  .card-description {
+    font-size: 0.875rem !important;
+    line-height: 1.4 !important;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  
+  /* Grid containers - Better spacing */
+  .grid-container {
+    gap: 1rem !important;
+  }
+  
+  /* Hero section - Tablet layout */
+  .hero-content {
+    flex-direction: column !important;
+    gap: 2rem !important;
+  }
+  
+  .hero-image {
+    max-width: 400px !important;
+    margin: 0 auto !important;
+  }
+  
+  .hero-title {
+    font-size: 4rem !important;
+    text-align: center !important;
+  }
+}
+
+/* ===== SMALL TABLET / LARGE MOBILE (640px - 767px) ===== */
+@media (min-width: 640px) and (max-width: 767px) {
+  
+  /* Cards - Consistent sizing */
+  .project-card,
+  .blog-card,
+  .doc-card {
+    min-height: 300px;
+    padding: 0.875rem !important;
+  }
+  
+  /* Text scaling */
+  .card-title {
+    font-size: 0.9rem !important;
+  }
+  
+  .card-description {
+    font-size: 0.8rem !important;
+    -webkit-line-clamp: 2;
+  }
+  
+  /* Hero adjustments */
+  .hero-title {
+    font-size: 3.5rem !important;
+  }
+}
+
+/* ===== MOBILE LANDSCAPE (480px - 639px) ===== */
+@media (min-width: 480px) and (max-width: 639px) {
+  
+  /* Prevent horizontal overflow */
+  .container {
+    padding-left: 1rem !important;
+    padding-right: 1rem !important;
+  }
+  
+  /* Cards - Mobile landscape */
+  .project-card,
+  .blog-card,
+  .doc-card {
+    min-height: 280px;
+    padding: 0.75rem !important;
+  }
+  
+  .card-title {
+    font-size: 0.85rem !important;
+  }
+  
+  .card-description {
+    font-size: 0.75rem !important;
+  }
+}
+
+/* ===== CONTENT RESPONSIVE FIXES ===== */
+
+/* Ensure all card content is properly contained */
+.card-content {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;
+}
+
+.card-header {
+  flex-shrink: 0;
+}
+
+.card-body {
+  flex-grow: 1;
+  overflow: hidden;
+}
+
+.card-footer {
+  flex-shrink: 0;
+  margin-top: auto;
+}
+
+/* Text truncation utilities */
+.line-clamp-1 {
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.line-clamp-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.line-clamp-3 {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* ===== GRID SYSTEM FIXES ===== */
+
+/* Ensure grids don't break on intermediate sizes */
+@media (min-width: 640px) and (max-width: 767px) {
+  .responsive-grid-2 {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+}
+
+@media (min-width: 768px) and (max-width: 1023px) {
+  .responsive-grid-3 {
+    grid-template-columns: repeat(3, 1fr) !important;
+  }
+  
+  .responsive-grid-2 {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+}
+
+@media (min-width: 1024px) {
+  .responsive-grid-4 {
+    grid-template-columns: repeat(4, 1fr) !important;
+  }
+  
+  .responsive-grid-5 {
+    grid-template-columns: repeat(5, 1fr) !important;
+  }
+}
+
+/* ===== IMAGE RESPONSIVE FIXES ===== */
+
+/* Ensure images scale properly */
+.responsive-image {
+  width: 100%;
+  height: auto;
+  object-fit: cover;
+  transition: transform 0.3s ease;
+}
+
+.responsive-image:hover {
+  transform: scale(1.05);
+}
+
+/* ===== BUTTON AND INTERACTIVE ELEMENT FIXES ===== */
+
+/* Touch-friendly buttons on tablets */
+@media (min-width: 768px) and (max-width: 1023px) {
+  .btn {
+    min-height: 44px;
+    padding: 0.75rem 1.5rem !important;
+    font-size: 0.9rem !important;
+  }
+}
+
+/* ===== NAVIGATION FIXES ===== */
+
+/* Tablet navigation adjustments */
+@media (min-width: 768px) and (max-width: 1023px) {
+  .nav-item {
+    padding: 0.5rem 1rem !important;
+    font-size: 0.9rem !important;
+  }
+}
+
+/* ===== SPACING UTILITIES ===== */
+
+/* Responsive spacing classes */
+.space-y-responsive > * + * {
+  margin-top: 1rem;
+}
+
+@media (min-width: 640px) {
+  .space-y-responsive > * + * {
+    margin-top: 1.25rem;
+  }
+}
+
+@media (min-width: 768px) {
+  .space-y-responsive > * + * {
+    margin-top: 1.5rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .space-y-responsive > * + * {
+    margin-top: 2rem;
+  }
+}
+
+/* ===== PREVENT HORIZONTAL SCROLL ===== */
+
+/* Ensure no horizontal overflow */
+* {
+  box-sizing: border-box;
+}
+
+html, body {
+  overflow-x: hidden;
+  width: 100%;
+}
+
+.container,
+.max-w-7xl,
+.max-w-6xl,
+.max-w-5xl {
+  width: 100%;
+  max-width: 100%;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* ===== ANIMATION PERFORMANCE ===== */
+
+/* Optimize animations for mobile */
+@media (max-width: 768px) {
+  * {
+    animation-duration: 0.2s !important;
+    transition-duration: 0.2s !important;
+  }
+}
+
+/* ===== ACCESSIBILITY IMPROVEMENTS ===== */
+
+/* Focus states for keyboard navigation */
+.focusable:focus {
+  outline: 2px solid #3b82f6;
+  outline-offset: 2px;
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .card {
+    border-width: 3px !important;
+  }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

@@ -141,10 +141,10 @@ export default function HeroSection() {
       <div className="relative z-[5]">
         <div className="flex flex-col">
           {/* First Screen - Hero Content */}
-          <div className="min-h-[75vh] flex flex-col lg:flex-row items-center justify-between px-6 md:px-24 max-w-7xl mx-auto w-full gap-6 pt-24 md:pt-20 pb-0">
+          <div className="min-h-[75vh] flex flex-col md:flex-row lg:flex-row items-center justify-between px-6 md:px-12 lg:px-24 max-w-7xl mx-auto w-full gap-6 pt-24 md:pt-20 pb-0">
             {/* Image Second on Mobile, Second on Desktop */}
-            <div className="relative w-full lg:w-[45%] aspect-square select-none order-2 lg:order-2 -mt-4 md:mt-0">
-              <div className="relative w-full h-full max-w-[320px] md:max-w-[500px] mx-auto">
+            <div className="relative w-full md:w-[45%] lg:w-[45%] aspect-square select-none order-2 md:order-2 lg:order-2 -mt-4 md:mt-0">
+              <div className="relative w-full h-full max-w-[320px] md:max-w-[400px] lg:max-w-[500px] mx-auto">
                 <div className="absolute inset-0 bg-sky-400/20 rounded-[2rem] md:rounded-[4rem] rotate-6 scale-95" />
                 <div className="absolute inset-0 bg-black/5 rounded-[2rem] md:rounded-[4rem] -rotate-3 border border-black/10 backdrop-blur-sm" />
                 <div className="absolute inset-0 rounded-[2rem] md:rounded-[4rem] overflow-hidden border border-black/20 bg-gradient-to-br from-white/50 to-transparent">
@@ -153,7 +153,7 @@ export default function HeroSection() {
                       src="/me.png"
                       alt="Hero Character"
                       loading="eager"
-                      fetchpriority="high"
+                      fetchPriority="high"
                       width={500}
                       height={500}
                       decoding="async"
@@ -171,13 +171,13 @@ export default function HeroSection() {
             </div>
 
             {/* Text Content - First on Mobile, First on Desktop */}
-            <div className="flex flex-col items-start justify-center lg:w-3/5 order-1 lg:order-1">
+            <div className="flex flex-col items-start justify-center md:w-3/5 lg:w-3/5 order-1 md:order-1 lg:order-1">
               <motion.div {...fadeIn} className="mb-2 md:mb-6">
                 <span className="px-3 md:px-4 py-1 md:py-1.5 rounded-full border border-sky-500/30 bg-sky-500/10 text-sky-600 text-[8px] md:text-[10px] font-black uppercase tracking-[0.3em]">
                   Crafting Future Tech
                 </span>
               </motion.div>
-              <h1 className="hero-title text-5xl md:text-[10rem] font-black tracking-tighter leading-[0.8] mb-3 md:mb-8 select-none text-left text-black">
+              <h1 className="hero-title text-5xl md:text-6xl lg:text-[10rem] font-black tracking-tighter leading-[0.8] mb-3 md:mb-6 lg:mb-8 select-none text-left text-black">
                 KUNAL<br />
                 <span className="text-transparent bg-clip-text bg-gradient-to-b from-black to-black/40">PATIL</span>
               </h1>

@@ -60,13 +60,13 @@ export default function GridSection() {
           </div>
 
           {/* Grid with 4 Divisions */}
-          <div className="relative grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12">
+          <div className="relative grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6 md:gap-8 lg:gap-12">
             
             {/* Vertical Dashed Line */}
-            <div className="hidden md:block absolute left-1/2 top-0 bottom-0 w-[2px] border-l-2 border-dashed border-red-400/50 -translate-x-1/2" />
+            <div className="hidden md:block lg:block absolute left-1/2 top-0 bottom-0 w-[2px] border-l-2 border-dashed border-red-400/50 -translate-x-1/2" />
             
             {/* Horizontal Dashed Line */}
-            <div className="hidden md:block absolute top-1/2 left-0 right-0 h-[2px] border-t-2 border-dashed border-red-400/50 -translate-y-1/2" />
+            <div className="hidden md:block lg:block absolute top-1/2 left-0 right-0 h-[2px] border-t-2 border-dashed border-red-400/50 -translate-y-1/2" />
 
             {/* Top Left Division - Pink/Purple Gradient */}
             <motion.div
@@ -74,7 +74,7 @@ export default function GridSection() {
               whileInView={{ opacity: 1, scale: 1 }}
               viewport={{ once: true }}
               transition={{ duration: 0.6 }}
-              className="relative p-8 rounded-2xl bg-gradient-to-br from-pink-100/50 via-white to-white border-2 border-gray-300 hover:border-pink-400 transition-all duration-300 group"
+              className="relative p-6 md:p-8 lg:p-8 rounded-2xl bg-gradient-to-br from-pink-100/50 via-white to-white border-2 border-gray-300 hover:border-pink-400 transition-all duration-300 group"
             >
               <div className="absolute top-0 left-0 w-32 h-32 bg-gradient-to-br from-pink-300/30 to-transparent rounded-full blur-3xl" />
               

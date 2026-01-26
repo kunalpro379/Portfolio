@@ -169,14 +169,23 @@ export default function ProjectsSection() {
         <SectionHeader icon={FolderKanban} title="FEATURED PROJECTS" subtitle="PREMIUM WORK COLLECTION" />
 
         {/* Mobile Layout - Simple Vertical Stack */}
-        <div className="md:hidden space-y-4 mt-8">
+        <div className="lg:hidden space-y-4 mt-8">
           {projects.map((project, index) => (
             <ProjectCard key={index} {...project} />
           ))}
         </div>
 
+        {/* Tablet Layout - 2 Column Grid */}
+        <div className="hidden md:block lg:hidden">
+          <div className="grid grid-cols-2 gap-4 mt-8">
+            {projects.map((project, index) => (
+              <ProjectCard key={index} {...project} size="medium" />
+            ))}
+          </div>
+        </div>
+
         {/* Desktop Layout */}
-        <div className="hidden md:block">
+        <div className="hidden lg:block">
           {/* Row 1 - Layout: Tall | Medium+Medium | Tall | Medium+Medium */}
           <div className="grid grid-cols-4 gap-6 mt-8">
             <div className="col-span-1">

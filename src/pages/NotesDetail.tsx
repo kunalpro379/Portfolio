@@ -48,26 +48,6 @@ export default function NotesDetail() {
     return textExtensions.includes(getFileExtension(filename));
   };
 
-  // Mobile and PDF support detection
-  const isMobile = () => {
-    return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-  };
-
-  const supportsPDFViewing = () => {
-    // Check if browser supports PDF viewing in iframe
-    const isChrome = /Chrome/.test(navigator.userAgent);
-    const isFirefox = /Firefox/.test(navigator.userAgent);
-    const isSafari = /Safari/.test(navigator.userAgent) && !/Chrome/.test(navigator.userAgent);
-    const isEdge = /Edge/.test(navigator.userAgent);
-    
-    // Most modern browsers support PDF viewing, but mobile Safari can be problematic
-    if (isMobile() && isSafari) {
-      return false;
-    }
-    
-    return isChrome || isFirefox || isEdge || (!isMobile() && isSafari);
-  };
-
   useEffect(() => {
     const fetchFolderTree = async () => {
       try {
@@ -133,37 +113,6 @@ export default function NotesDetail() {
 
     if (id) fetchFolderTree();
   }, [id]);
-
-  // Handle PDF loading errors on mobile
-  useEffect(() => {
-    if (selectedFile && isPdfFile(selectedFile.filename) && supportsPDFViewing()) {
-      const iframe = document.querySelector(`iframe[title="${selectedFile.filename}"]`) as HTMLIFrameElement;
-      const fallback = document.getElementById(`pdf-fallback-${selectedFile.fileId}`);
-      
-      if (iframe && fallback) {
-        const handleLoad = () => {
-          // PDF loaded successfully, hide fallback
-          fallback.style.opacity = '0';
-          fallback.style.pointerEvents = 'none';
-        };
-        
-        const handleError = () => {
-          // PDF failed to load, show fallback
-          fallback.style.opacity = '1';
-          fallback.style.pointerEvents = 'auto';
-        };
-        
-        iframe.addEventListener('load', handleLoad);
-        iframe.addEventListener('error', handleError);
-        
-        // Cleanup
-        return () => {
-          iframe.removeEventListener('load', handleLoad);
-          iframe.removeEventListener('error', handleError);
-        };
-      }
-    }
-  }, [selectedFile]);
 
   const loadFile = async (file: NoteFile, isInitialLoad: boolean = false) => {
     try {
@@ -324,28 +273,16 @@ export default function NotesDetail() {
           
           {selectedFile && (
             <div className="flex items-center gap-2 flex-shrink-0">
-              {isPdfFile(selectedFile.filename) && supportsPDFViewing() && (
+              {isPdfFile(selectedFile.filename) && (
                 <button
                   onClick={() => {
                     const iframe = document.querySelector('iframe[title="' + selectedFile.filename + '"]') as HTMLIFrameElement;
                     if (iframe) {
-                      // Try different fullscreen methods for better mobile support
-                      if (iframe.requestFullscreen) {
-                        iframe.requestFullscreen();
-                      } else if ((iframe as any).webkitRequestFullscreen) {
-                        (iframe as any).webkitRequestFullscreen();
-                      } else if ((iframe as any).mozRequestFullScreen) {
-                        (iframe as any).mozRequestFullScreen();
-                      } else if ((iframe as any).msRequestFullscreen) {
-                        (iframe as any).msRequestFullscreen();
-                      } else {
-                        // Fallback: open in new tab for mobile browsers that don't support fullscreen
-                        window.open(selectedFile.cloudinaryUrl, '_blank');
-                      }
+                      iframe.requestFullscreen();
                     }
                   }}
-                  className="p-2 bg-purple-500 text-white border-2 border-black rounded-lg hover:bg-purple-600 active:bg-purple-700 transition-all"
-                  title="Full Screen / Open in New Tab"
+                  className="p-2 bg-purple-500 text-white border-2 border-black rounded-lg hover:bg-purple-600 transition-all"
+                  title="Full Screen"
                 >
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2.5}>
                     <path strokeLinecap="round" strokeLinejoin="round" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4" />
@@ -410,70 +347,14 @@ export default function NotesDetail() {
               <div className="flex-1 overflow-hidden min-h-0">
                 {isPdfFile(selectedFile.filename) ? (
                   <>
-                    {/* PDF Viewer - Mobile Optimized */}
-                    <div className="h-full w-full relative pdf-container mobile-pdf-height">
-                      {supportsPDFViewing() ? (
-                        <iframe 
-                          src={`${selectedFile.cloudinaryUrl}#toolbar=1&navpanes=1&scrollbar=1&view=FitH`}
-                          className="w-full h-full min-h-[70vh] md:min-h-full" 
-                          title={selectedFile.filename}
-                          style={{ 
-                            border: 'none',
-                            minHeight: 'calc(100vh - 200px)' // Better mobile height
-                          }}
-                          // Mobile-specific attributes
-                          allow="fullscreen"
-                          loading="lazy"
-                          sandbox="allow-same-origin allow-scripts allow-popups allow-forms"
-                        />
-                      ) : (
-                        /* Fallback for browsers/devices that don't support PDF viewing */
-                        <div className="flex items-center justify-center h-full bg-gray-100">
-                          <div className="text-center p-6">
-                            <FileText size={64} className="mx-auto mb-4 text-gray-400" />
-                            <h3 className="text-lg font-bold text-gray-800 mb-2">PDF Preview Not Available</h3>
-                            <p className="text-gray-600 mb-6 text-sm">
-                              {isMobile() ? 'Mobile browser doesn\'t support PDF preview' : 'PDF preview not supported in this browser'}
-                            </p>
-                            <div className="flex flex-col sm:flex-row gap-3 justify-center">
-                              <a 
-                                href={selectedFile.cloudinaryUrl} 
-                                target="_blank" 
-                                rel="noopener noreferrer"
-                                className="inline-flex items-center gap-2 px-4 py-2 bg-blue-500 text-white border-2 border-black rounded-lg hover:bg-blue-600 transition-all font-bold"
-                              >
-                                <ExternalLink className="w-4 h-4" />
-                                Open PDF
-                              </a>
-                              <a 
-                                href={selectedFile.cloudinaryUrl} 
-                                download={selectedFile.filename}
-                                className="inline-flex items-center gap-2 px-4 py-2 bg-green-500 text-white border-2 border-black rounded-lg hover:bg-green-600 transition-all font-bold"
-                              >
-                                <Download className="w-4 h-4" />
-                                Download
-                              </a>
-                            </div>
-                          </div>
-                        </div>
-                      )}
-                      
-                      {/* Mobile Fallback - Show download option if PDF doesn't load properly */}
-                      <div className="absolute inset-0 flex items-center justify-center bg-gray-100 opacity-0 pointer-events-none" id={`pdf-fallback-${selectedFile.fileId}`}>
-                        <div className="text-center p-6">
-                          <FileText size={48} className="mx-auto mb-4 text-gray-400" />
-                          <p className="text-gray-600 mb-4 font-bold">PDF viewer not supported</p>
-                          <a 
-                            href={selectedFile.cloudinaryUrl} 
-                            target="_blank" 
-                            rel="noopener noreferrer"
-                            className="inline-flex items-center gap-2 px-4 py-2 bg-blue-500 text-white border-2 border-black rounded-lg hover:bg-blue-600 transition-all font-bold"
-                          >
-                            <ExternalLink className="w-4 h-4" />
-                            Open PDF
-                          </a>
-                        </div>
-                      </div>
+                    {/* PDF Viewer - Full Height for all screens */}
+                    <div className="h-full w-full">
+                      <iframe 
+                        src={selectedFile.cloudinaryUrl} 
+                        className="w-full h-full" 
+                        title={selectedFile.filename}
+                        style={{ border: 'none' }}
+                      />
                     </div>
                   </>
               ) : isTextFile(selectedFile.filename) ? (
