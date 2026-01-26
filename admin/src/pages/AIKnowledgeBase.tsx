@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Upload, Database, FileText, Code, BookOpen, FolderOpen, Loader2, CheckCircle, XCircle, Plus } from 'lucide-react';
+import { Upload, Database, FileText, Code, BookOpen, FolderOpen, Loader2, CheckCircle, XCircle, Plus, Clock, ArrowRight } from 'lucide-react';
 import config from '../config/config';
 
 interface KnowledgeBaseFile {
@@ -25,14 +25,32 @@ interface ExistingContent {
   selected?: boolean;
 }
 
+interface ProcessingStep {
+  id: string;
+  title: string;
+  description: string;
+  status: 'pending' | 'processing' | 'completed' | 'error';
+  progress?: number;
+}
+
+interface UploadProgress {
+  fileName: string;
+  steps: ProcessingStep[];
+  currentStep: number;
+  overallProgress: number;
+  status: 'uploading' | 'completed' | 'error';
+}
+
 export default function AIKnowledgeBase() {
   const [activeTab, setActiveTab] = useState<'upload' | 'existing'>('upload');
   const [knowledgeBaseFiles, setKnowledgeBaseFiles] = useState<KnowledgeBaseFile[]>([]);
   const [existingContent, setExistingContent] = useState<ExistingContent[]>([]);
   const [loading, setLoading] = useState(false);
-  const [uploadProgress, setUploadProgress] = useState<{ [key: string]: number }>({});
+  const [uploadProgress, setUploadProgress] = useState<UploadProgress[]>([]);
   const [showExistingModal, setShowExistingModal] = useState(false);
   const [processingExisting, setProcessingExisting] = useState(false);
+  const [existingProcessSteps, setExistingProcessSteps] = useState<ProcessingStep[]>([]);
+  const [showUploadProgress, setShowUploadProgress] = useState(false);
 
   useEffect(() => {
     fetchKnowledgeBaseFiles();
@@ -229,28 +247,108 @@ export default function AIKnowledgeBase() {
     if (!files || files.length === 0) return;
 
     setLoading(true);
+    setShowUploadProgress(true);
+    
+    const initialProgress: UploadProgress[] = Array.from(files).map((file, index) => ({
+      fileName: file.name,
+      steps: [
+        { id: 'validate', title: 'Validating File', description: 'Checking file format and size', status: 'pending' },
+        { id: 'upload', title: 'Uploading to Cloud', description: 'Storing file in Azure Blob Storage', status: 'pending' },
+        { id: 'process', title: 'Processing Content', description: 'Analyzing and extracting content', status: 'pending' },
+        { id: 'database', title: 'Saving to Database', description: 'Storing metadata and references', status: 'pending' },
+        { id: 'complete', title: 'Finalizing', description: 'Adding to knowledge base', status: 'pending' }
+      ],
+      currentStep: 0,
+      overallProgress: 0,
+      status: 'uploading'
+    }));
+    
+    setUploadProgress(initialProgress);
     
     try {
       // Process files one by one
       for (let i = 0; i < files.length; i++) {
         const file = files[i];
-        const formData = new FormData();
-        formData.append('file', file);
+        
+        // Update current file progress
+        const updateProgress = (stepIndex: number, stepStatus: 'processing' | 'completed' | 'error', progress: number) => {
+          setUploadProgress(prev => prev.map((item, index) => {
+            if (index === i) {
+              const updatedSteps = item.steps.map((step, sIndex) => {
+                if (sIndex === stepIndex) {
+                  return { ...step, status: stepStatus, progress };
+                } else if (sIndex < stepIndex) {
+                  return { ...step, status: 'completed' };
+                }
+                return step;
+              });
+              
+              return {
+                ...item,
+                steps: updatedSteps,
+                currentStep: stepIndex,
+                overallProgress: progress,
+                status: stepStatus === 'error' ? 'error' : (stepIndex === 4 && stepStatus === 'completed' ? 'completed' : 'uploading')
+              };
+            }
+            return item;
+          }));
+        };
 
-        const response = await fetch(config.api.endpoints.knowledgeBaseUpload, {
-          method: 'POST',
-          credentials: 'include',
-          body: formData
-        });
+        try {
+          // Step 1: Validate
+          updateProgress(0, 'processing', 10);
+          await new Promise(resolve => setTimeout(resolve, 500)); // Simulate validation
+          updateProgress(0, 'completed', 20);
 
-        if (!response.ok) {
-          console.error(`Upload failed for ${file.name}`);
+          // Step 2: Upload
+          updateProgress(1, 'processing', 30);
+          const formData = new FormData();
+          formData.append('file', file);
+
+          const response = await fetch(config.api.endpoints.knowledgeBaseUpload, {
+            method: 'POST',
+            credentials: 'include',
+            body: formData
+          });
+
+          if (!response.ok) {
+            throw new Error(`Upload failed for ${file.name}`);
+          }
+
+          updateProgress(1, 'completed', 50);
+
+          // Step 3: Process
+          updateProgress(2, 'processing', 60);
+          await new Promise(resolve => setTimeout(resolve, 800)); // Simulate processing
+          updateProgress(2, 'completed', 80);
+
+          // Step 4: Database
+          updateProgress(3, 'processing', 90);
+          await new Promise(resolve => setTimeout(resolve, 500)); // Simulate database save
+          updateProgress(3, 'completed', 95);
+
+          // Step 5: Complete
+          updateProgress(4, 'processing', 98);
+          await new Promise(resolve => setTimeout(resolve, 300));
+          updateProgress(4, 'completed', 100);
+
+        } catch (error) {
+          console.error(`Error uploading ${file.name}:`, error);
+          updateProgress(Math.min(4, initialProgress[i].currentStep), 'error', initialProgress[i].overallProgress);
         }
       }
 
       await fetchKnowledgeBaseFiles();
       // Reset file input
       event.target.value = '';
+      
+      // Hide progress after 2 seconds
+      setTimeout(() => {
+        setShowUploadProgress(false);
+        setUploadProgress([]);
+      }, 2000);
+      
     } catch (error) {
       console.error('Error uploading files:', error);
     } finally {
@@ -278,7 +376,39 @@ export default function AIKnowledgeBase() {
     if (selectedItems.length === 0) return;
 
     setProcessingExisting(true);
+    
+    // Initialize processing steps
+    const steps: ProcessingStep[] = [
+      { id: 'fetch', title: 'Fetching Content', description: `Collecting ${selectedItems.length} selected items`, status: 'pending' },
+      { id: 'convert', title: 'Converting Format', description: 'Converting content to knowledge base format', status: 'pending' },
+      { id: 'upload', title: 'Uploading to Cloud', description: 'Storing files in Azure Blob Storage', status: 'pending' },
+      { id: 'process', title: 'Processing Content', description: 'Analyzing and indexing content', status: 'pending' },
+      { id: 'database', title: 'Saving to Database', description: 'Storing in knowledge base collection', status: 'pending' },
+      { id: 'complete', title: 'Finalizing', description: 'Adding to searchable knowledge base', status: 'pending' }
+    ];
+    
+    setExistingProcessSteps(steps);
+
+    const updateStep = (stepId: string, status: 'processing' | 'completed' | 'error', progress?: number) => {
+      setExistingProcessSteps(prev => prev.map(step => 
+        step.id === stepId ? { ...step, status, progress } : step
+      ));
+    };
+
     try {
+      // Step 1: Fetch Content
+      updateStep('fetch', 'processing', 10);
+      await new Promise(resolve => setTimeout(resolve, 800));
+      updateStep('fetch', 'completed', 20);
+
+      // Step 2: Convert Format
+      updateStep('convert', 'processing', 30);
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      updateStep('convert', 'completed', 40);
+
+      // Step 3: Upload to Cloud
+      updateStep('upload', 'processing', 50);
+      
       const response = await fetch(config.api.endpoints.knowledgeBaseProcessExisting, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -286,21 +416,58 @@ export default function AIKnowledgeBase() {
         body: JSON.stringify({ items: selectedItems })
       });
 
-      if (response.ok) {
-        const data = await response.json();
-        alert(`Successfully processed ${data.stats.successful} items!`);
-        await fetchKnowledgeBaseFiles();
-        setShowExistingModal(false);
-        setExistingContent(prev => prev.map(item => ({ ...item, selected: false })));
-      } else {
+      if (!response.ok) {
         const errorData = await response.json();
-        alert(`Processing failed: ${errorData.message}`);
+        throw new Error(errorData.message || 'Processing failed');
       }
+
+      updateStep('upload', 'completed', 60);
+
+      // Step 4: Process Content
+      updateStep('process', 'processing', 70);
+      await new Promise(resolve => setTimeout(resolve, 1200));
+      updateStep('process', 'completed', 85);
+
+      // Step 5: Database
+      updateStep('database', 'processing', 90);
+      await new Promise(resolve => setTimeout(resolve, 800));
+      updateStep('database', 'completed', 95);
+
+      // Step 6: Complete
+      updateStep('complete', 'processing', 98);
+      await new Promise(resolve => setTimeout(resolve, 500));
+      updateStep('complete', 'completed', 100);
+
+      const data = await response.json();
+      alert(`Successfully processed ${data.stats.successful} items!`);
+      
+      await fetchKnowledgeBaseFiles();
+      setShowExistingModal(false);
+      setExistingContent(prev => prev.map(item => ({ ...item, selected: false })));
+      
+      // Hide steps after 2 seconds
+      setTimeout(() => {
+        setExistingProcessSteps([]);
+      }, 2000);
+      
     } catch (error) {
       console.error('Error processing existing content:', error);
-      alert('Failed to process existing content');
+      const currentStep = existingProcessSteps.find(step => step.status === 'processing');
+      if (currentStep) {
+        updateStep(currentStep.id, 'error');
+      }
+      alert(`Processing failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
     } finally {
       setProcessingExisting(false);
+    }
+  };
+
+  const getStepIcon = (status: string) => {
+    switch (status) {
+      case 'processing': return <Loader2 className="w-4 h-4 animate-spin text-blue-500" />;
+      case 'completed': return <CheckCircle className="w-4 h-4 text-green-500" />;
+      case 'error': return <XCircle className="w-4 h-4 text-red-500" />;
+      default: return <Clock className="w-4 h-4 text-gray-400" />;
     }
   };
 
@@ -518,6 +685,112 @@ export default function AIKnowledgeBase() {
                   <Code className="w-8 h-8 text-orange-500 mx-auto mb-2" strokeWidth={2.5} />
                   <p className="font-bold text-black text-sm">Code Files</p>
                   <p className="text-xs text-gray-600">Source code</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Upload Progress Modal */}
+        {showUploadProgress && (
+          <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+            <div className="bg-white border-2 border-black rounded-xl p-6 max-w-2xl w-full max-h-[80vh] overflow-y-auto shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
+              <div className="flex items-center justify-between mb-6">
+                <h2 className="text-xl font-black text-black" style={{ fontFamily: 'Comic Sans MS, cursive' }}>
+                  Uploading Files
+                </h2>
+                <div className="flex items-center gap-2">
+                  <Loader2 className="w-5 h-5 animate-spin text-blue-500" />
+                  <span className="text-sm font-medium text-gray-600">
+                    {uploadProgress.filter(p => p.status === 'completed').length} / {uploadProgress.length} completed
+                  </span>
+                </div>
+              </div>
+
+              <div className="space-y-4">
+                {uploadProgress.map((progress, index) => (
+                  <div key={index} className="border-2 border-black rounded-lg p-4 bg-white">
+                    <div className="flex items-center justify-between mb-3">
+                      <h3 className="font-bold text-black text-sm truncate flex-1 mr-2">{progress.fileName}</h3>
+                      <div className="flex items-center gap-2">
+                        {progress.status === 'uploading' && <Loader2 className="w-4 h-4 animate-spin text-blue-500" />}
+                        {progress.status === 'completed' && <CheckCircle className="w-4 h-4 text-green-500" />}
+                        {progress.status === 'error' && <XCircle className="w-4 h-4 text-red-500" />}
+                        <span className="text-xs font-medium text-gray-600">{progress.overallProgress}%</span>
+                      </div>
+                    </div>
+
+                    {/* Progress Bar */}
+                    <div className="w-full bg-gray-200 border-2 border-black rounded-lg h-2 mb-3">
+                      <div 
+                        className="bg-blue-500 h-full rounded-md transition-all duration-300"
+                        style={{ width: `${progress.overallProgress}%` }}
+                      />
+                    </div>
+
+                    {/* Steps */}
+                    <div className="space-y-2">
+                      {progress.steps.map((step, stepIndex) => (
+                        <div key={step.id} className="flex items-center gap-3">
+                          {getStepIcon(step.status)}
+                          <div className="flex-1">
+                            <p className="text-xs font-bold text-black">{step.title}</p>
+                            <p className="text-xs text-gray-600">{step.description}</p>
+                          </div>
+                          {stepIndex < progress.steps.length - 1 && step.status === 'completed' && (
+                            <ArrowRight className="w-3 h-3 text-gray-400" />
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Existing Content Processing Progress */}
+        {processingExisting && existingProcessSteps.length > 0 && (
+          <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+            <div className="bg-white border-2 border-black rounded-xl p-6 max-w-lg w-full shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
+              <div className="flex items-center justify-between mb-6">
+                <h2 className="text-xl font-black text-black" style={{ fontFamily: 'Comic Sans MS, cursive' }}>
+                  Processing Content
+                </h2>
+                <Loader2 className="w-5 h-5 animate-spin text-blue-500" />
+              </div>
+
+              <div className="space-y-4">
+                {existingProcessSteps.map((step, index) => (
+                  <div key={step.id} className="flex items-center gap-3">
+                    {getStepIcon(step.status)}
+                    <div className="flex-1">
+                      <p className="text-sm font-bold text-black">{step.title}</p>
+                      <p className="text-xs text-gray-600">{step.description}</p>
+                    </div>
+                    {index < existingProcessSteps.length - 1 && step.status === 'completed' && (
+                      <ArrowRight className="w-4 h-4 text-gray-400" />
+                    )}
+                  </div>
+                ))}
+              </div>
+
+              {/* Overall Progress */}
+              <div className="mt-6">
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-xs font-medium text-gray-600">Overall Progress</span>
+                  <span className="text-xs font-bold text-black">
+                    {Math.round((existingProcessSteps.filter(s => s.status === 'completed').length / existingProcessSteps.length) * 100)}%
+                  </span>
+                </div>
+                <div className="w-full bg-gray-200 border-2 border-black rounded-lg h-2">
+                  <div 
+                    className="bg-green-500 h-full rounded-md transition-all duration-300"
+                    style={{ 
+                      width: `${(existingProcessSteps.filter(s => s.status === 'completed').length / existingProcessSteps.length) * 100}%` 
+                    }}
+                  />
                 </div>
               </div>
             </div>

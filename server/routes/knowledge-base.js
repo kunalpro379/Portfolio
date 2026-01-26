@@ -2,8 +2,28 @@ import express from 'express';
 import multer from 'multer';
 import { BlobServiceClient } from '@azure/storage-blob';
 import { KnowledgeBase } from '../models/KnowledgeBase.js';
+import CONFIG from '../../config.shared.js';
 
 const router = express.Router();
+
+// CORS middleware for knowledge base routes
+router.use((req, res, next) => {
+  const origin = req.headers.origin;
+  const allowedOrigin = CONFIG.CORS.ORIGINS.includes(origin) ? origin : null;
+  
+  if (allowedOrigin) {
+    res.header('Access-Control-Allow-Origin', allowedOrigin);
+    res.header('Access-Control-Allow-Credentials', 'true');
+  }
+  res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+  res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
+  
+  if (req.method === 'OPTIONS') {
+    return res.status(204).end();
+  }
+  
+  next();
+});
 
 // Check if required environment variables exist
 const AZURE_STORAGE_CONNECTION_STRING = process.env.AZURE_STORAGE_CONNECTION_STRING;
@@ -137,7 +157,7 @@ const processFileContent = (fileBuffer, fileName) => {
   return { processedContent, metadata };
 };
 
-// Upload knowledge base file
+// Upload knowledge base file - simplified version
 router.post('/upload', upload.single('file'), async (req, res) => {
   try {
     if (!req.file) {
@@ -150,50 +170,28 @@ router.post('/upload', upload.single('file'), async (req, res) => {
     const { originalname, buffer, size } = req.file;
     const fileId = generateId();
     
-    // Set headers for Server-Sent Events
-    res.writeHead(200, {
-      'Content-Type': 'text/plain',
-      'Cache-Control': 'no-cache',
-      'Connection': 'keep-alive',
-      'Access-Control-Allow-Origin': '*',
-      'Access-Control-Allow-Headers': 'Cache-Control'
-    });
+    console.log(`Processing file: ${originalname} (${size} bytes)`);
     
-    // Step 1: Upload to Azure Blob Storage
-    res.write(`data: ${JSON.stringify({ 
-      step: 'upload', 
-      message: 'Uploading file to Azure Blob Storage...', 
-      progress: 20 
-    })}\n\n`);
-
+    // Upload to Azure Blob Storage
     let blobPath, blobUrl;
     try {
       const uploadResult = await uploadFileToAzure(buffer, originalname, fileId);
       blobPath = uploadResult.blobPath;
       blobUrl = uploadResult.blobUrl;
+      console.log('✅ File uploaded to Azure Blob Storage');
     } catch (azureError) {
       console.error('Azure upload failed:', azureError);
       // Continue without Azure storage
       blobPath = `local/${fileId}-${originalname}`;
       blobUrl = `local://files/${fileId}`;
+      console.log('⚠️ Using local storage fallback');
     }
     
-    // Step 2: Process file content
-    res.write(`data: ${JSON.stringify({ 
-      step: 'process', 
-      message: 'Processing file content...', 
-      progress: 40 
-    })}\n\n`);
-
+    // Process file content
     const { processedContent, metadata } = processFileContent(buffer, originalname);
+    console.log('✅ File content processed');
     
-    // Step 3: Save to database
-    res.write(`data: ${JSON.stringify({ 
-      step: 'database', 
-      message: 'Saving file information to database...', 
-      progress: 60 
-    })}\n\n`);
-
+    // Save to database
     const knowledgeBaseEntry = new KnowledgeBase({
       fileId,
       fileName: originalname,
@@ -202,50 +200,30 @@ router.post('/upload', upload.single('file'), async (req, res) => {
       azureBlobPath: blobPath,
       azureBlobUrl: blobUrl,
       metadata,
-      status: 'processing',
+      status: 'completed',
+      vectorStatus: 'skipped', // Skip vector processing for now
       createdAt: new Date(),
       updatedAt: new Date()
     });
 
     await knowledgeBaseEntry.save();
+    console.log('✅ File saved to database');
     
-    // Step 4: Processing complete
-    res.write(`data: ${JSON.stringify({ 
-      step: 'processing', 
-      message: 'Processing complete...', 
-      progress: 90 
-    })}\n\n`);
-
-    // Update status to completed (skip vector database entirely)
-    knowledgeBaseEntry.status = 'completed';
-    knowledgeBaseEntry.vectorStatus = 'skipped';
-    knowledgeBaseEntry.updatedAt = new Date();
-    await knowledgeBaseEntry.save();
-    
-    console.log('✅ File processed successfully (vector database skipped)');
-      
-    // Step 5: Complete
-    res.write(`data: ${JSON.stringify({ 
-      step: 'complete', 
-      message: 'Knowledge base updated successfully!', 
-      progress: 100,
+    res.json({ 
       success: true,
+      message: 'File uploaded and processed successfully',
       fileId,
-      fileName: originalname
-    })}\n\n`);
-    
-    res.end();
+      fileName: originalname,
+      fileSize: size
+    });
     
   } catch (error) {
     console.error('Upload error:', error);
-    res.write(`data: ${JSON.stringify({ 
-      step: 'error', 
-      message: 'Upload failed: ' + error.message, 
-      progress: 100,
+    res.status(500).json({
       success: false,
+      message: 'Upload failed: ' + error.message,
       error: error.message
-    })}\n\n`);
-    res.end();
+    });
   }
 });
 
