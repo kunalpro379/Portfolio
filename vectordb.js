@@ -137,9 +137,14 @@ async function uploadDocumentToQdrant(content = null, metadata = {}) {
         let documentContent = content;
         if (!documentContent) {
             console.log('📖 Reading document from AI/md.md...');
-            // Go up one directory from server to root, then into AI folder
-            const documentPath = path.join(process.cwd(), '..', 'AI', 'md.md');
-            documentContent = fs.readFileSync(documentPath, 'utf-8');
+            // Read from the correct path relative to the project root
+            const documentPath = path.join(process.cwd(), 'AI', 'md.md');
+            try {
+                documentContent = fs.readFileSync(documentPath, 'utf-8');
+            } catch (error) {
+                console.warn('⚠️ Could not read AI/md.md file:', error.message);
+                documentContent = 'Default content for testing purposes.';
+            }
         }
         
         console.log(`📄 Document loaded: ${documentContent.length} characters`);

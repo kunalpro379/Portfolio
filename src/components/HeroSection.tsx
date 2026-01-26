@@ -50,14 +50,8 @@ export default function HeroSection() {
   );
 
   useEffect(() => {
-    // Preload only critical hero image
-    const img = new Image();
-    img.src = "/me.png";
-    img.decode().then(() => {
-      setImagesLoaded(true);
-    }).catch(() => {
-      setImagesLoaded(true);
-    });
+    // Since the image is already preloaded in HTML, just set it as loaded
+    setImagesLoaded(true);
 
     // Image rotation for heroImages2
     const interval = setInterval(() => {
@@ -148,20 +142,16 @@ export default function HeroSection() {
                 <div className="absolute inset-0 bg-sky-400/20 rounded-[2rem] md:rounded-[4rem] rotate-6 scale-95" />
                 <div className="absolute inset-0 bg-black/5 rounded-[2rem] md:rounded-[4rem] -rotate-3 border border-black/10 backdrop-blur-sm" />
                 <div className="absolute inset-0 rounded-[2rem] md:rounded-[4rem] overflow-hidden border border-black/20 bg-gradient-to-br from-white/50 to-transparent">
-                  {imagesLoaded ? (
-                    <img
-                      src="/me.png"
-                      alt="Hero Character"
-                      loading="eager"
-                      fetchPriority="high"
-                      width={500}
-                      height={500}
-                      decoding="async"
-                      className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[100%] h-[100%] md:w-[80%] md:h-[80%] object-contain md:object-cover grayscale rounded-2xl"
-                    />
-                  ) : (
-                    <div className="absolute inset-0 bg-gradient-to-br from-sky-100 to-sky-200" />
-                  )}
+                  <img
+                    src="/me.png"
+                    alt="Hero Character"
+                    loading="eager"
+                    fetchPriority="high"
+                    width={500}
+                    height={500}
+                    decoding="async"
+                    className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[100%] h-[100%] md:w-[80%] md:h-[80%] object-contain md:object-cover grayscale rounded-2xl"
+                  />
                 </div>
 
                 {/* <div className="absolute -top-3 -right-3 md:-top-6 md:-right-6 px-3 md:px-6 py-1.5 md:py-3 bg-white border border-black/10 rounded-xl md:rounded-2xl shadow-2xl">

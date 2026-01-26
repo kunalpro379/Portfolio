@@ -1,7 +1,19 @@
 import express from 'express';
-import aiChatService from '../services/aiChatService.js';
 
 const router = express.Router();
+
+// Try to load the full AI chat service, fallback to minimal version
+let aiChatService;
+try {
+  const fullService = await import('../services/aiChatService.js');
+  aiChatService = fullService.default;
+  console.log('✅ Full AI Chat Service loaded');
+} catch (error) {
+  console.warn('⚠️ Full AI Chat Service failed, using minimal version:', error.message);
+  const minimalService = await import('../services/aiChatService.minimal.js');
+  aiChatService = minimalService.default;
+  console.log('✅ Minimal AI Chat Service loaded');
+}
 
 // Chat endpoint with session management
 router.post('/chat', async (req, res) => {
