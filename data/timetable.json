@@ -6,139 +6,363 @@
     "Monday": [
       {
         "time": "08:30-09:30",
-        "subject": "Data Structures",
+        "subject": "Unknown",
         "room": "B75",
-        "teacher": "Dr. Kumar",
-        "note": "Bring your laptop for practical session"
+        "teacher": null,
+        "note": "Subject not clearly mentioned"
       },
       {
         "time": "09:30-10:30",
-        "subject": "Machine Learning",
-        "room": "B76",
-        "teacher": "Prof. Sharma",
-        "note": "Quiz on linear regression"
+        "subject": "AAI (SO)",
+        "room": "B74",
+        "teacher": "SO"
       },
       {
         "time": "10:30-11:30",
-        "subject": "Database Management",
-        "room": "B77",
-        "teacher": "Dr. Patel",
-        "note": "SQL assignment due"
+        "subject": "AAI/A/SO",
+        "room": "210",
+        "teacher": "SO"
+      },
+      {
+        "time": "11:30-12:30",
+        "subject": "RL/B/POV + PROJECT/C",
+        "room": "211",
+        "teacher": "POV"
+      },
+      {
+        "time": "12:30-13:30",
+        "subject": "RS/H",
+        "room": "B75",
+        "teacher": "H"
+      },
+      {
+        "time": "12:30-13:30",
+        "subject": "SMA",
+        "room": "B76",
+        "teacher": "OMK",
+        "note": "Parallel group session"
+      },
+      {
+        "time": "13:30-14:30",
+        "subject": "Break",
+        "room": null,
+        "teacher": null
+      },
+      {
+        "time": "14:30-15:30",
+        "subject": "ILOC Practical",
+        "room": "Multiple Rooms",
+        "teacher": "Multiple Faculty",
+        "sessions": [
+          {
+            "teacher": "EM/AMUDHA",
+            "subject": "AIDS + AURO",
+            "room": "213"
+          },
+          {
+            "teacher": "EM/GS",
+            "subject": "D17A + D17C",
+            "room": "515"
+          },
+          {
+            "teacher": "FM/AC",
+            "subject": "AIDS",
+            "room": "413"
+          },
+          {
+            "teacher": "FM/SG",
+            "subject": "ECS + AURO",
+            "room": "412"
+          },
+          {
+            "teacher": "FM/MD",
+            "subject": "CMPN",
+            "room": "B31"
+          },
+          {
+            "teacher": "EM/KG",
+            "subject": "INFT + D19B + ECS",
+            "room": "B52"
+          },
+          {
+            "teacher": "EM/NK",
+            "subject": "D19A",
+            "room": "514"
+          },
+          {
+            "teacher": "FM/CJ",
+            "subject": "EXTC + INFT",
+            "room": "B42"
+          },
+          {
+            "teacher": "PM/PK",
+            "subject": "EXTC + CMPN",
+            "room": "B75"
+          },
+          {
+            "teacher": "PM/SKG",
+            "subject": "INFT (D20A) + AIDS",
+            "room": "B21"
+          },
+          {
+            "teacher": "PM/VP",
+            "subject": "INFT (D20B + D20C) + AURO",
+            "room": "516"
+          }
+        ]
       }
     ],
+
     "Tuesday": [
       {
         "time": "08:30-09:30",
-        "subject": "Algorithms",
-        "room": "B78",
-        "teacher": "Prof. Desai",
-        "note": "Complete homework on sorting algorithms"
+        "subject": "No Lecture",
+        "room": null,
+        "teacher": null
       },
       {
         "time": "09:30-10:30",
-        "subject": "Web Development",
-        "room": "B79",
-        "teacher": "Mr. Singh",
-        "note": "React.js project presentation"
+        "subject": "RL (POV)",
+        "room": "B75",
+        "teacher": "POV"
       },
       {
         "time": "10:30-11:30",
-        "subject": "Statistics",
-        "room": "B80",
-        "teacher": "Dr. Mehta",
-        "note": "Probability distributions chapter"
+        "subject": "SMA/A22",
+        "room": "B61",
+        "teacher": "OMK"
+      },
+      {
+        "time": "11:30-12:30",
+        "subject": "RS/A11",
+        "room": "207",
+        "teacher": "HJ"
+      },
+      {
+        "time": "12:30-13:30",
+        "subject": "AAI (SO)",
+        "room": "B75",
+        "teacher": "SO"
+      },
+      {
+        "time": "13:30-14:30",
+        "subject": "Break",
+        "room": null,
+        "teacher": null
+      },
+      {
+        "time": "14:30-15:30",
+        "subject": "ILOC Practical",
+        "room": "Multiple Rooms",
+        "teacher": "Multiple Faculty",
+        "sessions": [
+          {
+            "teacher": "EM/AMUDHA",
+            "subject": "AIDS + ECS",
+            "room": "B51"
+          },
+          {
+            "teacher": "EM/GS",
+            "subject": "D17A + D17C",
+            "room": "515"
+          },
+          {
+            "teacher": "FM/AC",
+            "subject": "AIDS",
+            "room": "413"
+          },
+          {
+            "teacher": "FM/SG",
+            "subject": "ECS + AURO",
+            "room": "412"
+          },
+          {
+            "teacher": "FM/MD",
+            "subject": "CMPN",
+            "room": "B31"
+          },
+          {
+            "teacher": "EM/KG",
+            "subject": "AURO + INFT",
+            "room": "B52"
+          },
+          {
+            "teacher": "EM/NK",
+            "subject": "D17B",
+            "room": "514"
+          },
+          {
+            "teacher": "FM/CJ",
+            "subject": "EXTC + INFT",
+            "room": "B42"
+          },
+          {
+            "teacher": "PM/PK",
+            "subject": "EXTC + CMPN",
+            "room": "415"
+          },
+          {
+            "teacher": "PM/SKG",
+            "subject": "INFT (D20A) + AIDS",
+            "room": "B21"
+          },
+          {
+            "teacher": "PM/VP",
+            "subject": "INFT (D20B + D20C) + AURO",
+            "room": "516"
+          }
+        ]
       }
     ],
+
     "Wednesday": [
       {
         "time": "08:30-09:30",
-        "subject": "Computer Networks",
-        "room": "B81",
-        "teacher": "Prof. Gupta",
-        "note": "OSI model discussion"
+        "subject": "BE Minor Block",
+        "room": "Multiple Rooms",
+        "sessions": [
+          {
+            "subject": "AIML",
+            "teacher": "Dhanamma",
+            "room": "414"
+          },
+          {
+            "subject": "BC/LF",
+            "teacher": null,
+            "room": "B32"
+          },
+          {
+            "subject": "CS/ARS",
+            "teacher": null,
+            "room": "B42"
+          },
+          {
+            "subject": "DS",
+            "teacher": "Meenalshi G",
+            "room": "214"
+          },
+          {
+            "subject": "IA/SP",
+            "teacher": null,
+            "room": "119"
+          }
+        ]
       },
       {
         "time": "09:30-10:30",
-        "subject": "Artificial Intelligence",
-        "room": "B82",
-        "teacher": "Dr. Joshi",
-        "note": "Neural networks lab"
+        "subject": "RL (POV)",
+        "room": "210",
+        "teacher": "POV"
       },
       {
         "time": "10:30-11:30",
-        "subject": "Software Engineering",
-        "room": "B83",
-        "teacher": "Prof. Agarwal",
-        "note": "SDLC methodologies"
-      }
-    ],
-    "Thursday": [
-      {
-        "time": "08:30-09:30",
-        "subject": "Operating Systems",
-        "room": "B84",
-        "teacher": "Dr. Verma",
-        "note": "Process scheduling algorithms"
+        "subject": "AAI/B/SO + PROJECT/C",
+        "room": "211",
+        "teacher": "SO"
       },
       {
-        "time": "09:30-10:30",
-        "subject": "Data Mining",
-        "room": "B85",
-        "teacher": "Prof. Rao",
-        "note": "Association rule mining"
+        "time": "11:30-12:30",
+        "subject": "RS",
+        "room": "B76",
+        "teacher": "HJ"
       },
       {
-        "time": "10:30-11:30",
-        "subject": "Computer Graphics",
-        "room": "B86",
-        "teacher": "Mr. Pandey",
-        "note": "3D transformations practical"
+        "time": "11:30-12:30",
+        "subject": "SMA",
+        "room": "516",
+        "teacher": "OMK",
+        "note": "Parallel session"
+      },
+      {
+        "time": "12:30-13:30",
+        "subject": "Break",
+        "room": null
+      },
+      {
+        "time": "14:30-15:30",
+        "subject": "RS/A13",
+        "room": "207",
+        "teacher": "HJ"
+      },
+      {
+        "time": "14:30-15:30",
+        "subject": "SMA/B22",
+        "room": "B61",
+        "teacher": "OMK",
+        "note": "Parallel session"
       }
     ],
+
     "Friday": [
       {
         "time": "08:30-09:30",
-        "subject": "Deep Learning",
-        "room": "B87",
-        "teacher": "Dr. Shah",
-        "note": "CNN architecture implementation"
+        "subject": "Project Session",
+        "room": null
       },
       {
         "time": "09:30-10:30",
-        "subject": "Cloud Computing",
-        "room": "B88",
-        "teacher": "Prof. Nair",
-        "note": "AWS services overview"
+        "subject": "RL (POV)",
+        "room": "B75",
+        "teacher": "POV"
       },
       {
         "time": "10:30-11:30",
-        "subject": "Project Work",
-        "room": "B89",
-        "teacher": "Dr. Kumar",
-        "note": "Final project presentations"
+        "subject": "AAI (SO)",
+        "room": "B75",
+        "teacher": "SO"
+      },
+      {
+        "time": "11:30-12:30",
+        "subject": "RL/A/POV",
+        "room": "207",
+        "teacher": "POV"
+      },
+      {
+        "time": "11:30-12:30",
+        "subject": "AAI/C/SO + PROJECT/C",
+        "room": "211",
+        "teacher": "SO"
+      },
+      {
+        "time": "14:30-15:30",
+        "subject": "BE Minor Block",
+        "room": "Multiple Rooms",
+        "sessions": [
+          {
+            "subject": "AIML",
+            "teacher": "Dhanamma",
+            "room": "415"
+          },
+          {
+            "subject": "BC/LF",
+            "teacher": null,
+            "room": "412"
+          },
+          {
+            "subject": "CS/ARS",
+            "teacher": null,
+            "room": "B42"
+          },
+          {
+            "subject": "DS",
+            "teacher": "Meenalshi G",
+            "room": "B51"
+          },
+          {
+            "subject": "IA/SP",
+            "teacher": null,
+            "room": "413"
+          }
+        ]
       }
     ],
+
     "Saturday": [
       {
-        "time": "08:30-09:30",
-        "subject": "Seminar",
-        "room": "Auditorium",
-        "teacher": "Guest Speaker",
-        "note": "Industry expert talk on AI trends"
-      },
-      {
-        "time": "09:30-10:30",
-        "subject": "Lab Session",
-        "room": "Computer Lab 1",
-        "teacher": "Lab Assistant",
-        "note": "Open lab for project work"
-      },
-      {
-        "time": "10:30-11:30",
-        "subject": "Extra Classes",
-        "room": "B90",
-        "teacher": "Various",
-        "note": "Doubt clearing session"
+        "time": "Online",
+        "subject": "Mini Project + Major/Minor Project Work",
+        "room": "Online",
+        "teacher": null
       }
     ]
   }

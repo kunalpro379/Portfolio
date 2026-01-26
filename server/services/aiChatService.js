@@ -1,6 +1,7 @@
 import Groq from 'groq-sdk';
 import { KnowledgeBase } from '../models/KnowledgeBase.js';
 import { BlobServiceClient } from '@azure/storage-blob';
+import { searchKnowledgeBase as vectorSearch } from '../../vectordb.js';
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
@@ -27,98 +28,32 @@ class AIChatService {
     this.containerName = 'knowledge-base';
   }
 
-  // Load local data files (timetable, etc.)
-  loadLocalData() {
+  // Search using vector database for all content types
+  async searchVectorDatabase(query, limit = 5) {
     try {
-      const dataPath = path.join(__dirname, '../../data');
-      const localData = {};
+      console.log(`🔍 Searching vector database for: "${query}"`);
       
-      // Load timetable.json
-      const timetablePath = path.join(dataPath, 'timetable.json');
-      if (fs.existsSync(timetablePath)) {
-        localData.timetable = JSON.parse(fs.readFileSync(timetablePath, 'utf8'));
-      }
+      // Use the vector database search function
+      const results = await vectorSearch(query, limit);
       
-      // Add other local data files here as needed
+      // Transform results to match expected format
+      const transformedResults = results.map(result => ({
+        content: result.payload.content,
+        section: result.payload.section_title || result.payload.section || 'Unknown',
+        type: result.payload.type || 'general',
+        technologies: result.payload.technologies || [],
+        score: result.score,
+        metadata: result.payload
+      }));
       
-      return localData;
+      console.log(`📋 Vector search found ${transformedResults.length} results`);
+      return transformedResults;
+      
     } catch (error) {
-      console.error('Error loading local data:', error);
-      return {};
+      console.error('❌ Vector database search error:', error);
+      // Fallback to empty results if vector search fails
+      return [];
     }
-  }
-
-  // Search local data for relevant information
-  searchLocalData(query, localData) {
-    const results = [];
-    const queryLower = query.toLowerCase();
-    
-    // Search timetable data
-    if (localData.timetable) {
-      const timetable = localData.timetable;
-      
-      // Check if query is about schedule/timetable
-      if (queryLower.includes('class') || queryLower.includes('schedule') || queryLower.includes('timetable') || 
-          queryLower.includes('monday') || queryLower.includes('tuesday') || queryLower.includes('wednesday') ||
-          queryLower.includes('thursday') || queryLower.includes('friday') || queryLower.includes('saturday')) {
-        
-        // Extract day and time from query
-        const days = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
-        const foundDay = days.find(day => queryLower.includes(day));
-        
-        // Extract time pattern (like 10:30)
-        const timeMatch = query.match(/(\d{1,2}):?(\d{2})/);
-        const queryTime = timeMatch ? `${timeMatch[1].padStart(2, '0')}:${timeMatch[2]}` : null;
-        
-        if (foundDay && queryTime) {
-          // Search for specific day and time
-          const daySchedule = timetable.timetable[foundDay.charAt(0).toUpperCase() + foundDay.slice(1)];
-          if (daySchedule) {
-            const classAtTime = daySchedule.find(cls => cls.time.includes(queryTime));
-            if (classAtTime) {
-              results.push({
-                content: `On ${foundDay} at ${queryTime}, you have ${classAtTime.subject} in room ${classAtTime.room} with ${classAtTime.teacher}. Note: ${classAtTime.note}`,
-                section: 'Timetable',
-                type: 'schedule',
-                score: 10,
-                fullContent: JSON.stringify(classAtTime, null, 2)
-              });
-            } else {
-              results.push({
-                content: `No class found on ${foundDay} at ${queryTime}. Here's the full schedule for ${foundDay}: ${JSON.stringify(daySchedule, null, 2)}`,
-                section: 'Timetable',
-                type: 'schedule',
-                score: 8,
-                fullContent: JSON.stringify(daySchedule, null, 2)
-              });
-            }
-          }
-        } else if (foundDay) {
-          // Search for specific day
-          const daySchedule = timetable.timetable[foundDay.charAt(0).toUpperCase() + foundDay.slice(1)];
-          if (daySchedule) {
-            results.push({
-              content: `Here's your schedule for ${foundDay}: ${JSON.stringify(daySchedule, null, 2)}`,
-              section: 'Timetable',
-              type: 'schedule',
-              score: 9,
-              fullContent: JSON.stringify(daySchedule, null, 2)
-            });
-          }
-        } else {
-          // General timetable query
-          results.push({
-            content: `Here's your complete timetable: ${JSON.stringify(timetable, null, 2)}`,
-            section: 'Timetable',
-            type: 'schedule',
-            score: 7,
-            fullContent: JSON.stringify(timetable, null, 2)
-          });
-        }
-      }
-    }
-    
-    return results;
   }
 
   // Search the knowledge base using text search through uploaded files
@@ -279,20 +214,21 @@ Guidelines:
     }
   }
 
-  // Main chat method that combines search and generation
+  // Main chat method that uses vector database for all content retrieval
   async chat(userQuery) {
     try {
-      // Load local data first
-      const localData = this.loadLocalData();
+      console.log(`💬 Processing query: "${userQuery}"`);
       
-      // Search local data for relevant context
-      const localResults = this.searchLocalData(userQuery, localData);
+      // Search vector database for relevant context (this handles JSON, MD, TXT files)
+      const vectorResults = await this.searchVectorDatabase(userQuery, 5);
       
-      // Search knowledge base for additional context
+      // Search knowledge base (Azure Blob) for additional context if available
       const kbResults = await this.searchKnowledgeBase(userQuery, 3);
       
-      // Combine results, prioritizing local data for schedule queries
-      const allResults = [...localResults, ...kbResults];
+      // Combine results, prioritizing vector database results
+      const allResults = [...vectorResults, ...kbResults];
+      
+      console.log(`📊 Total context sources found: ${allResults.length}`);
       
       // Generate response with context
       const result = await this.generateResponse(userQuery, allResults);
