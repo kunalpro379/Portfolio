@@ -309,6 +309,134 @@ router.get('/stats', async (req, res) => {
   }
 });
 
+// Process existing content from projects, blogs, docs, code
+router.post('/process-existing', async (req, res) => {
+  try {
+    const { items } = req.body;
+    
+    if (!items || !Array.isArray(items) || items.length === 0) {
+      return res.status(400).json({ 
+        success: false, 
+        message: 'No items provided for processing' 
+      });
+    }
+
+    const results = [];
+    
+    for (const item of items) {
+      try {
+        const fileId = generateId();
+        let content = '';
+        let fileName = '';
+        
+        // Extract content based on type
+        switch (item.type) {
+          case 'project':
+          case 'blog':
+            content = item.mdContent || '';
+            fileName = `${item.title.replace(/[^a-zA-Z0-9]/g, '_')}.md`;
+            break;
+          case 'documentation':
+          case 'code':
+            content = item.content || '';
+            fileName = item.fileName || `${item.title.replace(/[^a-zA-Z0-9]/g, '_')}.txt`;
+            break;
+          default:
+            continue; // Skip unknown types
+        }
+        
+        if (!content.trim()) {
+          console.warn(`Skipping ${item.title} - no content found`);
+          continue;
+        }
+        
+        const contentBuffer = Buffer.from(content, 'utf-8');
+        const fileSize = contentBuffer.length;
+        
+        // Upload to Azure Blob Storage
+        let blobPath, blobUrl;
+        try {
+          const uploadResult = await uploadFileToAzure(contentBuffer, fileName, fileId);
+          blobPath = uploadResult.blobPath;
+          blobUrl = uploadResult.blobUrl;
+        } catch (azureError) {
+          console.error('Azure upload failed for', fileName, ':', azureError);
+          // Continue without Azure storage
+          blobPath = `local/${fileId}-${fileName}`;
+          blobUrl = `local://files/${fileId}`;
+        }
+        
+        // Process content
+        const { processedContent, metadata } = processFileContent(contentBuffer, fileName);
+        
+        // Add additional metadata
+        metadata.sourceType = item.type;
+        metadata.sourceId = item._id;
+        metadata.sourceTitle = item.title;
+        metadata.processedAt = new Date().toISOString();
+        
+        // Save to knowledge base
+        const knowledgeBaseEntry = new KnowledgeBase({
+          fileId,
+          fileName,
+          fileType: fileName.endsWith('.md') ? '.md' : '.txt',
+          fileSize,
+          azureBlobPath: blobPath,
+          azureBlobUrl: blobUrl,
+          metadata,
+          status: 'completed',
+          vectorStatus: 'skipped', // Skip vector processing for now
+          createdAt: new Date(),
+          updatedAt: new Date()
+        });
+
+        await knowledgeBaseEntry.save();
+        
+        results.push({
+          success: true,
+          fileId,
+          fileName,
+          title: item.title,
+          type: item.type
+        });
+        
+        console.log(`✅ Processed ${item.type}: ${item.title}`);
+        
+      } catch (itemError) {
+        console.error(`Error processing ${item.title}:`, itemError);
+        results.push({
+          success: false,
+          title: item.title,
+          type: item.type,
+          error: itemError.message
+        });
+      }
+    }
+    
+    const successCount = results.filter(r => r.success).length;
+    const failureCount = results.filter(r => !r.success).length;
+    
+    res.json({ 
+      success: true, 
+      message: `Processed ${successCount} items successfully${failureCount > 0 ? `, ${failureCount} failed` : ''}`,
+      results,
+      stats: {
+        total: items.length,
+        successful: successCount,
+        failed: failureCount
+      }
+    });
+    
+  } catch (error) {
+    console.error('Process existing content error:', error);
+    res.status(500).json({ 
+      success: false, 
+      message: 'Server error while processing existing content',
+      error: error.message 
+    });
+  }
+});
+
 // Delete knowledge base file
 router.delete('/files/:fileId', async (req, res) => {
   try {

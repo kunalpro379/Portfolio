@@ -1,0 +1,87 @@
+/* Mobile Excalidraw Optimizations */
+
+/* Ensure proper touch handling on mobile */
+@media (max-width: 768px) {
+  /* Excalidraw canvas container */
+  .excalidraw {
+    touch-action: none !important;
+    -webkit-touch-callout: none !important;
+    -webkit-user-select: none !important;
+    user-select: none !important;
+    -webkit-tap-highlight-color: transparent !important;
+  }
+  
+  /* Canvas element specific optimizations */
+  .excalidraw canvas {
+    touch-action: none !important;
+    -webkit-touch-callout: none !important;
+    -webkit-user-select: none !important;
+    user-select: none !important;
+  }
+  
+  /* Prevent iOS Safari zoom on double tap */
+  .excalidraw * {
+    -webkit-touch-callout: none !important;
+    -webkit-user-select: none !important;
+    user-select: none !important;
+  }
+  
+  /* Improve touch responsiveness */
+  .excalidraw .App-menu {
+    touch-action: manipulation !important;
+  }
+  
+  /* Better toolbar handling on mobile */
+  .excalidraw .App-toolbar {
+    touch-action: manipulation !important;
+  }
+  
+  /* Optimize scroll behavior */
+  .excalidraw .scroll-parent {
+    -webkit-overflow-scrolling: touch !important;
+    overflow: hidden !important;
+  }
+}
+
+/* Tablet optimizations */
+@media (min-width: 769px) and (max-width: 1024px) {
+  .excalidraw {
+    touch-action: pan-x pan-y pinch-zoom !important;
+  }
+  
+  .excalidraw canvas {
+    touch-action: pan-x pan-y pinch-zoom !important;
+  }
+}
+
+/* Prevent text selection during drawing */
+.excalidraw .App-canvas {
+  -webkit-user-select: none !important;
+  -moz-user-select: none !important;
+  -ms-user-select: none !important;
+  user-select: none !important;
+}
+
+/* Fix for iOS Safari viewport issues */
+@supports (-webkit-touch-callout: none) {
+  .excalidraw {
+    height: 100vh !important;
+    height: -webkit-fill-available !important;
+  }
+}
+
+/* Improve pinch zoom behavior */
+@media (pointer: coarse) {
+  .excalidraw {
+    touch-action: none !important;
+  }
+  
+  .excalidraw canvas {
+    touch-action: none !important;
+  }
+  
+  /* Allow pinch zoom on the canvas specifically */
+  .excalidraw .App-canvas canvas {
+    touch-action: pinch-zoom !important;
+  }
+}

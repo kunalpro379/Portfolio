@@ -22,6 +22,7 @@ const config = {
       knowledgeBaseFiles: `${getApiBaseUrl()}/api/knowledge-base/files`,
       knowledgeBaseStats: `${getApiBaseUrl()}/api/knowledge-base/stats`,
       knowledgeBaseUpload: `${getApiBaseUrl()}/api/knowledge-base/upload`,
+      knowledgeBaseProcessExisting: `${getApiBaseUrl()}/api/knowledge-base/process-existing`,
       knowledgeBaseFileById: (id: string) => `${getApiBaseUrl()}/api/knowledge-base/files/${id}`,
       
       // AI Chat

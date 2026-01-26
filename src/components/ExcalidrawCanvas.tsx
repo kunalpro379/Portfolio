@@ -1,6 +1,6 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { Excalidraw, MainMenu, WelcomeScreen } from '@excalidraw/excalidraw';
-import { Save, Share2, Lock, Unlock, X } from 'lucide-react';
+import { Save, Share2, Lock, Unlock, X, ZoomIn } from 'lucide-react';
 
 interface ExcalidrawCanvasProps {
   canvasId: string;
@@ -26,6 +26,66 @@ export default function ExcalidrawCanvas({
   const [showShareModal, setShowShareModal] = useState(false);
   const [shareLink, setShareLink] = useState('');
   const [showControls, setShowControls] = useState(true);
+
+  // Mobile touch optimization
+  useEffect(() => {
+    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+    
+    if (isMobile) {
+      // Prevent default touch behaviors that interfere with Excalidraw
+      const preventDefaultTouch = (e: TouchEvent) => {
+        if (e.touches.length > 1) {
+          // Allow multi-touch for pinch zoom
+          e.preventDefault();
+        }
+      };
+
+      // Add touch event listeners for better mobile handling
+      document.addEventListener('touchstart', preventDefaultTouch, { passive: false });
+      document.addEventListener('touchmove', preventDefaultTouch, { passive: false });
+      
+      // Set viewport meta tag for better mobile zoom handling
+      let viewport = document.querySelector('meta[name="viewport"]');
+      if (!viewport) {
+        viewport = document.createElement('meta');
+        viewport.setAttribute('name', 'viewport');
+        document.head.appendChild(viewport);
+      }
+      viewport.setAttribute('content', 'width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes');
+
+      return () => {
+        document.removeEventListener('touchstart', preventDefaultTouch);
+        document.removeEventListener('touchmove', preventDefaultTouch);
+      };
+    }
+  }, []);
+
+  // Auto-hide controls on mobile after inactivity
+  useEffect(() => {
+    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+    
+    if (isMobile) {
+      let hideTimer: NodeJS.Timeout;
+      
+      const resetTimer = () => {
+        setShowControls(true);
+        clearTimeout(hideTimer);
+        hideTimer = setTimeout(() => setShowControls(false), 3000);
+      };
+
+      document.addEventListener('touchstart', resetTimer);
+      document.addEventListener('touchmove', resetTimer);
+      
+      // Initial timer
+      hideTimer = setTimeout(() => setShowControls(false), 3000);
+
+      return () => {
+        clearTimeout(hideTimer);
+        document.removeEventListener('touchstart', resetTimer);
+        document.removeEventListener('touchmove', resetTimer);
+      };
+    }
+  }, []);
 
   const handleSave = useCallback(async () => {
     if (!excalidrawAPI || viewOnly) return;
@@ -78,6 +138,30 @@ export default function ExcalidrawCanvas({
     setTimeout(() => successMsg.remove(), 2000);
   };
 
+  // Mobile zoom optimization function
+  const optimizeMobileZoom = useCallback(() => {
+    if (!excalidrawAPI) return;
+    
+    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+    if (isMobile) {
+      try {
+        // Get current viewport
+        const appState = excalidrawAPI.getAppState();
+        const elements = excalidrawAPI.getSceneElements();
+        
+        if (elements.length > 0) {
+          // Fit content to screen with some padding
+          excalidrawAPI.scrollToContent(elements, {
+            fitToContent: true,
+            animate: true
+          });
+        }
+      } catch (error) {
+        console.log('Mobile zoom optimization error:', error);
+      }
+    }
+  }, [excalidrawAPI]);
+
   return (
     <div className="fixed inset-0 z-50 bg-white" onMouseMove={() => setShowControls(true)}>
       {/* Floating Controls - Desktop: top horizontal, Mobile: left vertical column (small icons only) */}
@@ -94,6 +178,16 @@ export default function ExcalidrawCanvas({
           >
             <X size={18} strokeWidth={2.5} className="md:w-5 md:h-5" />
           </button>
+          
+          {/* Mobile Zoom Fit Button */}
+          <button
+            onClick={optimizeMobileZoom}
+            className="md:hidden p-1.5 hover:bg-gray-100 rounded-lg border-2 border-black transition-all bg-white/95 backdrop-blur-sm shadow-md"
+            title="Fit to Screen"
+          >
+            <ZoomIn size={18} strokeWidth={2.5} />
+          </button>
+          
           <div className={`flex items-center justify-center p-1.5 md:px-3 md:py-1.5 border-2 border-black rounded-lg shadow-md backdrop-blur-sm ${
             viewOnly ? 'bg-red-100' : isPublic ? 'bg-green-100' : 'bg-gray-100'
           }`}>
@@ -147,13 +241,46 @@ export default function ExcalidrawCanvas({
       )}
 
       {/* Full Screen Excalidraw Canvas - z-10 so it's below controls */}
-      <div className="absolute inset-0 z-10" key={`canvas-${viewOnly ? 'view' : 'edit'}`}>
+      <div 
+        className="absolute inset-0 z-10" 
+        key={`canvas-${viewOnly ? 'view' : 'edit'}`}
+        style={{
+          touchAction: 'none', // Prevent default touch behaviors
+          WebkitTouchCallout: 'none',
+          WebkitUserSelect: 'none',
+          userSelect: 'none'
+        }}
+      >
         <Excalidraw
-          excalidrawAPI={(api) => setExcalidrawAPI(api)}
+          excalidrawAPI={(api) => {
+            setExcalidrawAPI(api);
+            
+            // Mobile-specific API optimizations
+            if (api && /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
+              // Set initial zoom to fit content on mobile
+              setTimeout(() => {
+                try {
+                  const elements = api.getSceneElements();
+                  if (elements.length > 0) {
+                    api.scrollToContent(elements, {
+                      fitToContent: true,
+                      animate: false
+                    });
+                  }
+                } catch (error) {
+                  console.log('Mobile zoom optimization failed:', error);
+                }
+              }, 500);
+            }
+          }}
           initialData={initialData}
           viewModeEnabled={viewOnly}
           zenModeEnabled={false}
           gridModeEnabled={false}
+          handleKeyboardGlobally={true}
+          detectScroll={false}
+          // Mobile-specific optimizations
+          theme="light"
         >
           <MainMenu>
             <MainMenu.DefaultItems.ClearCanvas />

@@ -5,6 +5,9 @@
 /* Import mobile PDF optimizations */
 @import './styles/pdf-mobile.css';
 
+/* Import mobile Excalidraw optimizations */
+@import './styles/excalidraw-mobile.css';
+
 
 /* Preload Kalam font with font-display: optional for better performance */
 @font-face {

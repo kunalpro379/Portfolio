@@ -1,19 +1,6 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { 
-  Upload, 
-  FileText, 
-  Database, 
-  Trash2, 
-  CheckCircle, 
-  XCircle, 
-  Clock, 
-  AlertCircle,
-  BarChart3,
-  RefreshCw,
-  FileJson,
-  FileCode
-} from 'lucide-react';
-import config, { buildUrl } from '../config/config';
+import { useState, useEffect } from 'react';
+import { Upload, Database, FileText, Code, BookOpen, FolderOpen, Loader2, CheckCircle, XCircle, Plus } from 'lucide-react';
+import config from '../config/config';
 
 interface KnowledgeBaseFile {
   _id: string;
@@ -21,218 +8,316 @@ interface KnowledgeBaseFile {
   fileName: string;
   fileType: string;
   fileSize: number;
+  azureBlobUrl: string;
   status: 'processing' | 'completed' | 'failed';
-  vectorStatus: 'pending' | 'uploaded' | 'failed';
-  error?: string;
+  vectorStatus: 'pending' | 'uploaded' | 'failed' | 'skipped';
   createdAt: string;
-  updatedAt: string;
 }
 
-interface UploadProgress {
-  step: string;
-  message: string;
-  progress: number;
-  success?: boolean;
-  error?: string;
-  fileId?: string;
+interface ExistingContent {
+  _id: string;
+  title: string;
+  type: 'project' | 'blog' | 'documentation' | 'code';
   fileName?: string;
+  mdContent?: string;
+  content?: string;
+  createdAt: string;
+  selected?: boolean;
 }
 
-interface Stats {
-  totalFiles: number;
-  completedFiles: number;
-  failedFiles: number;
-  vectorStats?: any;
-}
-
-const AIKnowledgeBase: React.FC = () => {
-  const [files, setFiles] = useState<KnowledgeBaseFile[]>([]);
-  const [stats, setStats] = useState<Stats | null>(null);
-  const [uploading, setUploading] = useState(false);
-  const [uploadProgress, setUploadProgress] = useState<UploadProgress | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const fileInputRef = useRef<HTMLInputElement>(null);
+export default function AIKnowledgeBase() {
+  const [activeTab, setActiveTab] = useState<'upload' | 'existing'>('upload');
+  const [knowledgeBaseFiles, setKnowledgeBaseFiles] = useState<KnowledgeBaseFile[]>([]);
+  const [existingContent, setExistingContent] = useState<ExistingContent[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState<{ [key: string]: number }>({});
+  const [showExistingModal, setShowExistingModal] = useState(false);
+  const [processingExisting, setProcessingExisting] = useState(false);
 
   useEffect(() => {
-    fetchFiles();
-    fetchStats();
+    fetchKnowledgeBaseFiles();
   }, []);
 
-  const fetchFiles = async () => {
+  const fetchKnowledgeBaseFiles = async () => {
     try {
-      const response = await fetch(config.api.endpoints.knowledgeBaseFiles);
-      
-      if (!response.ok) {
-        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-      }
-      
+      const response = await fetch(config.api.endpoints.knowledgeBaseFiles, {
+        credentials: 'include'
+      });
       const data = await response.json();
+      setKnowledgeBaseFiles(data.files || []);
+    } catch (error) {
+      console.error('Error fetching knowledge base files:', error);
+    }
+  };
+
+  const fetchExistingContent = async () => {
+    setLoading(true);
+    try {
+      console.log('Fetching existing content...');
       
-      if (data.success) {
-        setFiles(data.files || []);
-        if (data.message) {
-          console.warn('Knowledge Base service message:', data.message);
+      // Fetch all data sources
+      const responses = await Promise.allSettled([
+        fetch(config.api.endpoints.projects, { credentials: 'include' }),
+        fetch(config.api.endpoints.blogs, { credentials: 'include' }),
+        fetch(config.api.endpoints.documentation, { credentials: 'include' }),
+        fetch(config.api.endpoints.codeFolders(''), { credentials: 'include' })
+      ]);
+
+      console.log('API responses status:', responses.map((r, i) => ({
+        index: i,
+        status: r.status,
+        endpoint: [
+          config.api.endpoints.projects,
+          config.api.endpoints.blogs,
+          config.api.endpoints.documentation,
+          config.api.endpoints.codeFolders('')
+        ][i]
+      })));
+
+      const content: ExistingContent[] = [];
+
+      // Process Projects
+      if (responses[0].status === 'fulfilled' && responses[0].value.ok) {
+        try {
+          const projects = await responses[0].value.json();
+          console.log('Projects data:', projects);
+          
+          if (projects.projects) {
+            projects.projects.forEach((project: any) => {
+              if (project.mdContent && project.mdContent.trim()) {
+                content.push({
+                  _id: project._id,
+                  title: project.title,
+                  type: 'project',
+                  fileName: `${project.title.replace(/[^a-zA-Z0-9]/g, '_')}.md`,
+                  mdContent: project.mdContent,
+                  createdAt: project.createdAt,
+                  selected: false
+                });
+              }
+            });
+          }
+        } catch (error) {
+          console.error('Error processing projects:', error);
+        }
+      }
+
+      // Process Blogs
+      if (responses[1].status === 'fulfilled' && responses[1].value.ok) {
+        try {
+          const blogs = await responses[1].value.json();
+          console.log('Blogs data:', blogs);
+          
+          if (blogs.blogs) {
+            blogs.blogs.forEach((blog: any) => {
+              if (blog.mdContent && blog.mdContent.trim()) {
+                content.push({
+                  _id: blog._id,
+                  title: blog.title,
+                  type: 'blog',
+                  fileName: `${blog.title.replace(/[^a-zA-Z0-9]/g, '_')}.md`,
+                  mdContent: blog.mdContent,
+                  createdAt: blog.createdAt,
+                  selected: false
+                });
+              }
+            });
+          }
+        } catch (error) {
+          console.error('Error processing blogs:', error);
+        }
+      }
+
+      // Process Documentation
+      if (responses[2].status === 'fulfilled' && responses[2].value.ok) {
+        try {
+          const docs = await responses[2].value.json();
+          console.log('Documentation data:', docs);
+          
+          // Try different possible response structures
+          let documentationArray = [];
+          if (docs.documentation) {
+            documentationArray = docs.documentation;
+          } else if (docs.docs) {
+            documentationArray = docs.docs;
+          } else if (Array.isArray(docs)) {
+            documentationArray = docs;
+          }
+
+          console.log('Documentation array:', documentationArray);
+
+          documentationArray.forEach((doc: any) => {
+            if (doc.content && doc.content.trim()) {
+              content.push({
+                _id: doc._id,
+                title: doc.title,
+                type: 'documentation',
+                fileName: `${doc.title.replace(/[^a-zA-Z0-9]/g, '_')}.md`,
+                content: doc.content,
+                createdAt: doc.createdAt,
+                selected: false
+              });
+            }
+          });
+        } catch (error) {
+          console.error('Error processing documentation:', error);
         }
       } else {
-        setError(data.message || 'Failed to fetch files');
+        console.error('Documentation API failed:', responses[2]);
       }
+
+      // Process Code Files
+      if (responses[3].status === 'fulfilled' && responses[3].value.ok) {
+        try {
+          const codeFolders = await responses[3].value.json();
+          console.log('Code folders data:', codeFolders);
+          
+          if (codeFolders.folders) {
+            for (const folder of codeFolders.folders) {
+              try {
+                const filesRes = await fetch(config.api.endpoints.codeFiles(folder.path), {
+                  credentials: 'include'
+                });
+                
+                if (filesRes.ok) {
+                  const filesData = await filesRes.json();
+                  
+                  if (filesData.files) {
+                    filesData.files.forEach((file: any) => {
+                      if (file.content && file.content.trim()) {
+                        content.push({
+                          _id: file._id,
+                          title: `${folder.name}/${file.filename}`,
+                          type: 'code',
+                          fileName: file.filename,
+                          content: file.content,
+                          createdAt: file.createdAt,
+                          selected: false
+                        });
+                      }
+                    });
+                  }
+                }
+              } catch (error) {
+                console.error(`Error fetching files for folder ${folder.name}:`, error);
+              }
+            }
+          }
+        } catch (error) {
+          console.error('Error processing code folders:', error);
+        }
+      }
+
+      console.log('Final content array:', content);
+      console.log('Content by type:', {
+        projects: content.filter(c => c.type === 'project').length,
+        blogs: content.filter(c => c.type === 'blog').length,
+        documentation: content.filter(c => c.type === 'documentation').length,
+        code: content.filter(c => c.type === 'code').length
+      });
+      
+      setExistingContent(content);
     } catch (error) {
-      console.error('Error fetching files:', error);
-      if (error.message.includes('503')) {
-        setError('Knowledge Base service is temporarily unavailable. Please try again later.');
-      } else {
-        setError('Failed to fetch files: ' + error.message);
-      }
+      console.error('Error fetching existing content:', error);
     } finally {
       setLoading(false);
     }
   };
 
-  const fetchStats = async () => {
-    try {
-      const response = await fetch(config.api.endpoints.knowledgeBaseStats);
-      
-      if (!response.ok) {
-        console.warn('Stats service unavailable:', response.status);
-        return;
-      }
-      
-      const data = await response.json();
-      
-      if (data.success) {
-        setStats(data.stats);
-        if (data.message) {
-          console.warn('Knowledge Base stats message:', data.message);
-        }
-      }
-    } catch (error) {
-      console.error('Error fetching stats:', error);
-      // Don't show error for stats, just log it
-    }
-  };
-
   const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (!file) return;
+    const files = event.target.files;
+    if (!files || files.length === 0) return;
 
-    // Validate file type
-    const allowedTypes = ['.json', '.md', '.txt'];
-    const fileExtension = file.name.toLowerCase().substring(file.name.lastIndexOf('.'));
+    setLoading(true);
     
-    if (!allowedTypes.includes(fileExtension)) {
-      setError('Only JSON, Markdown (.md), and Text (.txt) files are allowed');
-      return;
-    }
-
-    // Validate file size (10MB limit)
-    if (file.size > 10 * 1024 * 1024) {
-      setError('File size must be less than 10MB');
-      return;
-    }
-
-    setUploading(true);
-    setUploadProgress(null);
-    setError(null);
-
     try {
-      const formData = new FormData();
-      formData.append('file', file);
+      // Process files one by one
+      for (let i = 0; i < files.length; i++) {
+        const file = files[i];
+        const formData = new FormData();
+        formData.append('file', file);
 
-      const response = await fetch(config.api.endpoints.knowledgeBaseUpload, {
-        method: 'POST',
-        body: formData,
-      });
+        const response = await fetch(config.api.endpoints.knowledgeBaseUpload, {
+          method: 'POST',
+          credentials: 'include',
+          body: formData
+        });
 
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-
-      const reader = response.body?.getReader();
-      const decoder = new TextDecoder();
-
-      if (reader) {
-        while (true) {
-          const { done, value } = await reader.read();
-          if (done) break;
-
-          const chunk = decoder.decode(value);
-          const lines = chunk.split('\n');
-
-          for (const line of lines) {
-            if (line.startsWith('data: ')) {
-              try {
-                const data = JSON.parse(line.slice(6));
-                setUploadProgress(data);
-                
-                if (data.success === true) {
-                  // Refresh files and stats after successful upload
-                  setTimeout(() => {
-                    fetchFiles();
-                    fetchStats();
-                  }, 1000);
-                }
-              } catch (parseError) {
-                console.error('Error parsing SSE data:', parseError);
-              }
-            }
-          }
+        if (!response.ok) {
+          console.error(`Upload failed for ${file.name}`);
         }
       }
+
+      await fetchKnowledgeBaseFiles();
+      // Reset file input
+      event.target.value = '';
     } catch (error) {
-      console.error('Upload error:', error);
-      setError('Upload failed: ' + (error as Error).message);
+      console.error('Error uploading files:', error);
     } finally {
-      setUploading(false);
-      // Clear file input
-      if (fileInputRef.current) {
-        fileInputRef.current.value = '';
-      }
+      setLoading(false);
     }
   };
 
-  const handleDeleteFile = async (fileId: string) => {
-    if (!confirm('Are you sure you want to delete this file?')) return;
+  const toggleContentSelection = (id: string) => {
+    setExistingContent(prev => 
+      prev.map(item => 
+        item._id === id ? { ...item, selected: !item.selected } : item
+      )
+    );
+  };
 
+  const selectAllContent = () => {
+    const allSelected = existingContent.every(item => item.selected);
+    setExistingContent(prev => 
+      prev.map(item => ({ ...item, selected: !allSelected }))
+    );
+  };
+
+  const processSelectedContent = async () => {
+    const selectedItems = existingContent.filter(item => item.selected);
+    if (selectedItems.length === 0) return;
+
+    setProcessingExisting(true);
     try {
-      const response = await fetch(config.api.endpoints.knowledgeBaseFileById(fileId), {
-        method: 'DELETE',
+      const response = await fetch(config.api.endpoints.knowledgeBaseProcessExisting, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({ items: selectedItems })
       });
 
-      const data = await response.json();
-      
-      if (data.success) {
-        fetchFiles();
-        fetchStats();
+      if (response.ok) {
+        const data = await response.json();
+        alert(`Successfully processed ${data.stats.successful} items!`);
+        await fetchKnowledgeBaseFiles();
+        setShowExistingModal(false);
+        setExistingContent(prev => prev.map(item => ({ ...item, selected: false })));
       } else {
-        setError('Failed to delete file');
+        const errorData = await response.json();
+        alert(`Processing failed: ${errorData.message}`);
       }
     } catch (error) {
-      console.error('Error deleting file:', error);
-      setError('Failed to delete file');
-    }
-  };
-
-  const getFileIcon = (fileType: string) => {
-    switch (fileType) {
-      case '.json':
-        return <FileJson className="w-5 h-5 text-blue-600" />;
-      case '.md':
-        return <FileCode className="w-5 h-5 text-green-600" />;
-      case '.txt':
-        return <FileText className="w-5 h-5 text-gray-600" />;
-      default:
-        return <FileText className="w-5 h-5 text-gray-600" />;
+      console.error('Error processing existing content:', error);
+      alert('Failed to process existing content');
+    } finally {
+      setProcessingExisting(false);
     }
   };
 
   const getStatusIcon = (status: string, vectorStatus: string) => {
-    if (status === 'completed' && vectorStatus === 'uploaded') {
-      return <CheckCircle className="w-5 h-5 text-green-600" />;
-    } else if (status === 'failed' || vectorStatus === 'failed') {
-      return <XCircle className="w-5 h-5 text-red-600" />;
-    } else {
-      return <Clock className="w-5 h-5 text-yellow-600" />;
+    if (status === 'processing') return <Loader2 className="w-4 h-4 animate-spin text-blue-500" />;
+    if (status === 'failed') return <XCircle className="w-4 h-4 text-red-500" />;
+    if (vectorStatus === 'uploaded') return <CheckCircle className="w-4 h-4 text-green-500" />;
+    return <CheckCircle className="w-4 h-4 text-yellow-500" />;
+  };
+
+  const getTypeIcon = (type: string) => {
+    switch (type) {
+      case 'project': return <FolderOpen className="w-4 h-4 text-blue-500" />;
+      case 'blog': return <FileText className="w-4 h-4 text-green-500" />;
+      case 'documentation': return <BookOpen className="w-4 h-4 text-purple-500" />;
+      case 'code': return <Code className="w-4 h-4 text-orange-500" />;
+      default: return <FileText className="w-4 h-4 text-gray-500" />;
     }
   };
 
@@ -242,221 +327,276 @@ const AIKnowledgeBase: React.FC = () => {
     return (bytes / (1024 * 1024)).toFixed(2) + ' MB';
   };
 
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleString();
-  };
-
   return (
-    <div className="min-h-screen bg-gray-50 p-4 sm:p-6 lg:p-8">
+    <div className="p-3 sm:p-4 md:p-6 lg:p-8">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
-        <div className="mb-8">
-          <div className="flex items-center gap-3 mb-4">
-            <Database className="w-8 h-8 text-blue-600" />
-            <h1 className="text-3xl font-bold text-gray-900">AI Knowledge Base</h1>
+        <div className="flex items-center justify-between mb-6">
+          <div>
+            <h1 className="text-2xl sm:text-3xl lg:text-4xl font-black text-black mb-2" style={{ fontFamily: 'Comic Sans MS, cursive' }}>
+              AI Knowledge Base
+            </h1>
+            <p className="text-sm lg:text-base text-gray-600 font-medium">
+              Upload files or push existing content to the knowledge base
+            </p>
           </div>
-          <p className="text-gray-600">
-            Upload and manage files for the AI knowledge base. Supported formats: JSON, Markdown (.md), and Text (.txt)
-          </p>
         </div>
 
-        {/* Error Display */}
-        {error && (
-          <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg flex items-center gap-2">
-            <AlertCircle className="w-5 h-5 text-red-600" />
-            <span className="text-red-700">{error}</span>
-            <button 
-              onClick={() => setError(null)}
-              className="ml-auto text-red-600 hover:text-red-800"
-            >
-              ×
-            </button>
-          </div>
-        )}
-
-        {/* Stats Display */}
-        {stats && (
-          <div className="mb-8 p-4 bg-white rounded-lg shadow-sm border">
-            <h2 className="text-lg font-semibold text-gray-900 mb-3">Knowledge Base Statistics</h2>
-            <div className="text-sm text-gray-600 flex gap-6">
-              <span>Total Files: <span className="font-medium text-gray-900">{stats.totalFiles}</span></span>
-              <span>Completed: <span className="font-medium text-green-600">{stats.completedFiles}</span></span>
-              <span>Failed: <span className="font-medium text-red-600">{stats.failedFiles}</span></span>
-              <span>Vector Points: <span className="font-medium text-purple-600">{stats.vectorStats?.points_count || 0}</span></span>
-            </div>
-          </div>
-        )}
-
-        {/* Upload Section */}
-        <div className="bg-white rounded-lg shadow-sm border p-6 mb-8">
-          <h2 className="text-xl font-semibold text-gray-900 mb-4">Upload New File</h2>
-          
-          <div className="flex items-center gap-4">
-            <input
-              ref={fileInputRef}
-              type="file"
-              accept=".json,.md,.txt"
-              onChange={handleFileUpload}
-              disabled={uploading}
-              className="hidden"
-            />
-            
-            <button
-              onClick={() => fileInputRef.current?.click()}
-              disabled={uploading}
-              className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              <Upload className="w-5 h-5" />
-              {uploading ? 'Uploading...' : 'Choose File'}
-            </button>
-            
-            <button
-              onClick={() => { fetchFiles(); fetchStats(); }}
-              className="flex items-center gap-2 px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700"
-            >
-              <RefreshCw className="w-5 h-5" />
-              Refresh
-            </button>
-          </div>
-
-          <p className="text-sm text-gray-500 mt-2">
-            Supported formats: JSON, Markdown (.md), Text (.txt) • Max size: 10MB
-          </p>
+        {/* Tab Navigation */}
+        <div className="flex gap-2 mb-6">
+          <button
+            onClick={() => setActiveTab('upload')}
+            className={`flex items-center gap-2 px-4 py-2 border-2 border-black rounded-lg font-bold text-sm transition ${
+              activeTab === 'upload'
+                ? 'bg-blue-200 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]'
+                : 'bg-white hover:bg-gray-50'
+            }`}
+          >
+            <Upload className="w-4 h-4" strokeWidth={2.5} />
+            Upload New Files
+          </button>
+          <button
+            onClick={() => {
+              setActiveTab('existing');
+              if (existingContent.length === 0) {
+                fetchExistingContent();
+              }
+            }}
+            className={`flex items-center gap-2 px-4 py-2 border-2 border-black rounded-lg font-bold text-sm transition ${
+              activeTab === 'existing'
+                ? 'bg-green-200 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]'
+                : 'bg-white hover:bg-gray-50'
+            }`}
+          >
+            <Database className="w-4 h-4" strokeWidth={2.5} />
+            Push Existing Info
+          </button>
         </div>
 
-        {/* Upload Progress */}
-        {uploadProgress && (
-          <div className="bg-white rounded-lg shadow-sm border p-6 mb-8">
-            <h3 className="text-lg font-semibold text-gray-900 mb-4">Upload Progress</h3>
-            
-            <div className="space-y-4">
-              <div className="flex items-center gap-3">
-                {uploadProgress.success === false ? (
-                  <XCircle className="w-6 h-6 text-red-600" />
-                ) : uploadProgress.progress === 100 && uploadProgress.success === true ? (
-                  <CheckCircle className="w-6 h-6 text-green-600" />
-                ) : (
-                  <RefreshCw className="w-6 h-6 text-blue-600 animate-spin" />
-                )}
-                <span className="text-gray-900">{uploadProgress.message}</span>
-              </div>
+        {/* Upload New Files Tab */}
+        {activeTab === 'upload' && (
+          <div className="space-y-6">
+            {/* Upload Section */}
+            <div className="bg-white border-2 border-black rounded-xl p-6 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+              <h2 className="text-xl font-black text-black mb-4" style={{ fontFamily: 'Comic Sans MS, cursive' }}>
+                Upload New Files
+              </h2>
               
-              <div className="w-full bg-gray-200 rounded-full h-2">
-                <div 
-                  className={`h-2 rounded-full transition-all duration-300 ${
-                    uploadProgress.success === false ? 'bg-red-600' : 
-                    uploadProgress.success === true ? 'bg-green-600' : 'bg-blue-600'
-                  }`}
-                  style={{ width: `${uploadProgress.progress}%` }}
+              <div className="border-2 border-dashed border-black rounded-lg p-8 text-center">
+                <Upload className="w-12 h-12 text-gray-400 mx-auto mb-4" strokeWidth={2} />
+                <p className="text-lg font-bold text-black mb-2">Drop files here or click to browse</p>
+                <p className="text-sm text-gray-600 mb-4">Supports .md, .txt, .json files</p>
+                
+                <input
+                  type="file"
+                  multiple
+                  accept=".md,.txt,.json"
+                  onChange={handleFileUpload}
+                  className="hidden"
+                  id="file-upload"
+                  disabled={loading}
                 />
+                <label
+                  htmlFor="file-upload"
+                  className={`inline-flex items-center gap-2 px-6 py-3 bg-blue-200 border-2 border-black rounded-lg font-bold text-sm hover:bg-blue-300 transition shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] cursor-pointer ${
+                    loading ? 'opacity-50 cursor-not-allowed' : ''
+                  }`}
+                >
+                  {loading ? (
+                    <>
+                      <Loader2 className="w-4 h-4 animate-spin" />
+                      Uploading...
+                    </>
+                  ) : (
+                    <>
+                      <Plus className="w-4 h-4" strokeWidth={2.5} />
+                      Choose Files
+                    </>
+                  )}
+                </label>
               </div>
-              
-              <p className="text-sm text-gray-600">
-                {uploadProgress.progress}% complete
-              </p>
-              
-              {uploadProgress.error && (
-                <p className="text-sm text-red-600">{uploadProgress.error}</p>
+            </div>
+
+            {/* Knowledge Base Files List */}
+            <div className="bg-white border-2 border-black rounded-xl p-6 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+              <h2 className="text-xl font-black text-black mb-4" style={{ fontFamily: 'Comic Sans MS, cursive' }}>
+                Knowledge Base Files ({knowledgeBaseFiles.length})
+              </h2>
+
+              {knowledgeBaseFiles.length === 0 ? (
+                <div className="text-center py-8 border-2 border-dashed border-black rounded-lg">
+                  <FileText className="w-12 h-12 text-gray-400 mx-auto mb-3" strokeWidth={2} />
+                  <p className="text-base text-gray-600 font-medium">No files in knowledge base</p>
+                  <p className="text-sm text-gray-500 mt-1">Upload files to get started</p>
+                </div>
+              ) : (
+                <div className="space-y-3">
+                  {knowledgeBaseFiles.map((file) => (
+                    <div
+                      key={file._id}
+                      className="flex items-center justify-between p-4 bg-white border-2 border-black rounded-lg shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]"
+                    >
+                      <div className="flex items-center gap-3 flex-1 min-w-0">
+                        <FileText className="w-5 h-5 text-black flex-shrink-0" strokeWidth={2.5} />
+                        <div className="flex-1 min-w-0">
+                          <p className="font-bold text-black text-sm truncate">{file.fileName}</p>
+                          <p className="text-xs text-gray-600 font-medium">
+                            {file.fileType} • {formatFileSize(file.fileSize)} • {new Date(file.createdAt).toLocaleDateString()}
+                          </p>
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        {getStatusIcon(file.status, file.vectorStatus)}
+                        <span className="text-xs font-medium text-gray-600 capitalize">
+                          {file.vectorStatus === 'uploaded' ? 'Ready' : file.status}
+                        </span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
               )}
             </div>
           </div>
         )}
 
-        {/* Files List */}
-        <div className="bg-white rounded-lg shadow-sm border">
-          <div className="p-6 border-b">
-            <h2 className="text-xl font-semibold text-gray-900">Knowledge Base Files</h2>
-          </div>
-          
-          <div className="overflow-x-auto">
-            {loading ? (
-              <div className="p-8 text-center">
-                <RefreshCw className="w-8 h-8 text-gray-400 animate-spin mx-auto mb-4" />
-                <p className="text-gray-600">Loading files...</p>
+        {/* Push Existing Info Tab */}
+        {activeTab === 'existing' && (
+          <div className="space-y-6">
+            <div className="bg-white border-2 border-black rounded-xl p-6 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+              <div className="flex items-center justify-between mb-4">
+                <h2 className="text-xl font-black text-black" style={{ fontFamily: 'Comic Sans MS, cursive' }}>
+                  Existing Content
+                </h2>
+                <button
+                  onClick={() => setShowExistingModal(true)}
+                  disabled={loading}
+                  className="flex items-center gap-2 px-4 py-2 bg-green-200 border-2 border-black rounded-lg font-bold text-sm hover:bg-green-300 transition shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] disabled:opacity-50"
+                >
+                  {loading ? (
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                  ) : (
+                    <Database className="w-4 h-4" strokeWidth={2.5} />
+                  )}
+                  Select & Push Content
+                </button>
               </div>
-            ) : files.length === 0 ? (
-              <div className="p-8 text-center">
-                <FileText className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-                <p className="text-gray-600">No files uploaded yet</p>
+
+              <p className="text-sm text-gray-600 font-medium mb-4">
+                Push your existing projects, blogs, documentation, and code files to the knowledge base
+              </p>
+
+              {/* Debug Info */}
+              {existingContent.length > 0 && (
+                <div className="mb-4 p-3 bg-gray-50 border-2 border-gray-300 rounded-lg">
+                  <p className="text-xs font-bold text-gray-700 mb-2">Content Summary:</p>
+                  <div className="grid grid-cols-4 gap-2 text-xs">
+                    <div>Projects: {existingContent.filter(c => c.type === 'project').length}</div>
+                    <div>Blogs: {existingContent.filter(c => c.type === 'blog').length}</div>
+                    <div>Docs: {existingContent.filter(c => c.type === 'documentation').length}</div>
+                    <div>Code: {existingContent.filter(c => c.type === 'code').length}</div>
+                  </div>
+                </div>
+              )}
+
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <div className="bg-blue-50 border-2 border-black rounded-lg p-4 text-center">
+                  <FolderOpen className="w-8 h-8 text-blue-500 mx-auto mb-2" strokeWidth={2.5} />
+                  <p className="font-bold text-black text-sm">Projects</p>
+                  <p className="text-xs text-gray-600">Portfolio projects</p>
+                </div>
+                <div className="bg-green-50 border-2 border-black rounded-lg p-4 text-center">
+                  <FileText className="w-8 h-8 text-green-500 mx-auto mb-2" strokeWidth={2.5} />
+                  <p className="font-bold text-black text-sm">Blogs</p>
+                  <p className="text-xs text-gray-600">Blog articles</p>
+                </div>
+                <div className="bg-purple-50 border-2 border-black rounded-lg p-4 text-center">
+                  <BookOpen className="w-8 h-8 text-purple-500 mx-auto mb-2" strokeWidth={2.5} />
+                  <p className="font-bold text-black text-sm">Documentation</p>
+                  <p className="text-xs text-gray-600">Technical docs</p>
+                </div>
+                <div className="bg-orange-50 border-2 border-black rounded-lg p-4 text-center">
+                  <Code className="w-8 h-8 text-orange-500 mx-auto mb-2" strokeWidth={2.5} />
+                  <p className="font-bold text-black text-sm">Code Files</p>
+                  <p className="text-xs text-gray-600">Source code</p>
+                </div>
               </div>
-            ) : (
-              <table className="w-full">
-                <thead className="bg-gray-50">
-                  <tr>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      File
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Type
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Size
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Status
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Uploaded
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Actions
-                    </th>
-                  </tr>
-                </thead>
-                <tbody className="bg-white divide-y divide-gray-200">
-                  {files.map((file) => (
-                    <tr key={file.fileId} className="hover:bg-gray-50">
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="flex items-center gap-3">
-                          {getFileIcon(file.fileType)}
-                          <div>
-                            <p className="text-sm font-medium text-gray-900">{file.fileName}</p>
-                            <p className="text-xs text-gray-500">{file.fileId}</p>
-                          </div>
-                        </div>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
-                          {file.fileType}
-                        </span>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                        {formatFileSize(file.fileSize)}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="flex items-center gap-2">
-                          {getStatusIcon(file.status, file.vectorStatus)}
-                          <div>
-                            <p className="text-sm text-gray-900 capitalize">{file.status}</p>
-                            <p className="text-xs text-gray-500">Vector: {file.vectorStatus}</p>
-                          </div>
-                        </div>
-                        {file.error && (
-                          <p className="text-xs text-red-600 mt-1">{file.error}</p>
-                        )}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                        {formatDate(file.createdAt)}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <button
-                          onClick={() => handleDeleteFile(file.fileId)}
-                          className="text-red-600 hover:text-red-800"
-                          title="Delete file"
-                        >
-                          <Trash2 className="w-4 h-4" />
-                        </button>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            )}
+            </div>
           </div>
-        </div>
+        )}
+
+        {/* Existing Content Selection Modal */}
+        {showExistingModal && (
+          <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+            <div className="bg-white border-2 border-black rounded-xl p-6 max-w-4xl w-full max-h-[80vh] overflow-hidden shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
+              <div className="flex items-center justify-between mb-4">
+                <h2 className="text-xl font-black text-black" style={{ fontFamily: 'Comic Sans MS, cursive' }}>
+                  Select Content to Push
+                </h2>
+                <button
+                  onClick={() => setShowExistingModal(false)}
+                  className="p-2 hover:bg-gray-100 rounded-lg transition"
+                >
+                  <XCircle className="w-5 h-5" />
+                </button>
+              </div>
+
+              <div className="flex items-center justify-between mb-4">
+                <p className="text-sm text-gray-600">
+                  {existingContent.filter(item => item.selected).length} of {existingContent.length} items selected
+                </p>
+                <div className="flex gap-2">
+                  <button
+                    onClick={selectAllContent}
+                    className="px-3 py-1 bg-gray-100 border-2 border-black rounded-lg font-bold text-xs hover:bg-gray-200 transition"
+                  >
+                    {existingContent.every(item => item.selected) ? 'Deselect All' : 'Select All'}
+                  </button>
+                  <button
+                    onClick={processSelectedContent}
+                    disabled={processingExisting || existingContent.filter(item => item.selected).length === 0}
+                    className="px-4 py-1 bg-green-200 border-2 border-black rounded-lg font-bold text-xs hover:bg-green-300 transition disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    {processingExisting ? (
+                      <>
+                        <Loader2 className="w-3 h-3 animate-spin inline mr-1" />
+                        Processing...
+                      </>
+                    ) : (
+                      'Push Selected'
+                    )}
+                  </button>
+                </div>
+              </div>
+
+              <div className="overflow-y-auto max-h-96 space-y-2">
+                {existingContent.map((item) => (
+                  <div
+                    key={item._id}
+                    className={`flex items-center gap-3 p-3 border-2 border-black rounded-lg cursor-pointer transition ${
+                      item.selected ? 'bg-blue-50' : 'bg-white hover:bg-gray-50'
+                    }`}
+                    onClick={() => toggleContentSelection(item._id)}
+                  >
+                    <input
+                      type="checkbox"
+                      checked={item.selected}
+                      onChange={() => toggleContentSelection(item._id)}
+                      className="w-4 h-4"
+                    />
+                    {getTypeIcon(item.type)}
+                    <div className="flex-1 min-w-0">
+                      <p className="font-bold text-black text-sm truncate">{item.title}</p>
+                      <p className="text-xs text-gray-600 font-medium capitalize">
+                        {item.type} • {new Date(item.createdAt).toLocaleDateString()}
+                      </p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
-};
-
-export default AIKnowledgeBase;
+}
