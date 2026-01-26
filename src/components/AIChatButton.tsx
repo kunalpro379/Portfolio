@@ -12,22 +12,13 @@ interface ChatMessage {
 interface ChatResponse {
   success: boolean;
   message: string;
-  sessionId?: string;
   contextUsed?: boolean;
-  conversationContextUsed?: boolean;
-  sources?: Array<{
-    section: string;
-    type: string;
-    technologies: string[];
-  }>;
-  responseTime?: number;
   timestamp: string;
   error?: string;
 }
 
 const AIChatButton: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const [sessionId, setSessionId] = useState<string | null>(null);
   const [messages, setMessages] = useState<ChatMessage[]>([
     {
       id: '1',
@@ -40,32 +31,8 @@ const AIChatButton: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
-  // Initialize session when chat opens
-  useEffect(() => {
-    if (isOpen && !sessionId) {
-      initializeSession();
-    }
-  }, [isOpen]);
-
-  // Initialize new session
-  const initializeSession = async () => {
-    try {
-      const response = await fetch(`${API_CONFIG.BASE_URL}${API_CONFIG.ENDPOINTS.AI_CHAT}/session/new`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      });
-
-      if (response.ok) {
-        const data = await response.json();
-        setSessionId(data.sessionId);
-        console.log('🆕 New session initialized:', data.sessionId.substring(0, 8) + '...');
-      }
-    } catch (error) {
-      console.warn('⚠️ Failed to initialize session, continuing without session management:', error);
-    }
-  };
+  // Debug log to ensure component is rendering
+  console.log('AIChatButton rendered, isOpen:', isOpen);
 
   // Prevent body scroll when chat is open
   useEffect(() => {
@@ -127,8 +94,7 @@ const AIChatButton: React.FC = () => {
           'Accept': 'application/json',
         },
         body: JSON.stringify({
-          message: userMessage.content,
-          sessionId: sessionId
+          message: userMessage.content
         })
       });
 
@@ -153,12 +119,6 @@ const AIChatButton: React.FC = () => {
 
       const data: ChatResponse = await response.json();
       console.log('API response:', data);
-
-      // Update session ID if returned
-      if (data.sessionId && data.sessionId !== sessionId) {
-        setSessionId(data.sessionId);
-        console.log('📝 Session updated:', data.sessionId.substring(0, 8) + '...');
-      }
 
       const aiMessage: ChatMessage = {
         id: (Date.now() + 1).toString(),
