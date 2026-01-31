@@ -278,7 +278,6 @@ export default function LearningsPage() {
 
   const handlePasswordSubmit = () => {
     if (password === 'kunal') {
-      setShowPasswordModal(false);
       setPassword('');
       const canvasToLoad = createdCanvasId || selectedCanvas?.canvasId;
       if (canvasToLoad) {
