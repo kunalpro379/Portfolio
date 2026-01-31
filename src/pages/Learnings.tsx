@@ -106,10 +106,6 @@ export default function LearningsPage() {
   const [createdCanvasId, setCreatedCanvasId] = useState<string | null>(null);
   const [showShareModal, setShowShareModal] = useState(false);
   const [shareableLink, setShareableLink] = useState('');
-  const [showViewEditModal, setShowViewEditModal] = useState(false);
-  const [createdCanvasId, setCreatedCanvasId] = useState<string | null>(null);
-  const [showShareModal, setShowShareModal] = useState(false);
-  const [shareableLink, setShareableLink] = useState('');
 
   // Check for canvas parameter in URL
   const canvasIdFromUrl = searchParams.get('canvas');

@@ -61,9 +61,9 @@ const TechStackIcons = memo(({ technologies }: TechStackIconsProps) => {
               decoding="async"
               width={48}
               height={48}
-              className="w-8 h-8 md:w-12 md:h-12 mb-1 md:mb-2 filter drop-shadow-[0_2px_8px_rgba(0,0,0,0.15)]"
+              className="w-8 h-8 md:w-12 md:h-12 mb-1 md:mb-2 filter grayscale opacity-60 drop-shadow-[0_2px_8px_rgba(0,0,0,0.15)]"
             />
-            <span className="text-[7px] md:text-[9px] font-black uppercase tracking-tight text-black/80 text-center">
+            <span className="text-[7px] md:text-[9px] font-black uppercase tracking-tight text-black/60 text-center">
               {tech.name}
             </span>
           </div>
