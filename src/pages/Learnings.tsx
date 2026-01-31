@@ -1,4 +1,4 @@
-import { Clock, Calendar, ArrowLeft, FolderOpen, FileText, BookOpen, Code, FileImage, Plus, Github } from "lucide-react";
+import { Clock, Calendar, ArrowLeft, FolderOpen, FileText, BookOpen, Code, FileImage, Plus, Github, Menu, X, Home, LogOut, Share2, Eye, Edit } from "lucide-react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { API_ENDPOINTS, API_BASE_URL } from "@/config/api";
@@ -90,6 +90,7 @@ export default function LearningsPage() {
   const [githubRepos, setGithubRepos] = useState<GitHubRepo[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   // Canvas state
   const [activeCanvas, setActiveCanvas] = useState<string | null>(null);
@@ -101,15 +102,26 @@ export default function LearningsPage() {
   const [password, setPassword] = useState('');
   const [newCanvasName, setNewCanvasName] = useState('');
   const [newCanvasPublic, setNewCanvasPublic] = useState(false);
+  const [showViewEditModal, setShowViewEditModal] = useState(false);
+  const [createdCanvasId, setCreatedCanvasId] = useState<string | null>(null);
+  const [showShareModal, setShowShareModal] = useState(false);
+  const [shareableLink, setShareableLink] = useState('');
+  const [showViewEditModal, setShowViewEditModal] = useState(false);
+  const [createdCanvasId, setCreatedCanvasId] = useState<string | null>(null);
+  const [showShareModal, setShowShareModal] = useState(false);
+  const [shareableLink, setShareableLink] = useState('');
 
   // Check for canvas parameter in URL
   const canvasIdFromUrl = searchParams.get('canvas');
+  const viewerIdFromUrl = searchParams.get('viewer');
 
   useEffect(() => {
     if (canvasIdFromUrl) {
       loadCanvasFromShare(canvasIdFromUrl);
+    } else if (viewerIdFromUrl) {
+      loadCanvasAsViewer(viewerIdFromUrl);
     }
-  }, [canvasIdFromUrl]);
+  }, [canvasIdFromUrl, viewerIdFromUrl]);
 
   useEffect(() => {
     const tab = searchParams.get('tab') || 'blogs';
@@ -243,6 +255,24 @@ export default function LearningsPage() {
     }
   };
 
+  const loadCanvasAsViewer = async (canvasId: string) => {
+    try {
+      const response = await fetch(`${API_BASE_URL}/api/diagrams/${canvasId}`);
+      
+      if (!response.ok) throw new Error('Failed to load canvas');
+      
+      const responseData = await response.json();
+      
+      // Viewer link always loads in view-only mode
+      setCanvasData(responseData.data);
+      setActiveCanvas(canvasId);
+      setViewOnly(true);
+    } catch (error) {
+      console.error('Error loading canvas:', error);
+      alert('Failed to load canvas');
+    }
+  };
+
   const handleCanvasClick = (canvas: any) => {
     setSelectedCanvas(canvas);
     setShowPasswordModal(true);
@@ -252,8 +282,10 @@ export default function LearningsPage() {
     if (password === 'kunal') {
       setShowPasswordModal(false);
       setPassword('');
-      if (selectedCanvas) {
-        loadCanvasWithPassword(selectedCanvas.canvasId);
+      const canvasToLoad = createdCanvasId || selectedCanvas?.canvasId;
+      if (canvasToLoad) {
+        loadCanvasWithPassword(canvasToLoad);
+        setCreatedCanvasId(null);
       }
     } else {
       alert('Incorrect password!');
@@ -304,10 +336,9 @@ export default function LearningsPage() {
       setNewCanvasName('');
       setNewCanvasPublic(false);
       
-      // Open the newly created canvas in edit mode
-      setCanvasData({ elements: [], appState: {} });
-      setActiveCanvas(data.canvasId);
-      setViewOnly(false);
+      // Store created canvas ID and show view/edit modal
+      setCreatedCanvasId(data.canvasId);
+      setShowViewEditModal(true);
       
       // Refresh diagrams list
       if (activeTab === 'diagrams') {
@@ -340,6 +371,39 @@ export default function LearningsPage() {
       console.error('Error saving canvas:', error);
       throw error;
     }
+  };
+
+  const handleViewDiagram = async (canvasId: string) => {
+    try {
+      const response = await fetch(`${API_BASE_URL}/api/diagrams/${canvasId}`);
+      if (!response.ok) throw new Error('Failed to load canvas');
+      
+      const responseData = await response.json();
+      setCanvasData(responseData.data);
+      setActiveCanvas(canvasId);
+      setViewOnly(true);
+      setShowViewEditModal(false);
+    } catch (error) {
+      console.error('Error loading canvas:', error);
+      alert('Failed to load canvas');
+    }
+  };
+
+  const handleEditDiagram = () => {
+    setShowViewEditModal(false);
+    setShowPasswordModal(true);
+  };
+
+  const handleShareDiagram = (canvas: any) => {
+    const viewerLink = `${window.location.origin}/learnings?tab=diagrams&viewer=${canvas.canvasId}`;
+    setShareableLink(viewerLink);
+    setSelectedCanvas(canvas);
+    setShowShareModal(true);
+  };
+
+  const copyToClipboard = () => {
+    navigator.clipboard.writeText(shareableLink);
+    alert('Link copied to clipboard!');
   };
 
   // If canvas is active, show full-screen canvas
@@ -382,13 +446,24 @@ export default function LearningsPage() {
         <div className="max-w-7xl mx-auto">
           {/* Mobile Layout - Original */}
           <div className="block md:hidden">
-            <button
-              onClick={() => navigate('/')}
-              className="flex items-center gap-2 text-gray-600 hover:text-black mb-3 font-bold text-sm transition-all hover:gap-3"
-            >
-              <ArrowLeft className="w-4 h-4" strokeWidth={2.5} />
-              Back to Home
-            </button>
+            <div className="flex items-center justify-between mb-3">
+              <button
+                onClick={() => navigate('/')}
+                className="flex items-center gap-2 text-gray-600 hover:text-black font-bold text-sm transition-all hover:gap-3"
+              >
+                <ArrowLeft className="w-4 h-4" strokeWidth={2.5} />
+                Back to Home
+              </button>
+              
+              {/* Mobile Menu Button */}
+              <button
+                onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+                className="p-2 bg-black text-white rounded-lg border-3 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] transition-all"
+                aria-label="Toggle menu"
+              >
+                {mobileMenuOpen ? <X className="w-5 h-5" strokeWidth={2.5} /> : <Menu className="w-5 h-5" strokeWidth={2.5} />}
+              </button>
+            </div>
 
             <div className="mb-4">
               <h1 className="text-3xl font-black text-black mb-2" style={{ fontFamily: 'Comic Sans MS, cursive' }}>
@@ -502,25 +577,135 @@ export default function LearningsPage() {
         </div>
       </div>
 
+      {/* Mobile Menu Dropdown */}
+      {mobileMenuOpen && (
+        <div className="md:hidden fixed inset-0 z-50 bg-black/50 backdrop-blur-sm" onClick={() => setMobileMenuOpen(false)}>
+          <div 
+            className="absolute top-20 right-4 left-4 bg-white border-4 border-black rounded-2xl shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] overflow-hidden"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="p-4 space-y-2">
+              {/* Navigation Buttons */}
+              <button
+                onClick={() => {
+                  navigate('/');
+                  setMobileMenuOpen(false);
+                }}
+                className="w-full flex items-center gap-3 px-4 py-3 bg-gray-100 hover:bg-gray-200 border-3 border-black rounded-xl font-bold text-sm transition-all shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:shadow-[3px_3px_0px_0px_rgba(0,0,0,1)]"
+              >
+                <Home className="w-5 h-5" strokeWidth={2.5} />
+                <span>Home</span>
+              </button>
+
+              <div className="h-px bg-gray-300 my-2"></div>
+
+              {/* Tab Buttons */}
+              <button
+                onClick={() => {
+                  changeTab('blogs');
+                  setMobileMenuOpen(false);
+                }}
+                className={`w-full flex items-center gap-3 px-4 py-3 border-3 border-black rounded-xl font-bold text-sm transition-all shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] ${
+                  activeTab === 'blogs' ? 'bg-pink-400 text-white' : 'bg-white hover:bg-pink-50'
+                }`}
+              >
+                <BookOpen className="w-5 h-5" strokeWidth={2.5} />
+                <span>Blogs</span>
+              </button>
+
+              <button
+                onClick={() => {
+                  changeTab('documentation');
+                  setMobileMenuOpen(false);
+                }}
+                className={`w-full flex items-center gap-3 px-4 py-3 border-3 border-black rounded-xl font-bold text-sm transition-all shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] ${
+                  activeTab === 'documentation' ? 'bg-blue-400 text-white' : 'bg-white hover:bg-blue-50'
+                }`}
+              >
+                <FileText className="w-5 h-5" strokeWidth={2.5} />
+                <span>Documentation</span>
+              </button>
+
+              <button
+                onClick={() => {
+                  changeTab('notes');
+                  setMobileMenuOpen(false);
+                }}
+                className={`w-full flex items-center gap-3 px-4 py-3 border-3 border-black rounded-xl font-bold text-sm transition-all shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] ${
+                  activeTab === 'notes' ? 'bg-yellow-400 text-white' : 'bg-white hover:bg-yellow-50'
+                }`}
+              >
+                <FolderOpen className="w-5 h-5" strokeWidth={2.5} />
+                <span>Notes</span>
+              </button>
+
+              <button
+                onClick={() => {
+                  changeTab('code');
+                  setMobileMenuOpen(false);
+                }}
+                className={`w-full flex items-center gap-3 px-4 py-3 border-3 border-black rounded-xl font-bold text-sm transition-all shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] ${
+                  activeTab === 'code' ? 'bg-orange-400 text-white' : 'bg-white hover:bg-orange-50'
+                }`}
+              >
+                <Code className="w-5 h-5" strokeWidth={2.5} />
+                <span>Code</span>
+              </button>
+
+              <button
+                onClick={() => {
+                  changeTab('diagrams');
+                  setMobileMenuOpen(false);
+                }}
+                className={`w-full flex items-center gap-3 px-4 py-3 border-3 border-black rounded-xl font-bold text-sm transition-all shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] ${
+                  activeTab === 'diagrams' ? 'bg-purple-400 text-white' : 'bg-white hover:bg-purple-50'
+                }`}
+              >
+                <FileImage className="w-5 h-5" strokeWidth={2.5} />
+                <span>Diagrams</span>
+              </button>
+
+              <button
+                onClick={() => {
+                  changeTab('projects');
+                  setMobileMenuOpen(false);
+                }}
+                className={`w-full flex items-center gap-3 px-4 py-3 border-3 border-black rounded-xl font-bold text-sm transition-all shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] ${
+                  activeTab === 'projects' ? 'bg-green-400 text-white' : 'bg-white hover:bg-green-50'
+                }`}
+              >
+                <Github className="w-5 h-5" strokeWidth={2.5} />
+                <span>Projects</span>
+              </button>
+
+              <div className="h-px bg-gray-300 my-2"></div>
+
+              {/* Logout Button */}
+              <button
+                onClick={() => {
+                  // Add logout logic here
+                  console.log('Logout clicked');
+                  setMobileMenuOpen(false);
+                }}
+                className="w-full flex items-center gap-3 px-4 py-3 bg-red-500 hover:bg-red-600 text-white border-3 border-black rounded-xl font-bold text-sm transition-all shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:shadow-[3px_3px_0px_0px_rgba(0,0,0,1)]"
+              >
+                <LogOut className="w-5 h-5" strokeWidth={2.5} />
+                <span>Logout</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Scrollable Main Content */}
       <main className="flex-1 overflow-y-auto bg-transparent p-4 md:p-6 relative z-10">
         <div className="max-w-7xl mx-auto">
           {/* Loading State */}
           {loading && (
             <div className="flex items-center justify-center py-20">
-              <div className="relative w-32 h-32">
-                <div className="absolute inset-0 animate-spin">
-                  <svg className="w-32 h-32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                    <path
-                      d="M4 12a8 8 0 0 1 8-8V2.5L14.5 5 12 7.5V6a6 6 0 0 0-6 6h-2z"
-                      className="text-black"
-                    />
-                    <path
-                      d="M20 12a8 8 0 0 1-8 8v1.5L9.5 19 12 16.5V18a6 6 0 0 0 6-6h2z"
-                      className="text-black"
-                    />
-                  </svg>
-                </div>
+              <div className="flex flex-col items-center gap-4">
+                <div className="animate-spin w-16 h-16 border-4 border-black border-t-transparent rounded-full" style={{ animationDuration: '1.5s' }}></div>
+                <div className="text-black text-lg font-bold">Loading content...</div>
               </div>
             </div>
           )}
@@ -863,11 +1048,13 @@ export default function LearningsPage() {
                       diagrams.map((diagram) => (
                         <div
                           key={diagram.canvasId}
-                          onClick={() => handleCanvasClick(diagram)}
-                          className="bg-gray-50/70 backdrop-blur-sm border-3 border-black rounded-xl p-4 hover:shadow-[5px_5px_0px_0px_rgba(0,0,0,1)] transition-all cursor-pointer hover:-translate-y-1 group"
+                          className="bg-gray-50/70 backdrop-blur-sm border-3 border-black rounded-xl p-4 hover:shadow-[5px_5px_0px_0px_rgba(0,0,0,1)] transition-all group relative"
                           style={{ borderRadius: '12px 15px 13px 14px' }}
                         >
-                          <div className="flex flex-col items-center text-center gap-2">
+                          <div 
+                            onClick={() => handleCanvasClick(diagram)}
+                            className="flex flex-col items-center text-center gap-2 cursor-pointer"
+                          >
                             <div className="p-2.5 bg-purple-300 border-2 border-black rounded-lg group-hover:rotate-6 transition-transform" style={{ borderRadius: '8px 10px 9px 11px' }}>
                               <FileImage size={24} strokeWidth={2.5} />
                             </div>
@@ -876,6 +1063,17 @@ export default function LearningsPage() {
                               {new Date(diagram.updatedAt).toLocaleDateString()}
                             </p>
                           </div>
+                          {/* Share Button */}
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleShareDiagram(diagram);
+                            }}
+                            className="absolute top-2 right-2 p-1.5 bg-white border-2 border-black rounded-lg hover:bg-blue-100 transition-all shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:shadow-[3px_3px_0px_0px_rgba(0,0,0,1)]"
+                            title="Share diagram"
+                          >
+                            <Share2 size={14} strokeWidth={2.5} />
+                          </button>
                         </div>
                       ))
                     )}
@@ -891,7 +1089,7 @@ export default function LearningsPage() {
       {showPasswordModal && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-[100] p-4">
           <div className="bg-white border-4 border-black rounded-2xl p-6 max-w-md w-full shadow-2xl" style={{ borderRadius: '20px 25px 22px 24px' }}>
-            <h3 className="text-2xl font-black mb-4"> Enter Password</h3>
+            <h3 className="text-2xl font-black mb-4">🔒 Enter Password</h3>
             
             <div className="mb-6">
               <input
@@ -911,6 +1109,7 @@ export default function LearningsPage() {
                   setShowPasswordModal(false);
                   setPassword('');
                   setSelectedCanvas(null);
+                  setCreatedCanvasId(null);
                 }}
                 className="flex-1 px-4 py-2 bg-gray-200 border-2 border-black rounded-lg font-bold hover:bg-gray-300 transition-all"
                 style={{ borderRadius: '10px 12px 11px 13px' }}
@@ -980,6 +1179,96 @@ export default function LearningsPage() {
                 Create
               </button>
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* View/Edit Modal */}
+      {showViewEditModal && createdCanvasId && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-[100] p-4">
+          <div className="bg-white border-4 border-black rounded-2xl p-6 max-w-md w-full shadow-2xl" style={{ borderRadius: '20px 25px 22px 24px' }}>
+            <h3 className="text-2xl font-black mb-2">✨ Diagram Created!</h3>
+            <p className="text-gray-600 mb-6 font-medium">Choose how you want to open your diagram</p>
+            
+            <div className="space-y-3">
+              <button
+                onClick={() => handleViewDiagram(createdCanvasId)}
+                className="w-full flex items-center gap-3 px-6 py-4 bg-blue-100 hover:bg-blue-200 border-3 border-black rounded-xl font-bold transition-all shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:shadow-[5px_5px_0px_0px_rgba(0,0,0,1)]"
+                style={{ borderRadius: '12px 15px 13px 14px' }}
+              >
+                <Eye size={24} strokeWidth={2.5} />
+                <div className="text-left flex-1">
+                  <div className="text-lg">View File</div>
+                  <div className="text-xs text-gray-600 font-normal">Open in read-only mode</div>
+                </div>
+              </button>
+
+              <button
+                onClick={handleEditDiagram}
+                className="w-full flex items-center gap-3 px-6 py-4 bg-green-100 hover:bg-green-200 border-3 border-black rounded-xl font-bold transition-all shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:shadow-[5px_5px_0px_0px_rgba(0,0,0,1)]"
+                style={{ borderRadius: '12px 15px 13px 14px' }}
+              >
+                <Edit size={24} strokeWidth={2.5} />
+                <div className="text-left flex-1">
+                  <div className="text-lg">Edit File</div>
+                  <div className="text-xs text-gray-600 font-normal">Enter password to edit</div>
+                </div>
+              </button>
+
+              <button
+                onClick={() => {
+                  setShowViewEditModal(false);
+                  setCreatedCanvasId(null);
+                }}
+                className="w-full px-4 py-2 bg-gray-200 border-2 border-black rounded-lg font-bold hover:bg-gray-300 transition-all mt-2"
+                style={{ borderRadius: '10px 12px 11px 13px' }}
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Share Modal */}
+      {showShareModal && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-[100] p-4">
+          <div className="bg-white border-4 border-black rounded-2xl p-6 max-w-md w-full shadow-2xl" style={{ borderRadius: '20px 25px 22px 24px' }}>
+            <h3 className="text-2xl font-black mb-2">🔗 Share Diagram</h3>
+            <p className="text-gray-600 mb-4 font-medium">Share this view-only link with others</p>
+            
+            <div className="mb-4">
+              <div className="flex gap-2">
+                <input
+                  type="text"
+                  value={shareableLink}
+                  readOnly
+                  className="flex-1 px-4 py-2 border-2 border-black rounded-lg font-mono text-sm bg-gray-50"
+                />
+                <button
+                  onClick={copyToClipboard}
+                  className="px-4 py-2 bg-blue-500 text-white border-2 border-black rounded-lg font-bold hover:bg-blue-600 transition-all"
+                >
+                  Copy
+                </button>
+              </div>
+            </div>
+
+            <div className="bg-yellow-50 border-2 border-yellow-400 rounded-lg p-3 mb-4">
+              <p className="text-xs text-yellow-800 font-medium">👁️ This link allows <strong>view-only</strong> access. Recipients cannot edit the diagram.</p>
+            </div>
+
+            <button
+              onClick={() => {
+                setShowShareModal(false);
+                setShareableLink('');
+                setSelectedCanvas(null);
+              }}
+              className="w-full px-4 py-2 bg-gray-200 border-2 border-black rounded-lg font-bold hover:bg-gray-300 transition-all"
+              style={{ borderRadius: '10px 12px 11px 13px' }}
+            >
+              Close
+            </button>
           </div>
         </div>
       )}

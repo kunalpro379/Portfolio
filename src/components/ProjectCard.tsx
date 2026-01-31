@@ -69,16 +69,16 @@ const ProjectCard = memo(function ProjectCard({
   };
 
   const sizeHeight = {
-    big: "h-[280px] md:h-[320px] lg:h-[650px]",
-    "big-width": "h-[280px] md:h-[320px] lg:h-[380px]",
-    large: "h-[280px] md:h-[320px] lg:h-[650px]",
-    medium: "h-[280px] md:h-[320px] lg:h-[380px]",
-    small: "h-[280px] md:h-[320px] lg:h-[310px]"
+    big: "h-full",
+    "big-width": "h-full",
+    large: "h-full",
+    medium: "h-full",
+    small: "h-full"
   };
 
   return (
     <div
-      className={`relative ${sizeClasses[size]} ${sizeHeight[size]} cursor-pointer`}
+      className={`relative ${sizeClasses[size]} h-full cursor-pointer`}
       style={{ perspective: "1000px" }}
       onClick={handleCardClick}
       onMouseEnter={() => setIsFlipped(true)}

@@ -33,10 +33,12 @@ export default function BlogsSection() {
   const docsScrollRef = useRef<HTMLDivElement>(null);
   const [documentation, setDocumentation] = useState<Documentation[]>([]);
   const [blogs, setBlogs] = useState<Blog[]>([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
+        setLoading(true);
         // Fetch documentation
         const docsUrl = `${API_BASE_URL}${API_ENDPOINTS.documentation}`;
         console.log('Fetching documentation from:', docsUrl);
@@ -76,6 +78,8 @@ export default function BlogsSection() {
         }
       } catch (error) {
         console.error('Error fetching data:', error);
+      } finally {
+        setLoading(false);
       }
     };
     fetchData();
@@ -106,6 +110,21 @@ export default function BlogsSection() {
       accentColor: colors[idx % colors.length]
     };
   });
+
+  if (loading) {
+    return (
+      <section className="relative py-16 md:py-24">
+        <div className="max-w-[1440px] mx-auto px-6 md:px-12 relative z-10">
+          <div className="flex items-center justify-center py-20">
+            <div className="flex flex-col items-center gap-4">
+              <div className="animate-spin w-16 h-16 border-4 border-pink-500 border-t-transparent rounded-full" style={{ animationDuration: '1.5s' }}></div>
+              <div className="text-pink-500 text-lg font-bold">Loading blogs & documentation...</div>
+            </div>
+          </div>
+        </div>
+      </section>
+    );
+  }
 
   return (
     <section className="relative py-16 md:py-24">

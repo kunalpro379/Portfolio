@@ -143,7 +143,10 @@ export default function ProjectsSection() {
         <div className="max-w-[1440px] mx-auto px-6 md:px-12 relative z-10">
           <SectionHeader icon={FolderKanban} title="FEATURED PROJECTS" subtitle="PREMIUM WORK COLLECTION" />
           <div className="flex items-center justify-center py-20">
-            <div className="text-sky-400 text-lg">Loading projects...</div>
+            <div className="flex flex-col items-center gap-4">
+              <div className="animate-spin w-16 h-16 border-4 border-sky-400 border-t-transparent rounded-full" style={{ animationDuration: '1.5s' }}></div>
+              <div className="text-sky-400 text-lg font-bold">Loading projects...</div>
+            </div>
           </div>
         </div>
       </section>
@@ -171,7 +174,9 @@ export default function ProjectsSection() {
         {/* Mobile Layout - Simple Vertical Stack */}
         <div className="lg:hidden space-y-4 mt-8">
           {projects.map((project, index) => (
-            <ProjectCard key={index} {...project} />
+            <div key={index} className="min-h-[280px]">
+              <ProjectCard {...project} />
+            </div>
           ))}
         </div>
 
@@ -179,7 +184,9 @@ export default function ProjectsSection() {
         <div className="hidden md:block lg:hidden">
           <div className="grid grid-cols-2 gap-4 mt-8">
             {projects.map((project, index) => (
-              <ProjectCard key={index} {...project} size="medium" />
+              <div key={index} className="min-h-[320px]">
+                <ProjectCard {...project} size="medium" />
+              </div>
             ))}
           </div>
         </div>
@@ -188,7 +195,7 @@ export default function ProjectsSection() {
         <div className="hidden lg:block">
           {/* Row 1 - Layout: Tall | Medium+Medium | Tall | Medium+Medium */}
           <div className="grid grid-cols-4 gap-6 mt-8">
-            <div className="col-span-1">
+            <div className="col-span-1 h-[650px]">
               <ProjectCard {...projects[0]} size="big" />
             </div>
             <div className="col-span-1 flex flex-col gap-6">
@@ -200,7 +207,7 @@ export default function ProjectsSection() {
               </div>
             </div>
             {/* Parallel File Encryptor - Tall */}
-            <div className="col-span-1">
+            <div className="col-span-1 h-[650px]">
               <ProjectCard {...projects[3]} size="big" />
             </div>
             {/* Multithreaded Proxy + Resync - Stacked Medium */}
@@ -217,15 +224,15 @@ export default function ProjectsSection() {
           {/* Row 2 - Reverse Proxy | Sketch-to-Face (wide) | Hydralite */}
           <div className="grid grid-cols-4 gap-6 mt-6">
             {/* Reverse Proxy Web Server */}
-            <div className="col-span-1">
+            <div className="col-span-1 h-[320px]">
               <ProjectCard {...projects[6]} size="medium" />
             </div>
             {/* Sketch-to-Face GAN System - Wide */}
-            <div className="col-span-2">
+            <div className="col-span-2 h-[320px]">
               <ProjectCard {...projects[7]} size="big-width" />
             </div>
             {/* Hydralite.in */}
-            <div className="col-span-1">
+            <div className="col-span-1 h-[320px]">
               <ProjectCard {...projects[8]} size="medium" />
             </div>
           </div>
@@ -233,7 +240,7 @@ export default function ProjectsSection() {
           {/* Row 3 - ProSmart | Hydralite+Remote Desktop (stacked) | Video Pipeline */}
           <div className="grid grid-cols-12 gap-6 mt-6">
             {/* ProSmart.in - Left */}
-            <div className="col-span-4">
+            <div className="col-span-4 h-[650px]">
               <ProjectCard {...projects[9]} size="big" />
             </div>
             {/* Hydralite + Remote Desktop - Stacked in middle (narrower) */}
@@ -246,17 +253,25 @@ export default function ProjectsSection() {
               </div>
             </div>
             {/* Video Pipeline - Right */}
-            <div className="col-span-5">
+            <div className="col-span-5 h-[650px]">
               <ProjectCard {...projects[12]} size="big" />
             </div>
           </div>
 
           {/* Row 4 - Remaining cards in standard grid */}
           <div className="grid grid-cols-4 gap-6 mt-6">
-            <ProjectCard {...projects[13]} size="medium" />
-            <ProjectCard {...projects[14]} size="medium" />
-            <ProjectCard {...projects[15]} size="medium" />
-            <ProjectCard {...projects[16]} size="medium" />
+            <div className="h-[320px]">
+              <ProjectCard {...projects[13]} size="medium" />
+            </div>
+            <div className="h-[320px]">
+              <ProjectCard {...projects[14]} size="medium" />
+            </div>
+            <div className="h-[320px]">
+              <ProjectCard {...projects[15]} size="medium" />
+            </div>
+            <div className="h-[320px]">
+              <ProjectCard {...projects[16]} size="medium" />
+            </div>
           </div>
 
           {/* Row 5 - Tall | 2 Stacked | Extra Large (Reduced Heights) */}
@@ -283,13 +298,13 @@ export default function ProjectsSection() {
           {/* Row 6 - Tall | 2 Stacked | Extra Large */}
           <div className="grid grid-cols-4 gap-6 mt-6">
             {/* Tall card */}
-            <div className="col-span-2">
+            <div className="col-span-2 h-[320px]">
               <ProjectCard {...projects[21]} size="small" />
             </div>
-              <div className="col-span-1">
+              <div className="col-span-1 h-[320px]">
                 <ProjectCard {...projects[22]} size="small" />
               </div>
-                <div className="col-span-1">
+                <div className="col-span-1 h-[320px]">
                   <ProjectCard {...projects[23]} size="small" />
                 </div>
             
