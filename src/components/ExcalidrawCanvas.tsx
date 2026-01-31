@@ -238,7 +238,7 @@ export default function ExcalidrawCanvas({
       {/* View-Only Banner */}
       {viewOnly && (
         <div className="fixed top-20 left-1/2 transform -translate-x-1/2 z-[60] bg-red-500 text-white px-6 py-3 rounded-lg border-2 border-black shadow-lg font-bold pointer-events-none">
-           View Only Mode - This is a private canvas
+           View Only Mode
         </div>
       )}
 
