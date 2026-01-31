@@ -94,6 +94,7 @@ export default function LearningsPage() {
 
   // Canvas state
   const [activeCanvas, setActiveCanvas] = useState<string | null>(null);
+  const [activeViewerId, setActiveViewerId] = useState<string | null>(null);
   const [canvasData, setCanvasData] = useState<any>(null);
   const [viewOnly, setViewOnly] = useState(false);
   const [showPasswordModal, setShowPasswordModal] = useState(false);
@@ -106,6 +107,7 @@ export default function LearningsPage() {
   const [createdCanvasId, setCreatedCanvasId] = useState<string | null>(null);
   const [showShareModal, setShowShareModal] = useState(false);
   const [shareableLink, setShareableLink] = useState('');
+  const [isLoadingDiagram, setIsLoadingDiagram] = useState(false);
 
   // Check for canvas parameter in URL
   const canvasIdFromUrl = searchParams.get('canvas');
@@ -271,7 +273,7 @@ export default function LearningsPage() {
 
   const handleCanvasClick = (canvas: any) => {
     setSelectedCanvas(canvas);
-    setShowPasswordModal(true);
+    setShowViewEditModal(true);
   };
 
   const handlePasswordSubmit = () => {
@@ -290,6 +292,7 @@ export default function LearningsPage() {
 
   const loadCanvasWithPassword = async (canvasId: string) => {
     try {
+      setIsLoadingDiagram(true);
       const response = await fetch(`${API_BASE_URL}/api/diagrams/${canvasId}`);
       
       if (!response.ok) throw new Error('Failed to load canvas');
@@ -299,10 +302,13 @@ export default function LearningsPage() {
       // Direct access with password = always editable
       setCanvasData(responseData.data);
       setActiveCanvas(canvasId);
+      setActiveViewerId(responseData.canvas.viewerId);
       setViewOnly(false);
     } catch (error) {
       console.error('Error loading canvas:', error);
       alert('Failed to load canvas');
+    } finally {
+      setIsLoadingDiagram(false);
     }
   };
 
@@ -371,17 +377,21 @@ export default function LearningsPage() {
 
   const handleViewDiagram = async (canvasId: string) => {
     try {
+      setIsLoadingDiagram(true);
       const response = await fetch(`${API_BASE_URL}/api/diagrams/${canvasId}`);
       if (!response.ok) throw new Error('Failed to load canvas');
       
       const responseData = await response.json();
       setCanvasData(responseData.data);
       setActiveCanvas(canvasId);
+      setActiveViewerId(responseData.canvas.viewerId);
       setViewOnly(true);
       setShowViewEditModal(false);
     } catch (error) {
       console.error('Error loading canvas:', error);
       alert('Failed to load canvas');
+    } finally {
+      setIsLoadingDiagram(false);
     }
   };
 
@@ -391,7 +401,9 @@ export default function LearningsPage() {
   };
 
   const handleShareDiagram = (canvas: any) => {
-    const viewerLink = `${window.location.origin}/learnings?tab=diagrams&viewer=${canvas.canvasId}`;
+    const viewerLink = canvas.viewerId 
+      ? `${window.location.origin}/learnings/diagrams?viewer=${canvas.viewerId}`
+      : `${window.location.origin}/learnings/diagrams?canvas=${canvas.canvasId}`;
     setShareableLink(viewerLink);
     setSelectedCanvas(canvas);
     setShowShareModal(true);
@@ -410,9 +422,11 @@ export default function LearningsPage() {
     return (
       <ExcalidrawCanvas
         canvasId={activeCanvas}
+        viewerId={activeViewerId || undefined}
         isPublic={canvasIsPublic}
         onClose={() => {
           setActiveCanvas(null);
+          setActiveViewerId(null);
           setCanvasData(null);
           setViewOnly(false);
           navigate('/learnings?tab=diagrams');
@@ -575,7 +589,7 @@ export default function LearningsPage() {
 
       {/* Mobile Menu Dropdown */}
       {mobileMenuOpen && (
-        <div className="md:hidden fixed inset-0 z-50 bg-black/50 backdrop-blur-sm" onClick={() => setMobileMenuOpen(false)}>
+        <div className="md:hidden fixed inset-0 z-[100] bg-black/50 backdrop-blur-sm" onClick={() => setMobileMenuOpen(false)}>
           <div 
             className="absolute top-20 right-4 left-4 bg-white border-4 border-black rounded-2xl shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] overflow-hidden"
             onClick={(e) => e.stopPropagation()}
@@ -1044,13 +1058,11 @@ export default function LearningsPage() {
                       diagrams.map((diagram) => (
                         <div
                           key={diagram.canvasId}
-                          className="bg-gray-50/70 backdrop-blur-sm border-3 border-black rounded-xl p-4 hover:shadow-[5px_5px_0px_0px_rgba(0,0,0,1)] transition-all group relative"
+                          onClick={() => handleCanvasClick(diagram)}
+                          className="bg-gray-50/70 backdrop-blur-sm border-3 border-black rounded-xl p-4 hover:shadow-[5px_5px_0px_0px_rgba(0,0,0,1)] transition-all group cursor-pointer"
                           style={{ borderRadius: '12px 15px 13px 14px' }}
                         >
-                          <div 
-                            onClick={() => handleCanvasClick(diagram)}
-                            className="flex flex-col items-center text-center gap-2 cursor-pointer"
-                          >
+                          <div className="flex flex-col items-center text-center gap-2">
                             <div className="p-2.5 bg-purple-300 border-2 border-black rounded-lg group-hover:rotate-6 transition-transform" style={{ borderRadius: '8px 10px 9px 11px' }}>
                               <FileImage size={24} strokeWidth={2.5} />
                             </div>
@@ -1059,17 +1071,6 @@ export default function LearningsPage() {
                               {new Date(diagram.updatedAt).toLocaleDateString()}
                             </p>
                           </div>
-                          {/* Share Button */}
-                          <button
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              handleShareDiagram(diagram);
-                            }}
-                            className="absolute top-2 right-2 p-1.5 bg-white border-2 border-black rounded-lg hover:bg-blue-100 transition-all shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:shadow-[3px_3px_0px_0px_rgba(0,0,0,1)]"
-                            title="Share diagram"
-                          >
-                            <Share2 size={14} strokeWidth={2.5} />
-                          </button>
                         </div>
                       ))
                     )}
@@ -1085,41 +1086,53 @@ export default function LearningsPage() {
       {showPasswordModal && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-[100] p-4">
           <div className="bg-white border-4 border-black rounded-2xl p-6 max-w-md w-full shadow-2xl" style={{ borderRadius: '20px 25px 22px 24px' }}>
-            <h3 className="text-2xl font-black mb-4">🔒 Enter Password</h3>
-            
-            <div className="mb-6">
-              <input
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                onKeyPress={(e) => e.key === 'Enter' && handlePasswordSubmit()}
-                placeholder="Enter password"
-                className="w-full px-4 py-2 border-2 border-black rounded-lg font-medium"
-                autoFocus
-              />
-            </div>
+            {isLoadingDiagram ? (
+              <div className="text-center py-8">
+                <div className="animate-spin w-16 h-16 border-4 border-black border-t-transparent rounded-full mx-auto mb-4"></div>
+                <h3 className="text-xl font-black mb-2">Opening Diagram...</h3>
+                <p className="text-gray-600 font-medium">Please wait while we load your diagram</p>
+              </div>
+            ) : (
+              <>
+                <h3 className="text-2xl font-black mb-4"> Enter Password</h3>
+                
+                <div className="mb-6">
+                  <input
+                    type="password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    onKeyPress={(e) => e.key === 'Enter' && handlePasswordSubmit()}
+                    placeholder="Enter password"
+                    className="w-full px-4 py-2 border-2 border-black rounded-lg font-medium"
+                    autoFocus
+                  />
+                </div>
 
-            <div className="flex gap-3">
-              <button
-                onClick={() => {
-                  setShowPasswordModal(false);
-                  setPassword('');
-                  setSelectedCanvas(null);
-                  setCreatedCanvasId(null);
-                }}
-                className="flex-1 px-4 py-2 bg-gray-200 border-2 border-black rounded-lg font-bold hover:bg-gray-300 transition-all"
-                style={{ borderRadius: '10px 12px 11px 13px' }}
-              >
-                Cancel
-              </button>
-              <button
-                onClick={handlePasswordSubmit}
-                className="flex-1 px-4 py-2 bg-black text-white border-2 border-black rounded-lg font-bold hover:bg-gray-800 transition-all"
-                style={{ borderRadius: '10px 12px 11px 13px' }}
-              >
-                Unlock
-              </button>
-            </div>
+                <div className="flex gap-3">
+                  <button
+                    onClick={() => {
+                      setShowPasswordModal(false);
+                      setPassword('');
+                      setSelectedCanvas(null);
+                      setCreatedCanvasId(null);
+                    }}
+                    disabled={isLoadingDiagram}
+                    className="flex-1 px-4 py-2 bg-gray-200 border-2 border-black rounded-lg font-bold hover:bg-gray-300 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                    style={{ borderRadius: '10px 12px 11px 13px' }}
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    onClick={handlePasswordSubmit}
+                    disabled={isLoadingDiagram}
+                    className="flex-1 px-4 py-2 bg-black text-white border-2 border-black rounded-lg font-bold hover:bg-gray-800 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                    style={{ borderRadius: '10px 12px 11px 13px' }}
+                  >
+                    Unlock
+                  </button>
+                </div>
+              </>
+            )}
           </div>
         </div>
       )}
@@ -1180,48 +1193,64 @@ export default function LearningsPage() {
       )}
 
       {/* View/Edit Modal */}
-      {showViewEditModal && createdCanvasId && (
+      {showViewEditModal && (createdCanvasId || selectedCanvas) && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-[100] p-4">
           <div className="bg-white border-4 border-black rounded-2xl p-6 max-w-md w-full shadow-2xl" style={{ borderRadius: '20px 25px 22px 24px' }}>
-            <h3 className="text-2xl font-black mb-2">✨ Diagram Created!</h3>
-            <p className="text-gray-600 mb-6 font-medium">Choose how you want to open your diagram</p>
-            
-            <div className="space-y-3">
-              <button
-                onClick={() => handleViewDiagram(createdCanvasId)}
-                className="w-full flex items-center gap-3 px-6 py-4 bg-blue-100 hover:bg-blue-200 border-3 border-black rounded-xl font-bold transition-all shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:shadow-[5px_5px_0px_0px_rgba(0,0,0,1)]"
-                style={{ borderRadius: '12px 15px 13px 14px' }}
-              >
-                <Eye size={24} strokeWidth={2.5} />
-                <div className="text-left flex-1">
-                  <div className="text-lg">View File</div>
-                  <div className="text-xs text-gray-600 font-normal">Open in read-only mode</div>
-                </div>
-              </button>
+            {isLoadingDiagram ? (
+              <div className="text-center py-8">
+                <div className="animate-spin w-16 h-16 border-4 border-black border-t-transparent rounded-full mx-auto mb-4"></div>
+                <h3 className="text-xl font-black mb-2">Opening Diagram...</h3>
+                <p className="text-gray-600 font-medium">Please wait while we load your diagram</p>
+              </div>
+            ) : (
+              <>
+                <h3 className="text-2xl font-black mb-2">{createdCanvasId ? '✨ Diagram Created!' : ' Choose Action'}</h3>
+                <p className="text-gray-600 mb-6 font-medium">
+                  {createdCanvasId ? 'Choose how you want to open your diagram' : 'How would you like to open this diagram?'}
+                </p>
+                
+                <div className="space-y-3">
+                  <button
+                    onClick={() => handleViewDiagram(createdCanvasId || selectedCanvas?.canvasId)}
+                    disabled={isLoadingDiagram}
+                    className="w-full flex items-center gap-3 px-6 py-4 bg-blue-100 hover:bg-blue-200 border-3 border-black rounded-xl font-bold transition-all shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:shadow-[5px_5px_0px_0px_rgba(0,0,0,1)] disabled:opacity-50 disabled:cursor-not-allowed"
+                    style={{ borderRadius: '12px 15px 13px 14px' }}
+                  >
+                    <Eye size={24} strokeWidth={2.5} />
+                    <div className="text-left flex-1">
+                      <div className="text-lg">View Only</div>
+                      <div className="text-xs text-gray-600 font-normal">Open in read-only mode (No password required)</div>
+                    </div>
+                  </button>
 
-              <button
-                onClick={handleEditDiagram}
-                className="w-full flex items-center gap-3 px-6 py-4 bg-green-100 hover:bg-green-200 border-3 border-black rounded-xl font-bold transition-all shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:shadow-[5px_5px_0px_0px_rgba(0,0,0,1)]"
-                style={{ borderRadius: '12px 15px 13px 14px' }}
-              >
-                <Edit size={24} strokeWidth={2.5} />
-                <div className="text-left flex-1">
-                  <div className="text-lg">Edit File</div>
-                  <div className="text-xs text-gray-600 font-normal">Enter password to edit</div>
-                </div>
-              </button>
+                  <button
+                    onClick={handleEditDiagram}
+                    disabled={isLoadingDiagram}
+                    className="w-full flex items-center gap-3 px-6 py-4 bg-green-100 hover:bg-green-200 border-3 border-black rounded-xl font-bold transition-all shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:shadow-[5px_5px_0px_0px_rgba(0,0,0,1)] disabled:opacity-50 disabled:cursor-not-allowed"
+                    style={{ borderRadius: '12px 15px 13px 14px' }}
+                  >
+                    <Edit size={24} strokeWidth={2.5} />
+                    <div className="text-left flex-1">
+                      <div className="text-lg">Edit Mode</div>
+                      <div className="text-xs text-gray-600 font-normal">Make changes to the diagram (Password required)</div>
+                    </div>
+                  </button>
 
-              <button
-                onClick={() => {
-                  setShowViewEditModal(false);
-                  setCreatedCanvasId(null);
-                }}
-                className="w-full px-4 py-2 bg-gray-200 border-2 border-black rounded-lg font-bold hover:bg-gray-300 transition-all mt-2"
-                style={{ borderRadius: '10px 12px 11px 13px' }}
-              >
-                Close
-              </button>
-            </div>
+                  <button
+                    onClick={() => {
+                      setShowViewEditModal(false);
+                      setCreatedCanvasId(null);
+                      setSelectedCanvas(null);
+                    }}
+                    disabled={isLoadingDiagram}
+                    className="w-full px-4 py-2 bg-gray-200 border-2 border-black rounded-lg font-bold hover:bg-gray-300 transition-all mt-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                    style={{ borderRadius: '10px 12px 11px 13px' }}
+                  >
+                    Close
+                  </button>
+                </div>
+              </>
+            )}
           </div>
         </div>
       )}

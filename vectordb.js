@@ -270,7 +270,7 @@ async function searchKnowledgeBase(query, limit = 5) {
             with_payload: true
         });
         
-        console.log(`📋 Found ${results.length} results:`);
+        console.log(` Found ${results.length} results:`);
         results.forEach((result, index) => {
             console.log(`\n${index + 1}. Score: ${result.score.toFixed(4)}`);
             console.log(`   Section: ${result.payload.section_title}`);

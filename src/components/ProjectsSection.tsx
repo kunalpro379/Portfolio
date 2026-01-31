@@ -40,7 +40,6 @@ interface ProjectData {
 // Transform the API data to match ProjectCard props
 const transformProjects = (projects: RawProjectData[]): ProjectData[] => {
   return projects
-    .filter(project => project.featured)
     .map((project, index) => {
       // Define sizes for specific positions
       let size: "big" | "small" | "large" | "medium" = "medium";
@@ -167,148 +166,96 @@ export default function ProjectsSection() {
   }
 
   return (
-    <section id="projects" className="relative py-12 md:py-20">
-      <div className="max-w-[1440px] mx-auto px-6 md:px-12 relative z-10">
+    <section id="projects" className="relative py-12 md:py-20 overflow-hidden">
+      <div className="max-w-[1440px] mx-auto px-4 sm:px-6 md:px-12 relative z-10">
         <SectionHeader icon={FolderKanban} title="FEATURED PROJECTS" subtitle="PREMIUM WORK COLLECTION" />
 
         {/* Mobile Layout - Simple Vertical Stack */}
-        <div className="lg:hidden space-y-4 mt-8">
+        <div className="block md:hidden space-y-4 mt-8">
           {projects.map((project, index) => (
-            <div key={index} className="min-h-[280px]">
-              <ProjectCard {...project} />
+            <div key={index} className="w-full aspect-[4/3]">
+              <ProjectCard {...project} size="medium" />
             </div>
           ))}
         </div>
 
         {/* Tablet Layout - 2 Column Grid */}
-        <div className="hidden md:block lg:hidden">
-          <div className="grid grid-cols-2 gap-4 mt-8">
-            {projects.map((project, index) => (
-              <div key={index} className="min-h-[320px]">
-                <ProjectCard {...project} size="medium" />
-              </div>
-            ))}
-          </div>
+        <div className="hidden md:grid lg:hidden grid-cols-2 gap-4 mt-8">
+          {projects.map((project, index) => (
+            <div key={index} className="w-full aspect-[4/3]">
+              <ProjectCard {...project} size="medium" />
+            </div>
+          ))}
         </div>
 
-        {/* Desktop Layout */}
-        <div className="hidden lg:block">
-          {/* Row 1 - Layout: Tall | Medium+Medium | Tall | Medium+Medium */}
-          <div className="grid grid-cols-4 gap-6 mt-8">
-            <div className="col-span-1 h-[650px]">
-              <ProjectCard {...projects[0]} size="big" />
-            </div>
-            <div className="col-span-1 flex flex-col gap-6">
-              <div className="h-[313px]">
-                <ProjectCard {...projects[1]} size="small" />
-              </div>
-              <div className="h-[313px]">
-                <ProjectCard {...projects[2]} size="small" />
-              </div>
-            </div>
-            {/* Parallel File Encryptor - Tall */}
-            <div className="col-span-1 h-[650px]">
-              <ProjectCard {...projects[3]} size="big" />
-            </div>
-            {/* Multithreaded Proxy + Resync - Stacked Medium */}
-            <div className="col-span-1 flex flex-col gap-6">
-              <div className="h-[313px]">
-                <ProjectCard {...projects[4]} size="small" />
-              </div>
-              <div className="h-[313px]">
-                <ProjectCard {...projects[5]} size="small" />
-              </div>
-            </div>
-          </div>
-
-          {/* Row 2 - Reverse Proxy | Sketch-to-Face (wide) | Hydralite */}
-          <div className="grid grid-cols-4 gap-6 mt-6">
-            {/* Reverse Proxy Web Server */}
-            <div className="col-span-1 h-[320px]">
-              <ProjectCard {...projects[6]} size="medium" />
-            </div>
-            {/* Sketch-to-Face GAN System - Wide */}
-            <div className="col-span-2 h-[320px]">
-              <ProjectCard {...projects[7]} size="big-width" />
-            </div>
-            {/* Hydralite.in */}
-            <div className="col-span-1 h-[320px]">
-              <ProjectCard {...projects[8]} size="medium" />
-            </div>
-          </div>
-
-          {/* Row 3 - ProSmart | Hydralite+Remote Desktop (stacked) | Video Pipeline */}
-          <div className="grid grid-cols-12 gap-6 mt-6">
-            {/* ProSmart.in - Left */}
-            <div className="col-span-4 h-[650px]">
-              <ProjectCard {...projects[9]} size="big" />
-            </div>
-            {/* Hydralite + Remote Desktop - Stacked in middle (narrower) */}
-            <div className="col-span-3 flex flex-col gap-6">
-              <div className="h-[313px]">
-                <ProjectCard {...projects[10]} size="small" />
-              </div>
-              <div className="h-[313px]">
-                <ProjectCard {...projects[11]} size="small" />
-              </div>
-            </div>
-            {/* Video Pipeline - Right */}
-            <div className="col-span-5 h-[650px]">
-              <ProjectCard {...projects[12]} size="big" />
-            </div>
-          </div>
-
-          {/* Row 4 - Remaining cards in standard grid */}
-          <div className="grid grid-cols-4 gap-6 mt-6">
-            <div className="h-[320px]">
-              <ProjectCard {...projects[13]} size="medium" />
-            </div>
-            <div className="h-[320px]">
-              <ProjectCard {...projects[14]} size="medium" />
-            </div>
-            <div className="h-[320px]">
-              <ProjectCard {...projects[15]} size="medium" />
-            </div>
-            <div className="h-[320px]">
-              <ProjectCard {...projects[16]} size="medium" />
-            </div>
-          </div>
-
-          {/* Row 5 - Tall | 2 Stacked | Extra Large (Reduced Heights) */}
-          <div className="grid grid-cols-4 gap-6 mt-6">
-            {/* Tall card - reduced height */}
-            <div className="col-span-1 h-[500px]">
-              <ProjectCard {...projects[17]} size="big" />
-            </div>
-            {/* 2 Stacked medium cards - reduced heights */}
-            <div className="col-span-1 flex flex-col gap-6">
-              <div className="h-[313px]">
-                <ProjectCard {...projects[18]} size="small" />
-              </div>
-              <div className="h-[313px]">
-                <ProjectCard {...projects[19]} size="small" />
-              </div>
-            </div>
-            {/* Extra Large card - 2 columns wide, reduced height */}
-            <div className="col-span-2 h-[500px]">
-              <ProjectCard {...projects[20]} size="big" />
-            </div>
-          </div>
-
-          {/* Row 6 - Tall | 2 Stacked | Extra Large */}
-          <div className="grid grid-cols-4 gap-6 mt-6">
-            {/* Tall card */}
-            <div className="col-span-2 h-[320px]">
-              <ProjectCard {...projects[21]} size="small" />
-            </div>
-              <div className="col-span-1 h-[320px]">
-                <ProjectCard {...projects[22]} size="small" />
-              </div>
-                <div className="col-span-1 h-[320px]">
-                  <ProjectCard {...projects[23]} size="small" />
+        {/* Desktop Layout - Bento Grid with Proper Heights */}
+        <div className="hidden lg:grid grid-cols-4 gap-4 xl:gap-6 mt-8" style={{ gridAutoRows: '280px' }}>
+          {projects.slice(0, 24).map((project, index) => {
+            // First 6 cards - alternating pattern (tall, medium, medium, tall, medium, medium)
+            if (index === 0 || index === 3) {
+              return (
+                <div key={index} className="col-span-1 row-span-2">
+                  <ProjectCard {...project} size="big" />
                 </div>
-            
-          </div>
+              );
+            }
+            if (index === 1 || index === 2 || index === 4 || index === 5) {
+              return (
+                <div key={index} className="col-span-1 row-span-1">
+                  <ProjectCard {...project} size="medium" />
+                </div>
+              );
+            }
+            // Cards 7-9: medium, wide, medium
+            if (index === 6 || index === 8) {
+              return (
+                <div key={index} className="col-span-1 row-span-1">
+                  <ProjectCard {...project} size="medium" />
+                </div>
+              );
+            }
+            if (index === 7) {
+              return (
+                <div key={index} className="col-span-2 row-span-1">
+                  <ProjectCard {...project} size="big-width" />
+                </div>
+              );
+            }
+            // Cards 10-13: tall, wide, medium, large
+            if (index === 9) {
+              return (
+                <div key={index} className="col-span-1 row-span-2">
+                  <ProjectCard {...project} size="big" />
+                </div>
+              );
+            }
+            if (index === 10) {
+              return (
+                <div key={index} className="col-span-2 row-span-1">
+                  <ProjectCard {...project} size="big-width" />
+                </div>
+              );
+            }
+            if (index === 11) {
+              return (
+                <div key={index} className="col-span-1 row-span-1">
+                  <ProjectCard {...project} size="big-width" />
+                </div>
+              );
+            }
+            if (index === 12) {
+              return (
+                <div key={index} className="col-span-2 row-span-2">
+                  <ProjectCard {...project} size="big" />
+                </div>
+              );
+            }
+            return (
+              <div key={index} className="col-span-1 row-span-1">
+                <ProjectCard {...project} size="medium" />
+              </div>
+            );
+          })}
         </div>
       </div>
     </section>

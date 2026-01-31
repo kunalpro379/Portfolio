@@ -376,7 +376,7 @@ class AIChatService {
         metadata: result.payload
       }));
       
-      console.log(`📋 Vector search found ${transformedResults.length} results`);
+      console.log(` Vector search found ${transformedResults.length} results`);
       return transformedResults;
       
     } catch (error) {

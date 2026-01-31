@@ -4,6 +4,7 @@ import { Save, Share2, Lock, Unlock, X, ZoomIn } from 'lucide-react';
 
 interface ExcalidrawCanvasProps {
   canvasId: string;
+  viewerId?: string;
   isPublic: boolean;
   onClose: () => void;
   onSave: (data: any) => Promise<void>;
@@ -13,13 +14,14 @@ interface ExcalidrawCanvasProps {
 
 export default function ExcalidrawCanvas({
   canvasId,
+  viewerId,
   isPublic,
   onClose,
   onSave,
   initialData,
   viewOnly = false
 }: ExcalidrawCanvasProps) {
-  console.log('ExcalidrawCanvas props:', { canvasId, isPublic, viewOnly });
+  console.log('ExcalidrawCanvas props:', { canvasId, viewerId, isPublic, viewOnly });
   
   const [excalidrawAPI, setExcalidrawAPI] = useState<any>(null);
   const [isSaving, setIsSaving] = useState(false);
@@ -124,7 +126,7 @@ export default function ExcalidrawCanvas({
 
   const handleShare = () => {
     const baseUrl = window.location.origin;
-    const link = `${baseUrl}/learnings/diagrams?canvas=${canvasId}`;
+    const link = viewerId ? `${baseUrl}/learnings/diagrams?viewer=${viewerId}` : `${baseUrl}/learnings/diagrams?canvas=${canvasId}`;
     setShareLink(link);
     setShowShareModal(true);
   };
@@ -215,7 +217,7 @@ export default function ExcalidrawCanvas({
             <button
               onClick={handleShare}
               className="p-1.5 md:px-4 md:py-2 bg-blue-500 text-white border-2 border-black rounded-lg font-bold hover:bg-blue-600 transition-all flex items-center gap-2 justify-center shadow-md backdrop-blur-sm"
-              title="Share"
+              title="Share Viewer Link"
             >
               <Share2 size={18} strokeWidth={2.5} className="md:w-[18px] md:h-[18px]" />
               <span className="hidden md:inline">Share</span>
@@ -310,7 +312,7 @@ export default function ExcalidrawCanvas({
             
             <div className="mb-4">
               <p className="text-xs md:text-sm font-bold mb-2">
-                {isPublic ? ' Public Link (Anyone can edit)' : ' Private Link (View only - no editing)'}
+                View-Only Link (Recipients cannot edit)
               </p>
               <div className="flex flex-col sm:flex-row gap-2">
                 <input

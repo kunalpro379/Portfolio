@@ -82,7 +82,7 @@ router.post('/reorder', async (req, res) => {
 // Create new project
 router.post('/create', async (req, res) => {
     try {
-        const { projectId, title, tagline, footer, description, tags, links } = req.body;
+        const { projectId, title, tagline, footer, description, tags, links, featured } = req.body;
 
         if (!projectId || !title) {
             return res.status(400).json({ message: 'Project ID and title are required' });
@@ -103,6 +103,7 @@ router.post('/create', async (req, res) => {
             assets: [],
             cardasset: [],
             mdFiles: [],
+            featured: featured !== undefined ? featured : false,
             created_at: new Date(),
             updated_at: new Date()
         });

@@ -7,6 +7,12 @@ const diagramSchema = new mongoose.Schema({
     unique: true,
     index: true
   },
+  viewerId: {
+    type: String,
+    unique: true,
+    sparse: true,
+    index: true
+  },
   name: {
     type: String,
     required: true

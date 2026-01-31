@@ -47,6 +47,11 @@ function generateCanvasId() {
   return `canvas_${Date.now()}_${crypto.randomBytes(8).toString('hex')}`;
 }
 
+// Generate unique viewer ID
+function generateViewerId() {
+  return `viewer_${crypto.randomBytes(16).toString('hex')}`;
+}
+
 // GET all canvases
 router.get('/', async (req, res) => {
   try {
@@ -112,6 +117,7 @@ router.get('/:canvasId', async (req, res) => {
       data: canvasData,
       canvas: {
         canvasId: canvas.canvasId,
+        viewerId: canvas.viewerId,
         name: canvas.name,
         isPublic: canvas.isPublic,
         createdAt: canvas.createdAt,
@@ -120,6 +126,58 @@ router.get('/:canvasId', async (req, res) => {
     });
   } catch (error) {
     console.error('Error fetching canvas:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to fetch canvas',
+      error: error.message
+    });
+  }
+});
+
+// GET canvas by viewerId (read-only access)
+router.get('/viewer/:viewerId', async (req, res) => {
+  try {
+    const { viewerId } = req.params;
+
+    const canvas = await databaseUtils.executeOperation(async () => {
+      return await Diagram.findOne({ viewerId });
+    }, `Fetch canvas by viewerId ${viewerId}`);
+
+    if (!canvas) {
+      return res.status(404).json({
+        success: false,
+        message: 'Canvas not found'
+      });
+    }
+
+    // Try to load from Azure Blob if available
+    let canvasData = canvas.data;
+    if (containerClient && canvas.blobUrl) {
+      try {
+        const blobName = `${canvas.canvasId}.excalidraw`;
+        const blockBlobClient = containerClient.getBlockBlobClient(blobName);
+        const downloadResponse = await blockBlobClient.download();
+        const downloaded = await streamToBuffer(downloadResponse.readableStreamBody);
+        canvasData = JSON.parse(downloaded.toString());
+        console.log('✓ Loaded canvas from Azure Blob Storage');
+      } catch (blobError) {
+        console.log('Using MongoDB data as fallback');
+      }
+    }
+
+    res.json({
+      success: true,
+      data: canvasData,
+      canvas: {
+        canvasId: canvas.canvasId,
+        name: canvas.name,
+        createdAt: canvas.createdAt,
+        updatedAt: canvas.updatedAt
+      },
+      viewOnly: true // Always view-only for viewer links
+    });
+  } catch (error) {
+    console.error('Error fetching canvas by viewerId:', error);
     res.status(500).json({
       success: false,
       message: 'Failed to fetch canvas',
@@ -155,6 +213,7 @@ router.post('/', async (req, res) => {
     }
 
     const canvasId = generateCanvasId();
+    const viewerId = generateViewerId();
     const canvasData = data || { elements: [], appState: {} };
 
     // Save to Azure Blob Storage
@@ -185,6 +244,7 @@ router.post('/', async (req, res) => {
     const newCanvas = await databaseUtils.executeOperation(async () => {
       const canvas = new Diagram({
         canvasId,
+        viewerId,
         name,
         isPublic: isPublic || false,
         data: canvasData,
@@ -198,9 +258,11 @@ router.post('/', async (req, res) => {
       success: true,
       message: 'Canvas created successfully',
       canvasId: newCanvas.canvasId,
+      viewerId: newCanvas.viewerId,
       blobUrl: blobUrl,
       canvas: {
         canvasId: newCanvas.canvasId,
+        viewerId: newCanvas.viewerId,
         name: newCanvas.name,
         isPublic: newCanvas.isPublic,
         createdAt: newCanvas.createdAt,

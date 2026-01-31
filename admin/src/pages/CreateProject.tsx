@@ -42,6 +42,7 @@ export default function CreateProject() {
   const [mdContent, setMdContent] = useState('');
   const [assets, setAssets] = useState<Asset[]>([]);
   const [cardAssets, setCardAssets] = useState<CardAsset[]>([]);
+  const [featured, setFeatured] = useState(true);
 
   const addLink = () => {
     setLinks([...links, { name: '', url: '' }]);
@@ -128,7 +129,8 @@ export default function CreateProject() {
         links: links.filter(l => l.name && l.url),
         assets: [],
         cardasset: [],
-        mdFiles: []
+        mdFiles: [],
+        featured
       };
 
       const createResponse = await fetch(config.api.endpoints.projectCreate, {
@@ -344,6 +346,24 @@ export default function CreateProject() {
                     className="w-full px-4 py-3 bg-white border-3 border-black rounded-xl font-medium focus:outline-none focus:ring-4 focus:ring-black/20 shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] focus:shadow-[5px_5px_0px_0px_rgba(0,0,0,1)]"
                     placeholder="Footer text"
                   />
+                </div>
+
+                {/* Featured Toggle */}
+                <div>
+                  <label className="flex items-center gap-3 cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={featured}
+                      onChange={(e) => setFeatured(e.target.checked)}
+                      className="w-6 h-6 border-3 border-black rounded cursor-pointer accent-black"
+                    />
+                    <span className="text-sm font-black text-black uppercase tracking-wide">
+                      Show on Homepage (Featured)
+                    </span>
+                  </label>
+                  <p className="text-xs text-gray-600 font-medium mt-1 ml-9">
+                    Enable this to display the project on your portfolio homepage
+                  </p>
                 </div>
               </div>
             </div>

@@ -7,6 +7,7 @@ import PageShimmer from '@/components/PageShimmer';
 
 interface Canvas {
   canvasId: string;
+  viewerId?: string;
   name: string;
   isPublic: boolean;
   createdAt: string;
@@ -20,6 +21,7 @@ export default function DiagramsPage() {
   const [canvases, setCanvases] = useState<Canvas[]>([]);
   const [loading, setLoading] = useState(true);
   const [activeCanvas, setActiveCanvas] = useState<string | null>(null);
+  const [viewerId, setViewerId] = useState<string | null>(null);
   const [canvasData, setCanvasData] = useState<any>(null);
   const [viewOnly, setViewOnly] = useState(true); // Default to read-only
   const [showActionModal, setShowActionModal] = useState(false);
@@ -30,34 +32,60 @@ export default function DiagramsPage() {
 
   const EDIT_PASSWORD = 'Lawm@822471';
 
-  // Check if accessing via share link
+  // Check if accessing via share link (canvas or viewer)
   const canvasIdFromUrl = searchParams.get('canvas');
+  const viewerIdFromUrl = searchParams.get('viewer');
 
   useEffect(() => {
-    if (canvasIdFromUrl) {
-      // Accessing via share link - bypass password and determine access from canvas settings
+    if (viewerIdFromUrl) {
+      // Accessing via viewer link - always read-only
+      loadCanvasFromViewerLink(viewerIdFromUrl);
+    } else if (canvasIdFromUrl) {
+      // Accessing via canvas link - ask for viewer or editor
       loadCanvasFromShare(canvasIdFromUrl);
     } else {
       fetchCanvases();
     }
-  }, [canvasIdFromUrl]);
+  }, [canvasIdFromUrl, viewerIdFromUrl]);
 
   const loadCanvasFromShare = async (canvasId: string) => {
     try {
-      // Load canvas in read-only mode (no password required)
+      // Show action modal for canvas links (viewer or editor choice)
       const response = await fetch(`${API_BASE_URL}/api/diagrams/${canvasId}`);
       
       if (!response.ok) throw new Error('Failed to load canvas');
       
       const responseData = await response.json();
       
-      // Always load in read-only mode for public access
+      // Store data and show modal to choose viewer/editor
       setCanvasData(responseData.data);
       setActiveCanvas(canvasId);
-      setViewOnly(true); // Always read-only
+      setViewerId(responseData.canvas.viewerId);
+      setShowActionModal(true);
     } catch (error) {
       console.error('Error loading canvas:', error);
       alert('Failed to load canvas. It may have been deleted.');
+      navigate('/learnings?tab=diagrams');
+    }
+  };
+
+  const loadCanvasFromViewerLink = async (viewerId: string) => {
+    try {
+      // Load canvas via viewer link - always read-only
+      const response = await fetch(`${API_BASE_URL}/api/diagrams/viewer/${viewerId}`);
+      
+      if (!response.ok) throw new Error('Failed to load canvas');
+      
+      const responseData = await response.json();
+      
+      // Always load in read-only mode for viewer links
+      setCanvasData(responseData.data);
+      setActiveCanvas(responseData.canvas.canvasId);
+      setViewerId(viewerId);
+      setViewOnly(true); // Always read-only
+    } catch (error) {
+      console.error('Error loading canvas from viewer link:', error);
+      alert('Failed to load canvas. The link may be invalid or the canvas was deleted.');
       navigate('/learnings?tab=diagrams');
     }
   };
@@ -89,7 +117,8 @@ export default function DiagramsPage() {
       console.log('Canvas loaded, setting viewOnly to:', isViewOnly);
       setCanvasData(responseData.data);
       setActiveCanvas(canvasId);
-      setViewOnly(isViewOnly); // Always read-only for public access
+      setViewerId(responseData.canvas.viewerId);
+      setViewOnly(isViewOnly);
     } catch (error) {
       console.error('Error loading canvas:', error);
       alert('Failed to load canvas');
@@ -103,12 +132,9 @@ export default function DiagramsPage() {
   };
 
   const handleViewCanvas = () => {
-    if (selectedCanvas) {
-      console.log('Opening canvas in read-only mode');
-      loadCanvas(selectedCanvas.canvasId, true);
-      setShowActionModal(false);
-      setSelectedCanvas(null);
-    }
+    console.log('Opening canvas in read-only mode');
+    setViewOnly(true);
+    setShowActionModal(false);
   };
 
   const handleEditCanvas = () => {
@@ -118,14 +144,12 @@ export default function DiagramsPage() {
 
   const handlePasswordSubmit = () => {
     if (password === EDIT_PASSWORD) {
-      if (selectedCanvas) {
-        console.log('Opening canvas in edit mode');
-        loadCanvas(selectedCanvas.canvasId, false); // Edit mode
-        setShowPasswordModal(false);
-        setSelectedCanvas(null);
-        setPassword('');
-        setPasswordError('');
-      }
+      console.log('Opening canvas in edit mode');
+      setViewOnly(false);
+      setShowPasswordModal(false);
+      setSelectedCanvas(null);
+      setPassword('');
+      setPasswordError('');
     } else {
       setPasswordError('Incorrect password. Please try again.');
     }
@@ -138,29 +162,79 @@ export default function DiagramsPage() {
     setSelectedCanvas(null);
   };
 
+  const handleSaveCanvas = async (data: any) => {
+    if (!activeCanvas) return;
+    
+    try {
+      const response = await fetch(`${API_BASE_URL}/api/diagrams/${activeCanvas}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ data }),
+      });
+
+      if (!response.ok) throw new Error('Failed to save canvas');
+      
+      console.log('Canvas saved successfully');
+    } catch (error) {
+      console.error('Error saving canvas:', error);
+      throw error;
+    }
+  };
+
   if (activeCanvas) {
     const currentCanvas = canvases.find(c => c.canvasId === activeCanvas);
     const canvasIsPublic = currentCanvas?.isPublic || false;
     
-    console.log('Rendering canvas:', activeCanvas, 'viewOnly:', viewOnly, 'isPublic:', canvasIsPublic);
+    console.log('Rendering canvas:', activeCanvas, 'viewOnly:', viewOnly, 'isPublic:', canvasIsPublic, 'viewerId:', viewerId);
     
     return (
       <ExcalidrawCanvas
         canvasId={activeCanvas}
+        viewerId={viewerId || undefined}
         isPublic={canvasIsPublic}
         onClose={() => {
           setActiveCanvas(null);
+          setViewerId(null);
           setCanvasData(null);
           setViewOnly(true);
-          if (!canvasIdFromUrl) {
+          if (!canvasIdFromUrl && !viewerIdFromUrl) {
             fetchCanvases();
           } else {
             navigate('/learnings?tab=diagrams');
           }
         }}
+        onSave={handleSaveCanvas}
         initialData={canvasData}
         viewOnly={viewOnly}
       />
+    );
+  }
+
+  // Show loading screen when accessing via viewer link
+  if (viewerIdFromUrl && loading) {
+    return (
+      <div className="min-h-screen bg-white flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin w-16 h-16 border-4 border-black border-t-transparent rounded-full mx-auto mb-4"></div>
+          <h3 className="text-2xl font-black mb-2">Loading Diagram...</h3>
+          <p className="text-gray-600 font-medium">Please wait while we fetch your diagram</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Show loading screen when accessing via canvas link
+  if (canvasIdFromUrl && loading) {
+    return (
+      <div className="min-h-screen bg-white flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin w-16 h-16 border-4 border-black border-t-transparent rounded-full mx-auto mb-4"></div>
+          <h3 className="text-2xl font-black mb-2">Loading Diagram...</h3>
+          <p className="text-gray-600 font-medium">Please wait while we fetch your diagram</p>
+        </div>
+      </div>
     );
   }
 
@@ -257,15 +331,18 @@ export default function DiagramsPage() {
       </main>
 
       {/* Action Modal - Choose View or Edit */}
-      {showActionModal && selectedCanvas && (
+      {showActionModal && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
           <div className="bg-white border-4 border-black rounded-2xl p-6 max-w-md w-full mx-4 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
             <div className="flex items-center justify-between mb-4">
-              <h3 className="text-xl font-black text-black">📋 Choose Action</h3>
+              <h3 className="text-xl font-black text-black"> Choose Action</h3>
               <button
                 onClick={() => {
                   setShowActionModal(false);
                   setSelectedCanvas(null);
+                  if (canvasIdFromUrl) {
+                    navigate('/learnings?tab=diagrams');
+                  }
                 }}
                 className="p-1 hover:bg-gray-100 rounded-lg transition-all"
               >
@@ -274,7 +351,7 @@ export default function DiagramsPage() {
             </div>
             
             <p className="text-gray-600 mb-6 font-medium">
-              How would you like to open "<span className="font-bold text-black">{selectedCanvas.name}</span>"?
+              How would you like to open this diagram?
             </p>
             
             <div className="space-y-3">
@@ -305,11 +382,11 @@ export default function DiagramsPage() {
       )}
 
       {/* Password Modal */}
-      {showPasswordModal && selectedCanvas && (
+      {showPasswordModal && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
           <div className="bg-white border-4 border-black rounded-2xl p-6 max-w-md w-full mx-4 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
             <div className="flex items-center justify-between mb-4">
-              <h3 className="text-xl font-black text-black">🔒 Enter Password</h3>
+              <h3 className="text-xl font-black text-black"> Enter Password</h3>
               <button
                 onClick={closePasswordModal}
                 className="p-1 hover:bg-gray-100 rounded-lg transition-all"
@@ -319,7 +396,7 @@ export default function DiagramsPage() {
             </div>
             
             <p className="text-gray-600 mb-4 font-medium">
-              Enter the password to edit "<span className="font-bold text-black">{selectedCanvas.name}</span>":
+              Enter the password to edit this diagram:
             </p>
             
             <div className="space-y-4">
