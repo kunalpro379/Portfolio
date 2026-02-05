@@ -82,23 +82,6 @@ class ServerConfig {
   configureCORS() {
     console.log('Server: Configuring CORS with origins:', CONFIG.CORS.ORIGINS);
 
-    // Handle preflight requests explicitly FIRST
-    this.app.options('*', (req, res) => {
-      const origin = req.headers.origin;
-      const allowedOrigin = CONFIG.CORS.ORIGINS.includes(origin) ? origin : null;
-      
-      if (allowedOrigin) {
-        res.header('Access-Control-Allow-Origin', allowedOrigin);
-        res.header('Access-Control-Allow-Credentials', 'true');
-        res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, PATCH, DELETE, OPTIONS');
-        res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization, Content-Length, X-File-Name, X-File-Size, X-File-Type');
-        res.header('Access-Control-Max-Age', '86400');
-        res.status(204).end();
-      } else {
-        res.status(403).end();
-      }
-    });
-
     const corsOptions = {
       origin: (origin, callback) => {
         // Allow requests with no origin (mobile apps, curl, etc.)
@@ -127,6 +110,18 @@ class ServerConfig {
     };
 
     this.app.use(cors(corsOptions));
+    
+    // Additional CORS headers for all responses
+    this.app.use((req, res, next) => {
+      const origin = req.headers.origin;
+      if (origin && CONFIG.CORS.ORIGINS.includes(origin)) {
+        res.setHeader('Access-Control-Allow-Origin', origin);
+        res.setHeader('Access-Control-Allow-Credentials', 'true');
+        res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, PATCH, DELETE, OPTIONS');
+        res.setHeader('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization, Content-Length, X-File-Name, X-File-Size, X-File-Type');
+      }
+      next();
+    });
   }
 
   /**
