@@ -316,16 +316,19 @@ export default function LearningsPage() {
       try {
         // Fetch full todo details if we only have summary
         if (!todo.points || !todo.content) {
+          console.log('Fetching full todo details for:', todo.todoId);
           const fullTodo = await fetchTodoById(todo.todoId);
+          console.log('Full todo data:', fullTodo);
           setEditingTodo(fullTodo);
         } else {
+          console.log('Using existing todo data:', todo);
           setEditingTodo(todo);
         }
         setTodoFormMode('edit');
         setShowTodoForm(true);
       } catch (err) {
         console.error('Error fetching todo details:', err);
-        alert('Failed to load todo details');
+        alert('Failed to load todo details. Please try again.');
       }
     }
   };
@@ -347,6 +350,12 @@ export default function LearningsPage() {
           links: data.links
         });
       }
+      
+      // Close form and reset state
+      setShowTodoForm(false);
+      setEditingTodo(null);
+      
+      // Reload todos to show updated data
       await loadTodos();
     } catch (err) {
       console.error('Error saving todo:', err);
@@ -374,6 +383,12 @@ export default function LearningsPage() {
       console.error('Error toggling point:', err);
       alert('Failed to toggle point');
     }
+  };
+
+  const handleTodoFormClose = () => {
+    setShowTodoForm(false);
+    setEditingTodo(null);
+    setTodoFormMode('create');
   };
 
   const handleLogoutTodos = () => {
@@ -1577,10 +1592,7 @@ export default function LearningsPage() {
       {/* Todo Form Modal */}
       <TodoForm
         isOpen={showTodoForm}
-        onClose={() => {
-          setShowTodoForm(false);
-          setEditingTodo(null);
-        }}
+        onClose={handleTodoFormClose}
         onSubmit={handleTodoSubmit}
         initialData={editingTodo ? {
           todoId: editingTodo.todoId,

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { X, Plus, Trash2, Link as LinkIcon, CheckCircle2, Loader, Circle } from 'lucide-react';
 
 interface TodoPoint {
@@ -20,7 +20,7 @@ interface TodoFormProps {
     points: TodoPoint[];
     links: TodoLink[];
     persistFor: 'day' | 'always';
-  }) => void;
+  }) => Promise<void>;
   initialData?: {
     todoId?: string;
     topic: string;
@@ -40,6 +40,23 @@ export default function TodoForm({ isOpen, onClose, onSubmit, initialData, mode 
   const [newLinkTitle, setNewLinkTitle] = useState('');
   const [newLinkUrl, setNewLinkUrl] = useState('');
   const [persistFor, setPersistFor] = useState<'day' | 'always'>('day');
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // Update form state when initialData changes (for edit mode)
+  useEffect(() => {
+    if (initialData) {
+      setTopic(initialData.topic || '');
+      setContent(initialData.content || '');
+      setPoints(initialData.points || []);
+      setLinks(initialData.links || []);
+    } else {
+      // Reset form for create mode
+      setTopic('');
+      setContent('');
+      setPoints([]);
+      setLinks([]);
+    }
+  }, [initialData, mode]);
 
   if (!isOpen) return null;
 
@@ -79,14 +96,35 @@ export default function TodoForm({ isOpen, onClose, onSubmit, initialData, mode 
     setLinks(links.filter((_, i) => i !== index));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!topic.trim()) {
       alert('Please enter a topic');
       return;
     }
-    onSubmit({ topic, content, points, links, persistFor });
-    onClose();
+    
+    setIsSubmitting(true);
+    
+    try {
+      await onSubmit({ topic, content, points, links, persistFor });
+      
+      // Reset form state after successful submission
+      setTopic('');
+      setContent('');
+      setPoints([]);
+      setLinks([]);
+      setNewPoint('');
+      setNewLinkTitle('');
+      setNewLinkUrl('');
+      setPersistFor('day');
+      
+      onClose();
+    } catch (error) {
+      console.error('Error submitting todo:', error);
+      alert('Failed to save todo. Please try again.');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -344,9 +382,17 @@ export default function TodoForm({ isOpen, onClose, onSubmit, initialData, mode 
             </button>
             <button
               type="submit"
-              className="flex-1 px-5 py-2.5 bg-gradient-to-r from-orange-600 to-orange-700 text-white border border-orange-800 rounded-md font-medium hover:from-orange-700 hover:to-orange-800 transition-all shadow-md hover:shadow-lg"
+              disabled={isSubmitting}
+              className="flex-1 px-5 py-2.5 bg-gradient-to-r from-orange-600 to-orange-700 text-white border border-orange-800 rounded-md font-medium hover:from-orange-700 hover:to-orange-800 transition-all shadow-md hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              {mode === 'create' ? 'Create Todo' : 'Save Changes'}
+              {isSubmitting ? (
+                <div className="flex items-center justify-center gap-2">
+                  <Loader size={16} className="animate-spin" />
+                  {mode === 'create' ? 'Creating...' : 'Saving...'}
+                </div>
+              ) : (
+                mode === 'create' ? 'Create Todo' : 'Save Changes'
+              )}
             </button>
           </div>
         </form>

@@ -136,7 +136,7 @@ export const fetchPerformanceStats = async (): Promise<PerformanceStats> => {
     }
     
     const data = await response.json();
-    return data.stats;
+    return data; // Return the data directly since the server returns the stats object directly
   } catch (error) {
     console.error('Error fetching performance stats:', error);
     throw error;
