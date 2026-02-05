@@ -80,23 +80,11 @@ class ServerConfig {
    * @private
    */
   configureCORS() {
-    console.log('Server: Configuring CORS with origins:', CONFIG.CORS.ORIGINS);
+    console.log('Server: Configuring CORS - allowing all origins');
 
     const corsOptions = {
-      origin: (origin, callback) => {
-        // Allow requests with no origin (mobile apps, curl, etc.)
-        if (!origin) return callback(null, true);
-        
-        // Check if origin is in allowed list
-        if (CONFIG.CORS.ORIGINS.includes(origin)) {
-          console.log('CORS: Allowing origin:', origin);
-          callback(null, true);
-        } else {
-          console.log('CORS: Blocked origin:', origin);
-          callback(new Error('Not allowed by CORS'));
-        }
-      },
-      credentials: true,
+      origin: '*',
+      credentials: false,
       methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
       allowedHeaders: [
         'Origin', 'X-Requested-With', 'Content-Type', 'Accept', 
@@ -111,15 +99,11 @@ class ServerConfig {
 
     this.app.use(cors(corsOptions));
     
-    // Additional CORS headers for all responses
+    // Additional headers to ensure CORS works everywhere
     this.app.use((req, res, next) => {
-      const origin = req.headers.origin;
-      if (origin && CONFIG.CORS.ORIGINS.includes(origin)) {
-        res.setHeader('Access-Control-Allow-Origin', origin);
-        res.setHeader('Access-Control-Allow-Credentials', 'true');
-        res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, PATCH, DELETE, OPTIONS');
-        res.setHeader('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization, Content-Length, X-File-Name, X-File-Size, X-File-Type');
-      }
+      res.setHeader('Access-Control-Allow-Origin', '*');
+      res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, PATCH, DELETE, OPTIONS');
+      res.setHeader('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization, Content-Length, X-File-Name, X-File-Size, X-File-Type');
       next();
     });
   }
