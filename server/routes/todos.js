@@ -8,11 +8,32 @@ function generateId() {
   return `todo_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
 }
 
-// Get all todos
+// Get all todos (limited info for list view)
 router.get('/', async (req, res) => {
   try {
     const todos = await Todo.find({}).sort({ createdAt: -1 });
-    res.json({ todos });
+    
+    // Return only summary information for list view
+    const todosSummary = todos.map(todo => {
+      const points = todo.points || [];
+      const doneCount = points.filter(p => p.status === 'done').length;
+      const workingCount = points.filter(p => p.status === 'working').length;
+      const pendingCount = points.filter(p => p.status === 'pending').length;
+      
+      return {
+        todoId: todo.todoId,
+        topic: todo.topic,
+        pointsCount: points.length,
+        doneCount,
+        workingCount,
+        pendingCount,
+        linksCount: (todo.links || []).length,
+        createdAt: todo.createdAt,
+        updatedAt: todo.updatedAt
+      };
+    });
+    
+    res.json({ todos: todosSummary });
   } catch (error) {
     console.error('Get todos error:', error);
     res.status(500).json({ message: 'Server error' });
