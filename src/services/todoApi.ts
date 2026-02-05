@@ -109,6 +109,23 @@ export const fetchTodos = async (): Promise<Todo[]> => {
   }
 };
 
+// Fetch single todo by ID
+export const fetchTodoById = async (todoId: string): Promise<Todo> => {
+  try {
+    const response = await fetch(`${API_BASE_URL}${API_ENDPOINTS.todos}/${todoId}`);
+    
+    if (!response.ok) {
+      throw new Error('Failed to fetch todo');
+    }
+    
+    const data = await response.json();
+    return data.todo;
+  } catch (error) {
+    console.error('Error fetching todo:', error);
+    throw error;
+  }
+};
+
 // Fetch performance stats
 export const fetchPerformanceStats = async (): Promise<PerformanceStats> => {
   try {

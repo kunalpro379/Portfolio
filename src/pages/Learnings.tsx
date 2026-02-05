@@ -9,6 +9,7 @@ import TodoPasswordModal from "@/components/TodoPasswordModal";
 import TodoPerformanceStats from "@/components/TodoPerformanceStats";
 import {
   fetchTodos,
+  fetchTodoById,
   createTodo,
   updateTodo,
   deleteTodo,
@@ -306,15 +307,26 @@ export default function LearningsPage() {
     }
   };
 
-  const handleEditTodo = (todo: Todo) => {
+  const handleEditTodo = async (todo: Todo) => {
     if (!todosAuthenticated) {
       setTodoPasswordMode('edit');
       setEditingTodo(todo);
       setShowTodoPasswordModal(true);
     } else {
-      setTodoFormMode('edit');
-      setEditingTodo(todo);
-      setShowTodoForm(true);
+      try {
+        // Fetch full todo details if we only have summary
+        if (!todo.points || !todo.content) {
+          const fullTodo = await fetchTodoById(todo.todoId);
+          setEditingTodo(fullTodo);
+        } else {
+          setEditingTodo(todo);
+        }
+        setTodoFormMode('edit');
+        setShowTodoForm(true);
+      } catch (err) {
+        console.error('Error fetching todo details:', err);
+        alert('Failed to load todo details');
+      }
     }
   };
 
