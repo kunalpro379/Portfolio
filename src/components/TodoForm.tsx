@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { X, Plus, Trash2, Link as LinkIcon, CheckCircle2, Loader, Circle } from 'lucide-react';
+import { X, Plus, Trash2, Link as LinkIcon, CheckCircle2, Loader, Circle, Save } from 'lucide-react';
 
 interface TodoPoint {
   text: string;
@@ -142,13 +142,28 @@ export default function TodoForm({ isOpen, onClose, onSubmit, initialData, mode 
             <h2 className="text-lg sm:text-xl font-semibold text-white">
               {mode === 'create' ? 'Create New Todo' : 'Edit Todo'}
             </h2>
-            <button
-              type="button"
-              onClick={onClose}
-              className="p-1.5 sm:p-2 text-white hover:bg-white/20 rounded-md transition-all"
-            >
-              <X size={18} strokeWidth={2} className="sm:w-5 sm:h-5" />
-            </button>
+            <div className="flex items-center gap-2">
+              {/* Save button - visible only on mobile */}
+              <button
+                type="submit"
+                disabled={isSubmitting}
+                className="sm:hidden p-2 bg-white/20 hover:bg-white/30 rounded-md transition-all disabled:opacity-50"
+                title="Save"
+              >
+                {isSubmitting ? (
+                  <Loader size={18} className="animate-spin text-white" />
+                ) : (
+                  <Save size={18} strokeWidth={2} className="text-white" />
+                )}
+              </button>
+              <button
+                type="button"
+                onClick={onClose}
+                className="p-1.5 sm:p-2 text-white hover:bg-white/20 rounded-md transition-all"
+              >
+                <X size={18} strokeWidth={2} className="sm:w-5 sm:h-5" />
+              </button>
+            </div>
           </div>
 
           {/* Body */}

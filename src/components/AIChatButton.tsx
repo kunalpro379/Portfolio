@@ -231,15 +231,15 @@ const AIChatButton: React.FC = () => {
 
   return (
     <>
-      {/* Chat Button - Mobile Optimized */}
+      {/* Chat Button - Smaller on Mobile */}
       <button
         onClick={() => setIsOpen(true)}
         className={`ai-chat-button-fixed group ${
           isOpen ? 'hidden' : 'flex'
-        } items-center gap-2 sm:gap-3 bg-white text-black px-4 py-3 sm:px-6 sm:py-4 rounded-2xl shadow-2xl hover:shadow-3xl transition-all duration-500 transform hover:scale-105 hover:-translate-y-2 border-4 border-black relative overflow-hidden`}
+        } items-center gap-1.5 sm:gap-3 bg-white text-black px-2.5 py-2 sm:px-6 sm:py-4 rounded-2xl shadow-2xl hover:shadow-3xl transition-all duration-500 transform hover:scale-105 hover:-translate-y-2 border-3 sm:border-4 border-black relative overflow-hidden`}
         style={{
           borderRadius: '20px 25px 20px 25px',
-          boxShadow: '8px 8px 0px 0px rgba(0,0,0,1), 0 0 30px rgba(0,0,0,0.1)',
+          boxShadow: '4px 4px 0px 0px rgba(0,0,0,1), 0 0 30px rgba(0,0,0,0.1)',
         }}
         aria-label="Ask about Kunal"
       >
@@ -248,13 +248,13 @@ const AIChatButton: React.FC = () => {
         </div>
         
         {/* Main content */}
-        <div className="relative flex items-center gap-2 sm:gap-3">
+        <div className="relative flex items-center gap-1.5 sm:gap-3">
           <div className="relative">
-            <div className="w-8 h-8 sm:w-12 sm:h-12 rounded-full flex items-center justify-center p-1">
+            <div className="w-6 h-6 sm:w-12 sm:h-12 rounded-full flex items-center justify-center p-1">
               <img src="/gemini.png" alt="Gemini AI" className="w-full h-full object-contain animate-spin" style={{ animationDuration: '3s' }} />
             </div>
           </div>
-          <span className="text-sm sm:text-base font-black tracking-wide text-black relative">
+          <span className="text-xs sm:text-base font-black tracking-wide text-black relative">
             Ask about me
             <div className="absolute -bottom-1 left-0 w-full h-0.5 bg-black transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300"></div>
           </span>

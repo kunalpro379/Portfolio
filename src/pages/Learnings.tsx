@@ -676,15 +676,11 @@ export default function LearningsPage() {
             </div>
           </div>
 
-          {/* Tabs - Scrollable on mobile */}
-          <div className="flex overflow-x-auto gap-1 md:gap-2 mt-4 pb-2 scrollbar-hide md:grid md:grid-cols-6">
-            <style>{`
-              .scrollbar-hide::-webkit-scrollbar { display: none; }
-              .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
-            `}</style>
+          {/* Tabs - Fixed 6 columns, no scrolling */}
+          <div className="grid grid-cols-6 gap-1 md:gap-2 mt-4">
             <button
               onClick={() => changeTab('blogs')}
-              className={`flex-shrink-0 px-4 md:px-6 py-1.5 md:py-3 rounded-lg md:rounded-xl font-bold text-xs md:text-sm transition-all border-2 md:border-3 border-black whitespace-nowrap ${activeTab === 'blogs'
+              className={`px-1 md:px-6 py-1.5 md:py-3 rounded-lg md:rounded-xl font-bold text-[9px] md:text-sm transition-all border-2 md:border-3 border-black ${activeTab === 'blogs'
                   ? 'bg-pink-400 text-white shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] md:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transform -translate-y-0.5'
                   : 'bg-white hover:bg-pink-50 hover:shadow-[1px_1px_0px_0px_rgba(0,0,0,1)] md:hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]'
                 }`}
@@ -696,7 +692,7 @@ export default function LearningsPage() {
             </button>
             <button
               onClick={() => changeTab('documentation')}
-              className={`flex-shrink-0 px-4 md:px-6 py-1.5 md:py-3 rounded-lg md:rounded-xl font-bold text-xs md:text-sm transition-all border-2 md:border-3 border-black whitespace-nowrap ${activeTab === 'documentation'
+              className={`px-1 md:px-6 py-1.5 md:py-3 rounded-lg md:rounded-xl font-bold text-[9px] md:text-sm transition-all border-2 md:border-3 border-black ${activeTab === 'documentation'
                   ? 'bg-blue-400 text-white shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] md:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transform -translate-y-0.5'
                   : 'bg-white hover:bg-blue-50 hover:shadow-[1px_1px_0px_0px_rgba(0,0,0,1)] md:hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]'
                 }`}
@@ -708,7 +704,7 @@ export default function LearningsPage() {
             </button>
             <button
               onClick={() => changeTab('notes')}
-              className={`flex-shrink-0 px-4 md:px-6 py-1.5 md:py-3 rounded-lg md:rounded-xl font-bold text-xs md:text-sm transition-all border-2 md:border-3 border-black whitespace-nowrap ${activeTab === 'notes'
+              className={`px-1 md:px-6 py-1.5 md:py-3 rounded-lg md:rounded-xl font-bold text-[9px] md:text-sm transition-all border-2 md:border-3 border-black ${activeTab === 'notes'
                   ? 'bg-yellow-400 text-white shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] md:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transform -translate-y-0.5'
                   : 'bg-white hover:bg-yellow-50 hover:shadow-[1px_1px_0px_0px_rgba(0,0,0,1)] md:hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]'
                 }`}
@@ -720,7 +716,7 @@ export default function LearningsPage() {
             </button>
             <button
               onClick={() => changeTab('code')}
-              className={`flex-shrink-0 px-4 md:px-6 py-1.5 md:py-3 rounded-lg md:rounded-xl font-bold text-xs md:text-sm transition-all border-2 md:border-3 border-black whitespace-nowrap ${activeTab === 'code'
+              className={`px-1 md:px-6 py-1.5 md:py-3 rounded-lg md:rounded-xl font-bold text-[9px] md:text-sm transition-all border-2 md:border-3 border-black ${activeTab === 'code'
                   ? 'bg-orange-400 text-white shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] md:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transform -translate-y-0.5'
                   : 'bg-white hover:bg-orange-50 hover:shadow-[1px_1px_0px_0px_rgba(0,0,0,1)] md:hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]'
                 }`}
@@ -732,7 +728,7 @@ export default function LearningsPage() {
             </button>
             <button
               onClick={() => changeTab('diagrams')}
-              className={`flex-shrink-0 px-4 md:px-6 py-1.5 md:py-3 rounded-lg md:rounded-xl font-bold text-xs md:text-sm transition-all border-2 md:border-3 border-black whitespace-nowrap ${activeTab === 'diagrams'
+              className={`px-1 md:px-6 py-1.5 md:py-3 rounded-lg md:rounded-xl font-bold text-[9px] md:text-sm transition-all border-2 md:border-3 border-black ${activeTab === 'diagrams'
                   ? 'bg-purple-400 text-white shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] md:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transform -translate-y-0.5'
                   : 'bg-white hover:bg-purple-50 hover:shadow-[1px_1px_0px_0px_rgba(0,0,0,1)] md:hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]'
                 }`}
@@ -744,7 +740,7 @@ export default function LearningsPage() {
             </button>
             <button
               onClick={() => changeTab('projects')}
-              className={`flex-shrink-0 px-4 md:px-6 py-1.5 md:py-3 rounded-lg md:rounded-xl font-bold text-xs md:text-sm transition-all border-2 md:border-3 border-black whitespace-nowrap ${activeTab === 'projects'
+              className={`px-1 md:px-6 py-1.5 md:py-3 rounded-lg md:rounded-xl font-bold text-[9px] md:text-sm transition-all border-2 md:border-3 border-black ${activeTab === 'projects'
                   ? 'bg-green-400 text-white shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] md:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transform -translate-y-0.5'
                   : 'bg-white hover:bg-green-50 hover:shadow-[1px_1px_0px_0px_rgba(0,0,0,1)] md:hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]'
                 }`}
