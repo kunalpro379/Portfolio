@@ -561,7 +561,7 @@ Guidelines:
       
       if (isScheduleQuery) {
         // Use direct timetable search for schedule queries
-        console.log('📅 Using direct timetable search for schedule query');
+        console.log(' Using direct timetable search for schedule query');
         const timetableResults = this.searchTimetable(userQuery);
         allResults = [...timetableResults];
         

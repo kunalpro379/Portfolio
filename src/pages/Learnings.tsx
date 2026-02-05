@@ -1,8 +1,26 @@
-import { Clock, Calendar, ArrowLeft, FolderOpen, FileText, BookOpen, Code, FileImage, Plus, Github, Menu, X, Home, LogOut, Share2, Eye, Edit } from "lucide-react";
+import { Clock, Calendar, ArrowLeft, FolderOpen, FileText, BookOpen, Code, FileImage, Plus, Github, Menu, X, Home, LogOut, Share2, Eye, Edit, ListTodo, Lock } from "lucide-react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { API_ENDPOINTS, API_BASE_URL } from "@/config/api";
 import ExcalidrawCanvas from "@/components/ExcalidrawCanvas";
+import TodoCard from "@/components/TodoCard";
+import TodoForm from "@/components/TodoForm";
+import TodoPasswordModal from "@/components/TodoPasswordModal";
+import TodoPerformanceStats from "@/components/TodoPerformanceStats";
+import {
+  fetchTodos,
+  createTodo,
+  updateTodo,
+  deleteTodo,
+  toggleTodoPoint,
+  fetchPerformanceStats,
+  isAuthenticated,
+  setAuthToken,
+  clearAuthToken,
+  type Todo,
+  type CreateTodoData,
+  type PerformanceStats
+} from "@/services/todoApi";
 
 interface ProjectData {
   size?: "big" | "small" | "large" | "medium";
@@ -98,6 +116,17 @@ export default function LearningsPage() {
   const [canvasData, setCanvasData] = useState<any>(null);
   const [viewOnly, setViewOnly] = useState(false);
   const [showPasswordModal, setShowPasswordModal] = useState(false);
+
+  // Todo state
+  const [todos, setTodos] = useState<Todo[]>([]);
+  const [todosLoading, setTodosLoading] = useState(false);
+  const [performanceStats, setPerformanceStats] = useState<PerformanceStats | null>(null);
+  const [showTodoPasswordModal, setShowTodoPasswordModal] = useState(false);
+  const [showTodoForm, setShowTodoForm] = useState(false);
+  const [todoFormMode, setTodoFormMode] = useState<'create' | 'edit'>('create');
+  const [editingTodo, setEditingTodo] = useState<Todo | null>(null);
+  const [todoPasswordMode, setTodoPasswordMode] = useState<'view' | 'create' | 'edit'>('view');
+  const [todosAuthenticated, setTodosAuthenticated] = useState(isAuthenticated());
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [selectedCanvas, setSelectedCanvas] = useState<any>(null);
   const [password, setPassword] = useState('');
@@ -228,6 +257,118 @@ export default function LearningsPage() {
 
     fetchData();
   }, [activeTab]);
+
+  // Load todos when authenticated and on notes tab
+  useEffect(() => {
+    if (activeTab === 'notes' && todosAuthenticated) {
+      loadTodos();
+    }
+  }, [activeTab, todosAuthenticated]);
+
+  const loadTodos = async () => {
+    try {
+      setTodosLoading(true);
+      const [fetchedTodos, stats] = await Promise.all([
+        fetchTodos(),
+        fetchPerformanceStats()
+      ]);
+      setTodos(fetchedTodos);
+      setPerformanceStats(stats);
+    } catch (err) {
+      console.error('Error loading todos:', err);
+    } finally {
+      setTodosLoading(false);
+    }
+  };
+
+  const handleTodoPasswordSuccess = (persistFor: 'day' | 'always') => {
+    setAuthToken(persistFor);
+    setTodosAuthenticated(true);
+    
+    // If we were trying to create/edit, show the form
+    if (todoPasswordMode === 'create') {
+      setShowTodoForm(true);
+      setTodoFormMode('create');
+    } else if (todoPasswordMode === 'edit' && editingTodo) {
+      setShowTodoForm(true);
+      setTodoFormMode('edit');
+    }
+  };
+
+  const handleCreateTodo = () => {
+    if (!todosAuthenticated) {
+      setTodoPasswordMode('create');
+      setShowTodoPasswordModal(true);
+    } else {
+      setTodoFormMode('create');
+      setEditingTodo(null);
+      setShowTodoForm(true);
+    }
+  };
+
+  const handleEditTodo = (todo: Todo) => {
+    if (!todosAuthenticated) {
+      setTodoPasswordMode('edit');
+      setEditingTodo(todo);
+      setShowTodoPasswordModal(true);
+    } else {
+      setTodoFormMode('edit');
+      setEditingTodo(todo);
+      setShowTodoForm(true);
+    }
+  };
+
+  const handleTodoSubmit = async (data: CreateTodoData & { persistFor: 'day' | 'always'; links: any[] }) => {
+    try {
+      if (todoFormMode === 'create') {
+        await createTodo({
+          topic: data.topic,
+          content: data.content,
+          points: data.points,
+          links: data.links
+        });
+      } else if (editingTodo) {
+        await updateTodo(editingTodo.todoId, {
+          topic: data.topic,
+          content: data.content,
+          points: data.points,
+          links: data.links
+        });
+      }
+      await loadTodos();
+    } catch (err) {
+      console.error('Error saving todo:', err);
+      alert('Failed to save todo');
+    }
+  };
+
+  const handleDeleteTodo = async (todoId: string) => {
+    if (!confirm('Are you sure you want to delete this todo?')) return;
+    
+    try {
+      await deleteTodo(todoId);
+      await loadTodos();
+    } catch (err) {
+      console.error('Error deleting todo:', err);
+      alert('Failed to delete todo');
+    }
+  };
+
+  const handleToggleTodoPoint = async (todoId: string, pointIndex: number) => {
+    try {
+      await toggleTodoPoint(todoId, pointIndex);
+      await loadTodos();
+    } catch (err) {
+      console.error('Error toggling point:', err);
+      alert('Failed to toggle point');
+    }
+  };
+
+  const handleLogoutTodos = () => {
+    clearAuthToken();
+    setTodosAuthenticated(false);
+    setTodos([]);
+  };
 
   const changeTab = (tab: 'notes' | 'documentation' | 'blogs' | 'projects' | 'diagrams' | 'code') => {
     setSearchParams({ tab });
@@ -766,6 +907,122 @@ export default function LearningsPage() {
                       ))
                     )}
                   </div>
+
+                  {/* TODOS SECTION */}
+                  <div className="mt-12">
+                    {/* Todos Header */}
+                    <div className="flex items-center justify-between mb-6">
+                      <div className="flex items-center gap-3">
+                        <div className="p-3 bg-gradient-to-br from-orange-400 to-orange-500 border-3 border-black rounded-xl">
+                          <ListTodo size={28} strokeWidth={2.5} className="text-white" />
+                        </div>
+                        <div>
+                          <h2 className="text-2xl font-black text-black">My Todos</h2>
+                          <p className="text-sm font-medium text-gray-600">
+                            {todosAuthenticated ? 'Manage your tasks' : 'Password protected'}
+                          </p>
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        {todosAuthenticated && (
+                          <>
+                            <button
+                              onClick={handleCreateTodo}
+                              className="flex items-center gap-2 px-4 py-3 bg-gradient-to-r from-orange-500 to-orange-600 text-white border-3 border-black rounded-xl font-bold hover:from-orange-600 hover:to-orange-700 transition-all shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]"
+                            >
+                              <Plus size={20} strokeWidth={2.5} />
+                              <span className="hidden sm:inline">New Todo</span>
+                            </button>
+                            <button
+                              onClick={handleLogoutTodos}
+                              className="flex items-center gap-2 px-4 py-3 bg-red-500 text-white border-3 border-black rounded-xl font-bold hover:bg-red-600 transition-all shadow-[3px_3px_0px_0px_rgba(0,0,0,1)]"
+                              title="Logout from todos"
+                            >
+                              <Lock size={20} strokeWidth={2.5} />
+                            </button>
+                          </>
+                        )}
+                        {!todosAuthenticated && (
+                          <button
+                            onClick={() => {
+                              setTodoPasswordMode('view');
+                              setShowTodoPasswordModal(true);
+                            }}
+                            className="flex items-center gap-2 px-4 py-3 bg-gradient-to-r from-orange-500 to-orange-600 text-white border-3 border-black rounded-xl font-bold hover:from-orange-600 hover:to-orange-700 transition-all shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]"
+                          >
+                            <Lock size={20} strokeWidth={2.5} />
+                            <span>Unlock Todos</span>
+                          </button>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* Todos Content */}
+                    {!todosAuthenticated ? (
+                      <div className="text-center py-16">
+                        <div className="bg-gradient-to-br from-orange-50 to-orange-100 border-3 border-black rounded-2xl p-10 inline-block shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]">
+                          <div className="w-20 h-20 bg-orange-400 border-3 border-black rounded-full flex items-center justify-center mx-auto mb-4">
+                            <Lock size={40} strokeWidth={2.5} className="text-white" />
+                          </div>
+                          <p className="text-gray-800 text-lg font-black mb-2">Protected Content</p>
+                          <p className="text-gray-600 text-sm font-medium mb-4">Enter password to view your todos</p>
+                          <button
+                            onClick={() => {
+                              setTodoPasswordMode('view');
+                              setShowTodoPasswordModal(true);
+                            }}
+                            className="px-6 py-3 bg-gradient-to-r from-orange-500 to-orange-600 text-white border-3 border-black rounded-xl font-bold hover:from-orange-600 hover:to-orange-700 transition-all shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]"
+                          >
+                            🔓 Unlock
+                          </button>
+                        </div>
+                      </div>
+                    ) : todosLoading ? (
+                      <div className="flex items-center justify-center py-16">
+                        <div className="flex flex-col items-center gap-4">
+                          <div className="animate-spin w-12 h-12 border-4 border-orange-500 border-t-transparent rounded-full"></div>
+                          <p className="text-gray-700 font-bold">Loading todos...</p>
+                        </div>
+                      </div>
+                    ) : todos.length === 0 ? (
+                      <div className="text-center py-16">
+                        <div className="bg-gradient-to-br from-orange-50 to-orange-100 border-3 border-black rounded-2xl p-10 inline-block shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]">
+                          <ListTodo size={48} strokeWidth={2.5} className="mx-auto mb-3 text-orange-500" />
+                          <p className="text-gray-800 text-lg font-black mb-2">No todos yet</p>
+                          <p className="text-gray-600 text-sm font-medium mb-4">Create your first todo to get started</p>
+                          <button
+                            onClick={handleCreateTodo}
+                            className="px-6 py-3 bg-gradient-to-r from-orange-500 to-orange-600 text-white border-3 border-black rounded-xl font-bold hover:from-orange-600 hover:to-orange-700 transition-all shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] inline-flex items-center gap-2"
+                          >
+                            <Plus size={20} strokeWidth={2.5} />
+                            Create Todo
+                          </button>
+                        </div>
+                      </div>
+                    ) : (
+                      <>
+                        {/* Performance Stats */}
+                        {performanceStats && todos.length > 0 && (
+                          <div className="mb-6">
+                            <TodoPerformanceStats stats={performanceStats} />
+                          </div>
+                        )}
+
+                        {/* Todos Grid */}
+                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+                          {todos.map((todo) => (
+                            <TodoCard
+                              key={todo.todoId}
+                              todo={todo}
+                              onEdit={handleEditTodo}
+                              onDelete={handleDeleteTodo}
+                              onTogglePoint={handleToggleTodoPoint}
+                            />
+                          ))}
+                        </div>
+                      </>
+                    )}
+                  </div>
                 </>
               )}
 
@@ -1296,7 +1553,32 @@ export default function LearningsPage() {
           </div>
         </div>
       )}
+
+      {/* Todo Password Modal */}
+      <TodoPasswordModal
+        isOpen={showTodoPasswordModal}
+        onClose={() => setShowTodoPasswordModal(false)}
+        onSuccess={handleTodoPasswordSuccess}
+        mode={todoPasswordMode}
+      />
+
+      {/* Todo Form Modal */}
+      <TodoForm
+        isOpen={showTodoForm}
+        onClose={() => {
+          setShowTodoForm(false);
+          setEditingTodo(null);
+        }}
+        onSubmit={handleTodoSubmit}
+        initialData={editingTodo ? {
+          todoId: editingTodo.todoId,
+          topic: editingTodo.topic,
+          content: editingTodo.content,
+          points: editingTodo.points,
+          links: editingTodo.links
+        } : undefined}
+        mode={todoFormMode}
+      />
     </div>
   );
 }
-
