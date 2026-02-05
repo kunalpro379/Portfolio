@@ -80,11 +80,40 @@ class ServerConfig {
    * @private
    */
   configureCORS() {
-    console.log('Server: Configuring CORS - allowing all origins');
+    console.log('Server: Configuring CORS with origins:', CONFIG.CORS.ORIGINS);
+
+    // Handle preflight requests explicitly FIRST
+    this.app.options('*', (req, res) => {
+      const origin = req.headers.origin;
+      const allowedOrigin = CONFIG.CORS.ORIGINS.includes(origin) ? origin : null;
+      
+      if (allowedOrigin) {
+        res.header('Access-Control-Allow-Origin', allowedOrigin);
+        res.header('Access-Control-Allow-Credentials', 'true');
+        res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, PATCH, DELETE, OPTIONS');
+        res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization, Content-Length, X-File-Name, X-File-Size, X-File-Type');
+        res.header('Access-Control-Max-Age', '86400');
+        res.status(204).end();
+      } else {
+        res.status(403).end();
+      }
+    });
 
     const corsOptions = {
-      origin: '*',
-      credentials: false,
+      origin: (origin, callback) => {
+        // Allow requests with no origin (mobile apps, curl, etc.)
+        if (!origin) return callback(null, true);
+        
+        // Check if origin is in allowed list
+        if (CONFIG.CORS.ORIGINS.includes(origin)) {
+          console.log('CORS: Allowing origin:', origin);
+          callback(null, true);
+        } else {
+          console.log('CORS: Blocked origin:', origin);
+          callback(new Error('Not allowed by CORS'));
+        }
+      },
+      credentials: true,
       methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
       allowedHeaders: [
         'Origin', 'X-Requested-With', 'Content-Type', 'Accept', 
@@ -98,14 +127,6 @@ class ServerConfig {
     };
 
     this.app.use(cors(corsOptions));
-    
-    // Additional headers to ensure CORS works everywhere
-    this.app.use((req, res, next) => {
-      res.setHeader('Access-Control-Allow-Origin', '*');
-      res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, PATCH, DELETE, OPTIONS');
-      res.setHeader('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization, Content-Length, X-File-Name, X-File-Size, X-File-Type');
-      next();
-    });
   }
 
   /**
