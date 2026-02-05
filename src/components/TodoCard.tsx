@@ -1,4 +1,4 @@
-import { CheckCircle2, Circle, Trash2, Edit, Calendar, Clock, Loader, Link as LinkIcon, Target } from 'lucide-react';
+import { CheckCircle2, Circle, Trash2, Edit, Calendar, Clock, Loader, Link as LinkIcon } from 'lucide-react';
 
 interface TodoPoint {
   text: string;
@@ -223,36 +223,6 @@ export default function TodoCard({ todo, onEdit, onDelete, onTogglePoint }: Todo
                   stroke="currentColor"
                   viewBox="0 0 24 24"
                   strokeWidth={2}
-                >
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-                </svg>
-              </a>
-            ))}
-          </div>
-        </div>
-      )}
-    </div>
-  );
-}
-            {todo.links.map((link, index) => (
-              <a
-                key={index}
-                href={link.url}
-                target="_blank"
-                rel="noopener noreferrer"
-                onClick={(e) => e.stopPropagation()}
-                className="flex items-center gap-2 p-2 bg-white hover:bg-orange-50 border-2 border-black rounded-lg transition-all group/link text-sm"
-              >
-                <LinkIcon size={14} strokeWidth={2.5} className="text-orange-500 flex-shrink-0" />
-                <span className="text-xs font-medium text-gray-800 group-hover/link:text-orange-600 truncate">
-                  {link.title}
-                </span>
-                <svg
-                  className="w-3 h-3 text-gray-400 group-hover/link:text-orange-600 ml-auto flex-shrink-0"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                  strokeWidth={2.5}
                 >
                   <path strokeLinecap="round" strokeLinejoin="round" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
                 </svg>
