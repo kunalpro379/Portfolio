@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { ArrowLeft, Save, Upload, Image as ImageIcon, Trash2, Download, Eye } from 'lucide-react';
+import { ArrowLeft, Save, Upload, Image as ImageIcon, Trash2, Eye, FileText, Plus } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { vscDarkPlus } from 'react-syntax-highlighter/dist/esm/styles/prism';
@@ -19,17 +19,18 @@ export default function GuideNoteEditorPage() {
 
   const [title, setTitle] = useState('');
   const [topic, setTopic] = useState('');
+  const [description, setDescription] = useState('');
+  const [tags, setTags] = useState('');
   const [content, setContent] = useState('');
   const [canvasData, setCanvasData] = useState<any>(null);
   const [assets, setAssets] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
-  const [showCanvas, setShowCanvas] = useState(false);
-  const [showPreview, setShowPreview] = useState(false);
+  const [activeView, setActiveView] = useState<'markdown' | 'diagram'>('markdown');
   const [uploading, setUploading] = useState(false);
   const [currentNoteId, setCurrentNoteId] = useState<string | null>(noteId || null);
+  const [isPublic, setIsPublic] = useState(false);
 
-  // Load existing note if in edit mode
   useEffect(() => {
     if (isEditMode && noteId) {
       loadNote(noteId);
@@ -79,7 +80,6 @@ export default function GuideNoteEditorPage() {
         });
         setCurrentNoteId(newNote.noteId);
         alert('Guide note created successfully!');
-        // Redirect to edit mode with the new note ID
         navigate(`/learnings/guide/${newNote.noteId}`, { replace: true });
       }
     } catch (err) {
@@ -113,7 +113,6 @@ export default function GuideNoteEditorPage() {
         const data = await response.json();
         setAssets(prev => [...prev, data.asset]);
 
-        // Insert markdown link at cursor position
         const markdownLink = file.type.startsWith('image/') 
           ? `![${file.name}](${data.asset.azureUrl})`
           : `[${file.name}](${data.asset.azureUrl})`;
@@ -145,13 +144,6 @@ export default function GuideNoteEditorPage() {
     }
   };
 
-  const insertCanvasImage = () => {
-    if (!canvasData) return;
-    const canvasMarkdown = `\n\n![Canvas Drawing](canvas:embedded)\n\n`;
-    setContent(prev => prev + canvasMarkdown);
-    setShowCanvas(false);
-  };
-
   if (loading) {
     return (
       <div className="min-h-screen bg-gray-100 flex items-center justify-center">
@@ -164,236 +156,334 @@ export default function GuideNoteEditorPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-100">
-      {/* Background */}
-      <div 
-        className="fixed inset-0 z-0 opacity-30"
-        style={{
-          backgroundImage: 'url(/page14.png)',
-          backgroundSize: 'auto',
-          backgroundPosition: 'top left',
-          backgroundRepeat: 'repeat',
-        }}
-      />
-
+    <div className="h-screen bg-gray-100 flex flex-col overflow-hidden">
       {/* Header */}
-      <div className="bg-gray-50/80 backdrop-blur-sm border-b-4 border-black p-4 md:p-6 z-50 shadow-lg relative">
-        <div className="max-w-7xl mx-auto">
-          <div className="flex items-center justify-between mb-4">
+      <div className="bg-white border-b-4 border-black p-4 flex-shrink-0">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-4">
             <button
               onClick={() => navigate('/learnings?tab=notes')}
-              className="flex items-center gap-2 text-gray-600 hover:text-black font-bold text-sm md:text-base transition-all hover:gap-3"
+              className="flex items-center gap-2 text-gray-600 hover:text-black font-bold text-sm transition-all"
             >
-              <ArrowLeft className="w-4 h-4 md:w-5 md:h-5" strokeWidth={2.5} />
-              Back to Notes
+              <ArrowLeft className="w-5 h-5" strokeWidth={2.5} />
+              Back to Documentation
             </button>
-            
-            <div className="flex items-center gap-2">
+            <h1 className="text-2xl font-black text-black">Edit Document</h1>
+          </div>
+          
+          <div className="flex items-center gap-2">
+            <div className="flex items-center border-3 border-black rounded-lg overflow-hidden">
               <button
-                onClick={() => setShowPreview(!showPreview)}
-                className="flex items-center gap-2 px-4 py-2 bg-gray-500 text-white border-3 border-black rounded-lg font-bold hover:bg-gray-600 transition-all"
+                onClick={() => setActiveView('markdown')}
+                className={`px-4 py-2 font-bold text-sm transition-all ${
+                  activeView === 'markdown'
+                    ? 'bg-black text-white'
+                    : 'bg-white text-black hover:bg-gray-100'
+                }`}
               >
-                <Eye size={18} strokeWidth={2.5} />
-                <span className="hidden sm:inline">{showPreview ? 'Edit' : 'Preview'}</span>
+                Markdown
               </button>
               <button
-                onClick={handleSave}
-                disabled={saving}
-                className="flex items-center gap-2 px-4 py-2 bg-black text-white border-3 border-black rounded-lg font-bold hover:bg-gray-800 transition-all disabled:opacity-50"
+                onClick={() => setActiveView('diagram')}
+                className={`px-4 py-2 font-bold text-sm transition-all border-l-3 border-black ${
+                  activeView === 'diagram'
+                    ? 'bg-black text-white'
+                    : 'bg-white text-black hover:bg-gray-100'
+                }`}
               >
-                <Save size={18} strokeWidth={2.5} />
-                <span className="hidden sm:inline">{saving ? 'Saving...' : 'Save'}</span>
+                Diagram
               </button>
             </div>
+            <button
+              onClick={handleSave}
+              disabled={saving}
+              className="flex items-center gap-2 px-6 py-2 bg-black text-white border-3 border-black rounded-lg font-bold hover:bg-gray-800 transition-all disabled:opacity-50"
+            >
+              <Save size={18} strokeWidth={2.5} />
+              Save All
+            </button>
           </div>
-
-          <h1 className="text-3xl md:text-4xl font-black text-black" style={{ fontFamily: 'Comic Sans MS, cursive' }}>
-            {isEditMode ? 'Edit Guide Note' : 'Create Guide Note'}
-          </h1>
         </div>
       </div>
 
       {/* Main Content */}
-      <div className="relative z-10 max-w-7xl mx-auto p-4 md:p-6">
-        <div className="bg-white border-4 border-black rounded-2xl shadow-2xl overflow-hidden">
-          {/* Title & Topic */}
-          <div className="p-6 border-b-4 border-black bg-gradient-to-r from-yellow-50 to-amber-50">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div className="flex-1 flex overflow-hidden">
+        {/* Sidebar */}
+        <div className="w-64 bg-white border-r-4 border-black flex flex-col overflow-hidden">
+          <div className="p-3 border-b-2 border-gray-200">
+            <button className="w-full px-4 py-2 bg-green-100 border-2 border-black rounded-lg font-bold text-sm hover:bg-green-200 transition-all flex items-center justify-center gap-2">
+              <Plus size={16} strokeWidth={2.5} />
+              New File
+            </button>
+          </div>
+
+          <div className="border-b-2 border-gray-200">
+            <div className="p-3 bg-gray-50 border-b-2 border-gray-200">
+              <div className="flex items-center gap-2">
+                <FileText size={16} strokeWidth={2.5} />
+                <span className="font-black text-xs uppercase tracking-wider">Markdown</span>
+              </div>
+            </div>
+            <div className="p-2">
+              <div className="px-3 py-2 bg-blue-50 border-2 border-blue-300 rounded-lg flex items-center justify-between">
+                <span className="text-sm font-bold">index.md</span>
+                <Eye size={14} strokeWidth={2.5} className="text-blue-600" />
+              </div>
+            </div>
+          </div>
+
+          <div className="border-b-2 border-gray-200">
+            <div className="p-3 bg-gray-50 border-b-2 border-gray-200">
+              <div className="flex items-center gap-2">
+                <ImageIcon size={16} strokeWidth={2.5} />
+                <span className="font-black text-xs uppercase tracking-wider">Diagrams</span>
+              </div>
+            </div>
+            <div className="p-2">
+              {canvasData ? (
+                <div className="px-3 py-2 bg-purple-50 border-2 border-purple-300 rounded-lg flex items-center justify-between">
+                  <span className="text-sm font-bold">index.diagram</span>
+                  <Eye size={14} strokeWidth={2.5} className="text-purple-600" />
+                </div>
+              ) : (
+                <button
+                  onClick={() => setActiveView('diagram')}
+                  className="w-full px-3 py-2 bg-gray-100 border-2 border-dashed border-gray-400 rounded-lg text-xs font-bold text-gray-600 hover:bg-gray-200 transition-all"
+                >
+                  + Add Diagram
+                </button>
+              )}
+            </div>
+          </div>
+
+          <div className="flex-1 overflow-y-auto">
+            <div className="p-3 bg-gray-50 border-b-2 border-gray-200 flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <Upload size={16} strokeWidth={2.5} />
+                <span className="font-black text-xs uppercase tracking-wider">Attachments</span>
+              </div>
+              <label className="cursor-pointer">
+                <input
+                  type="file"
+                  multiple
+                  accept="image/*,.pdf,.doc,.docx,.txt,.md"
+                  onChange={handleFileUpload}
+                  className="hidden"
+                  disabled={!currentNoteId || uploading}
+                />
+                <Plus size={16} strokeWidth={2.5} className="text-blue-600 hover:text-blue-800" />
+              </label>
+            </div>
+            <div className="p-2">
+              {assets.length === 0 ? (
+                <p className="text-xs text-gray-500 text-center py-4">No attachments</p>
+              ) : (
+                <div className="space-y-1">
+                  {assets.map((asset) => (
+                    <div
+                      key={asset.assetId}
+                      className="px-2 py-1.5 bg-gray-50 border border-gray-300 rounded flex items-center justify-between hover:bg-gray-100 transition-all"
+                    >
+                      <span className="text-xs font-medium truncate flex-1">{asset.filename}</span>
+                      <button
+                        onClick={() => handleDeleteAsset(asset.assetId)}
+                        className="ml-2 text-red-600 hover:text-red-800"
+                      >
+                        <Trash2 size={12} strokeWidth={2.5} />
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+
+        {/* Editor Area */}
+        <div className="flex-1 flex overflow-hidden">
+          {/* Left Panel - Form */}
+          <div className="w-1/2 border-r-4 border-black bg-white overflow-y-auto">
+            <div className="p-6 space-y-4">
               <div>
-                <label className="block text-sm font-bold mb-2">Title *</label>
+                <label className="block text-sm font-black mb-2 uppercase tracking-wider">
+                  Title <span className="text-red-500">*</span>
+                </label>
                 <input
                   type="text"
                   value={title}
                   onChange={(e) => setTitle(e.target.value)}
-                  placeholder="Enter note title"
-                  className="w-full px-4 py-2 border-3 border-black rounded-lg font-medium"
+                  placeholder="TSQL guide"
+                  className="w-full px-4 py-3 border-3 border-black rounded-lg font-bold text-lg focus:outline-none focus:ring-4 focus:ring-yellow-300"
                 />
               </div>
+
               <div>
-                <label className="block text-sm font-bold mb-2">Topic *</label>
+                <label className="block text-sm font-black mb-2 uppercase tracking-wider">
+                  Subject <span className="text-red-500">*</span>
+                </label>
                 <input
                   type="text"
                   value={topic}
                   onChange={(e) => setTopic(e.target.value)}
-                  placeholder="e.g., React, AWS, System Design"
-                  className="w-full px-4 py-2 border-3 border-black rounded-lg font-medium"
+                  placeholder="TSQL"
+                  className="w-full px-4 py-3 border-3 border-black rounded-lg font-bold focus:outline-none focus:ring-4 focus:ring-yellow-300"
                 />
               </div>
+
+              <div>
+                <label className="block text-sm font-black mb-2 uppercase tracking-wider">
+                  Description
+                </label>
+                <textarea
+                  value={description}
+                  onChange={(e) => setDescription(e.target.value)}
+                  placeholder="Enter detailed description..."
+                  rows={4}
+                  className="w-full px-4 py-3 border-3 border-black rounded-lg font-medium focus:outline-none focus:ring-4 focus:ring-yellow-300 resize-none"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-black mb-2 uppercase tracking-wider">
+                  Tags
+                </label>
+                <input
+                  type="text"
+                  value={tags}
+                  onChange={(e) => setTags(e.target.value)}
+                  placeholder="TSQL, Databases"
+                  className="w-full px-4 py-3 border-3 border-black rounded-lg font-medium focus:outline-none focus:ring-4 focus:ring-yellow-300"
+                />
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-black mb-2 uppercase tracking-wider">
+                    Date
+                  </label>
+                  <input
+                    type="date"
+                    className="w-full px-4 py-3 border-3 border-black rounded-lg font-bold focus:outline-none focus:ring-4 focus:ring-yellow-300"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-black mb-2 uppercase tracking-wider">
+                    Time
+                  </label>
+                  <input
+                    type="time"
+                    className="w-full px-4 py-3 border-3 border-black rounded-lg font-bold focus:outline-none focus:ring-4 focus:ring-yellow-300"
+                  />
+                </div>
+              </div>
+
+              <div className="p-4 bg-yellow-50 border-3 border-black rounded-lg">
+                <label className="flex items-center gap-3 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={isPublic}
+                    onChange={(e) => setIsPublic(e.target.checked)}
+                    className="w-5 h-5 border-2 border-black rounded"
+                  />
+                  <span className="font-black text-sm uppercase tracking-wider">Make Public</span>
+                </label>
+              </div>
+
+              <div>
+                <label className="block text-sm font-black mb-2 uppercase tracking-wider">
+                  Assets
+                </label>
+                <label className="cursor-pointer">
+                  <input
+                    type="file"
+                    multiple
+                    accept="image/*,.pdf,.doc,.docx,.txt,.md"
+                    onChange={handleFileUpload}
+                    className="hidden"
+                    disabled={!currentNoteId || uploading}
+                  />
+                  <div className={`w-full px-4 py-3 bg-purple-100 border-3 border-black rounded-lg font-bold text-center hover:bg-purple-200 transition-all flex items-center justify-center gap-2 ${(!currentNoteId || uploading) ? 'opacity-50 cursor-not-allowed' : ''}`}>
+                    <Upload size={18} strokeWidth={2.5} />
+                    {uploading ? 'Uploading...' : 'Upload Assets'}
+                  </div>
+                </label>
+              </div>
             </div>
           </div>
 
-          {/* Toolbar */}
-          <div className="p-4 border-b-4 border-black bg-gray-50 flex items-center gap-2 flex-wrap">
-            <label className="cursor-pointer">
-              <input
-                type="file"
-                multiple
-                accept="image/*,.pdf,.doc,.docx,.txt,.md"
-                onChange={handleFileUpload}
-                className="hidden"
-                disabled={!currentNoteId || uploading}
-              />
-              <div className={`px-4 py-2 bg-blue-500 text-white border-3 border-black rounded-lg font-bold hover:bg-blue-600 transition-all flex items-center gap-2 ${(!currentNoteId || uploading) ? 'opacity-50 cursor-not-allowed' : ''}`}>
-                <Upload size={18} strokeWidth={2.5} />
-                {uploading ? 'Uploading...' : 'Upload File'}
-              </div>
-            </label>
-            <button
-              onClick={() => setShowCanvas(true)}
-              className="px-4 py-2 bg-purple-500 text-white border-3 border-black rounded-lg font-bold hover:bg-purple-600 transition-all flex items-center gap-2"
-            >
-              <ImageIcon size={18} strokeWidth={2.5} />
-              Draw Canvas
-            </button>
-            {!currentNoteId && (
-              <p className="text-xs text-gray-600 font-medium ml-2">
-                💡 Save the note first to upload files
-              </p>
-            )}
-          </div>
+          {/* Right Panel - Editor/Preview */}
+          <div className="w-1/2 bg-gray-900 overflow-hidden flex flex-col">
+            {activeView === 'markdown' ? (
+              <>
+                <div className="bg-gray-800 border-b border-gray-700 px-4 py-2 flex items-center justify-between">
+                  <span className="text-white font-bold text-sm">index.md</span>
+                  <button 
+                    onClick={handleSave}
+                    className="px-3 py-1 bg-blue-600 text-white text-xs font-bold rounded hover:bg-blue-700 transition-all"
+                  >
+                    Save File
+                  </button>
+                </div>
 
-          {/* Assets List */}
-          {assets.length > 0 && (
-            <div className="p-4 border-b-4 border-black bg-blue-50">
-              <h3 className="font-bold mb-2 text-sm">Uploaded Assets ({assets.length})</h3>
-              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2">
-                {assets.map((asset) => (
-                  <div key={asset.assetId} className="flex items-center justify-between bg-white p-2 rounded border-2 border-black">
-                    <div className="flex items-center gap-2 flex-1 min-w-0">
-                      <span className="text-xs font-medium truncate">{asset.filename}</span>
-                    </div>
-                    <div className="flex items-center gap-1">
-                      <a
-                        href={asset.azureUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="p-1 hover:bg-gray-100 rounded"
+                <div className="flex-1 flex overflow-hidden">
+                  <div className="w-1/2 border-r border-gray-700 overflow-y-auto">
+                    <textarea
+                      value={content}
+                      onChange={(e) => setContent(e.target.value)}
+                      placeholder="# Complete T-SQL Guide
+
+## Introduction to T-SQL
+
+T-SQL (Transact-SQL) is Microsoft's extension of SQL..."
+                      className="w-full h-full p-4 bg-gray-900 text-gray-100 font-mono text-sm resize-none focus:outline-none"
+                      style={{ minHeight: '100%' }}
+                    />
+                  </div>
+
+                  <div className="w-1/2 overflow-y-auto bg-gray-800 p-6">
+                    <div className="prose prose-invert prose-sm max-w-none">
+                      <ReactMarkdown
+                        components={{
+                          code({ node, inline, className, children, ...props }: any) {
+                            const match = /language-(\w+)/.exec(className || '');
+                            return !inline && match ? (
+                              <SyntaxHighlighter
+                                style={vscDarkPlus}
+                                language={match[1]}
+                                PreTag="div"
+                                {...props}
+                              >
+                                {String(children).replace(/\n$/, '')}
+                              </SyntaxHighlighter>
+                            ) : (
+                              <code className={className} {...props}>
+                                {children}
+                              </code>
+                            );
+                          }
+                        }}
                       >
-                        <Download size={14} strokeWidth={2.5} />
-                      </a>
-                      <button
-                        onClick={() => handleDeleteAsset(asset.assetId)}
-                        className="p-1 hover:bg-red-100 rounded text-red-600"
-                      >
-                        <Trash2 size={14} strokeWidth={2.5} />
-                      </button>
+                        {content || '*Start writing your guide...*'}
+                      </ReactMarkdown>
                     </div>
                   </div>
-                ))}
-              </div>
-            </div>
-          )}
-
-          {/* Content Editor/Preview */}
-          <div className="p-6">
-            {showPreview ? (
-              <div className="prose prose-sm max-w-none min-h-[500px]">
-                <ReactMarkdown
-                  components={{
-                    code({ node, inline, className, children, ...props }: any) {
-                      const match = /language-(\w+)/.exec(className || '');
-                      return !inline && match ? (
-                        <SyntaxHighlighter
-                          style={vscDarkPlus}
-                          language={match[1]}
-                          PreTag="div"
-                          {...props}
-                        >
-                          {String(children).replace(/\n$/, '')}
-                        </SyntaxHighlighter>
-                      ) : (
-                        <code className={className} {...props}>
-                          {children}
-                        </code>
-                      );
-                    }
-                  }}
-                >
-                  {content || '*No content yet. Start writing in edit mode.*'}
-                </ReactMarkdown>
-              </div>
+                </div>
+              </>
             ) : (
-              <div>
-                <label className="block text-sm font-bold mb-2">Content (Markdown)</label>
-                <textarea
-                  value={content}
-                  onChange={(e) => setContent(e.target.value)}
-                  placeholder="Write your notes in markdown...
-
-# Heading 1
-## Heading 2
-
-**Bold text**
-*Italic text*
-
-- List item 1
-- List item 2
-
-```javascript
-const code = 'example';
-```"
-                  className="w-full min-h-[500px] p-4 border-3 border-black rounded-lg font-mono text-sm resize-y"
+              <div className="flex-1">
+                <ExcalidrawCanvas
+                  canvasId={`guide-note-${currentNoteId || 'temp'}`}
+                  onClose={() => setActiveView('markdown')}
+                  onSave={async (data) => { setCanvasData(data); }}
+                  initialData={canvasData}
+                  viewOnly={false}
+                  isPublic={false}
                 />
               </div>
             )}
           </div>
         </div>
       </div>
-
-      {/* Canvas Modal */}
-      {showCanvas && (
-        <div className="fixed inset-0 bg-black/80 z-[300] flex items-center justify-center p-4">
-          <div className="bg-white border-4 border-black rounded-2xl w-full max-w-6xl h-[90vh] flex flex-col">
-            <div className="flex items-center justify-between p-4 border-b-4 border-black">
-              <h3 className="text-xl font-black">Draw on Canvas</h3>
-              <div className="flex items-center gap-2">
-                <button
-                  onClick={insertCanvasImage}
-                  className="px-4 py-2 bg-green-500 text-white border-3 border-black rounded-lg font-bold hover:bg-green-600 transition-all"
-                >
-                  Insert to Note
-                </button>
-                <button
-                  onClick={() => setShowCanvas(false)}
-                  className="p-2 hover:bg-gray-100 rounded-lg transition-all"
-                >
-                  <ArrowLeft size={24} strokeWidth={2.5} />
-                </button>
-              </div>
-            </div>
-            <div className="flex-1">
-              <ExcalidrawCanvas
-                canvasId={`guide-note-${currentNoteId || 'temp'}`}
-                onClose={() => setShowCanvas(false)}
-                onSave={async (data) => { setCanvasData(data); }}
-                initialData={canvasData}
-                viewOnly={false}
-                isPublic={false}
-              />
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 }

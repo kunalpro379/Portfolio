@@ -6,11 +6,23 @@ import CONFIG from '../../config.shared.js';
 
 const router = express.Router();
 
-// Initialize Azure Blob Storage client
-const blobServiceClient = BlobServiceClient.fromConnectionString(
-  process.env.AZURE_STORAGE_CONNECTION_STRING
-);
-const containerName = process.env.AZURE_BLOB_CONTAINER_NAME;
+// Initialize Azure Blob Storage client with error handling
+let blobServiceClient;
+let containerName;
+
+try {
+  if (process.env.AZURE_STORAGE_CONNECTION_STRING) {
+    blobServiceClient = BlobServiceClient.fromConnectionString(
+      process.env.AZURE_STORAGE_CONNECTION_STRING
+    );
+    containerName = process.env.AZURE_BLOB_CONTAINER_NAME;
+    console.log('Azure Blob Storage initialized for guide-notes');
+  } else {
+    console.warn('Azure Storage connection string not found for guide-notes');
+  }
+} catch (error) {
+  console.error('Failed to initialize Azure Blob Storage for guide-notes:', error);
+}
 
 // Configure multer for memory storage
 const storage = multer.memoryStorage();
@@ -57,9 +69,27 @@ const setCorsHeaders = (req, res, next) => {
 
 router.use(setCorsHeaders);
 
+// Handle OPTIONS requests for CORS
+router.options('*', (req, res) => {
+  res.sendStatus(200);
+});
+
+// Health check endpoint
+router.get('/health', (req, res) => {
+  res.json({ 
+    status: 'ok', 
+    message: 'Guide notes API is running',
+    azureConfigured: !!blobServiceClient
+  });
+});
+
 // Upload asset to Azure Blob Storage
 const uploadAssetToAzure = async (buffer, noteId, filename, fileType) => {
   try {
+    if (!blobServiceClient || !containerName) {
+      throw new Error('Azure Blob Storage not initialized');
+    }
+    
     const containerClient = blobServiceClient.getContainerClient(containerName);
     
     // Create blob path: guide-notes/noteId/assets/filename
@@ -118,11 +148,14 @@ router.post('/', async (req, res) => {
 // Get all guide notes
 router.get('/', async (req, res) => {
   try {
+    console.log('Fetching all guide notes...');
     const notes = await GuideNote.find().sort({ updatedAt: -1 });
+    console.log(`Found ${notes.length} guide notes`);
     res.json({ notes });
   } catch (error) {
     console.error('Get guide notes error:', error);
-    res.status(500).json({ message: 'Server error' });
+    console.error('Error stack:', error.stack);
+    res.status(500).json({ message: 'Server error', error: error.message });
   }
 });
 
