@@ -277,31 +277,13 @@ export default function NotesTabContent({ notes, activeSubTab: propActiveSubTab 
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
               {guides.map((guide, idx) => {
-                const rotations = ['-rotate-1', 'rotate-1', '-rotate-2', 'rotate-2'];
-                const hoverRotations = ['hover:rotate-0', 'hover:-rotate-1', 'hover:rotate-1', 'hover:-rotate-2'];
-                const shadows = [
-                  'shadow-[5px_5px_0px_0px_rgba(251,191,36,0.5)]',
-                  'shadow-[6px_5px_0px_0px_rgba(245,158,11,0.5)]',
-                  'shadow-[5px_6px_0px_0px_rgba(234,179,8,0.5)]',
-                  'shadow-[6px_6px_0px_0px_rgba(251,191,36,0.5)]'
-                ];
-                const hoverShadows = [
-                  'hover:shadow-[9px_9px_0px_0px_rgba(251,191,36,0.7)]',
-                  'hover:shadow-[10px_9px_0px_0px_rgba(245,158,11,0.7)]',
-                  'hover:shadow-[9px_10px_0px_0px_rgba(234,179,8,0.7)]',
-                  'hover:shadow-[10px_10px_0px_0px_rgba(251,191,36,0.7)]'
-                ];
-                
                 const titleCount = guide.titles.length;
                 
                 return (
                   <div
                     key={guide.guideId}
                     onClick={() => handleViewGuide(guide)}
-                    className={`bg-gradient-to-br from-yellow-50 to-white backdrop-blur-sm border-[3px] border-black p-5 transition-all duration-300 hover:-translate-y-2 group h-full flex flex-col cursor-pointer ${rotations[idx % 4]} ${hoverRotations[idx % 4]} ${shadows[idx % 4]} ${hoverShadows[idx % 4]} relative`}
-                    style={{ 
-                      borderRadius: idx % 2 === 0 ? '20px 24px 22px 26px' : '24px 20px 26px 22px'
-                    }}
+                    className="bg-gradient-to-br from-yellow-50/80 to-white/80 backdrop-blur-sm border-[3px] border-black p-5 transition-all duration-300 hover:-translate-y-2 group h-full flex flex-col cursor-pointer hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,0.3)] relative rounded-2xl"
                   >
                     <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity flex gap-1">
                       <button

@@ -16,6 +16,7 @@ export interface Document {
 
 export interface Title {
   titleId: string;
+  titleSlug?: string;
   name: string;
   description: string;
   documents: Document[];
@@ -25,6 +26,7 @@ export interface Title {
 
 export interface Guide {
   guideId: string;
+  guideSlug?: string;
   name: string;
   topic: string;
   description: string;
@@ -47,6 +49,13 @@ export async function fetchGuideById(guideId: string): Promise<Guide> {
   if (!response.ok) throw new Error('Failed to fetch guide');
   const data = await response.json();
   return data.guide;
+}
+
+export async function fetchGuideBySlug(guideSlug: string, titleSlug: string): Promise<{ guide: Guide; title: Title }> {
+  const response = await fetch(`${API_BASE_URL}/api/guide-notes/view/${guideSlug}/${titleSlug}`);
+  if (!response.ok) throw new Error('Failed to fetch guide');
+  const data = await response.json();
+  return { guide: data.guide, title: data.title };
 }
 
 export async function createGuide(data: { name: string; topic: string; description?: string }): Promise<Guide> {

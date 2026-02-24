@@ -82,24 +82,39 @@ const Home = memo(function Home() {
         preload="auto"
       />
 
-      {/* Music Control Button - Mobile Optimized */}
+      {/* Music Control Button - Mobile: Bottom Left, Desktop: Top Left */}
       <button
         onClick={togglePlay}
-        className={`fixed top-4 left-4 md:top-6 md:left-6 z-50 p-2 md:p-3 border-2 border-white rounded-full shadow-[2px_2px_0px_0px_rgba(255,255,255,0.5)] hover:shadow-[3px_3px_0px_0px_rgba(255,255,255,0.7)] transition-all hover:scale-110 active:scale-95 ${
+        className={`fixed bottom-4 left-4 md:top-6 md:left-6 md:bottom-auto z-50 p-1.5 md:p-3 border-2 border-white rounded-full shadow-[2px_2px_0px_0px_rgba(255,255,255,0.5)] hover:shadow-[3px_3px_0px_0px_rgba(255,255,255,0.7)] transition-all hover:scale-110 active:scale-95 ${
           isPlaying ? 'bg-green-500 animate-pulse' : 'bg-black'
         }`}
         aria-label={isPlaying ? "Pause music" : "Play music"}
         title={isPlaying ? "Music playing" : "Tap to play music"}
       >
         {isPlaying ? (
-          <Volume2 size={18} strokeWidth={2.5} className="text-white md:w-4 md:h-4" />
+          <Volume2 size={14} strokeWidth={2.5} className="text-white md:w-4 md:h-4" />
         ) : (
-          <VolumeX size={18} strokeWidth={2.5} className="text-white md:w-4 md:h-4" />
+          <VolumeX size={14} strokeWidth={2.5} className="text-white md:w-4 md:h-4" />
         )}
       </button>
 
-      {/* Animated Background Images - Slideshow - Mobile Optimized (No Flicker) */}
-      <div className="fixed inset-0 -z-[12]">
+      {/* Static Background Image for Mobile */}
+      <div className="fixed inset-0 -z-[12] md:hidden">
+        <div 
+          className="absolute inset-0"
+          style={{
+            backgroundImage: 'url(/back11.png)',
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
+            backgroundRepeat: 'no-repeat',
+            filter: 'grayscale(100%)',
+            opacity: 0.45
+          }}
+        />
+      </div>
+
+      {/* Animated Background Images - Desktop Only (Disabled on Mobile to prevent flickering) */}
+      <div className="fixed inset-0 -z-[12] hidden md:block">
         <style>{`
           @keyframes backgroundSlideshow {
             0% { opacity: 0; }
@@ -109,16 +124,6 @@ const Home = memo(function Home() {
             100% { opacity: 0; }
           }
           
-          @media (max-width: 768px) {
-            @keyframes backgroundSlideshow {
-              0% { opacity: 0; }
-              8% { opacity: 0.45; }
-              16% { opacity: 0.45; }
-              24% { opacity: 0; }
-              100% { opacity: 0; }
-            }
-          }
-          
           .bg-slide {
             position: absolute;
             inset: 0;
@@ -126,25 +131,65 @@ const Home = memo(function Home() {
             background-position: center;
             background-repeat: no-repeat;
             filter: grayscale(100%);
+            opacity: 0;
             transform: translateZ(0);
             -webkit-transform: translateZ(0);
             backface-visibility: hidden;
             -webkit-backface-visibility: hidden;
           }
           
-          .bg-slide-1 { animation: backgroundSlideshow 104s ease-in-out infinite 0s; background-image: url(/back1.png); }
-          .bg-slide-2 { animation: backgroundSlideshow 104s ease-in-out infinite 8s; background-image: url(/back2.png); }
-          .bg-slide-3 { animation: backgroundSlideshow 104s ease-in-out infinite 16s; background-image: url(/back3.png); }
-          .bg-slide-4 { animation: backgroundSlideshow 104s ease-in-out infinite 24s; background-image: url(/back4.png); }
-          .bg-slide-5 { animation: backgroundSlideshow 104s ease-in-out infinite 32s; background-image: url(/back5.png); }
-          .bg-slide-6 { animation: backgroundSlideshow 104s ease-in-out infinite 40s; background-image: url(/back6.png); }
-          .bg-slide-7 { animation: backgroundSlideshow 104s ease-in-out infinite 48s; background-image: url(/back7.png); }
-          .bg-slide-8 { animation: backgroundSlideshow 104s ease-in-out infinite 56s; background-image: url(/back8.png); }
-          .bg-slide-9 { animation: backgroundSlideshow 104s ease-in-out infinite 64s; background-image: url(/back9.png); }
-          .bg-slide-10 { animation: backgroundSlideshow 104s ease-in-out infinite 72s; background-image: url(/back10.png); }
-          .bg-slide-11 { animation: backgroundSlideshow 104s ease-in-out infinite 80s; background-image: url(/back11.png); }
-          .bg-slide-12 { animation: backgroundSlideshow 104s ease-in-out infinite 88s; background-image: url(/back12.png); }
-          .bg-slide-13 { animation: backgroundSlideshow 104s ease-in-out infinite 96s; background-image: url(/back13.png); }
+          .bg-slide-1 { 
+            animation: backgroundSlideshow 104s ease-in-out infinite 0s; 
+            background-image: url(/back1.png); 
+          }
+          .bg-slide-2 { 
+            animation: backgroundSlideshow 104s ease-in-out infinite 8s; 
+            background-image: url(/back2.png); 
+          }
+          .bg-slide-3 { 
+            animation: backgroundSlideshow 104s ease-in-out infinite 16s; 
+            background-image: url(/back3.png); 
+          }
+          .bg-slide-4 { 
+            animation: backgroundSlideshow 104s ease-in-out infinite 24s; 
+            background-image: url(/back4.png); 
+          }
+          .bg-slide-5 { 
+            animation: backgroundSlideshow 104s ease-in-out infinite 32s; 
+            background-image: url(/back5.png); 
+          }
+          .bg-slide-6 { 
+            animation: backgroundSlideshow 104s ease-in-out infinite 40s; 
+            background-image: url(/back6.png); 
+          }
+          .bg-slide-7 { 
+            animation: backgroundSlideshow 104s ease-in-out infinite 48s; 
+            background-image: url(/back7.png); 
+          }
+          .bg-slide-8 { 
+            animation: backgroundSlideshow 104s ease-in-out infinite 56s; 
+            background-image: url(/back8.png); 
+          }
+          .bg-slide-9 { 
+            animation: backgroundSlideshow 104s ease-in-out infinite 64s; 
+            background-image: url(/back9.png); 
+          }
+          .bg-slide-10 { 
+            animation: backgroundSlideshow 104s ease-in-out infinite 72s; 
+            background-image: url(/back10.png); 
+          }
+          .bg-slide-11 { 
+            animation: backgroundSlideshow 104s ease-in-out infinite 80s; 
+            background-image: url(/back11.png); 
+          }
+          .bg-slide-12 { 
+            animation: backgroundSlideshow 104s ease-in-out infinite 88s; 
+            background-image: url(/back12.png); 
+          }
+          .bg-slide-13 { 
+            animation: backgroundSlideshow 104s ease-in-out infinite 96s; 
+            background-image: url(/back13.png); 
+          }
         `}</style>
         
         <div className="bg-slide bg-slide-1" />

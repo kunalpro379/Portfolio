@@ -34,13 +34,15 @@ export default function GuideView() {
     }
   };
 
-  const handleTitleClick = (titleId: string, clickMode: 'view' | 'edit') => {
+  const handleTitleClick = (title: any, clickMode: 'view' | 'edit') => {
     if (clickMode === 'view') {
-      // Direct navigation for view mode - no password required
-      navigate(`/learnings/guide/${guideId}/title/${titleId}/view`);
+      // Use slug-based URL for view mode
+      const guideSlug = guide?.guideSlug || guide?.guideId;
+      const titleSlug = title.titleSlug || title.titleId;
+      navigate(`/learn/${guideSlug}/${titleSlug}`);
     } else {
       // Ask for password for edit mode
-      setSelectedTitleId(titleId);
+      setSelectedTitleId(title.titleId);
       setMode('edit');
       setShowPasswordModal(true);
     }
@@ -90,40 +92,40 @@ export default function GuideView() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-100 p-6">
+    <div className="min-h-screen bg-gray-100 p-3 md:p-6">
       {/* Header */}
-      <div className="max-w-7xl mx-auto mb-8">
+      <div className="max-w-7xl mx-auto mb-6 md:mb-8">
         <button
           onClick={() => navigate('/learnings?tab=notes')}
-          className="flex items-center gap-2 text-gray-600 hover:text-black font-bold text-sm transition-all mb-4"
+          className="flex items-center gap-2 text-gray-600 hover:text-black font-bold text-sm transition-all mb-3 md:mb-4"
         >
-          <ArrowLeft className="w-5 h-5" strokeWidth={2.5} />
+          <ArrowLeft className="w-4 h-4 md:w-5 md:h-5" strokeWidth={2.5} />
           Back to Guides
         </button>
 
-        <div className="bg-white border-4 border-black rounded-2xl p-8 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
-          <div className="flex items-start justify-between">
-            <div className="flex items-start gap-4">
-              <div className="p-4 bg-gradient-to-br from-yellow-400 to-yellow-600 border-4 border-black rounded-xl">
-                <BookOpen size={32} strokeWidth={2.5} className="text-white" />
+        <div className="bg-white border-3 md:border-4 border-black rounded-xl md:rounded-2xl p-4 md:p-8 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] md:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
+          <div className="flex flex-col md:flex-row items-start justify-between gap-4">
+            <div className="flex items-start gap-3 md:gap-4 flex-1">
+              <div className="p-2 md:p-4 bg-gradient-to-br from-yellow-400 to-yellow-600 border-2 md:border-4 border-black rounded-lg md:rounded-xl flex-shrink-0">
+                <BookOpen size={24} className="md:w-8 md:h-8" strokeWidth={2.5} className="text-white" />
               </div>
-              <div>
-                <span className="px-3 py-1.5 bg-yellow-100 border-2 border-black rounded-lg text-xs font-black uppercase tracking-wider inline-block mb-2">
+              <div className="flex-1 min-w-0">
+                <span className="px-2 md:px-3 py-1 md:py-1.5 bg-yellow-100 border-2 border-black rounded-lg text-[10px] md:text-xs font-black uppercase tracking-wider inline-block mb-2">
                   {guide.topic}
                 </span>
-                <h1 className="text-4xl font-black text-black mb-2" style={{ fontFamily: 'Comic Sans MS, cursive' }}>
+                <h1 className="text-2xl md:text-4xl font-black text-black mb-1 md:mb-2 break-words" style={{ fontFamily: 'Comic Sans MS, cursive' }}>
                   {guide.name}
                 </h1>
                 {guide.description && (
-                  <p className="text-gray-700 font-medium">{guide.description}</p>
+                  <p className="text-sm md:text-base text-gray-700 font-medium break-words">{guide.description}</p>
                 )}
               </div>
             </div>
             <button
               onClick={handleCreateTitle}
-              className="flex items-center gap-2 px-6 py-3 bg-black text-white border-3 border-black rounded-xl font-bold hover:bg-gray-800 transition-all shadow-[3px_3px_0px_0px_rgba(0,0,0,1)]"
+              className="w-full md:w-auto flex items-center justify-center gap-2 px-4 md:px-6 py-2 md:py-3 bg-black text-white border-2 md:border-3 border-black rounded-lg md:rounded-xl font-bold hover:bg-gray-800 transition-all shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] md:shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] text-sm md:text-base"
             >
-              <Plus size={20} strokeWidth={2.5} />
+              <Plus size={18} className="md:w-5 md:h-5" strokeWidth={2.5} />
               New Title
             </button>
           </div>
@@ -133,38 +135,23 @@ export default function GuideView() {
       {/* Titles Grid */}
       <div className="max-w-7xl mx-auto">
         {guide.titles.length === 0 ? (
-          <div className="text-center py-16">
-            <div className="bg-gradient-to-br from-yellow-50 to-amber-50 border-3 border-black rounded-2xl p-10 inline-block shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]">
-              <FileText size={48} strokeWidth={2.5} className="mx-auto mb-3 text-yellow-600" />
-              <p className="text-black text-lg font-black mb-2">No titles yet</p>
-              <p className="text-gray-700 text-sm font-medium mb-4">Create your first title to organize your documents</p>
+          <div className="text-center py-12 md:py-16">
+            <div className="bg-gradient-to-br from-yellow-50 to-amber-50 border-2 md:border-3 border-black rounded-xl md:rounded-2xl p-6 md:p-10 inline-block shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] md:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]">
+              <FileText size={40} className="md:w-12 md:h-12" strokeWidth={2.5} className="mx-auto mb-3 text-yellow-600" />
+              <p className="text-black text-base md:text-lg font-black mb-2">No titles yet</p>
+              <p className="text-gray-700 text-xs md:text-sm font-medium mb-4">Create your first title to organize your documents</p>
               <button
                 onClick={handleCreateTitle}
-                className="px-6 py-3 bg-black text-white border-3 border-black rounded-xl font-bold hover:bg-gray-800 transition-all shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] inline-flex items-center gap-2"
+                className="px-4 md:px-6 py-2 md:py-3 bg-black text-white border-2 md:border-3 border-black rounded-lg md:rounded-xl font-bold hover:bg-gray-800 transition-all shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] md:shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] inline-flex items-center gap-2 text-sm md:text-base"
               >
-                <Plus size={20} strokeWidth={2.5} />
+                <Plus size={18} className="md:w-5 md:h-5" strokeWidth={2.5} />
                 Create Title
               </button>
             </div>
           </div>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 md:gap-6">
             {guide.titles.map((title, idx) => {
-              const rotations = ['-rotate-1', 'rotate-1', '-rotate-2', 'rotate-2'];
-              const hoverRotations = ['hover:rotate-0', 'hover:-rotate-1', 'hover:rotate-1', 'hover:-rotate-2'];
-              const shadows = [
-                'shadow-[5px_5px_0px_0px_rgba(251,191,36,0.5)]',
-                'shadow-[6px_5px_0px_0px_rgba(245,158,11,0.5)]',
-                'shadow-[5px_6px_0px_0px_rgba(234,179,8,0.5)]',
-                'shadow-[6px_6px_0px_0px_rgba(251,191,36,0.5)]'
-              ];
-              const hoverShadows = [
-                'hover:shadow-[9px_9px_0px_0px_rgba(251,191,36,0.7)]',
-                'hover:shadow-[10px_9px_0px_0px_rgba(245,158,11,0.7)]',
-                'hover:shadow-[9px_10px_0px_0px_rgba(234,179,8,0.7)]',
-                'hover:shadow-[10px_10px_0px_0px_rgba(251,191,36,0.7)]'
-              ];
-              
               const markdownCount = title.documents.filter(d => d.type === 'markdown').length;
               const diagramCount = title.documents.filter(d => d.type === 'diagram').length;
               const attachmentCount = title.documents.filter(d => d.type === 'attachment').length;
@@ -172,10 +159,7 @@ export default function GuideView() {
               return (
                 <div
                   key={title.titleId}
-                  className={`bg-gradient-to-br from-white to-yellow-50 backdrop-blur-sm border-[3px] border-black p-6 transition-all duration-300 hover:-translate-y-2 group relative ${rotations[idx % 4]} ${hoverRotations[idx % 4]} ${shadows[idx % 4]} ${hoverShadows[idx % 4]}`}
-                  style={{ 
-                    borderRadius: idx % 2 === 0 ? '20px 24px 22px 26px' : '24px 20px 26px 22px'
-                  }}
+                  className="bg-gradient-to-br from-white/80 to-yellow-50/80 backdrop-blur-sm border-[3px] border-black p-4 md:p-6 transition-all duration-300 hover:-translate-y-2 group relative rounded-2xl hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,0.3)]"
                 >
                   <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity flex gap-1">
                     <button
@@ -191,7 +175,7 @@ export default function GuideView() {
                       <FileText size={20} strokeWidth={2.5} className="text-white" />
                     </div>
                     <div className="flex-1 min-w-0">
-                      <h3 className="text-lg font-black text-black mb-1 leading-tight line-clamp-2">
+                      <h3 className="text-base md:text-lg font-black text-black mb-1 leading-tight line-clamp-2">
                         {title.name}
                       </h3>
                       {title.description && (
@@ -227,17 +211,17 @@ export default function GuideView() {
 
                   <div className="flex gap-2">
                     <button
-                      onClick={() => handleTitleClick(title.titleId, 'view')}
-                      className="flex-1 flex items-center justify-center gap-2 px-4 py-2 bg-blue-500 text-white border-3 border-black rounded-lg font-bold hover:bg-blue-600 transition-all"
+                      onClick={() => handleTitleClick(title, 'view')}
+                      className="flex-1 flex items-center justify-center gap-2 px-3 md:px-4 py-2 bg-blue-500 text-white border-2 md:border-3 border-black rounded-lg font-bold hover:bg-blue-600 transition-all text-sm md:text-base"
                     >
-                      <Eye size={16} strokeWidth={2.5} />
+                      <Eye size={14} className="md:w-4 md:h-4" strokeWidth={2.5} />
                       View
                     </button>
                     <button
-                      onClick={() => handleTitleClick(title.titleId, 'edit')}
-                      className="flex-1 flex items-center justify-center gap-2 px-4 py-2 bg-yellow-400 text-black border-3 border-black rounded-lg font-bold hover:bg-yellow-500 transition-all"
+                      onClick={() => handleTitleClick(title, 'edit')}
+                      className="flex-1 flex items-center justify-center gap-2 px-3 md:px-4 py-2 bg-yellow-400 text-black border-2 md:border-3 border-black rounded-lg font-bold hover:bg-yellow-500 transition-all text-sm md:text-base"
                     >
-                      <Edit size={16} strokeWidth={2.5} />
+                      <Edit size={14} className="md:w-4 md:h-4" strokeWidth={2.5} />
                       Edit
                     </button>
                   </div>

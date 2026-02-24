@@ -39,6 +39,10 @@ const titleSchema = new mongoose.Schema({
     type: String,
     required: true
   },
+  titleSlug: {
+    type: String,
+    default: ''
+  },
   name: {
     type: String,
     required: true
@@ -64,6 +68,11 @@ const guideNoteSchema = new mongoose.Schema({
     type: String,
     required: true,
     unique: true,
+    index: true
+  },
+  guideSlug: {
+    type: String,
+    default: '',
     index: true
   },
   name: {

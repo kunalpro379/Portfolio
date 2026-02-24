@@ -45,6 +45,7 @@ function App() {
         <Route path="/learnings/guide/:guideId/title/:titleId" element={<TitleEditor />} />
         <Route path="/learnings/guide/:guideId/title/:titleId/view" element={<GuideNoteEditor />} />
         <Route path="/learnings/guide/:guideId/title/:titleId/edit" element={<GuideNoteEditor />} />
+        <Route path="/learn/:guideSlug/:titleSlug" element={<GuideNoteEditor />} />
         <Route path="*" element={<div className="min-h-screen flex items-center justify-center"><div className="text-center"><h1 className="text-2xl font-bold mb-4">404 - Page Not Found</h1><a href="/" className="text-blue-600 hover:underline">Go Home</a></div></div>} />
       </Routes>
       <AIChatButton />

@@ -43,6 +43,17 @@ function generateId() {
   return id;
 }
 
+// Generate slug from text
+function generateSlug(text) {
+  return text
+    .toLowerCase()
+    .trim()
+    .replace(/[^\w\s-]/g, '') // Remove special characters
+    .replace(/\s+/g, '-')      // Replace spaces with hyphens
+    .replace(/-+/g, '-')       // Replace multiple hyphens with single hyphen
+    .substring(0, 50);         // Limit length
+}
+
 // Helper function to get allowed origin for CORS
 const getAllowedOrigin = (origin) => {
   if (!origin) return null;
@@ -123,9 +134,11 @@ router.post('/guides', async (req, res) => {
     }
     
     const guideId = generateId();
+    const guideSlug = generateSlug(name);
     
     const guide = new GuideNote({
       guideId,
+      guideSlug,
       name,
       topic,
       description: description || '',
@@ -170,6 +183,28 @@ router.get('/guides/:guideId', async (req, res) => {
     res.json({ guide });
   } catch (error) {
     console.error('Get guide error:', error);
+    res.status(500).json({ message: 'Server error' });
+  }
+});
+
+// Get guide by slug and title by slug (for view mode)
+router.get('/view/:guideSlug/:titleSlug', async (req, res) => {
+  try {
+    const { guideSlug, titleSlug } = req.params;
+    
+    const guide = await GuideNote.findOne({ guideSlug });
+    if (!guide) {
+      return res.status(404).json({ message: 'Guide not found' });
+    }
+    
+    const title = guide.titles.find(t => t.titleSlug === titleSlug);
+    if (!title) {
+      return res.status(404).json({ message: 'Title not found' });
+    }
+    
+    res.json({ guide, title });
+  } catch (error) {
+    console.error('Get guide by slug error:', error);
     res.status(500).json({ message: 'Server error' });
   }
 });
@@ -255,8 +290,10 @@ router.post('/guides/:guideId/titles', async (req, res) => {
     }
     
     const titleId = generateId();
+    const titleSlug = generateSlug(name);
     const newTitle = {
       titleId,
+      titleSlug,
       name,
       description: description || '',
       documents: [],
