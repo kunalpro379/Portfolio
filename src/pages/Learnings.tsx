@@ -1,8 +1,9 @@
-import { Clock, Calendar, ArrowLeft, FolderOpen, FileText, BookOpen, Code, FileImage, Plus, Github, Menu, X, Home, LogOut, Eye, Edit, Trash2 } from "lucide-react";
+import { Clock, Calendar, ArrowLeft, FolderOpen, FileText, BookOpen, Code, FileImage, Plus, Github, Menu, X, Home, LogOut, Eye, Edit, Trash2, ListTodo } from "lucide-react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { API_ENDPOINTS, API_BASE_URL } from "@/config/api";
 import ExcalidrawCanvas from "@/components/ExcalidrawCanvas";
+import LoadingSpinner from "@/components/LoadingSpinner";
 import NotesTabContent from "@/components/NotesTabContent";
 
 interface ProjectData {
@@ -79,7 +80,7 @@ export default function LearningsPage() {
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
   const tabFromUrl = searchParams.get('tab') || 'blogs';
-  const [activeTab, setActiveTab] = useState<'notes' | 'documentation' | 'blogs' | 'projects' | 'diagrams' | 'code'>(tabFromUrl as any);
+  const [activeTab, setActiveTab] = useState<'guide' | 'files' | 'todo' | 'documentation' | 'blogs' | 'projects' | 'diagrams' | 'code'>(tabFromUrl as any);
 
   // State for API data
   const [projects, setProjects] = useState<ProjectData[]>([]);
@@ -173,7 +174,7 @@ export default function LearningsPage() {
             setBlogs(blogsData.blogs);
             break;
 
-          case 'notes':
+          case 'files':
             const notesRes = await fetch(`${API_BASE_URL}${API_ENDPOINTS.notes}/folders`);
             if (!notesRes.ok) throw new Error('Failed to fetch notes');
             const notesData = await notesRes.json();
@@ -182,6 +183,11 @@ export default function LearningsPage() {
             const validFolders = notesData.folders.filter((f: Note) => f.folderId);
             console.log('Valid folders:', validFolders);
             setNotes(validFolders);
+            break;
+
+          case 'guide':
+          case 'todo':
+            // These tabs don't need API calls, handled by NotesTabContent
             break;
 
           case 'documentation':
@@ -235,7 +241,7 @@ export default function LearningsPage() {
     fetchData();
   }, [activeTab]);
 
-  const changeTab = (tab: 'notes' | 'documentation' | 'blogs' | 'projects' | 'diagrams' | 'code') => {
+  const changeTab = (tab: 'guide' | 'files' | 'todo' | 'documentation' | 'blogs' | 'projects' | 'diagrams' | 'code') => {
     setSearchParams({ tab });
     setActiveTab(tab);
   };
@@ -524,41 +530,25 @@ export default function LearningsPage() {
             </div>
 
             <div className="mb-4">
-              <h1 className="text-3xl font-black text-black mb-2" style={{ fontFamily: 'Comic Sans MS, cursive' }}>
-                My Learnings
-              </h1>
-              <p className="text-sm text-gray-600 font-medium">
-                Explore my journey through code, design, and documentation
-              </p>
+              {/* Removed heading and description */}
             </div>
           </div>
 
           {/* Desktop Layout - New */}
           <div className="hidden md:block">
             <div className="flex items-start justify-between mb-4">
-              <div className="flex flex-col gap-4">
-                <button
-                  onClick={() => navigate('/')}
-                  className="flex items-center gap-2 text-gray-600 hover:text-black font-bold text-base transition-all hover:gap-3 self-start"
-                >
-                  <ArrowLeft className="w-5 h-5" strokeWidth={2.5} />
-                  Back to Home
-                </button>
-                <p className="text-base text-black font-medium">
-                  Explore my journey through code, design, and documentation
-                </p>
-              </div>
-              
-              <div className="flex-shrink-0">
-                <h1 className="text-4xl font-black text-black" style={{ fontFamily: 'Comic Sans MS, cursive' }}>
-                  My Learnings
-                </h1>
-              </div>
+              <button
+                onClick={() => navigate('/')}
+                className="flex items-center gap-2 text-gray-600 hover:text-black font-bold text-base transition-all hover:gap-3 self-start"
+              >
+                <ArrowLeft className="w-5 h-5" strokeWidth={2.5} />
+                Back to Home
+              </button>
             </div>
           </div>
 
-          {/* Tabs - Fixed 6 columns, no scrolling */}
-          <div className="grid grid-cols-6 gap-1 md:gap-2 mt-4">
+          {/* Tabs - 8 tabs in grid */}
+          <div className="grid grid-cols-4 gap-1 md:gap-2 mt-4">
             <button
               onClick={() => changeTab('blogs')}
               className={`px-1 md:px-6 py-1.5 md:py-3 rounded-lg md:rounded-xl font-bold text-[9px] md:text-sm transition-all border-2 md:border-3 border-black ${activeTab === 'blogs'
@@ -584,8 +574,8 @@ export default function LearningsPage() {
               Docs
             </button>
             <button
-              onClick={() => changeTab('notes')}
-              className={`px-1 md:px-6 py-1.5 md:py-3 rounded-lg md:rounded-xl font-bold text-[9px] md:text-sm transition-all border-2 md:border-3 border-black ${activeTab === 'notes'
+              onClick={() => changeTab('guide')}
+              className={`px-1 md:px-6 py-1.5 md:py-3 rounded-lg md:rounded-xl font-bold text-[9px] md:text-sm transition-all border-2 md:border-3 border-black ${activeTab === 'guide'
                   ? 'bg-yellow-400 text-white shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] md:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transform -translate-y-0.5'
                   : 'bg-white hover:bg-yellow-50 hover:shadow-[1px_1px_0px_0px_rgba(0,0,0,1)] md:hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]'
                 }`}
@@ -593,7 +583,31 @@ export default function LearningsPage() {
                 borderRadius: '13px 14px 12px 15px',
               }}
             >
-              Notes
+              Guide
+            </button>
+            <button
+              onClick={() => changeTab('files')}
+              className={`px-1 md:px-6 py-1.5 md:py-3 rounded-lg md:rounded-xl font-bold text-[9px] md:text-sm transition-all border-2 md:border-3 border-black ${activeTab === 'files'
+                  ? 'bg-cyan-400 text-white shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] md:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transform -translate-y-0.5'
+                  : 'bg-white hover:bg-cyan-50 hover:shadow-[1px_1px_0px_0px_rgba(0,0,0,1)] md:hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]'
+                }`}
+              style={{
+                borderRadius: '15px 13px 14px 12px',
+              }}
+            >
+              Files
+            </button>
+            <button
+              onClick={() => changeTab('todo')}
+              className={`px-1 md:px-6 py-1.5 md:py-3 rounded-lg md:rounded-xl font-bold text-[9px] md:text-sm transition-all border-2 md:border-3 border-black ${activeTab === 'todo'
+                  ? 'bg-red-400 text-white shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] md:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transform -translate-y-0.5'
+                  : 'bg-white hover:bg-red-50 hover:shadow-[1px_1px_0px_0px_rgba(0,0,0,1)] md:hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]'
+                }`}
+              style={{
+                borderRadius: '12px 15px 13px 14px',
+              }}
+            >
+              Todo
             </button>
             <button
               onClick={() => changeTab('code')}
@@ -686,15 +700,41 @@ export default function LearningsPage() {
 
               <button
                 onClick={() => {
-                  changeTab('notes');
+                  changeTab('guide');
                   setMobileMenuOpen(false);
                 }}
                 className={`w-full flex items-center gap-3 px-4 py-3 border-3 border-black rounded-xl font-bold text-sm transition-all shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] ${
-                  activeTab === 'notes' ? 'bg-yellow-400 text-white' : 'bg-white hover:bg-yellow-50'
+                  activeTab === 'guide' ? 'bg-yellow-400 text-white' : 'bg-white hover:bg-yellow-50'
+                }`}
+              >
+                <BookOpen className="w-5 h-5" strokeWidth={2.5} />
+                <span>Guide</span>
+              </button>
+
+              <button
+                onClick={() => {
+                  changeTab('files');
+                  setMobileMenuOpen(false);
+                }}
+                className={`w-full flex items-center gap-3 px-4 py-3 border-3 border-black rounded-xl font-bold text-sm transition-all shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] ${
+                  activeTab === 'files' ? 'bg-cyan-400 text-white' : 'bg-white hover:bg-cyan-50'
                 }`}
               >
                 <FolderOpen className="w-5 h-5" strokeWidth={2.5} />
-                <span>Notes</span>
+                <span>Files</span>
+              </button>
+
+              <button
+                onClick={() => {
+                  changeTab('todo');
+                  setMobileMenuOpen(false);
+                }}
+                className={`w-full flex items-center gap-3 px-4 py-3 border-3 border-black rounded-xl font-bold text-sm transition-all shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] ${
+                  activeTab === 'todo' ? 'bg-red-400 text-white' : 'bg-white hover:bg-red-50'
+                }`}
+              >
+                <ListTodo className="w-5 h-5" strokeWidth={2.5} />
+                <span>Todo</span>
               </button>
 
               <button
@@ -761,10 +801,7 @@ export default function LearningsPage() {
           {/* Loading State */}
           {loading && (
             <div className="flex items-center justify-center py-20">
-              <div className="flex flex-col items-center gap-4">
-                <div className="animate-spin w-16 h-16 border-4 border-black border-t-transparent rounded-full" style={{ animationDuration: '1.5s' }}></div>
-                <div className="text-black text-lg font-bold">Loading content...</div>
-              </div>
+              <LoadingSpinner size="lg" />
             </div>
           )}
 
@@ -780,9 +817,19 @@ export default function LearningsPage() {
           {/* Content based on active tab */}
           {!loading && !error && (
             <>
-              {/* NOTES TAB */}
-              {activeTab === 'notes' && (
-                <NotesTabContent notes={notes} />
+              {/* GUIDE TAB */}
+              {activeTab === 'guide' && (
+                <NotesTabContent notes={notes} activeSubTab="guide" />
+              )}
+
+              {/* FILES TAB */}
+              {activeTab === 'files' && (
+                <NotesTabContent notes={notes} activeSubTab="notes" />
+              )}
+
+              {/* TODO TAB */}
+              {activeTab === 'todo' && (
+                <NotesTabContent notes={notes} activeSubTab="todo" />
               )}
 
               {/* DOCUMENTATION TAB */}

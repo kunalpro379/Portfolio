@@ -1,105 +1,176 @@
 import { API_BASE_URL } from '@/config/api';
 
-export interface GuideNote {
-  noteId: string;
-  title: string;
-  topic: string;
+// Types
+export interface Document {
+  documentId: string;
+  name: string;
+  type: 'markdown' | 'diagram' | 'attachment';
   content: string;
-  canvasData?: any;
-  assets: Array<{
-    assetId: string;
-    filename: string;
-    fileType: string;
-    size: number;
-    azureUrl: string;
-    uploadedAt: string;
-  }>;
+  fileType?: string;
+  size?: number;
+  azurePath?: string;
+  azureUrl?: string;
   createdAt: string;
   updatedAt: string;
 }
 
-export interface CreateGuideNoteData {
-  title: string;
+export interface Title {
+  titleId: string;
+  name: string;
+  description: string;
+  documents: Document[];
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface Guide {
+  guideId: string;
+  name: string;
   topic: string;
-  content?: string;
-  canvasData?: any;
+  description: string;
+  titles: Title[];
+  createdAt: string;
+  updatedAt: string;
 }
 
-// Fetch all guide notes
-export async function fetchGuideNotes(): Promise<GuideNote[]> {
-  const response = await fetch(`${API_BASE_URL}/api/guide-notes`);
-  if (!response.ok) throw new Error('Failed to fetch guide notes');
+// ============ GUIDE API ============
+
+export async function fetchGuides(): Promise<Guide[]> {
+  const response = await fetch(`${API_BASE_URL}/api/guide-notes/guides`);
+  if (!response.ok) throw new Error('Failed to fetch guides');
   const data = await response.json();
-  return data.notes;
+  return data.guides;
 }
 
-// Fetch single guide note
-export async function fetchGuideNoteById(noteId: string): Promise<GuideNote> {
-  const response = await fetch(`${API_BASE_URL}/api/guide-notes/${noteId}`);
-  if (!response.ok) throw new Error('Failed to fetch guide note');
+export async function fetchGuideById(guideId: string): Promise<Guide> {
+  const response = await fetch(`${API_BASE_URL}/api/guide-notes/guides/${guideId}`);
+  if (!response.ok) throw new Error('Failed to fetch guide');
   const data = await response.json();
-  return data.note;
+  return data.guide;
 }
 
-// Create new guide note
-export async function createGuideNote(data: CreateGuideNoteData): Promise<GuideNote> {
-  const response = await fetch(`${API_BASE_URL}/api/guide-notes`, {
+export async function createGuide(data: { name: string; topic: string; description?: string }): Promise<Guide> {
+  const response = await fetch(`${API_BASE_URL}/api/guide-notes/guides`, {
     method: 'POST',
-    headers: {
-      'Content-Type': 'application/json'
-    },
+    headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(data)
   });
   
-  if (!response.ok) throw new Error('Failed to create guide note');
+  if (!response.ok) throw new Error('Failed to create guide');
   const result = await response.json();
-  return result.note;
+  return result.guide;
 }
 
-// Update guide note
-export async function updateGuideNote(noteId: string, data: Partial<CreateGuideNoteData>): Promise<GuideNote> {
-  const response = await fetch(`${API_BASE_URL}/api/guide-notes/${noteId}`, {
+export async function updateGuide(guideId: string, data: { name?: string; topic?: string; description?: string }): Promise<Guide> {
+  const response = await fetch(`${API_BASE_URL}/api/guide-notes/guides/${guideId}`, {
     method: 'PUT',
-    headers: {
-      'Content-Type': 'application/json'
-    },
+    headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(data)
   });
   
-  if (!response.ok) throw new Error('Failed to update guide note');
+  if (!response.ok) throw new Error('Failed to update guide');
   const result = await response.json();
-  return result.note;
+  return result.guide;
 }
 
-// Delete guide note
-export async function deleteGuideNote(noteId: string): Promise<void> {
-  const response = await fetch(`${API_BASE_URL}/api/guide-notes/${noteId}`, {
+export async function deleteGuide(guideId: string): Promise<void> {
+  const response = await fetch(`${API_BASE_URL}/api/guide-notes/guides/${guideId}`, {
     method: 'DELETE'
   });
   
-  if (!response.ok) throw new Error('Failed to delete guide note');
+  if (!response.ok) throw new Error('Failed to delete guide');
 }
 
-// Upload asset to guide note
-export async function uploadAsset(noteId: string, file: File): Promise<any> {
+// ============ TITLE API ============
+
+export async function createTitle(guideId: string, data: { name: string; description?: string }): Promise<Title> {
+  const response = await fetch(`${API_BASE_URL}/api/guide-notes/guides/${guideId}/titles`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(data)
+  });
+  
+  if (!response.ok) throw new Error('Failed to create title');
+  const result = await response.json();
+  return result.title;
+}
+
+export async function updateTitle(guideId: string, titleId: string, data: { name?: string; description?: string }): Promise<Title> {
+  const response = await fetch(`${API_BASE_URL}/api/guide-notes/guides/${guideId}/titles/${titleId}`, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(data)
+  });
+  
+  if (!response.ok) throw new Error('Failed to update title');
+  const result = await response.json();
+  return result.title;
+}
+
+export async function deleteTitle(guideId: string, titleId: string): Promise<void> {
+  const response = await fetch(`${API_BASE_URL}/api/guide-notes/guides/${guideId}/titles/${titleId}`, {
+    method: 'DELETE'
+  });
+  
+  if (!response.ok) throw new Error('Failed to delete title');
+}
+
+// ============ DOCUMENT API ============
+
+export async function createMarkdownDocument(guideId: string, titleId: string, data: { name: string; content?: string }): Promise<Document> {
+  const response = await fetch(`${API_BASE_URL}/api/guide-notes/guides/${guideId}/titles/${titleId}/documents/markdown`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(data)
+  });
+  
+  if (!response.ok) throw new Error('Failed to create markdown document');
+  const result = await response.json();
+  return result.document;
+}
+
+export async function createDiagramDocument(guideId: string, titleId: string, data: { name: string; content?: string }): Promise<Document> {
+  const response = await fetch(`${API_BASE_URL}/api/guide-notes/guides/${guideId}/titles/${titleId}/documents/diagram`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(data)
+  });
+  
+  if (!response.ok) throw new Error('Failed to create diagram document');
+  const result = await response.json();
+  return result.document;
+}
+
+export async function uploadAttachment(guideId: string, titleId: string, file: File): Promise<Document> {
   const formData = new FormData();
   formData.append('file', file);
   
-  const response = await fetch(`${API_BASE_URL}/api/guide-notes/${noteId}/assets`, {
+  const response = await fetch(`${API_BASE_URL}/api/guide-notes/guides/${guideId}/titles/${titleId}/documents/attachment`, {
     method: 'POST',
     body: formData
   });
   
-  if (!response.ok) throw new Error('Failed to upload asset');
-  const data = await response.json();
-  return data.asset;
+  if (!response.ok) throw new Error('Failed to upload attachment');
+  const result = await response.json();
+  return result.document;
 }
 
-// Delete asset from guide note
-export async function deleteAsset(noteId: string, assetId: string): Promise<void> {
-  const response = await fetch(`${API_BASE_URL}/api/guide-notes/${noteId}/assets/${assetId}`, {
+export async function updateDocument(guideId: string, titleId: string, documentId: string, data: { name?: string; content?: string }): Promise<Document> {
+  const response = await fetch(`${API_BASE_URL}/api/guide-notes/guides/${guideId}/titles/${titleId}/documents/${documentId}`, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(data)
+  });
+  
+  if (!response.ok) throw new Error('Failed to update document');
+  const result = await response.json();
+  return result.document;
+}
+
+export async function deleteDocument(guideId: string, titleId: string, documentId: string): Promise<void> {
+  const response = await fetch(`${API_BASE_URL}/api/guide-notes/guides/${guideId}/titles/${titleId}/documents/${documentId}`, {
     method: 'DELETE'
   });
   
-  if (!response.ok) throw new Error('Failed to delete asset');
+  if (!response.ok) throw new Error('Failed to delete document');
 }

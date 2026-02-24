@@ -1,14 +1,15 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { FolderOpen, Plus, ListTodo, Lock, Unlock, BookOpen, Edit, Trash2 } from 'lucide-react';
+import { FolderOpen, Plus, ListTodo, Lock, Unlock, BookOpen, Trash2 } from 'lucide-react';
+import LoadingSpinner from './LoadingSpinner';
 import TodoCard from './TodoCard';
 import TodoForm from './TodoForm';
 import TodoPasswordModal from './TodoPasswordModal';
 import TodoPerformanceStats from './TodoPerformanceStats';
 import {
-  fetchGuideNotes,
-  deleteGuideNote,
-  type GuideNote
+  fetchGuides,
+  deleteGuide,
+  type Guide
 } from '@/services/guideNotesApi';
 import {
   fetchTodos,
@@ -36,15 +37,23 @@ interface Note {
 
 interface NotesTabContentProps {
   notes: Note[];
+  activeSubTab?: 'guide' | 'notes' | 'todo';
 }
 
-export default function NotesTabContent({ notes }: NotesTabContentProps) {
+export default function NotesTabContent({ notes, activeSubTab: propActiveSubTab }: NotesTabContentProps) {
   const navigate = useNavigate();
-  const [activeSubTab, setActiveSubTab] = useState<'guide' | 'notes' | 'todo'>('guide');
+  const [activeSubTab, setActiveSubTab] = useState<'guide' | 'notes' | 'todo'>(propActiveSubTab || 'guide');
+
+  // Update activeSubTab when prop changes
+  useEffect(() => {
+    if (propActiveSubTab) {
+      setActiveSubTab(propActiveSubTab);
+    }
+  }, [propActiveSubTab]);
   
   // Guide Notes State
-  const [guideNotes, setGuideNotes] = useState<GuideNote[]>([]);
-  const [guideNotesLoading, setGuideNotesLoading] = useState(false);
+  const [guides, setGuides] = useState<Guide[]>([]);
+  const [guidesLoading, setGuidesLoading] = useState(false);
 
   // Todo State
   const [todos, setTodos] = useState<Todo[]>([]);
@@ -57,10 +66,10 @@ export default function NotesTabContent({ notes }: NotesTabContentProps) {
   const [todoPasswordMode, setTodoPasswordMode] = useState<'view' | 'create' | 'edit'>('view');
   const [todosAuthenticated, setTodosAuthenticated] = useState(isAuthenticated());
 
-  // Load guide notes
+  // Load guides
   useEffect(() => {
     if (activeSubTab === 'guide') {
-      loadGuideNotes();
+      loadGuides();
     }
   }, [activeSubTab]);
 
@@ -71,15 +80,15 @@ export default function NotesTabContent({ notes }: NotesTabContentProps) {
     }
   }, [activeSubTab, todosAuthenticated]);
 
-  const loadGuideNotes = async () => {
+  const loadGuides = async () => {
     try {
-      setGuideNotesLoading(true);
-      const fetchedNotes = await fetchGuideNotes();
-      setGuideNotes(fetchedNotes);
+      setGuidesLoading(true);
+      const fetchedGuides = await fetchGuides();
+      setGuides(fetchedGuides);
     } catch (err) {
-      console.error('Error loading guide notes:', err);
+      console.error('Error loading guides:', err);
     } finally {
-      setGuideNotesLoading(false);
+      setGuidesLoading(false);
     }
   };
 
@@ -99,23 +108,23 @@ export default function NotesTabContent({ notes }: NotesTabContentProps) {
     }
   };
 
-  const handleCreateGuideNote = () => {
-    navigate('/learnings/guide/new');
+  const handleCreateGuide = () => {
+    navigate('/learnings/guide/create');
   };
 
-  const handleEditGuideNote = (note: GuideNote) => {
-    navigate(`/learnings/guide/${note.noteId}`);
+  const handleViewGuide = (guide: Guide) => {
+    navigate(`/learnings/guide/${guide.guideId}`);
   };
 
-  const handleDeleteGuideNote = async (noteId: string) => {
-    if (!confirm('Are you sure you want to delete this guide note?')) return;
+  const handleDeleteGuide = async (guideId: string) => {
+    if (!confirm('Are you sure you want to delete this guide and all its contents?')) return;
     
     try {
-      await deleteGuideNote(noteId);
-      await loadGuideNotes();
+      await deleteGuide(guideId);
+      await loadGuides();
     } catch (err) {
-      console.error('Error deleting guide note:', err);
-      alert('Failed to delete guide note');
+      console.error('Error deleting guide:', err);
+      alert('Failed to delete guide');
     }
   };
 
@@ -229,62 +238,16 @@ export default function NotesTabContent({ notes }: NotesTabContentProps) {
 
   return (
     <div className="space-y-6">
-      {/* Sub-tabs */}
-      <div className="flex items-center gap-2 overflow-x-auto pb-2">
-        <button
-          onClick={() => setActiveSubTab('guide')}
-          className={`px-6 py-3 rounded-xl font-bold text-sm transition-all border-3 border-black whitespace-nowrap ${
-            activeSubTab === 'guide'
-              ? 'bg-gradient-to-r from-yellow-400 to-amber-400 text-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transform -translate-y-0.5'
-              : 'bg-white hover:bg-yellow-50 hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]'
-          }`}
-          style={{ borderRadius: '12px 15px 13px 14px' }}
-        >
-          <div className="flex items-center gap-2">
-            <BookOpen size={18} strokeWidth={2.5} />
-            Guide
-          </div>
-        </button>
-        <button
-          onClick={() => setActiveSubTab('notes')}
-          className={`px-6 py-3 rounded-xl font-bold text-sm transition-all border-3 border-black whitespace-nowrap ${
-            activeSubTab === 'notes'
-              ? 'bg-gradient-to-r from-yellow-400 to-amber-400 text-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transform -translate-y-0.5'
-              : 'bg-white hover:bg-yellow-50 hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]'
-          }`}
-          style={{ borderRadius: '14px 12px 15px 13px' }}
-        >
-          <div className="flex items-center gap-2">
-            <FolderOpen size={18} strokeWidth={2.5} />
-            Files
-          </div>
-        </button>
-        <button
-          onClick={() => setActiveSubTab('todo')}
-          className={`px-6 py-3 rounded-xl font-bold text-sm transition-all border-3 border-black whitespace-nowrap ${
-            activeSubTab === 'todo'
-              ? 'bg-gradient-to-r from-yellow-400 to-amber-400 text-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transform -translate-y-0.5'
-              : 'bg-white hover:bg-yellow-50 hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]'
-          }`}
-          style={{ borderRadius: '13px 14px 12px 15px' }}
-        >
-          <div className="flex items-center gap-2">
-            <ListTodo size={18} strokeWidth={2.5} />
-            Todo
-          </div>
-        </button>
-      </div>
-
       {/* Guide Tab Content */}
       {activeSubTab === 'guide' && (
         <div>
           <div className="flex items-center justify-between mb-6">
             <div>
-              <h3 className="text-2xl font-black text-black">Guide Notes</h3>
-              <p className="text-sm text-gray-600 font-medium">Create comprehensive notes with markdown, canvas, and file uploads</p>
+              <h3 className="text-2xl font-black text-black">Guides</h3>
+              <p className="text-sm text-gray-600 font-medium">Organize your documentation with guides and titles</p>
             </div>
             <button
-              onClick={handleCreateGuideNote}
+              onClick={handleCreateGuide}
               className="flex items-center gap-2 px-4 py-3 bg-black text-white border-3 border-black rounded-xl font-bold hover:bg-gray-800 transition-all shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]"
             >
               <Plus size={20} strokeWidth={2.5} />
@@ -292,31 +255,28 @@ export default function NotesTabContent({ notes }: NotesTabContentProps) {
             </button>
           </div>
 
-          {guideNotesLoading ? (
+          {guidesLoading ? (
             <div className="flex items-center justify-center py-16">
-              <div className="flex flex-col items-center gap-4">
-                <div className="animate-spin w-12 h-12 border-4 border-yellow-500 border-t-transparent rounded-full"></div>
-                <p className="text-gray-700 font-bold">Loading guide notes...</p>
-              </div>
+              <LoadingSpinner size="md" />
             </div>
-          ) : guideNotes.length === 0 ? (
+          ) : guides.length === 0 ? (
             <div className="text-center py-16">
               <div className="bg-gradient-to-br from-yellow-50 to-amber-50 border-3 border-black rounded-2xl p-10 inline-block shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]">
                 <BookOpen size={48} strokeWidth={2.5} className="mx-auto mb-3 text-yellow-600" />
-                <p className="text-black text-lg font-black mb-2">No guide notes yet</p>
-                <p className="text-gray-700 text-sm font-medium mb-4">Create your first guide note to get started</p>
+                <p className="text-black text-lg font-black mb-2">No guides yet</p>
+                <p className="text-gray-700 text-sm font-medium mb-4">Create your first guide to get started</p>
                 <button
-                  onClick={handleCreateGuideNote}
+                  onClick={handleCreateGuide}
                   className="px-6 py-3 bg-black text-white border-3 border-black rounded-xl font-bold hover:bg-gray-800 transition-all shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] inline-flex items-center gap-2"
                 >
                   <Plus size={20} strokeWidth={2.5} />
-                  Create Guide Note
+                  Create Guide
                 </button>
               </div>
             </div>
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-              {guideNotes.map((note, idx) => {
+              {guides.map((guide, idx) => {
                 const rotations = ['-rotate-1', 'rotate-1', '-rotate-2', 'rotate-2'];
                 const hoverRotations = ['hover:rotate-0', 'hover:-rotate-1', 'hover:rotate-1', 'hover:-rotate-2'];
                 const shadows = [
@@ -332,23 +292,23 @@ export default function NotesTabContent({ notes }: NotesTabContentProps) {
                   'hover:shadow-[10px_10px_0px_0px_rgba(251,191,36,0.7)]'
                 ];
                 
+                const titleCount = guide.titles.length;
+                
                 return (
                   <div
-                    key={note.noteId}
-                    className={`bg-gradient-to-br from-yellow-50 to-white backdrop-blur-sm border-[3px] border-black p-5 transition-all duration-300 hover:-translate-y-2 group h-full flex flex-col ${rotations[idx % 4]} ${hoverRotations[idx % 4]} ${shadows[idx % 4]} ${hoverShadows[idx % 4]} relative`}
+                    key={guide.guideId}
+                    onClick={() => handleViewGuide(guide)}
+                    className={`bg-gradient-to-br from-yellow-50 to-white backdrop-blur-sm border-[3px] border-black p-5 transition-all duration-300 hover:-translate-y-2 group h-full flex flex-col cursor-pointer ${rotations[idx % 4]} ${hoverRotations[idx % 4]} ${shadows[idx % 4]} ${hoverShadows[idx % 4]} relative`}
                     style={{ 
                       borderRadius: idx % 2 === 0 ? '20px 24px 22px 26px' : '24px 20px 26px 22px'
                     }}
                   >
                     <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity flex gap-1">
                       <button
-                        onClick={() => handleEditGuideNote(note)}
-                        className="p-1.5 bg-blue-500 text-white border-2 border-black rounded-lg hover:bg-blue-600 transition-all"
-                      >
-                        <Edit size={14} strokeWidth={2.5} />
-                      </button>
-                      <button
-                        onClick={() => handleDeleteGuideNote(note.noteId)}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleDeleteGuide(guide.guideId);
+                        }}
                         className="p-1.5 bg-red-500 text-white border-2 border-black rounded-lg hover:bg-red-600 transition-all"
                       >
                         <Trash2 size={14} strokeWidth={2.5} />
@@ -361,28 +321,26 @@ export default function NotesTabContent({ notes }: NotesTabContentProps) {
                       </div>
                       <div className="flex-1 min-w-0">
                         <span className="px-3 py-1.5 bg-yellow-100 border-2 border-black rounded-lg text-[10px] font-black uppercase tracking-wider inline-block mb-2">
-                          {note.topic}
+                          {guide.topic}
                         </span>
                         <h3 className="text-base md:text-lg font-black text-black mb-2 leading-tight line-clamp-2">
-                          {note.title}
+                          {guide.name}
                         </h3>
                       </div>
                     </div>
                     
-                    {note.content && (
+                    {guide.description && (
                       <p className="text-gray-700 mb-3 font-medium leading-relaxed line-clamp-3 text-sm flex-1">
-                        {note.content.substring(0, 150)}...
+                        {guide.description}
                       </p>
                     )}
                     
                     <div className="mt-auto pt-3 border-t-2 border-dashed border-gray-300">
                       <div className="flex items-center justify-between text-xs text-gray-600 font-black">
-                        <span>{new Date(note.updatedAt).toLocaleDateString()}</span>
-                        {note.assets && note.assets.length > 0 && (
-                          <span className="px-2 py-1 bg-blue-100 border-2 border-black rounded text-[10px]">
-                            {note.assets.length} files
-                          </span>
-                        )}
+                        <span>{new Date(guide.updatedAt).toLocaleDateString()}</span>
+                        <span className="px-2 py-1 bg-blue-100 border-2 border-black rounded text-[10px]">
+                          {titleCount} {titleCount === 1 ? 'title' : 'titles'}
+                        </span>
                       </div>
                     </div>
                   </div>
@@ -536,10 +494,7 @@ export default function NotesTabContent({ notes }: NotesTabContentProps) {
             </div>
           ) : todosLoading ? (
             <div className="flex items-center justify-center py-16">
-              <div className="flex flex-col items-center gap-4">
-                <div className="animate-spin w-12 h-12 border-4 border-orange-500 border-t-transparent rounded-full"></div>
-                <p className="text-gray-700 font-bold">Loading todos...</p>
-              </div>
+              <LoadingSpinner size="md" />
             </div>
           ) : todos.length === 0 ? (
             <div className="text-center py-16">

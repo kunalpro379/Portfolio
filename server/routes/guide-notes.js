@@ -83,8 +83,8 @@ router.get('/health', (req, res) => {
   });
 });
 
-// Upload asset to Azure Blob Storage
-const uploadAssetToAzure = async (buffer, noteId, filename, fileType) => {
+// Upload file to Azure Blob Storage
+const uploadToAzure = async (buffer, guideId, titleId, filename, fileType) => {
   try {
     if (!blobServiceClient || !containerName) {
       throw new Error('Azure Blob Storage not initialized');
@@ -92,8 +92,8 @@ const uploadAssetToAzure = async (buffer, noteId, filename, fileType) => {
     
     const containerClient = blobServiceClient.getContainerClient(containerName);
     
-    // Create blob path: guide-notes/noteId/assets/filename
-    const blobPath = `guide-notes/${noteId}/assets/${filename}`;
+    // Create blob path: guide-notes/guideId/titleId/filename
+    const blobPath = `guide-notes/${guideId}/${titleId}/${filename}`;
     const blockBlobClient = containerClient.getBlockBlobClient(blobPath);
     
     // Upload with content type
@@ -111,201 +111,465 @@ const uploadAssetToAzure = async (buffer, noteId, filename, fileType) => {
   }
 };
 
-// Create new guide note
-router.post('/', async (req, res) => {
+// ============ GUIDE ROUTES ============
+
+// Create new guide
+router.post('/guides', async (req, res) => {
   try {
-    const { title, topic, content, canvasData } = req.body;
+    const { name, topic, description } = req.body;
     
-    if (!title || !topic) {
-      return res.status(400).json({ message: 'Title and topic are required' });
+    if (!name || !topic) {
+      return res.status(400).json({ message: 'Name and topic are required' });
     }
     
-    const noteId = generateId();
+    const guideId = generateId();
     
-    const guideNote = new GuideNote({
-      noteId,
-      title,
+    const guide = new GuideNote({
+      guideId,
+      name,
       topic,
-      content: content || '',
-      canvasData: canvasData || null,
-      assets: [],
+      description: description || '',
+      titles: [],
       createdAt: new Date(),
       updatedAt: new Date()
     });
     
-    await guideNote.save();
+    await guide.save();
     
     res.status(201).json({
-      message: 'Guide note created successfully',
-      note: guideNote
+      message: 'Guide created successfully',
+      guide
     });
   } catch (error) {
-    console.error('Create guide note error:', error);
+    console.error('Create guide error:', error);
     res.status(500).json({ message: 'Server error', error: error.message });
   }
 });
 
-// Get all guide notes
-router.get('/', async (req, res) => {
+// Get all guides
+router.get('/guides', async (req, res) => {
   try {
-    console.log('Fetching all guide notes...');
-    const notes = await GuideNote.find().sort({ updatedAt: -1 });
-    console.log(`Found ${notes.length} guide notes`);
-    res.json({ notes });
+    const guides = await GuideNote.find().sort({ updatedAt: -1 });
+    res.json({ guides });
   } catch (error) {
-    console.error('Get guide notes error:', error);
-    console.error('Error stack:', error.stack);
+    console.error('Get guides error:', error);
     res.status(500).json({ message: 'Server error', error: error.message });
   }
 });
 
-// Get single guide note
-router.get('/:noteId', async (req, res) => {
+// Get single guide
+router.get('/guides/:guideId', async (req, res) => {
   try {
-    const { noteId } = req.params;
+    const { guideId } = req.params;
     
-    const note = await GuideNote.findOne({ noteId });
-    if (!note) {
-      return res.status(404).json({ message: 'Guide note not found' });
+    const guide = await GuideNote.findOne({ guideId });
+    if (!guide) {
+      return res.status(404).json({ message: 'Guide not found' });
     }
     
-    res.json({ note });
+    res.json({ guide });
   } catch (error) {
-    console.error('Get guide note error:', error);
+    console.error('Get guide error:', error);
     res.status(500).json({ message: 'Server error' });
   }
 });
 
-// Update guide note
-router.put('/:noteId', async (req, res) => {
+// Update guide
+router.put('/guides/:guideId', async (req, res) => {
   try {
-    const { noteId } = req.params;
-    const { title, topic, content, canvasData } = req.body;
+    const { guideId } = req.params;
+    const { name, topic, description } = req.body;
     
-    const note = await GuideNote.findOne({ noteId });
-    if (!note) {
-      return res.status(404).json({ message: 'Guide note not found' });
+    const guide = await GuideNote.findOne({ guideId });
+    if (!guide) {
+      return res.status(404).json({ message: 'Guide not found' });
     }
     
-    if (title) note.title = title;
-    if (topic) note.topic = topic;
-    if (content !== undefined) note.content = content;
-    if (canvasData !== undefined) note.canvasData = canvasData;
+    if (name) guide.name = name;
+    if (topic) guide.topic = topic;
+    if (description !== undefined) guide.description = description;
     
-    await note.save();
+    await guide.save();
     
     res.json({
-      message: 'Guide note updated successfully',
-      note
+      message: 'Guide updated successfully',
+      guide
     });
   } catch (error) {
-    console.error('Update guide note error:', error);
+    console.error('Update guide error:', error);
     res.status(500).json({ message: 'Server error', error: error.message });
   }
 });
 
-// Upload asset to guide note
-router.post('/:noteId/assets', upload.single('file'), async (req, res) => {
+// Delete guide
+router.delete('/guides/:guideId', async (req, res) => {
   try {
-    const { noteId } = req.params;
+    const { guideId } = req.params;
     
-    const note = await GuideNote.findOne({ noteId });
-    if (!note) {
-      return res.status(404).json({ message: 'Guide note not found' });
+    const guide = await GuideNote.findOne({ guideId });
+    if (!guide) {
+      return res.status(404).json({ message: 'Guide not found' });
     }
+    
+    // Delete all files from Azure
+    if (blobServiceClient && containerName) {
+      const containerClient = blobServiceClient.getContainerClient(containerName);
+      for (const title of guide.titles) {
+        for (const doc of title.documents) {
+          if (doc.type === 'attachment' && doc.azurePath) {
+            try {
+              const blockBlobClient = containerClient.getBlockBlobClient(doc.azurePath);
+              await blockBlobClient.deleteIfExists();
+            } catch (err) {
+              console.error('Error deleting file from Azure:', err);
+            }
+          }
+        }
+      }
+    }
+    
+    await GuideNote.deleteOne({ guideId });
+    
+    res.json({ message: 'Guide deleted successfully' });
+  } catch (error) {
+    console.error('Delete guide error:', error);
+    res.status(500).json({ message: 'Server error' });
+  }
+});
+
+// ============ TITLE ROUTES ============
+
+// Create new title in guide
+router.post('/guides/:guideId/titles', async (req, res) => {
+  try {
+    const { guideId } = req.params;
+    const { name, description } = req.body;
+    
+    if (!name) {
+      return res.status(400).json({ message: 'Title name is required' });
+    }
+    
+    const guide = await GuideNote.findOne({ guideId });
+    if (!guide) {
+      return res.status(404).json({ message: 'Guide not found' });
+    }
+    
+    const titleId = generateId();
+    const newTitle = {
+      titleId,
+      name,
+      description: description || '',
+      documents: [],
+      createdAt: new Date(),
+      updatedAt: new Date()
+    };
+    
+    guide.titles.push(newTitle);
+    await guide.save();
+    
+    res.status(201).json({
+      message: 'Title created successfully',
+      title: newTitle
+    });
+  } catch (error) {
+    console.error('Create title error:', error);
+    res.status(500).json({ message: 'Server error', error: error.message });
+  }
+});
+
+// Update title
+router.put('/guides/:guideId/titles/:titleId', async (req, res) => {
+  try {
+    const { guideId, titleId } = req.params;
+    const { name, description } = req.body;
+    
+    const guide = await GuideNote.findOne({ guideId });
+    if (!guide) {
+      return res.status(404).json({ message: 'Guide not found' });
+    }
+    
+    const title = guide.titles.find(t => t.titleId === titleId);
+    if (!title) {
+      return res.status(404).json({ message: 'Title not found' });
+    }
+    
+    if (name) title.name = name;
+    if (description !== undefined) title.description = description;
+    title.updatedAt = new Date();
+    
+    await guide.save();
+    
+    res.json({
+      message: 'Title updated successfully',
+      title
+    });
+  } catch (error) {
+    console.error('Update title error:', error);
+    res.status(500).json({ message: 'Server error', error: error.message });
+  }
+});
+
+// Delete title
+router.delete('/guides/:guideId/titles/:titleId', async (req, res) => {
+  try {
+    const { guideId, titleId } = req.params;
+    
+    const guide = await GuideNote.findOne({ guideId });
+    if (!guide) {
+      return res.status(404).json({ message: 'Guide not found' });
+    }
+    
+    const title = guide.titles.find(t => t.titleId === titleId);
+    if (!title) {
+      return res.status(404).json({ message: 'Title not found' });
+    }
+    
+    // Delete all attachments from Azure
+    if (blobServiceClient && containerName) {
+      const containerClient = blobServiceClient.getContainerClient(containerName);
+      for (const doc of title.documents) {
+        if (doc.type === 'attachment' && doc.azurePath) {
+          try {
+            const blockBlobClient = containerClient.getBlockBlobClient(doc.azurePath);
+            await blockBlobClient.deleteIfExists();
+          } catch (err) {
+            console.error('Error deleting file from Azure:', err);
+          }
+        }
+      }
+    }
+    
+    guide.titles = guide.titles.filter(t => t.titleId !== titleId);
+    await guide.save();
+    
+    res.json({ message: 'Title deleted successfully' });
+  } catch (error) {
+    console.error('Delete title error:', error);
+    res.status(500).json({ message: 'Server error' });
+  }
+});
+
+// ============ DOCUMENT ROUTES ============
+
+// Create markdown document
+router.post('/guides/:guideId/titles/:titleId/documents/markdown', async (req, res) => {
+  try {
+    const { guideId, titleId } = req.params;
+    const { name, content } = req.body;
+    
+    if (!name) {
+      return res.status(400).json({ message: 'Document name is required' });
+    }
+    
+    const guide = await GuideNote.findOne({ guideId });
+    if (!guide) {
+      return res.status(404).json({ message: 'Guide not found' });
+    }
+    
+    const title = guide.titles.find(t => t.titleId === titleId);
+    if (!title) {
+      return res.status(404).json({ message: 'Title not found' });
+    }
+    
+    const documentId = generateId();
+    const newDoc = {
+      documentId,
+      name,
+      type: 'markdown',
+      content: content || '',
+      createdAt: new Date(),
+      updatedAt: new Date()
+    };
+    
+    title.documents.push(newDoc);
+    title.updatedAt = new Date();
+    await guide.save();
+    
+    res.status(201).json({
+      message: 'Markdown document created successfully',
+      document: newDoc
+    });
+  } catch (error) {
+    console.error('Create markdown document error:', error);
+    res.status(500).json({ message: 'Server error', error: error.message });
+  }
+});
+
+// Create diagram document
+router.post('/guides/:guideId/titles/:titleId/documents/diagram', async (req, res) => {
+  try {
+    const { guideId, titleId } = req.params;
+    const { name, content } = req.body;
+    
+    if (!name) {
+      return res.status(400).json({ message: 'Document name is required' });
+    }
+    
+    const guide = await GuideNote.findOne({ guideId });
+    if (!guide) {
+      return res.status(404).json({ message: 'Guide not found' });
+    }
+    
+    const title = guide.titles.find(t => t.titleId === titleId);
+    if (!title) {
+      return res.status(404).json({ message: 'Title not found' });
+    }
+    
+    const documentId = generateId();
+    const newDoc = {
+      documentId,
+      name,
+      type: 'diagram',
+      content: content || '',
+      createdAt: new Date(),
+      updatedAt: new Date()
+    };
+    
+    title.documents.push(newDoc);
+    title.updatedAt = new Date();
+    await guide.save();
+    
+    res.status(201).json({
+      message: 'Diagram document created successfully',
+      document: newDoc
+    });
+  } catch (error) {
+    console.error('Create diagram document error:', error);
+    res.status(500).json({ message: 'Server error', error: error.message });
+  }
+});
+
+// Upload attachment document
+router.post('/guides/:guideId/titles/:titleId/documents/attachment', upload.single('file'), async (req, res) => {
+  try {
+    const { guideId, titleId } = req.params;
     
     if (!req.file) {
       return res.status(400).json({ message: 'No file uploaded' });
     }
     
-    const assetId = generateId();
-    const result = await uploadAssetToAzure(
+    const guide = await GuideNote.findOne({ guideId });
+    if (!guide) {
+      return res.status(404).json({ message: 'Guide not found' });
+    }
+    
+    const title = guide.titles.find(t => t.titleId === titleId);
+    if (!title) {
+      return res.status(404).json({ message: 'Title not found' });
+    }
+    
+    const documentId = generateId();
+    const result = await uploadToAzure(
       req.file.buffer,
-      noteId,
+      guideId,
+      titleId,
       req.file.originalname,
       req.file.mimetype
     );
     
-    const asset = {
-      assetId,
-      filename: req.file.originalname,
+    const newDoc = {
+      documentId,
+      name: req.file.originalname,
+      type: 'attachment',
+      content: '',
       fileType: req.file.mimetype,
       size: req.file.size,
       azurePath: result.blobPath,
       azureUrl: result.blobUrl,
-      uploadedAt: new Date()
+      createdAt: new Date(),
+      updatedAt: new Date()
     };
     
-    note.assets.push(asset);
-    await note.save();
+    title.documents.push(newDoc);
+    title.updatedAt = new Date();
+    await guide.save();
     
-    res.json({
-      message: 'Asset uploaded successfully',
-      asset
+    res.status(201).json({
+      message: 'Attachment uploaded successfully',
+      document: newDoc
     });
   } catch (error) {
-    console.error('Upload asset error:', error);
+    console.error('Upload attachment error:', error);
     res.status(500).json({ message: 'Upload failed', error: error.message });
   }
 });
 
-// Delete asset from guide note
-router.delete('/:noteId/assets/:assetId', async (req, res) => {
+// Update document
+router.put('/guides/:guideId/titles/:titleId/documents/:documentId', async (req, res) => {
   try {
-    const { noteId, assetId } = req.params;
+    const { guideId, titleId, documentId } = req.params;
+    const { name, content } = req.body;
     
-    const note = await GuideNote.findOne({ noteId });
-    if (!note) {
-      return res.status(404).json({ message: 'Guide note not found' });
+    const guide = await GuideNote.findOne({ guideId });
+    if (!guide) {
+      return res.status(404).json({ message: 'Guide not found' });
     }
     
-    const asset = note.assets.find(a => a.assetId === assetId);
-    if (!asset) {
-      return res.status(404).json({ message: 'Asset not found' });
+    const title = guide.titles.find(t => t.titleId === titleId);
+    if (!title) {
+      return res.status(404).json({ message: 'Title not found' });
     }
     
-    // Delete from Azure
-    const containerClient = blobServiceClient.getContainerClient(containerName);
-    const blockBlobClient = containerClient.getBlockBlobClient(asset.azurePath);
-    await blockBlobClient.deleteIfExists();
+    const document = title.documents.find(d => d.documentId === documentId);
+    if (!document) {
+      return res.status(404).json({ message: 'Document not found' });
+    }
     
-    // Remove from note
-    note.assets = note.assets.filter(a => a.assetId !== assetId);
-    await note.save();
+    if (name) document.name = name;
+    if (content !== undefined) document.content = content;
+    document.updatedAt = new Date();
+    title.updatedAt = new Date();
     
-    res.json({ message: 'Asset deleted successfully' });
+    await guide.save();
+    
+    res.json({
+      message: 'Document updated successfully',
+      document
+    });
   } catch (error) {
-    console.error('Delete asset error:', error);
-    res.status(500).json({ message: 'Server error' });
+    console.error('Update document error:', error);
+    res.status(500).json({ message: 'Server error', error: error.message });
   }
 });
 
-// Delete guide note
-router.delete('/:noteId', async (req, res) => {
+// Delete document
+router.delete('/guides/:guideId/titles/:titleId/documents/:documentId', async (req, res) => {
   try {
-    const { noteId } = req.params;
+    const { guideId, titleId, documentId } = req.params;
     
-    const note = await GuideNote.findOne({ noteId });
-    if (!note) {
-      return res.status(404).json({ message: 'Guide note not found' });
+    const guide = await GuideNote.findOne({ guideId });
+    if (!guide) {
+      return res.status(404).json({ message: 'Guide not found' });
     }
     
-    // Delete all assets from Azure
-    const containerClient = blobServiceClient.getContainerClient(containerName);
-    for (const asset of note.assets) {
+    const title = guide.titles.find(t => t.titleId === titleId);
+    if (!title) {
+      return res.status(404).json({ message: 'Title not found' });
+    }
+    
+    const document = title.documents.find(d => d.documentId === documentId);
+    if (!document) {
+      return res.status(404).json({ message: 'Document not found' });
+    }
+    
+    // Delete from Azure if it's an attachment
+    if (document.type === 'attachment' && document.azurePath && blobServiceClient && containerName) {
       try {
-        const blockBlobClient = containerClient.getBlockBlobClient(asset.azurePath);
+        const containerClient = blobServiceClient.getContainerClient(containerName);
+        const blockBlobClient = containerClient.getBlockBlobClient(document.azurePath);
         await blockBlobClient.deleteIfExists();
       } catch (err) {
-        console.error('Error deleting asset from Azure:', err);
+        console.error('Error deleting file from Azure:', err);
       }
     }
     
-    await GuideNote.deleteOne({ noteId });
+    title.documents = title.documents.filter(d => d.documentId !== documentId);
+    title.updatedAt = new Date();
+    await guide.save();
     
-    res.json({ message: 'Guide note deleted successfully' });
+    res.json({ message: 'Document deleted successfully' });
   } catch (error) {
-    console.error('Delete guide note error:', error);
+    console.error('Delete document error:', error);
     res.status(500).json({ message: 'Server error' });
   }
 });

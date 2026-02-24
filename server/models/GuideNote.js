@@ -1,13 +1,72 @@
 import mongoose from 'mongoose';
 
+// Document schema (markdown files, diagrams, attachments within a title)
+const documentSchema = new mongoose.Schema({
+  documentId: {
+    type: String,
+    required: true
+  },
+  name: {
+    type: String,
+    required: true
+  },
+  type: {
+    type: String,
+    enum: ['markdown', 'diagram', 'attachment'],
+    required: true
+  },
+  content: {
+    type: String, // Markdown content or diagram data
+    default: ''
+  },
+  fileType: String, // For attachments
+  size: Number, // For attachments
+  azurePath: String, // For attachments
+  azureUrl: String, // For attachments
+  createdAt: {
+    type: Date,
+    default: Date.now
+  },
+  updatedAt: {
+    type: Date,
+    default: Date.now
+  }
+});
+
+// Title schema (contains multiple documents)
+const titleSchema = new mongoose.Schema({
+  titleId: {
+    type: String,
+    required: true
+  },
+  name: {
+    type: String,
+    required: true
+  },
+  description: {
+    type: String,
+    default: ''
+  },
+  documents: [documentSchema],
+  createdAt: {
+    type: Date,
+    default: Date.now
+  },
+  updatedAt: {
+    type: Date,
+    default: Date.now
+  }
+});
+
+// Main Guide schema
 const guideNoteSchema = new mongoose.Schema({
-  noteId: {
+  guideId: {
     type: String,
     required: true,
     unique: true,
     index: true
   },
-  title: {
+  name: {
     type: String,
     required: true
   },
@@ -15,23 +74,11 @@ const guideNoteSchema = new mongoose.Schema({
     type: String,
     required: true
   },
-  content: {
-    type: String, // Markdown content
+  description: {
+    type: String,
     default: ''
   },
-  canvasData: {
-    type: String, // JSON string of Excalidraw canvas data
-    default: null
-  },
-  assets: [{
-    assetId: String,
-    filename: String,
-    fileType: String,
-    size: Number,
-    azurePath: String,
-    azureUrl: String,
-    uploadedAt: Date
-  }],
+  titles: [titleSchema],
   createdAt: {
     type: Date,
     default: Date.now
