@@ -84,15 +84,7 @@ export default function ExperienceSection() {
             Experience
           </motion.h2>
 
-          <motion.p
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6, delay: 0.2 }}
-            className="text-gray-500 text-sm md:text-base font-medium uppercase tracking-wider"
-          >
-            Building the future, one project at a time
-          </motion.p>
+         
         </div>
 
         {/* Timeline */}

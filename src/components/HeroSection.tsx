@@ -171,9 +171,13 @@ export default function HeroSection() {
                 KUNAL<br />
                 <span className="text-transparent bg-clip-text bg-gradient-to-b from-black to-black/40">PATIL</span>
               </h1>
-              <p className="max-w-xl text-black/60 font-medium text-xs md:text-lg tracking-wide uppercase text-left mb-3 md:mb-0 whitespace-nowrap">
-                I build scalable backends, automate the cloud, and bring AI ideas to life.
+              <p className="max-w-xl text-black font-medium text-xs md:text-lg tracking-wide uppercase text-left mb-3 md:mb-0 whitespace-nowrap">
+                I build scalable backends, automate the cloud,
               </p>
+              <p className="max-w-xl text-black font-medium text-xs md:text-lg tracking-wide uppercase text-left mb-3 md:mb-0 whitespace-nowrap">
+                and bring AI ideas to life.
+              </p>
+            
 
               <div className="mt-3 md:mt-8 flex flex-col gap-3 md:gap-6 w-full sm:w-auto mb-6 md:mb-20">
                 <div className="flex gap-3 md:gap-6">

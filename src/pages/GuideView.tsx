@@ -34,9 +34,16 @@ export default function GuideView() {
     }
   };
 
-  const handleTitleClick = (titleId: string) => {
-    setSelectedTitleId(titleId);
-    setShowPasswordModal(true);
+  const handleTitleClick = (titleId: string, clickMode: 'view' | 'edit') => {
+    if (clickMode === 'view') {
+      // Direct navigation for view mode - no password required
+      navigate(`/learnings/guide/${guideId}/title/${titleId}/view`);
+    } else {
+      // Ask for password for edit mode
+      setSelectedTitleId(titleId);
+      setMode('edit');
+      setShowPasswordModal(true);
+    }
   };
 
   const handlePasswordSubmit = () => {
@@ -44,12 +51,7 @@ export default function GuideView() {
       setShowPasswordModal(false);
       setPassword('');
       setPasswordError('');
-      
-      if (mode === 'view') {
-        navigate(`/learnings/guide/${guideId}/title/${selectedTitleId}/view`);
-      } else {
-        navigate(`/learnings/guide/${guideId}/title/${selectedTitleId}/edit`);
-      }
+      navigate(`/learnings/guide/${guideId}/title/${selectedTitleId}/edit`);
     } else {
       setPasswordError('Incorrect password');
     }
@@ -225,20 +227,14 @@ export default function GuideView() {
 
                   <div className="flex gap-2">
                     <button
-                      onClick={() => {
-                        setMode('view');
-                        handleTitleClick(title.titleId);
-                      }}
+                      onClick={() => handleTitleClick(title.titleId, 'view')}
                       className="flex-1 flex items-center justify-center gap-2 px-4 py-2 bg-blue-500 text-white border-3 border-black rounded-lg font-bold hover:bg-blue-600 transition-all"
                     >
                       <Eye size={16} strokeWidth={2.5} />
                       View
                     </button>
                     <button
-                      onClick={() => {
-                        setMode('edit');
-                        handleTitleClick(title.titleId);
-                      }}
+                      onClick={() => handleTitleClick(title.titleId, 'edit')}
                       className="flex-1 flex items-center justify-center gap-2 px-4 py-2 bg-yellow-400 text-black border-3 border-black rounded-lg font-bold hover:bg-yellow-500 transition-all"
                     >
                       <Edit size={16} strokeWidth={2.5} />
@@ -263,7 +259,7 @@ export default function GuideView() {
               <div>
                 <h3 className="text-2xl font-black text-black">Enter Password</h3>
                 <p className="text-sm text-gray-600 font-medium">
-                  {mode === 'edit' ? 'Password required to edit' : 'Password required to view'}
+                  Password required to edit
                 </p>
               </div>
             </div>

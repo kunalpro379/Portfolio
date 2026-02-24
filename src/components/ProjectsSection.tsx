@@ -79,7 +79,7 @@ const SectionHeader = ({ icon: Icon, title, subtitle }: { icon: any; title: stri
         <h2 className="text-3xl md:text-5xl font-black tracking-tighter uppercase leading-none drop-shadow-2xl text-black">{title}</h2>
         <div className="flex items-center gap-2 mt-2">
           <div className="h-1 w-8 bg-sky-400 rounded-full" />
-          <p className="text-sky-400 font-bold tracking-[0.2em] text-[10px] md:text-sm uppercase">{subtitle}</p>
+          <p className="text-blue-700 font-bold tracking-[0.2em] text-[10px] md:text-sm uppercase">{subtitle}</p>
         </div>
       </div>
     </div>

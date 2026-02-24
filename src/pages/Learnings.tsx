@@ -93,6 +93,7 @@ export default function LearningsPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [navigating, setNavigating] = useState(false);
 
   // Canvas state
   const [activeCanvas, setActiveCanvas] = useState<string | null>(null);
@@ -240,6 +241,13 @@ export default function LearningsPage() {
 
     fetchData();
   }, [activeTab]);
+
+  const handleNavigate = (path: string) => {
+    setNavigating(true);
+    setTimeout(() => {
+      navigate(path);
+    }, 300);
+  };
 
   const changeTab = (tab: 'guide' | 'files' | 'todo' | 'documentation' | 'blogs' | 'projects' | 'diagrams' | 'code') => {
     setSearchParams({ tab });
@@ -494,6 +502,13 @@ export default function LearningsPage() {
 
   return (
     <div className="h-screen bg-gray-100 flex flex-col overflow-hidden">
+      {/* Loading Overlay */}
+      {navigating && (
+        <div className="fixed inset-0 bg-gray-100 z-[9999] flex items-center justify-center">
+          <LoadingSpinner size="lg" />
+        </div>
+      )}
+      
       {/* Background Image */}
       <div 
         className="fixed inset-0 z-0 opacity-30"
@@ -796,8 +811,8 @@ export default function LearningsPage() {
       )}
 
       {/* Scrollable Main Content */}
-      <main className="flex-1 overflow-y-auto bg-transparent p-4 md:p-6 relative z-10">
-        <div className="max-w-7xl mx-auto">
+      <main className="flex-1 overflow-y-auto bg-transparent p-4 md:p-6 relative z-10 pt-0">
+        <div className="max-w-7xl mx-auto pt-4">
           {/* Loading State */}
           {loading && (
             <div className="flex items-center justify-center py-20">
@@ -869,7 +884,7 @@ export default function LearningsPage() {
                         return (
                         <div
                           key={doc.docId}
-                          onClick={() => navigate(`/learnings/documentation/${doc.docId}`)}
+                          onClick={() => handleNavigate(`/learnings/documentation/${doc.docId}`)}
                           className={`${bgGradients[idx % 4]} backdrop-blur-sm border-[3px] border-black p-5 transition-all duration-300 cursor-pointer hover:-translate-y-2 group h-full flex flex-col ${rotations[idx % 4]} ${hoverRotations[idx % 4]} ${shadows[idx % 4]} ${hoverShadows[idx % 4]}`}
                           style={{ 
                             borderRadius: idx % 2 === 0 ? '20px 24px 22px 26px' : '24px 20px 26px 22px'
@@ -978,7 +993,7 @@ export default function LearningsPage() {
                         return (
                         <div
                           key={blog.blogId}
-                          onClick={() => navigate(`/learnings/blogs/${blog.blogId}`)}
+                          onClick={() => handleNavigate(`/learnings/blogs/${blog.blogId}`)}
                           className={`${bgGradients[idx % 4]} backdrop-blur-sm border-[3px] border-black overflow-hidden transition-all duration-300 cursor-pointer hover:-translate-y-2 group ${rotations[idx % 4]} ${hoverRotations[idx % 4]} ${shadows[idx % 4]} ${hoverShadows[idx % 4]}`}
                           style={{ 
                             borderRadius: idx % 2 === 0 ? '18px 22px 20px 24px' : '22px 18px 24px 20px'
@@ -1037,7 +1052,7 @@ export default function LearningsPage() {
                       projects.map((project) => (
                         <div
                           key={project.id}
-                          onClick={() => navigate(`/projects/${project.id}`)}
+                          onClick={() => handleNavigate(`/projects/${project.id}`)}
                           className="bg-gray-50/70 backdrop-blur-sm border-3 border-black rounded-xl overflow-hidden hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] transition-all cursor-pointer hover:-translate-y-1 group"
                           style={{ borderRadius: '14px 16px 15px 17px' }}
                         >
@@ -1102,7 +1117,7 @@ export default function LearningsPage() {
                       <div
                         key={folder.folderId}
                         onClick={() => {
-                          navigate(`/learnings/code?folder=${encodeURIComponent(folder.path)}`);
+                          handleNavigate(`/learnings/code?folder=${encodeURIComponent(folder.path)}`);
                         }}
                         className={`${bgGradients[idx % 4]} backdrop-blur-sm border-[3px] border-black p-4 transition-all duration-300 cursor-pointer hover:-translate-y-2 group ${rotations[idx % 4]} ${hoverRotations[idx % 4]} ${shadows[idx % 4]} ${hoverShadows[idx % 4]}`}
                         style={{ 
@@ -1149,7 +1164,7 @@ export default function LearningsPage() {
                       <div
                         key={repo._id}
                         onClick={() => {
-                          navigate(`/learnings/code?repo=${repo._id}`);
+                          handleNavigate(`/learnings/code?repo=${repo._id}`);
                         }}
                         className={`${bgGradients[idx % 4]} backdrop-blur-sm border-[3px] border-black p-4 transition-all duration-300 cursor-pointer hover:-translate-y-2 group ${rotations[idx % 4]} ${hoverRotations[idx % 4]} ${shadows[idx % 4]} ${hoverShadows[idx % 4]}`}
                         style={{ 
