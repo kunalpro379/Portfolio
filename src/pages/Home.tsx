@@ -19,38 +19,40 @@ const Home = memo(function Home() {
   }, []);
 
   const audioRef = useRef<HTMLAudioElement>(null);
-  const [isPlaying, setIsPlaying] = useState(false);
+  const [isPlaying, setIsPlaying] = useState(true);
   const [isMuted, setIsMuted] = useState(false);
-  const [userInteracted, setUserInteracted] = useState(false);
 
   useEffect(() => {
     if (audioRef.current) {
       audioRef.current.volume = 0.3; // Set volume to 30%
-    }
-
-    // Handle user interaction for mobile autoplay
-    const handleFirstInteraction = () => {
-      if (!userInteracted) {
-        setUserInteracted(true);
-        if (audioRef.current && !isPlaying) {
-          audioRef.current.play().then(() => {
+      
+      // Try to auto-play
+      const playPromise = audioRef.current.play();
+      
+      if (playPromise !== undefined) {
+        playPromise
+          .then(() => {
             setIsPlaying(true);
-          }).catch(err => {
-            console.log('Autoplay prevented:', err);
+          })
+          .catch(err => {
+            console.log('Autoplay prevented, waiting for user interaction:', err);
+            setIsPlaying(false);
+            
+            // On mobile, play after first interaction
+            const handleInteraction = () => {
+              if (audioRef.current) {
+                audioRef.current.play().then(() => {
+                  setIsPlaying(true);
+                }).catch(e => console.log('Play failed:', e));
+              }
+            };
+            
+            document.addEventListener('click', handleInteraction, { once: true });
+            document.addEventListener('touchstart', handleInteraction, { once: true });
           });
-        }
       }
-    };
-
-    // Listen for any user interaction
-    document.addEventListener('click', handleFirstInteraction, { once: true });
-    document.addEventListener('touchstart', handleFirstInteraction, { once: true });
-
-    return () => {
-      document.removeEventListener('click', handleFirstInteraction);
-      document.removeEventListener('touchstart', handleFirstInteraction);
-    };
-  }, [userInteracted, isPlaying]);
+    }
+  }, []);
 
   const togglePlay = () => {
     if (audioRef.current) {
@@ -96,198 +98,68 @@ const Home = memo(function Home() {
         )}
       </button>
 
-      {/* Animated Background Images - Slideshow with grayscale - Mobile Optimized */}
+      {/* Animated Background Images - Slideshow - Mobile Optimized (No Flicker) */}
       <div className="fixed inset-0 -z-[12]">
         <style>{`
           @keyframes backgroundSlideshow {
             0% { opacity: 0; }
-            6% { opacity: 0.55; }
-            14% { opacity: 0.55; }
-            20% { opacity: 0; }
+            8% { opacity: 0.55; }
+            16% { opacity: 0.55; }
+            24% { opacity: 0; }
             100% { opacity: 0; }
           }
           
           @media (max-width: 768px) {
             @keyframes backgroundSlideshow {
               0% { opacity: 0; }
-              6% { opacity: 0.4; }
-              14% { opacity: 0.4; }
-              20% { opacity: 0; }
+              8% { opacity: 0.45; }
+              16% { opacity: 0.45; }
+              24% { opacity: 0; }
               100% { opacity: 0; }
             }
           }
           
-          .bg-slide-1 { animation: backgroundSlideshow 91s ease-in-out infinite 0s; }
-          .bg-slide-2 { animation: backgroundSlideshow 91s ease-in-out infinite 7s; }
-          .bg-slide-3 { animation: backgroundSlideshow 91s ease-in-out infinite 14s; }
-          .bg-slide-4 { animation: backgroundSlideshow 91s ease-in-out infinite 21s; }
-          .bg-slide-5 { animation: backgroundSlideshow 91s ease-in-out infinite 28s; }
-          .bg-slide-6 { animation: backgroundSlideshow 91s ease-in-out infinite 35s; }
-          .bg-slide-7 { animation: backgroundSlideshow 91s ease-in-out infinite 42s; }
-          .bg-slide-8 { animation: backgroundSlideshow 91s ease-in-out infinite 49s; }
-          .bg-slide-9 { animation: backgroundSlideshow 91s ease-in-out infinite 56s; }
-          .bg-slide-10 { animation: backgroundSlideshow 91s ease-in-out infinite 63s; }
-          .bg-slide-11 { animation: backgroundSlideshow 91s ease-in-out infinite 70s; }
-          .bg-slide-12 { animation: backgroundSlideshow 91s ease-in-out infinite 77s; }
-          .bg-slide-13 { animation: backgroundSlideshow 91s ease-in-out infinite 84s; }
+          .bg-slide {
+            position: absolute;
+            inset: 0;
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            filter: grayscale(100%);
+            transform: translateZ(0);
+            -webkit-transform: translateZ(0);
+            backface-visibility: hidden;
+            -webkit-backface-visibility: hidden;
+          }
+          
+          .bg-slide-1 { animation: backgroundSlideshow 104s ease-in-out infinite 0s; background-image: url(/back1.png); }
+          .bg-slide-2 { animation: backgroundSlideshow 104s ease-in-out infinite 8s; background-image: url(/back2.png); }
+          .bg-slide-3 { animation: backgroundSlideshow 104s ease-in-out infinite 16s; background-image: url(/back3.png); }
+          .bg-slide-4 { animation: backgroundSlideshow 104s ease-in-out infinite 24s; background-image: url(/back4.png); }
+          .bg-slide-5 { animation: backgroundSlideshow 104s ease-in-out infinite 32s; background-image: url(/back5.png); }
+          .bg-slide-6 { animation: backgroundSlideshow 104s ease-in-out infinite 40s; background-image: url(/back6.png); }
+          .bg-slide-7 { animation: backgroundSlideshow 104s ease-in-out infinite 48s; background-image: url(/back7.png); }
+          .bg-slide-8 { animation: backgroundSlideshow 104s ease-in-out infinite 56s; background-image: url(/back8.png); }
+          .bg-slide-9 { animation: backgroundSlideshow 104s ease-in-out infinite 64s; background-image: url(/back9.png); }
+          .bg-slide-10 { animation: backgroundSlideshow 104s ease-in-out infinite 72s; background-image: url(/back10.png); }
+          .bg-slide-11 { animation: backgroundSlideshow 104s ease-in-out infinite 80s; background-image: url(/back11.png); }
+          .bg-slide-12 { animation: backgroundSlideshow 104s ease-in-out infinite 88s; background-image: url(/back12.png); }
+          .bg-slide-13 { animation: backgroundSlideshow 104s ease-in-out infinite 96s; background-image: url(/back13.png); }
         `}</style>
         
-        <div 
-          className="absolute inset-0 bg-slide-1"
-          style={{
-            backgroundImage: 'url(/back1.png)',
-            backgroundSize: 'cover',
-            backgroundPosition: 'center',
-            backgroundRepeat: 'no-repeat',
-            filter: 'grayscale(100%)',
-            opacity: 0,
-            willChange: 'opacity'
-          }}
-        />
-        <div 
-          className="absolute inset-0 bg-slide-2"
-          style={{
-            backgroundImage: 'url(/back2.png)',
-            backgroundSize: 'cover',
-            backgroundPosition: 'center',
-            backgroundRepeat: 'no-repeat',
-            filter: 'grayscale(100%)',
-            opacity: 0,
-            willChange: 'opacity'
-          }}
-        />
-        <div 
-          className="absolute inset-0 bg-slide-3"
-          style={{
-            backgroundImage: 'url(/back3.png)',
-            backgroundSize: 'cover',
-            backgroundPosition: 'center',
-            backgroundRepeat: 'no-repeat',
-            filter: 'grayscale(100%)',
-            opacity: 0,
-            willChange: 'opacity'
-          }}
-        />
-        <div 
-          className="absolute inset-0 bg-slide-4"
-          style={{
-            backgroundImage: 'url(/back4.png)',
-            backgroundSize: 'cover',
-            backgroundPosition: 'center',
-            backgroundRepeat: 'no-repeat',
-            filter: 'grayscale(100%)',
-            opacity: 0,
-            willChange: 'opacity'
-          }}
-        />
-        <div 
-          className="absolute inset-0 bg-slide-5"
-          style={{
-            backgroundImage: 'url(/back5.png)',
-            backgroundSize: 'cover',
-            backgroundPosition: 'center',
-            backgroundRepeat: 'no-repeat',
-            filter: 'grayscale(100%)',
-            opacity: 0,
-            willChange: 'opacity'
-          }}
-        />
-        <div 
-          className="absolute inset-0 bg-slide-6"
-          style={{
-            backgroundImage: 'url(/back6.png)',
-            backgroundSize: 'cover',
-            backgroundPosition: 'center',
-            backgroundRepeat: 'no-repeat',
-            filter: 'grayscale(100%)',
-            opacity: 0,
-            willChange: 'opacity'
-          }}
-        />
-        <div 
-          className="absolute inset-0 bg-slide-7"
-          style={{
-            backgroundImage: 'url(/back7.png)',
-            backgroundSize: 'cover',
-            backgroundPosition: 'center',
-            backgroundRepeat: 'no-repeat',
-            filter: 'grayscale(100%)',
-            opacity: 0,
-            willChange: 'opacity'
-          }}
-        />
-        <div 
-          className="absolute inset-0 bg-slide-8"
-          style={{
-            backgroundImage: 'url(/back8.png)',
-            backgroundSize: 'cover',
-            backgroundPosition: 'center',
-            backgroundRepeat: 'no-repeat',
-            filter: 'grayscale(100%)',
-            opacity: 0,
-            willChange: 'opacity'
-          }}
-        />
-        <div 
-          className="absolute inset-0 bg-slide-9"
-          style={{
-            backgroundImage: 'url(/back9.png)',
-            backgroundSize: 'cover',
-            backgroundPosition: 'center',
-            backgroundRepeat: 'no-repeat',
-            filter: 'grayscale(100%)',
-            opacity: 0,
-            willChange: 'opacity'
-          }}
-        />
-        <div 
-          className="absolute inset-0 bg-slide-10"
-          style={{
-            backgroundImage: 'url(/back10.png)',
-            backgroundSize: 'cover',
-            backgroundPosition: 'center',
-            backgroundRepeat: 'no-repeat',
-            filter: 'grayscale(100%)',
-            opacity: 0,
-            willChange: 'opacity'
-          }}
-        />
-        <div 
-          className="absolute inset-0 bg-slide-11"
-          style={{
-            backgroundImage: 'url(/back11.png)',
-            backgroundSize: 'cover',
-            backgroundPosition: 'center',
-            backgroundRepeat: 'no-repeat',
-            filter: 'grayscale(100%)',
-            opacity: 0,
-            willChange: 'opacity'
-          }}
-        />
-        <div 
-          className="absolute inset-0 bg-slide-12"
-          style={{
-            backgroundImage: 'url(/back12.png)',
-            backgroundSize: 'cover',
-            backgroundPosition: 'center',
-            backgroundRepeat: 'no-repeat',
-            filter: 'grayscale(100%)',
-            opacity: 0,
-            willChange: 'opacity'
-          }}
-        />
-        <div 
-          className="absolute inset-0 bg-slide-13"
-          style={{
-            backgroundImage: 'url(/back13.png)',
-            backgroundSize: 'cover',
-            backgroundPosition: 'center',
-            backgroundRepeat: 'no-repeat',
-            filter: 'grayscale(100%)',
-            opacity: 0,
-            willChange: 'opacity'
-          }}
-        />
+        <div className="bg-slide bg-slide-1" />
+        <div className="bg-slide bg-slide-2" />
+        <div className="bg-slide bg-slide-3" />
+        <div className="bg-slide bg-slide-4" />
+        <div className="bg-slide bg-slide-5" />
+        <div className="bg-slide bg-slide-6" />
+        <div className="bg-slide bg-slide-7" />
+        <div className="bg-slide bg-slide-8" />
+        <div className="bg-slide bg-slide-9" />
+        <div className="bg-slide bg-slide-10" />
+        <div className="bg-slide bg-slide-11" />
+        <div className="bg-slide bg-slide-12" />
+        <div className="bg-slide bg-slide-13" />
       </div>
       
       {/* Beautiful Gradient Background - Top to Bottom */}
