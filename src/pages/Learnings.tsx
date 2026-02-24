@@ -1,27 +1,9 @@
-import { Clock, Calendar, ArrowLeft, FolderOpen, FileText, BookOpen, Code, FileImage, Plus, Github, Menu, X, Home, LogOut, Share2, Eye, Edit, ListTodo, Lock } from "lucide-react";
+import { Clock, Calendar, ArrowLeft, FolderOpen, FileText, BookOpen, Code, FileImage, Plus, Github, Menu, X, Home, LogOut, Eye, Edit, Trash2 } from "lucide-react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { API_ENDPOINTS, API_BASE_URL } from "@/config/api";
 import ExcalidrawCanvas from "@/components/ExcalidrawCanvas";
-import TodoCard from "@/components/TodoCard";
-import TodoForm from "@/components/TodoForm";
-import TodoPasswordModal from "@/components/TodoPasswordModal";
-import TodoPerformanceStats from "@/components/TodoPerformanceStats";
-import {
-  fetchTodos,
-  fetchTodoById,
-  createTodo,
-  updateTodo,
-  deleteTodo,
-  toggleTodoPoint,
-  fetchPerformanceStats,
-  isAuthenticated,
-  setAuthToken,
-  clearAuthToken,
-  type Todo,
-  type CreateTodoData,
-  type PerformanceStats
-} from "@/services/todoApi";
+import NotesTabContent from "@/components/NotesTabContent";
 
 interface ProjectData {
   size?: "big" | "small" | "large" | "medium";
@@ -117,17 +99,8 @@ export default function LearningsPage() {
   const [canvasData, setCanvasData] = useState<any>(null);
   const [viewOnly, setViewOnly] = useState(false);
   const [showPasswordModal, setShowPasswordModal] = useState(false);
+  const [diagramAuthenticated, setDiagramAuthenticated] = useState(false);
 
-  // Todo state
-  const [todos, setTodos] = useState<Todo[]>([]);
-  const [todosLoading, setTodosLoading] = useState(false);
-  const [performanceStats, setPerformanceStats] = useState<PerformanceStats | null>(null);
-  const [showTodoPasswordModal, setShowTodoPasswordModal] = useState(false);
-  const [showTodoForm, setShowTodoForm] = useState(false);
-  const [todoFormMode, setTodoFormMode] = useState<'create' | 'edit'>('create');
-  const [editingTodo, setEditingTodo] = useState<Todo | null>(null);
-  const [todoPasswordMode, setTodoPasswordMode] = useState<'view' | 'create' | 'edit'>('view');
-  const [todosAuthenticated, setTodosAuthenticated] = useState(isAuthenticated());
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [selectedCanvas, setSelectedCanvas] = useState<any>(null);
   const [password, setPassword] = useState('');
@@ -138,6 +111,9 @@ export default function LearningsPage() {
   const [showShareModal, setShowShareModal] = useState(false);
   const [shareableLink, setShareableLink] = useState('');
   const [isLoadingDiagram, setIsLoadingDiagram] = useState(false);
+  const [showDeletePasswordModal, setShowDeletePasswordModal] = useState(false);
+  const [deleteCanvasId, setDeleteCanvasId] = useState<string | null>(null);
+  const [deletePassword, setDeletePassword] = useState('');
 
   // Check for canvas parameter in URL
   const canvasIdFromUrl = searchParams.get('canvas');
@@ -259,144 +235,6 @@ export default function LearningsPage() {
     fetchData();
   }, [activeTab]);
 
-  // Load todos when authenticated and on notes tab
-  useEffect(() => {
-    if (activeTab === 'notes' && todosAuthenticated) {
-      loadTodos();
-    }
-  }, [activeTab, todosAuthenticated]);
-
-  const loadTodos = async () => {
-    try {
-      setTodosLoading(true);
-      const [fetchedTodos, stats] = await Promise.all([
-        fetchTodos(),
-        fetchPerformanceStats()
-      ]);
-      setTodos(fetchedTodos);
-      setPerformanceStats(stats);
-    } catch (err) {
-      console.error('Error loading todos:', err);
-    } finally {
-      setTodosLoading(false);
-    }
-  };
-
-  const handleTodoPasswordSuccess = (persistFor: 'day' | 'always') => {
-    setAuthToken(persistFor);
-    setTodosAuthenticated(true);
-    
-    // If we were trying to create/edit, show the form
-    if (todoPasswordMode === 'create') {
-      setShowTodoForm(true);
-      setTodoFormMode('create');
-    } else if (todoPasswordMode === 'edit' && editingTodo) {
-      setShowTodoForm(true);
-      setTodoFormMode('edit');
-    }
-  };
-
-  const handleCreateTodo = () => {
-    if (!todosAuthenticated) {
-      setTodoPasswordMode('create');
-      setShowTodoPasswordModal(true);
-    } else {
-      setTodoFormMode('create');
-      setEditingTodo(null);
-      setShowTodoForm(true);
-    }
-  };
-
-  const handleEditTodo = async (todo: Todo) => {
-    if (!todosAuthenticated) {
-      setTodoPasswordMode('edit');
-      setEditingTodo(todo);
-      setShowTodoPasswordModal(true);
-    } else {
-      try {
-        // Fetch full todo details if we only have summary
-        if (!todo.points || !todo.content) {
-          console.log('Fetching full todo details for:', todo.todoId);
-          const fullTodo = await fetchTodoById(todo.todoId);
-          console.log('Full todo data:', fullTodo);
-          setEditingTodo(fullTodo);
-        } else {
-          console.log('Using existing todo data:', todo);
-          setEditingTodo(todo);
-        }
-        setTodoFormMode('edit');
-        setShowTodoForm(true);
-      } catch (err) {
-        console.error('Error fetching todo details:', err);
-        alert('Failed to load todo details. Please try again.');
-      }
-    }
-  };
-
-  const handleTodoSubmit = async (data: CreateTodoData & { persistFor: 'day' | 'always'; links: any[] }) => {
-    try {
-      if (todoFormMode === 'create') {
-        await createTodo({
-          topic: data.topic,
-          content: data.content,
-          points: data.points,
-          links: data.links
-        });
-      } else if (editingTodo) {
-        await updateTodo(editingTodo.todoId, {
-          topic: data.topic,
-          content: data.content,
-          points: data.points,
-          links: data.links
-        });
-      }
-      
-      // Close form and reset state
-      setShowTodoForm(false);
-      setEditingTodo(null);
-      
-      // Reload todos to show updated data
-      await loadTodos();
-    } catch (err) {
-      console.error('Error saving todo:', err);
-      alert('Failed to save todo');
-    }
-  };
-
-  const handleDeleteTodo = async (todoId: string) => {
-    if (!confirm('Are you sure you want to delete this todo?')) return;
-    
-    try {
-      await deleteTodo(todoId);
-      await loadTodos();
-    } catch (err) {
-      console.error('Error deleting todo:', err);
-      alert('Failed to delete todo');
-    }
-  };
-
-  const handleToggleTodoPoint = async (todoId: string, pointIndex: number) => {
-    try {
-      await toggleTodoPoint(todoId, pointIndex);
-      await loadTodos();
-    } catch (err) {
-      console.error('Error toggling point:', err);
-      alert('Failed to toggle point');
-    }
-  };
-
-  const handleTodoFormClose = () => {
-    setShowTodoForm(false);
-    setEditingTodo(null);
-    setTodoFormMode('create');
-  };
-
-  const handleLogoutTodos = () => {
-    clearAuthToken();
-    setTodosAuthenticated(false);
-    setTodos([]);
-  };
-
   const changeTab = (tab: 'notes' | 'documentation' | 'blogs' | 'projects' | 'diagrams' | 'code') => {
     setSearchParams({ tab });
     setActiveTab(tab);
@@ -439,6 +277,48 @@ export default function LearningsPage() {
     }
   };
 
+  const handleDeleteDiagram = async (canvasId: string, e: React.MouseEvent) => {
+    e.stopPropagation();
+    
+    // Show password modal
+    setDeleteCanvasId(canvasId);
+    setShowDeletePasswordModal(true);
+  };
+
+  const handleConfirmDelete = async () => {
+    if (deletePassword !== 'kunal') {
+      alert('Incorrect password!');
+      return;
+    }
+
+    if (!deleteCanvasId) return;
+    
+    try {
+      const response = await fetch(`${API_BASE_URL}/api/diagrams/${deleteCanvasId}`, {
+        method: 'DELETE',
+      });
+      
+      if (!response.ok) throw new Error('Failed to delete diagram');
+      
+      // Refresh diagrams list
+      const diagramsRes = await fetch(`${API_BASE_URL}/api/diagrams`);
+      if (diagramsRes.ok) {
+        const diagramsData = await diagramsRes.json();
+        setDiagrams(diagramsData.canvases || []);
+      }
+      
+      // Close modal and reset
+      setShowDeletePasswordModal(false);
+      setDeleteCanvasId(null);
+      setDeletePassword('');
+      
+      alert('Architecture diagram deleted successfully');
+    } catch (error) {
+      console.error('Error deleting diagram:', error);
+      alert('Failed to delete diagram');
+    }
+  };
+
   const handleCanvasClick = (canvas: any) => {
     setSelectedCanvas(canvas);
     setShowViewEditModal(true);
@@ -447,6 +327,7 @@ export default function LearningsPage() {
   const handlePasswordSubmit = () => {
     if (password === 'kunal') {
       setPassword('');
+      setDiagramAuthenticated(true);
       const canvasToLoad = createdCanvasId || selectedCanvas?.canvasId;
       if (canvasToLoad) {
         loadCanvasWithPassword(canvasToLoad);
@@ -736,7 +617,7 @@ export default function LearningsPage() {
                 borderRadius: '15px 13px 14px 12px',
               }}
             >
-              Diagrams
+              Architectures
             </button>
             <button
               onClick={() => changeTab('projects')}
@@ -839,7 +720,7 @@ export default function LearningsPage() {
                 }`}
               >
                 <FileImage className="w-5 h-5" strokeWidth={2.5} />
-                <span>Diagrams</span>
+                <span>Architectures</span>
               </button>
 
               <button
@@ -901,156 +782,7 @@ export default function LearningsPage() {
             <>
               {/* NOTES TAB */}
               {activeTab === 'notes' && (
-                <>
-                  <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3 md:gap-4">
-                    {notes.length === 0 ? (
-                      <div className="col-span-full text-center py-16">
-                        <div className="bg-gray-50/70 backdrop-blur-sm border-3 border-black rounded-2xl p-10 inline-block shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]">
-                          <FolderOpen size={48} strokeWidth={2.5} className="mx-auto mb-3 text-yellow-500" />
-                          <p className="text-gray-600 text-base font-bold">No notes folders yet</p>
-                        </div>
-                      </div>
-                    ) : (
-                      notes.map((note) => (
-                        <div
-                          key={note.folderId}
-                          onClick={() => {
-                            if (note.folderId) {
-                              navigate(`/learnings/notes/${note.folderId}`);
-                            } else {
-                              console.error('Note folderId is missing:', note);
-                            }
-                          }}
-                          className="bg-gray-50/70 backdrop-blur-sm border-3 border-black rounded-xl p-4 hover:shadow-[5px_5px_0px_0px_rgba(0,0,0,1)] transition-all cursor-pointer hover:-translate-y-1 group"
-                          style={{ borderRadius: '12px 15px 13px 14px' }}
-                        >
-                          <div className="flex flex-col items-center text-center gap-2">
-                            <div className="p-2.5 bg-yellow-300 border-2 border-black rounded-lg group-hover:rotate-6 transition-transform" style={{ borderRadius: '8px 10px 9px 11px' }}>
-                              <FolderOpen size={24} strokeWidth={2.5} />
-                            </div>
-                            <h3 className="text-sm font-black text-black line-clamp-2">{note.name}</h3>
-                          </div>
-                        </div>
-                      ))
-                    )}
-                  </div>
-
-                  {/* TODOS SECTION */}
-                  <div className="mt-12">
-                    {/* Todos Header */}
-                    <div className="flex items-center justify-between mb-6">
-                      <div className="flex items-center gap-3">
-                        <div className="p-3 bg-gradient-to-br from-orange-400 to-orange-500 border-3 border-black rounded-xl">
-                          <ListTodo size={28} strokeWidth={2.5} className="text-white" />
-                        </div>
-                        <div>
-                          <h2 className="text-2xl font-black text-black">My Todos</h2>
-                          <p className="text-sm font-medium text-gray-600">
-                            {todosAuthenticated ? 'Manage your tasks' : 'Password protected'}
-                          </p>
-                        </div>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        {todosAuthenticated && (
-                          <>
-                            <button
-                              onClick={handleCreateTodo}
-                              className="flex items-center gap-2 px-4 py-3 bg-gradient-to-r from-orange-500 to-orange-600 text-white border-3 border-black rounded-xl font-bold hover:from-orange-600 hover:to-orange-700 transition-all shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]"
-                            >
-                              <Plus size={20} strokeWidth={2.5} />
-                              <span className="hidden sm:inline">New Todo</span>
-                            </button>
-                            <button
-                              onClick={handleLogoutTodos}
-                              className="flex items-center gap-2 px-4 py-3 bg-red-500 text-white border-3 border-black rounded-xl font-bold hover:bg-red-600 transition-all shadow-[3px_3px_0px_0px_rgba(0,0,0,1)]"
-                              title="Logout from todos"
-                            >
-                              <Lock size={20} strokeWidth={2.5} />
-                            </button>
-                          </>
-                        )}
-                        {!todosAuthenticated && (
-                          <button
-                            onClick={() => {
-                              setTodoPasswordMode('view');
-                              setShowTodoPasswordModal(true);
-                            }}
-                            className="flex items-center gap-2 px-4 py-3 bg-gradient-to-r from-orange-500 to-orange-600 text-white border-3 border-black rounded-xl font-bold hover:from-orange-600 hover:to-orange-700 transition-all shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]"
-                          >
-                            <Lock size={20} strokeWidth={2.5} />
-                            <span>Unlock Todos</span>
-                          </button>
-                        )}
-                      </div>
-                    </div>
-
-                    {/* Todos Content */}
-                    {!todosAuthenticated ? (
-                      <div className="text-center py-16">
-                        <div className="bg-gradient-to-br from-orange-50 to-orange-100 border-3 border-black rounded-2xl p-10 inline-block shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]">
-                          <div className="w-20 h-20 bg-orange-400 border-3 border-black rounded-full flex items-center justify-center mx-auto mb-4">
-                            <Lock size={40} strokeWidth={2.5} className="text-white" />
-                          </div>
-                          <p className="text-gray-800 text-lg font-black mb-2">Protected Content</p>
-                          <p className="text-gray-600 text-sm font-medium mb-4">Enter password to view your todos</p>
-                          <button
-                            onClick={() => {
-                              setTodoPasswordMode('view');
-                              setShowTodoPasswordModal(true);
-                            }}
-                            className="px-6 py-3 bg-gradient-to-r from-orange-500 to-orange-600 text-white border-3 border-black rounded-xl font-bold hover:from-orange-600 hover:to-orange-700 transition-all shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]"
-                          >
-                            🔓 Unlock
-                          </button>
-                        </div>
-                      </div>
-                    ) : todosLoading ? (
-                      <div className="flex items-center justify-center py-16">
-                        <div className="flex flex-col items-center gap-4">
-                          <div className="animate-spin w-12 h-12 border-4 border-orange-500 border-t-transparent rounded-full"></div>
-                          <p className="text-gray-700 font-bold">Loading todos...</p>
-                        </div>
-                      </div>
-                    ) : todos.length === 0 ? (
-                      <div className="text-center py-16">
-                        <div className="bg-gradient-to-br from-orange-50 to-orange-100 border-3 border-black rounded-2xl p-10 inline-block shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]">
-                          <ListTodo size={48} strokeWidth={2.5} className="mx-auto mb-3 text-orange-500" />
-                          <p className="text-gray-800 text-lg font-black mb-2">No todos yet</p>
-                          <p className="text-gray-600 text-sm font-medium mb-4">Create your first todo to get started</p>
-                          <button
-                            onClick={handleCreateTodo}
-                            className="px-6 py-3 bg-gradient-to-r from-orange-500 to-orange-600 text-white border-3 border-black rounded-xl font-bold hover:from-orange-600 hover:to-orange-700 transition-all shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] inline-flex items-center gap-2"
-                          >
-                            <Plus size={20} strokeWidth={2.5} />
-                            Create Todo
-                          </button>
-                        </div>
-                      </div>
-                    ) : (
-                      <>
-                        {/* Performance Stats */}
-                        {performanceStats && todos.length > 0 && (
-                          <div className="mb-6">
-                            <TodoPerformanceStats stats={performanceStats} />
-                          </div>
-                        )}
-
-                        {/* Todos Grid */}
-                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-                          {todos.map((todo) => (
-                            <TodoCard
-                              key={todo.todoId}
-                              todo={todo}
-                              onEdit={handleEditTodo}
-                              onDelete={handleDeleteTodo}
-                              onTogglePoint={handleToggleTodoPoint}
-                            />
-                          ))}
-                        </div>
-                      </>
-                    )}
-                  </div>
-                </>
+                <NotesTabContent notes={notes} />
               )}
 
               {/* DOCUMENTATION TAB */}
@@ -1065,57 +797,81 @@ export default function LearningsPage() {
                         </div>
                       </div>
                     ) : (
-                      documentation.map((doc) => (
+                      documentation.map((doc, idx) => {
+                        const rotations = ['rotate-2', '-rotate-1', 'rotate-1', '-rotate-2'];
+                        const hoverRotations = ['hover:-rotate-1', 'hover:rotate-1', 'hover:-rotate-1', 'hover:rotate-2'];
+                        const shadows = [
+                          'shadow-[6px_6px_0px_0px_rgba(59,130,246,0.5)]',
+                          'shadow-[5px_7px_0px_0px_rgba(236,72,153,0.5)]',
+                          'shadow-[7px_5px_0px_0px_rgba(168,85,247,0.5)]',
+                          'shadow-[6px_7px_0px_0px_rgba(34,197,94,0.5)]'
+                        ];
+                        const hoverShadows = [
+                          'hover:shadow-[10px_10px_0px_0px_rgba(59,130,246,0.7)]',
+                          'hover:shadow-[9px_11px_0px_0px_rgba(236,72,153,0.7)]',
+                          'hover:shadow-[11px_9px_0px_0px_rgba(168,85,247,0.7)]',
+                          'hover:shadow-[10px_11px_0px_0px_rgba(34,197,94,0.7)]'
+                        ];
+                        const bgGradients = [
+                          'bg-gradient-to-br from-blue-50 to-white',
+                          'bg-gradient-to-br from-pink-50 to-white',
+                          'bg-gradient-to-br from-purple-50 to-white',
+                          'bg-gradient-to-br from-green-50 to-white'
+                        ];
+                        
+                        return (
                         <div
                           key={doc.docId}
                           onClick={() => navigate(`/learnings/documentation/${doc.docId}`)}
-                          className="bg-gray-50/70 backdrop-blur-sm border-3 border-black rounded-xl p-5 hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] transition-all cursor-pointer hover:-translate-y-1 group h-full flex flex-col"
-                          style={{ borderRadius: '14px 16px 15px 17px' }}
+                          className={`${bgGradients[idx % 4]} backdrop-blur-sm border-[3px] border-black p-5 transition-all duration-300 cursor-pointer hover:-translate-y-2 group h-full flex flex-col ${rotations[idx % 4]} ${hoverRotations[idx % 4]} ${shadows[idx % 4]} ${hoverShadows[idx % 4]}`}
+                          style={{ 
+                            borderRadius: idx % 2 === 0 ? '20px 24px 22px 26px' : '24px 20px 26px 22px'
+                          }}
                         >
                           <div className="flex items-start gap-3 mb-3">
-                            <div className="p-2.5 bg-gradient-to-br from-blue-400 to-blue-600 border-2 border-black rounded-lg group-hover:rotate-6 transition-transform flex-shrink-0" style={{ borderRadius: '8px 10px 9px 11px' }}>
+                            <div className="p-2.5 bg-gradient-to-br from-blue-400 to-blue-600 border-[3px] border-black rounded-lg group-hover:rotate-12 transition-transform flex-shrink-0" style={{ borderRadius: '10px 12px 11px 13px' }}>
                               <FileText size={20} strokeWidth={2.5} className="text-white" />
                             </div>
                             <div className="flex-1 min-w-0">
                               <div className="flex items-center gap-2 mb-2 flex-wrap">
-                                <span className="px-2 py-1 bg-blue-100 border-2 border-black rounded-md text-[10px] font-bold uppercase tracking-wide">
+                                <span className="px-3 py-1.5 bg-blue-100 border-2 border-black rounded-lg text-[10px] font-black uppercase tracking-wider" style={{ borderRadius: '6px 8px 7px 9px' }}>
                                   {doc.subject}
                                 </span>
                                 {doc.isPublic && (
-                                  <span className="px-2 py-1 bg-green-100 border-2 border-black rounded-md text-[10px] font-bold uppercase tracking-wide">
+                                  <span className="px-3 py-1.5 bg-green-100 border-2 border-black rounded-lg text-[10px] font-black uppercase tracking-wider" style={{ borderRadius: '8px 6px 9px 7px' }}>
                                     Public
                                   </span>
                                 )}
                               </div>
-                              <h3 className="text-base font-black text-black mb-2 leading-tight group-hover:text-blue-600 transition-colors line-clamp-2">
+                              <h3 className="text-base md:text-lg font-black text-black mb-2 leading-tight group-hover:text-blue-600 transition-colors line-clamp-2">
                                 {doc.title}
                               </h3>
                             </div>
                           </div>
                           
                           {doc.description && (
-                            <p className="text-gray-700 mb-3 font-medium leading-relaxed line-clamp-2 text-sm">
+                            <p className="text-gray-700 mb-3 font-medium leading-relaxed line-clamp-3 text-sm">
                               {doc.description}
                             </p>
                           )}
                           
                           {doc.tags && doc.tags.length > 0 && (
-                            <div className="flex flex-wrap gap-1.5 mb-3">
+                            <div className="flex flex-wrap gap-2 mb-3">
                               {doc.tags.slice(0, 3).map((tag, i) => (
-                                <span key={i} className="px-2 py-0.5 text-[10px] bg-gray-100 border-2 border-black rounded-full font-bold">
+                                <span key={i} className="px-2.5 py-1 text-[10px] bg-gray-100 border-2 border-black rounded-full font-black" style={{ borderRadius: '10px 12px 11px 13px' }}>
                                   #{tag}
                                 </span>
                               ))}
                               {doc.tags.length > 3 && (
-                                <span className="px-2 py-0.5 text-[10px] bg-gray-200 border-2 border-black rounded-full font-bold">
+                                <span className="px-2.5 py-1 text-[10px] bg-gray-200 border-2 border-black rounded-full font-black">
                                   +{doc.tags.length - 3}
                                 </span>
                               )}
                             </div>
                           )}
                           
-                          <div className="mt-auto pt-3 border-t-2 border-gray-200">
-                            <div className="flex items-center gap-3 text-xs text-gray-600 font-bold">
+                          <div className="mt-auto pt-3 border-t-2 border-dashed border-gray-300">
+                            <div className="flex items-center gap-3 text-xs text-gray-600 font-black">
                               {doc.date && (
                                 <div className="flex items-center gap-1.5">
                                   <Calendar size={14} strokeWidth={2.5} className="text-blue-500" />
@@ -1131,7 +887,8 @@ export default function LearningsPage() {
                             </div>
                           </div>
                         </div>
-                      ))
+                        );
+                      })
                     )}
                   </div>
                 </>
@@ -1149,12 +906,36 @@ export default function LearningsPage() {
                         </div>
                       </div>
                     ) : (
-                      blogs.map((blog) => (
+                      blogs.map((blog, idx) => {
+                        const rotations = ['-rotate-1', 'rotate-1', '-rotate-2', 'rotate-2'];
+                        const hoverRotations = ['hover:rotate-0', 'hover:-rotate-1', 'hover:rotate-1', 'hover:-rotate-2'];
+                        const shadows = [
+                          'shadow-[5px_5px_0px_0px_rgba(244,114,182,0.5)]',
+                          'shadow-[6px_5px_0px_0px_rgba(251,146,60,0.5)]',
+                          'shadow-[5px_6px_0px_0px_rgba(167,139,250,0.5)]',
+                          'shadow-[6px_6px_0px_0px_rgba(34,197,94,0.5)]'
+                        ];
+                        const hoverShadows = [
+                          'hover:shadow-[9px_9px_0px_0px_rgba(244,114,182,0.7)]',
+                          'hover:shadow-[10px_9px_0px_0px_rgba(251,146,60,0.7)]',
+                          'hover:shadow-[9px_10px_0px_0px_rgba(167,139,250,0.7)]',
+                          'hover:shadow-[10px_10px_0px_0px_rgba(34,197,94,0.7)]'
+                        ];
+                        const bgGradients = [
+                          'bg-gradient-to-br from-pink-50 to-white',
+                          'bg-gradient-to-br from-orange-50 to-white',
+                          'bg-gradient-to-br from-purple-50 to-white',
+                          'bg-gradient-to-br from-green-50 to-white'
+                        ];
+                        
+                        return (
                         <div
                           key={blog.blogId}
                           onClick={() => navigate(`/learnings/blogs/${blog.blogId}`)}
-                          className="bg-gray-50/70 backdrop-blur-sm border-3 border-black rounded-xl overflow-hidden hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] transition-all cursor-pointer hover:-translate-y-1 group"
-                          style={{ borderRadius: '14px 16px 15px 17px' }}
+                          className={`${bgGradients[idx % 4]} backdrop-blur-sm border-[3px] border-black overflow-hidden transition-all duration-300 cursor-pointer hover:-translate-y-2 group ${rotations[idx % 4]} ${hoverRotations[idx % 4]} ${shadows[idx % 4]} ${hoverShadows[idx % 4]}`}
+                          style={{ 
+                            borderRadius: idx % 2 === 0 ? '18px 22px 20px 24px' : '22px 18px 24px 20px'
+                          }}
                         >
                           {blog.coverImage && (
                             <div className="relative overflow-hidden">
@@ -1167,13 +948,13 @@ export default function LearningsPage() {
                           )}
                           <div className="p-4">
                             <div className="mb-2">
-                              <span className="px-2 py-1 bg-pink-100 border-2 border-black rounded-md text-[10px] font-bold">
+                              <span className="px-3 py-1.5 bg-pink-100 border-2 border-black rounded-lg text-[10px] font-black uppercase tracking-wider" style={{ borderRadius: '6px 8px 7px 9px' }}>
                                 {blog.subject}
                               </span>
                             </div>
-                            <h3 className="text-sm font-black text-black mb-2 line-clamp-2">{blog.title}</h3>
-                            <p className="text-gray-700 mb-3 font-medium text-xs line-clamp-2">{blog.shortDescription}</p>
-                            <div className="flex items-center gap-2 text-[10px] text-gray-600 font-medium">
+                            <h3 className="text-sm md:text-base font-black text-black mb-2 line-clamp-2 leading-tight">{blog.title}</h3>
+                            <p className="text-gray-700 mb-3 font-medium text-xs line-clamp-2 leading-relaxed">{blog.shortDescription}</p>
+                            <div className="flex items-center gap-2 text-[10px] text-gray-600 font-black">
                               <div className="flex items-center gap-1">
                                 <Calendar size={10} strokeWidth={2.5} />
                                 <span>
@@ -1187,7 +968,8 @@ export default function LearningsPage() {
                             </div>
                           </div>
                         </div>
-                      ))
+                        );
+                      })
                     )}
                   </div>
                 </>
@@ -1247,59 +1029,109 @@ export default function LearningsPage() {
                 <>
                   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
                     {/* Local Code Folders */}
-                    {codeFiles.map((folder) => (
+                    {codeFiles.map((folder, idx) => {
+                      const rotations = ['-rotate-1', 'rotate-1', '-rotate-2', 'rotate-2'];
+                      const hoverRotations = ['hover:rotate-1', 'hover:-rotate-1', 'hover:rotate-2', 'hover:-rotate-2'];
+                      const shadows = [
+                        'shadow-[5px_5px_0px_0px_rgba(251,146,60,0.5)]',
+                        'shadow-[6px_5px_0px_0px_rgba(249,115,22,0.5)]',
+                        'shadow-[5px_6px_0px_0px_rgba(234,88,12,0.5)]',
+                        'shadow-[6px_6px_0px_0px_rgba(251,146,60,0.5)]'
+                      ];
+                      const hoverShadows = [
+                        'hover:shadow-[9px_9px_0px_0px_rgba(251,146,60,0.7)]',
+                        'hover:shadow-[10px_9px_0px_0px_rgba(249,115,22,0.7)]',
+                        'hover:shadow-[9px_10px_0px_0px_rgba(234,88,12,0.7)]',
+                        'hover:shadow-[10px_10px_0px_0px_rgba(251,146,60,0.7)]'
+                      ];
+                      const bgGradients = [
+                        'bg-gradient-to-br from-orange-50 to-white',
+                        'bg-gradient-to-br from-orange-100 to-orange-50',
+                        'bg-gradient-to-br from-amber-50 to-white',
+                        'bg-gradient-to-br from-amber-100 to-amber-50'
+                      ];
+                      
+                      return (
                       <div
                         key={folder.folderId}
                         onClick={() => {
                           navigate(`/learnings/code?folder=${encodeURIComponent(folder.path)}`);
                         }}
-                        className="bg-gray-50/70 backdrop-blur-sm border-3 border-black rounded-xl p-4 hover:shadow-[5px_5px_0px_0px_rgba(0,0,0,1)] transition-all cursor-pointer hover:-translate-y-1 group"
-                        style={{ borderRadius: '12px 15px 13px 14px' }}
+                        className={`${bgGradients[idx % 4]} backdrop-blur-sm border-[3px] border-black p-4 transition-all duration-300 cursor-pointer hover:-translate-y-2 group ${rotations[idx % 4]} ${hoverRotations[idx % 4]} ${shadows[idx % 4]} ${hoverShadows[idx % 4]}`}
+                        style={{ 
+                          borderRadius: idx % 2 === 0 ? '16px 20px 18px 22px' : '20px 16px 22px 18px'
+                        }}
                       >
                         <div className="flex items-start gap-3">
-                          <div className="p-2.5 bg-orange-300 border-2 border-black rounded-lg group-hover:rotate-6 transition-transform flex-shrink-0" style={{ borderRadius: '8px 10px 9px 11px' }}>
+                          <div className="p-2.5 bg-gradient-to-br from-orange-300 to-orange-400 border-[3px] border-black rounded-lg group-hover:rotate-12 transition-transform flex-shrink-0" style={{ borderRadius: '10px 12px 11px 13px' }}>
                             <Code size={20} strokeWidth={2.5} />
                           </div>
                           <div className="flex-1 min-w-0">
-                            <h3 className="text-sm font-black text-black mb-1">{folder.name}</h3>
-                            <p className="text-xs text-gray-600">Local Folder</p>
+                            <h3 className="text-sm font-black text-black mb-1 leading-tight">{folder.name}</h3>
+                            <p className="text-xs text-gray-600 font-bold">Local Folder</p>
                           </div>
                         </div>
                       </div>
-                    ))}
+                      );
+                    })}
 
                     {/* GitHub Repositories */}
-                    {githubRepos.map((repo) => (
+                    {githubRepos.map((repo, idx) => {
+                      const rotations = ['rotate-1', '-rotate-1', 'rotate-2', '-rotate-2'];
+                      const hoverRotations = ['hover:-rotate-1', 'hover:rotate-1', 'hover:-rotate-2', 'hover:rotate-2'];
+                      const shadows = [
+                        'shadow-[5px_5px_0px_0px_rgba(107,114,128,0.5)]',
+                        'shadow-[6px_5px_0px_0px_rgba(75,85,99,0.5)]',
+                        'shadow-[5px_6px_0px_0px_rgba(55,65,81,0.5)]',
+                        'shadow-[6px_6px_0px_0px_rgba(107,114,128,0.5)]'
+                      ];
+                      const hoverShadows = [
+                        'hover:shadow-[9px_9px_0px_0px_rgba(107,114,128,0.7)]',
+                        'hover:shadow-[10px_9px_0px_0px_rgba(75,85,99,0.7)]',
+                        'hover:shadow-[9px_10px_0px_0px_rgba(55,65,81,0.7)]',
+                        'hover:shadow-[10px_10px_0px_0px_rgba(107,114,128,0.7)]'
+                      ];
+                      const bgGradients = [
+                        'bg-gradient-to-br from-gray-50 to-white',
+                        'bg-gradient-to-br from-slate-50 to-white',
+                        'bg-gradient-to-br from-gray-100 to-gray-50',
+                        'bg-gradient-to-br from-slate-100 to-slate-50'
+                      ];
+                      
+                      return (
                       <div
                         key={repo._id}
                         onClick={() => {
                           navigate(`/learnings/code?repo=${repo._id}`);
                         }}
-                        className="bg-gray-50/70 backdrop-blur-sm border-3 border-black rounded-xl p-4 hover:shadow-[5px_5px_0px_0px_rgba(0,0,0,1)] transition-all cursor-pointer hover:-translate-y-1 group"
-                        style={{ borderRadius: '12px 15px 13px 14px' }}
+                        className={`${bgGradients[idx % 4]} backdrop-blur-sm border-[3px] border-black p-4 transition-all duration-300 cursor-pointer hover:-translate-y-2 group ${rotations[idx % 4]} ${hoverRotations[idx % 4]} ${shadows[idx % 4]} ${hoverShadows[idx % 4]}`}
+                        style={{ 
+                          borderRadius: idx % 2 === 0 ? '16px 20px 18px 22px' : '20px 16px 22px 18px'
+                        }}
                       >
                         <div className="flex items-start gap-3">
-                          <div className="p-2.5 bg-gray-300 border-2 border-black rounded-lg group-hover:rotate-6 transition-transform flex-shrink-0" style={{ borderRadius: '8px 10px 9px 11px' }}>
+                          <div className="p-2.5 bg-gradient-to-br from-gray-300 to-gray-400 border-[3px] border-black rounded-lg group-hover:rotate-12 transition-transform flex-shrink-0" style={{ borderRadius: '10px 12px 11px 13px' }}>
                             <Github size={20} strokeWidth={2.5} />
                           </div>
                           <div className="flex-1 min-w-0">
                             <div className="flex items-center gap-2 mb-1">
-                              <h3 className="text-sm font-black text-black truncate">{repo.name}</h3>
+                              <h3 className="text-sm font-black text-black truncate leading-tight">{repo.name}</h3>
                               {repo.isPrivate && (
-                                <span className="px-1 py-0.5 bg-red-100 border border-red-300 rounded text-[8px] font-bold text-red-800">
+                                <span className="px-2 py-0.5 bg-red-100 border-2 border-red-300 rounded text-[8px] font-black text-red-800" style={{ borderRadius: '4px 6px 5px 7px' }}>
                                   Private
                                 </span>
                               )}
                             </div>
                             {repo.description ? (
-                              <p className="text-xs text-gray-600 line-clamp-2">{repo.description}</p>
+                              <p className="text-xs text-gray-600 line-clamp-2 font-medium">{repo.description}</p>
                             ) : (
-                              <p className="text-xs text-gray-600">{repo.fullName}</p>
+                              <p className="text-xs text-gray-600 font-medium">{repo.fullName}</p>
                             )}
                           </div>
                         </div>
                       </div>
-                    ))}
+                      );
+                    })}
 
                     {/* Empty State */}
                     {codeFiles.length === 0 && githubRepos.length === 0 && (
@@ -1334,28 +1166,63 @@ export default function LearningsPage() {
                       <div className="col-span-full text-center py-16">
                         <div className="bg-gray-50/70 backdrop-blur-sm border-3 border-black rounded-2xl p-10 inline-block shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]" style={{ borderRadius: '20px 25px 22px 24px' }}>
                           <FileImage size={48} strokeWidth={2.5} className="mx-auto mb-3 text-purple-500" />
-                          <p className="text-gray-600 text-base font-bold">No diagrams yet</p>
+                          <p className="text-gray-600 text-base font-bold">No architectures yet</p>
                         </div>
                       </div>
                     ) : (
-                      diagrams.map((diagram) => (
+                      diagrams.map((diagram, idx) => {
+                        const rotations = ['-rotate-1', 'rotate-1', '-rotate-2', 'rotate-2', '-rotate-1'];
+                        const hoverRotations = ['hover:rotate-1', 'hover:-rotate-1', 'hover:rotate-2', 'hover:-rotate-2', 'hover:rotate-1'];
+                        const shadows = [
+                          'shadow-[5px_5px_0px_0px_rgba(168,85,247,0.5)]',
+                          'shadow-[6px_5px_0px_0px_rgba(147,51,234,0.5)]',
+                          'shadow-[5px_6px_0px_0px_rgba(126,34,206,0.5)]',
+                          'shadow-[6px_6px_0px_0px_rgba(168,85,247,0.5)]',
+                          'shadow-[5px_5px_0px_0px_rgba(147,51,234,0.5)]'
+                        ];
+                        const hoverShadows = [
+                          'hover:shadow-[9px_9px_0px_0px_rgba(168,85,247,0.7)]',
+                          'hover:shadow-[10px_9px_0px_0px_rgba(147,51,234,0.7)]',
+                          'hover:shadow-[9px_10px_0px_0px_rgba(126,34,206,0.7)]',
+                          'hover:shadow-[10px_10px_0px_0px_rgba(168,85,247,0.7)]',
+                          'hover:shadow-[9px_9px_0px_0px_rgba(147,51,234,0.7)]'
+                        ];
+                        const bgGradients = [
+                          'bg-gradient-to-br from-purple-50 to-white',
+                          'bg-gradient-to-br from-violet-50 to-white',
+                          'bg-gradient-to-br from-purple-100 to-purple-50',
+                          'bg-gradient-to-br from-violet-100 to-violet-50',
+                          'bg-gradient-to-br from-purple-50 to-white'
+                        ];
+                        
+                        return (
                         <div
                           key={diagram.canvasId}
-                          onClick={() => handleCanvasClick(diagram)}
-                          className="bg-gray-50/70 backdrop-blur-sm border-3 border-black rounded-xl p-4 hover:shadow-[5px_5px_0px_0px_rgba(0,0,0,1)] transition-all group cursor-pointer"
-                          style={{ borderRadius: '12px 15px 13px 14px' }}
+                          className={`${bgGradients[idx % 5]} backdrop-blur-sm border-[3px] border-black p-4 transition-all duration-300 group cursor-pointer hover:-translate-y-2 ${rotations[idx % 5]} ${hoverRotations[idx % 5]} ${shadows[idx % 5]} ${hoverShadows[idx % 5]} relative`}
+                          style={{ 
+                            borderRadius: idx % 2 === 0 ? '16px 20px 18px 22px' : '20px 16px 22px 18px'
+                          }}
                         >
-                          <div className="flex flex-col items-center text-center gap-2">
-                            <div className="p-2.5 bg-purple-300 border-2 border-black rounded-lg group-hover:rotate-6 transition-transform" style={{ borderRadius: '8px 10px 9px 11px' }}>
+                          <button
+                            onClick={(e) => handleDeleteDiagram(diagram.canvasId, e)}
+                            className="absolute top-2 right-2 p-1.5 bg-red-500 text-white border-2 border-black rounded-lg hover:bg-red-600 transition-all opacity-0 group-hover:opacity-100 z-10"
+                            style={{ borderRadius: '6px 8px 7px 9px' }}
+                            title="Delete architecture"
+                          >
+                            <Trash2 size={14} strokeWidth={2.5} />
+                          </button>
+                          <div onClick={() => handleCanvasClick(diagram)} className="flex flex-col items-center text-center gap-2">
+                            <div className="p-2.5 bg-gradient-to-br from-purple-300 to-purple-400 border-[3px] border-black rounded-lg group-hover:rotate-12 transition-transform" style={{ borderRadius: '10px 12px 11px 13px' }}>
                               <FileImage size={24} strokeWidth={2.5} />
                             </div>
-                            <h3 className="text-sm font-black text-black line-clamp-2">{diagram.name}</h3>
-                            <p className="text-[10px] text-gray-600 font-medium">
+                            <h3 className="text-sm font-black text-black line-clamp-2 leading-tight">{diagram.name}</h3>
+                            <p className="text-[10px] text-gray-600 font-black">
                               {new Date(diagram.updatedAt).toLocaleDateString()}
                             </p>
                           </div>
                         </div>
-                      ))
+                        );
+                      })
                     )}
                   </div>
                 </>
@@ -1581,28 +1448,53 @@ export default function LearningsPage() {
         </div>
       )}
 
-      {/* Todo Password Modal */}
-      <TodoPasswordModal
-        isOpen={showTodoPasswordModal}
-        onClose={() => setShowTodoPasswordModal(false)}
-        onSuccess={handleTodoPasswordSuccess}
-        mode={todoPasswordMode}
-      />
+      {/* Delete Password Modal */}
+      {showDeletePasswordModal && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-[100] p-4">
+          <div className="bg-white border-4 border-black rounded-2xl p-6 max-w-md w-full shadow-2xl" style={{ borderRadius: '20px 25px 22px 24px' }}>
+            <h3 className="text-2xl font-black mb-4">🔒 Delete Architecture</h3>
+            <p className="text-gray-600 mb-6 font-medium">Enter password to delete this architecture diagram</p>
+            
+            <div className="mb-6">
+              <label className="block text-sm font-bold mb-2">Password</label>
+              <input
+                type="password"
+                value={deletePassword}
+                onChange={(e) => setDeletePassword(e.target.value)}
+                onKeyPress={(e) => e.key === 'Enter' && handleConfirmDelete()}
+                placeholder="Enter password"
+                className="w-full px-4 py-2 border-2 border-black rounded-lg font-medium"
+                autoFocus
+              />
+            </div>
 
-      {/* Todo Form Modal */}
-      <TodoForm
-        isOpen={showTodoForm}
-        onClose={handleTodoFormClose}
-        onSubmit={handleTodoSubmit}
-        initialData={editingTodo ? {
-          todoId: editingTodo.todoId,
-          topic: editingTodo.topic,
-          content: editingTodo.content,
-          points: editingTodo.points,
-          links: editingTodo.links
-        } : undefined}
-        mode={todoFormMode}
-      />
+            <div className="bg-red-50 border-2 border-red-400 rounded-lg p-3 mb-4">
+              <p className="text-xs text-red-800 font-medium">⚠️ This action cannot be undone. The diagram will be permanently deleted.</p>
+            </div>
+
+            <div className="flex gap-3">
+              <button
+                onClick={() => {
+                  setShowDeletePasswordModal(false);
+                  setDeleteCanvasId(null);
+                  setDeletePassword('');
+                }}
+                className="flex-1 px-4 py-2 bg-gray-200 border-2 border-black rounded-lg font-bold hover:bg-gray-300 transition-all"
+                style={{ borderRadius: '10px 12px 11px 13px' }}
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleConfirmDelete}
+                className="flex-1 px-4 py-2 bg-red-500 text-white border-2 border-black rounded-lg font-bold hover:bg-red-600 transition-all"
+                style={{ borderRadius: '10px 12px 11px 13px' }}
+              >
+                Delete
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

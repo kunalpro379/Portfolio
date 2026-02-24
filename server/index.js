@@ -17,6 +17,7 @@ async function loadRoutes() {
   try {
     const { default: authRoutes } = await import('./routes/auth.js');
     const { default: notesRoutes } = await import('./routes/notes.js');
+    const { default: guideNotesRoutes } = await import('./routes/guide-notes.js');
     const { default: codeRoutes } = await import('./routes/code.js');
     const { default: projectsRoutes } = await import('./routes/projects.js');
     const { default: todosRoutes } = await import('./routes/todos.js');
@@ -26,6 +27,7 @@ async function loadRoutes() {
     
     app.use('/api/auth', authRoutes);
     app.use('/api/notes', notesRoutes);
+    app.use('/api/guide-notes', guideNotesRoutes);
     app.use('/api/code', codeRoutes);
     app.use('/api/projects', projectsRoutes);
     app.use('/api/todos', todosRoutes);

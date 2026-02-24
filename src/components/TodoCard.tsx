@@ -59,22 +59,23 @@ export default function TodoCard({ todo, onEdit, onDelete }: TodoCardProps) {
 
   return (
     <div 
-      className="bg-white border border-gray-200 rounded-lg p-4 hover:shadow-lg transition-all hover:-translate-y-0.5 cursor-pointer group"
+      className="bg-gradient-to-br from-[#FFF8E7] to-white border-[3px] border-black p-4 hover:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] transition-all duration-300 hover:-translate-y-1 cursor-pointer group -rotate-1 hover:rotate-0"
+      style={{ borderRadius: '16px 20px 18px 22px' }}
       onClick={() => onEdit(todo)}
     >
       {/* Header */}
       <div className="flex items-start justify-between mb-3">
         <div className="flex-1 min-w-0">
-          <h3 className="text-base font-semibold text-gray-900 mb-1.5 leading-tight group-hover:text-orange-600 transition-colors truncate">
+          <h3 className="text-base md:text-lg font-black text-black mb-1.5 leading-tight group-hover:underline transition-all truncate">
             {todo.topic}
           </h3>
-          <div className="flex items-center gap-3 text-xs text-gray-500">
+          <div className="flex items-center gap-3 text-xs text-gray-700 font-bold">
             <div className="flex items-center gap-1">
-              <Calendar size={11} strokeWidth={2} className="text-gray-400" />
+              <Calendar size={11} strokeWidth={2.5} className="text-black" />
               <span>{formatDate(todo.createdAt)}</span>
             </div>
             <div className="flex items-center gap-1">
-              <Clock size={11} strokeWidth={2} className="text-gray-400" />
+              <Clock size={11} strokeWidth={2.5} className="text-black" />
               <span>{formatTime(todo.createdAt)}</span>
             </div>
           </div>
@@ -85,37 +86,39 @@ export default function TodoCard({ todo, onEdit, onDelete }: TodoCardProps) {
               e.stopPropagation();
               onEdit(todo);
             }}
-            className="p-1.5 text-blue-600 hover:bg-blue-50 border border-blue-200 rounded-md transition-all opacity-0 group-hover:opacity-100"
+            className="p-1.5 text-black hover:bg-white border-2 border-black rounded-lg transition-all opacity-0 group-hover:opacity-100"
+            style={{ borderRadius: '6px 8px 7px 9px' }}
             title="Edit"
           >
-            <Edit size={13} strokeWidth={2} />
+            <Edit size={13} strokeWidth={2.5} />
           </button>
           <button
             onClick={(e) => {
               e.stopPropagation();
               onDelete(todo.todoId);
             }}
-            className="p-1.5 text-red-600 hover:bg-red-50 border border-red-200 rounded-md transition-all opacity-0 group-hover:opacity-100"
+            className="p-1.5 text-black hover:bg-white border-2 border-black rounded-lg transition-all opacity-0 group-hover:opacity-100"
+            style={{ borderRadius: '8px 6px 9px 7px' }}
             title="Delete"
           >
-            <Trash2 size={13} strokeWidth={2} />
+            <Trash2 size={13} strokeWidth={2.5} />
           </button>
         </div>
       </div>
 
       {/* Stats Summary */}
       <div className="grid grid-cols-3 gap-2 mb-3">
-        <div className="flex items-center gap-1.5 px-2 py-1.5 bg-green-50 border border-green-200 rounded">
-          <CheckCircle2 size={12} strokeWidth={2} className="text-green-600 flex-shrink-0" />
-          <span className="text-xs font-medium text-green-700">{doneCount}</span>
+        <div className="flex items-center gap-1.5 px-2 py-1.5 bg-white border-2 border-black rounded-lg" style={{ borderRadius: '8px 10px 9px 11px' }}>
+          <CheckCircle2 size={12} strokeWidth={2.5} className="text-black flex-shrink-0" />
+          <span className="text-xs font-black text-black">{doneCount}</span>
         </div>
-        <div className="flex items-center gap-1.5 px-2 py-1.5 bg-blue-50 border border-blue-200 rounded">
-          <Loader size={12} strokeWidth={2} className="text-blue-600 flex-shrink-0" />
-          <span className="text-xs font-medium text-blue-700">{workingCount}</span>
+        <div className="flex items-center gap-1.5 px-2 py-1.5 bg-[#FFF8E7] border-2 border-black rounded-lg" style={{ borderRadius: '10px 8px 11px 9px' }}>
+          <Loader size={12} strokeWidth={2.5} className="text-black flex-shrink-0" />
+          <span className="text-xs font-black text-black">{workingCount}</span>
         </div>
-        <div className="flex items-center gap-1.5 px-2 py-1.5 bg-gray-50 border border-gray-200 rounded">
-          <Circle size={12} strokeWidth={2} className="text-gray-600 flex-shrink-0" />
-          <span className="text-xs font-medium text-gray-700">{pendingCount}</span>
+        <div className="flex items-center gap-1.5 px-2 py-1.5 bg-white border-2 border-black rounded-lg" style={{ borderRadius: '9px 11px 8px 10px' }}>
+          <Circle size={12} strokeWidth={2.5} className="text-black flex-shrink-0" />
+          <span className="text-xs font-black text-black">{pendingCount}</span>
         </div>
       </div>
 
@@ -123,16 +126,16 @@ export default function TodoCard({ todo, onEdit, onDelete }: TodoCardProps) {
       {pointsCount > 0 && (
         <div className="mb-2">
           <div className="flex items-center justify-between text-xs mb-1.5">
-            <span className="text-gray-600 font-medium">Progress</span>
-            <span className="font-semibold text-gray-900">{Math.round(progress)}%</span>
+            <span className="text-gray-700 font-black">Progress</span>
+            <span className="font-black text-black">{Math.round(progress)}%</span>
           </div>
-          <div className="h-1.5 bg-gray-200 rounded-full overflow-hidden flex">
+          <div className="h-2 bg-white border-2 border-black rounded-full overflow-hidden flex" style={{ borderRadius: '10px 12px 11px 13px' }}>
             <div
-              className="h-full bg-green-500 transition-all duration-300"
+              className="h-full bg-black transition-all duration-300"
               style={{ width: `${(doneCount / pointsCount) * 100}%` }}
             />
             <div
-              className="h-full bg-blue-500 transition-all duration-300"
+              className="h-full bg-[#F5E6D3] transition-all duration-300"
               style={{ width: `${(workingCount / pointsCount) * 100}%` }}
             />
           </div>
@@ -140,11 +143,11 @@ export default function TodoCard({ todo, onEdit, onDelete }: TodoCardProps) {
       )}
 
       {/* Footer */}
-      <div className="flex items-center justify-between text-xs text-gray-500 pt-2 border-t border-gray-100">
-        <span className="font-medium">{pointsCount} task{pointsCount !== 1 ? 's' : ''}</span>
+      <div className="flex items-center justify-between text-xs text-gray-700 pt-2 border-t-2 border-dashed border-gray-300">
+        <span className="font-black">{pointsCount} task{pointsCount !== 1 ? 's' : ''}</span>
         {linksCount > 0 && (
-          <div className="flex items-center gap-1">
-            <LinkIcon size={11} strokeWidth={2} />
+          <div className="flex items-center gap-1 font-black">
+            <LinkIcon size={11} strokeWidth={2.5} />
             <span>{linksCount} link{linksCount !== 1 ? 's' : ''}</span>
           </div>
         )}

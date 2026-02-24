@@ -132,7 +132,7 @@ export default function BlogsSection() {
 
         {/* Blogs Section */}
         <div className="mb-12">
-          <div className="mb-6">
+          <div className="mb-6 flex items-center justify-between">
             <motion.h3
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
@@ -143,6 +143,19 @@ export default function BlogsSection() {
             >
               Blogs
             </motion.h3>
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6, delay: 0.2 }}
+            >
+              <Link
+                to="/learnings?tab=blogs"
+                className="text-black/70 hover:text-black font-bold text-base md:text-lg underline decoration-2 underline-offset-4 hover:decoration-sky-500 transition-all"
+              >
+                Show more →
+              </Link>
+            </motion.div>
           </div>
 
           <div className="relative">
@@ -151,18 +164,37 @@ export default function BlogsSection() {
               className="overflow-x-auto pt-4 pb-8 -mx-6 px-6 md:-mx-12 md:px-12 scrollbar-hide"
             >
               <div className="flex sm:grid sm:grid-cols-2 md:grid md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6 min-w-max sm:min-w-0 md:min-w-0">
-                {blogsWithColors.map((blog, idx) => (
+                {blogsWithColors.map((blog, idx) => {
+                  const rotations = ['-rotate-1', 'rotate-1', '-rotate-2', 'rotate-2'];
+                  const hoverRotations = ['hover:rotate-0', 'hover:-rotate-1', 'hover:rotate-1', 'hover:-rotate-2'];
+                  const shadows = [
+                    'shadow-[6px_6px_0px_0px_rgba(244,114,182,0.4)]',
+                    'shadow-[8px_6px_0px_0px_rgba(251,191,36,0.4)]',
+                    'shadow-[6px_8px_0px_0px_rgba(167,139,250,0.4)]',
+                    'shadow-[7px_7px_0px_0px_rgba(34,197,94,0.4)]'
+                  ];
+                  const hoverShadows = [
+                    'hover:shadow-[10px_10px_0px_0px_rgba(244,114,182,0.6)]',
+                    'hover:shadow-[12px_10px_0px_0px_rgba(251,191,36,0.6)]',
+                    'hover:shadow-[10px_12px_0px_0px_rgba(167,139,250,0.6)]',
+                    'hover:shadow-[11px_11px_0px_0px_rgba(34,197,94,0.6)]'
+                  ];
+                  
+                  return (
                   <motion.div
                     key={blog.blogId}
                     initial={{ opacity: 0, y: 50 }}
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true }}
                     transition={{ duration: 0.6, delay: idx * 0.15 }}
-                    className="group relative block hover:-translate-y-1 transition-all duration-300 w-[220px] sm:w-auto md:w-auto flex-shrink-0"
+                    className={`group relative block hover:-translate-y-2 transition-all duration-300 w-[220px] sm:w-auto md:w-auto flex-shrink-0 ${rotations[idx % 4]} ${hoverRotations[idx % 4]}`}
                   >
                     <Link to={`/learnings/blogs/${blog.blogId}`}>
                       <div
-                        className="blog-card relative bg-white overflow-hidden border-4 border-black rounded-2xl hover:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] transition-all duration-300 h-full flex flex-col"
+                        className={`blog-card relative bg-white overflow-hidden border-[3px] border-black rounded-[20px] transition-all duration-300 h-full flex flex-col ${shadows[idx % 4]} ${hoverShadows[idx % 4]}`}
+                        style={{
+                          borderRadius: idx % 2 === 0 ? '20px 25px 20px 25px' : '25px 20px 25px 20px'
+                        }}
                       >
                         {blog.coverImage && (
                           <div className="relative h-32 md:h-40 overflow-hidden bg-gray-50 flex-shrink-0 border-b-4 border-black">
@@ -202,30 +234,16 @@ export default function BlogsSection() {
                       </div>
                     </Link>
                   </motion.div>
-                ))}
+                  );
+                })}
               </div>
             </div>
           </div>
-
-          {/* <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6, delay: 0.4 }}
-            className="text-center mt-6"
-          >
-            <Link
-              to="/learnings?tab=blogs"
-              className="inline-flex items-center gap-2 px-8 py-3 bg-black text-white border-3 border-black rounded-xl font-bold hover:bg-gray-800 transition-all shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]"
-            >
-              Show More →
-            </Link>
-          </motion.div> */}
         </div>
 
         {/* Documentation Section */}
         <div className="mb-12">
-          <div className="mb-6">
+          <div className="mb-6 flex items-center justify-between">
             <motion.h3
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
@@ -236,6 +254,19 @@ export default function BlogsSection() {
             >
               Learnings
             </motion.h3>
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6, delay: 0.2 }}
+            >
+              <Link
+                to="/learnings?tab=documentation"
+                className="text-black/70 hover:text-black font-bold text-base md:text-lg underline decoration-2 underline-offset-4 hover:decoration-sky-500 transition-all"
+              >
+                Show more →
+              </Link>
+            </motion.div>
           </div>
 
           <div className="relative">
@@ -244,18 +275,37 @@ export default function BlogsSection() {
               className="overflow-x-auto pt-4 pb-8 -mx-6 px-6 md:-mx-12 md:px-12 scrollbar-hide"
             >
               <div className="flex sm:grid sm:grid-cols-2 md:grid md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6 min-w-max sm:min-w-0 md:min-w-0">
-                {docs.map((doc, idx) => (
+                {docs.map((doc, idx) => {
+                  const rotations = ['rotate-2', '-rotate-1', 'rotate-1', '-rotate-2'];
+                  const hoverRotations = ['hover:-rotate-1', 'hover:rotate-1', 'hover:-rotate-1', 'hover:rotate-2'];
+                  const shadows = [
+                    'shadow-[7px_7px_0px_0px_rgba(59,130,246,0.4)]',
+                    'shadow-[6px_8px_0px_0px_rgba(236,72,153,0.4)]',
+                    'shadow-[8px_6px_0px_0px_rgba(168,85,247,0.4)]',
+                    'shadow-[7px_8px_0px_0px_rgba(34,197,94,0.4)]'
+                  ];
+                  const hoverShadows = [
+                    'hover:shadow-[11px_11px_0px_0px_rgba(59,130,246,0.6)]',
+                    'hover:shadow-[10px_12px_0px_0px_rgba(236,72,153,0.6)]',
+                    'hover:shadow-[12px_10px_0px_0px_rgba(168,85,247,0.6)]',
+                    'hover:shadow-[11px_12px_0px_0px_rgba(34,197,94,0.6)]'
+                  ];
+                  
+                  return (
                   <motion.div
                     key={doc.docId}
                     initial={{ opacity: 0, y: 50 }}
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true }}
                     transition={{ duration: 0.6, delay: idx * 0.15 }}
-                    className="group relative block hover:-translate-y-1 transition-all duration-300 w-[220px] sm:w-auto md:w-auto flex-shrink-0"
+                    className={`group relative block hover:-translate-y-2 transition-all duration-300 w-[220px] sm:w-auto md:w-auto flex-shrink-0 ${rotations[idx % 4]} ${hoverRotations[idx % 4]}`}
                   >
                     <Link to={`/learnings/documentation/${doc.docId}`}>
                       <div
-                        className="doc-card relative bg-white overflow-hidden border-4 border-black rounded-2xl hover:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] transition-all duration-300 h-full flex flex-col min-h-[220px]"
+                        className={`doc-card relative bg-white overflow-hidden border-[3px] border-black transition-all duration-300 h-full flex flex-col min-h-[220px] ${shadows[idx % 4]} ${hoverShadows[idx % 4]}`}
+                        style={{
+                          borderRadius: idx % 2 === 0 ? '25px 20px 25px 18px' : '20px 25px 18px 25px'
+                        }}
                       >
                         <div className="p-3 md:p-4 space-y-2 flex-grow">
                           <div className="inline-block px-3 py-1 bg-blue-100 border-2 border-black rounded-lg text-[10px] md:text-xs font-bold">
@@ -281,25 +331,11 @@ export default function BlogsSection() {
                       </div>
                     </Link>
                   </motion.div>
-                ))}
+                  );
+                })}
               </div>
             </div>
           </div>
-
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6, delay: 0.4 }}
-            className="text-center mt-6"
-          >
-            <Link
-              to="/learnings?tab=documentation"
-              className="inline-flex items-center gap-2 px-8 py-3 bg-black text-white border-3 border-black rounded-xl font-bold hover:bg-gray-800 transition-all shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]"
-            >
-              Show More →
-            </Link>
-          </motion.div>
         </div>
       </div>
     </section>

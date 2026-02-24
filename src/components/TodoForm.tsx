@@ -134,12 +134,19 @@ export default function TodoForm({ isOpen, onClose, onSubmit, initialData, mode 
         .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
       `}</style>
       <div 
-        className="bg-white border border-gray-300 rounded-lg w-full max-w-2xl max-h-[95vh] sm:max-h-[90vh] overflow-y-auto shadow-2xl hide-scrollbar"
+        className="bg-gradient-to-br from-[#FFF8E7] to-white border-[3px] border-black w-full max-w-2xl max-h-[95vh] sm:max-h-[90vh] overflow-y-auto shadow-[8px_8px_0px_0px_rgba(0,0,0,0.3)] hide-scrollbar"
+        style={{ 
+          borderRadius: '25px 28px 26px 29px',
+          transform: 'rotate(-0.5deg)'
+        }}
       >
         <form onSubmit={handleSubmit}>
           {/* Header */}
-          <div className="sticky top-0 bg-gradient-to-r from-orange-500 to-orange-600 border-b border-orange-700 p-3 sm:p-5 flex items-center justify-between z-10">
-            <h2 className="text-lg sm:text-xl font-semibold text-white">
+          <div 
+            className="sticky top-0 bg-black border-b-[3px] border-black p-3 sm:p-5 flex items-center justify-between z-10"
+            style={{ borderRadius: '22px 25px 0 0' }}
+          >
+            <h2 className="text-lg sm:text-xl font-black text-white">
               {mode === 'create' ? 'Create New Todo' : 'Edit Todo'}
             </h2>
             <div className="flex items-center gap-2">
@@ -159,7 +166,7 @@ export default function TodoForm({ isOpen, onClose, onSubmit, initialData, mode 
               <button
                 type="button"
                 onClick={onClose}
-                className="p-1.5 sm:p-2 text-white hover:bg-white/20 rounded-md transition-all"
+                className="p-1.5 sm:p-2 text-white hover:bg-[#FFF8E7] hover:text-black rounded-md transition-all border-2 border-white/30 hover:border-black"
               >
                 <X size={18} strokeWidth={2} className="sm:w-5 sm:h-5" />
               </button>
@@ -170,7 +177,7 @@ export default function TodoForm({ isOpen, onClose, onSubmit, initialData, mode 
           <div className="p-3 sm:p-6 space-y-4 sm:space-y-6">
             {/* Topic Input */}
             <div>
-              <label className="block text-xs sm:text-sm font-semibold text-gray-700 mb-2">
+              <label className="block text-xs sm:text-sm font-black text-black mb-2">
                 Topic *
               </label>
               <input
@@ -178,14 +185,15 @@ export default function TodoForm({ isOpen, onClose, onSubmit, initialData, mode 
                 value={topic}
                 onChange={(e) => setTopic(e.target.value)}
                 placeholder="Enter todo topic..."
-                className="w-full px-3 sm:px-4 py-2 sm:py-2.5 text-sm sm:text-base border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all"
+                className="w-full px-3 sm:px-4 py-2 sm:py-2.5 text-sm sm:text-base border-[3px] border-black bg-white focus:outline-none focus:shadow-[4px_4px_0px_0px_rgba(0,0,0,0.3)] transition-all font-medium"
+                style={{ borderRadius: '8px 10px 9px 11px' }}
                 required
               />
             </div>
 
             {/* Content Text Editor */}
             <div>
-              <label className="block text-xs sm:text-sm font-semibold text-gray-700 mb-2">
+              <label className="block text-xs sm:text-sm font-black text-black mb-2">
                 Description
               </label>
               <textarea
@@ -193,13 +201,14 @@ export default function TodoForm({ isOpen, onClose, onSubmit, initialData, mode 
                 onChange={(e) => setContent(e.target.value)}
                 placeholder="Enter detailed description..."
                 rows={4}
-                className="w-full px-3 sm:px-4 py-2 sm:py-2.5 text-sm sm:text-base border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all resize-none"
+                className="w-full px-3 sm:px-4 py-2 sm:py-2.5 text-sm sm:text-base border-[3px] border-black bg-white focus:outline-none focus:shadow-[4px_4px_0px_0px_rgba(0,0,0,0.3)] transition-all resize-none font-medium"
+                style={{ borderRadius: '8px 10px 9px 11px' }}
               />
             </div>
 
             {/* Points Section */}
             <div>
-              <label className="block text-xs sm:text-sm font-semibold text-gray-700 mb-3">
+              <label className="block text-xs sm:text-sm font-black text-black mb-3">
                 Action Points
               </label>
               
@@ -207,27 +216,31 @@ export default function TodoForm({ isOpen, onClose, onSubmit, initialData, mode 
               {points.length > 0 && (
                 <div className="space-y-2 mb-3">
                   {points.map((point, index) => {
-                    const statusColors = {
-                      pending: { bg: 'bg-red-50', border: 'border-red-200', text: 'text-red-700' },
-                      working: { bg: 'bg-purple-50', border: 'border-purple-200', text: 'text-purple-700' },
-                      done: { bg: 'bg-green-50', border: 'border-green-200', text: 'text-green-700' }
+                    const statusStyles = {
+                      pending: { bg: 'bg-white', icon: 'text-black' },
+                      working: { bg: 'bg-[#F5E6D3]', icon: 'text-black' },
+                      done: { bg: 'bg-black', icon: 'text-white', textColor: 'text-white' }
                     };
-                    const colors = statusColors[point.status];
+                    const styles = statusStyles[point.status];
                     
                     return (
                       <div
                         key={index}
-                        className={`flex items-center gap-2 p-2 sm:p-3 ${colors.bg} border ${colors.border} rounded-md group cursor-pointer hover:opacity-80 transition-all`}
+                        className={`flex items-center gap-2 p-2 sm:p-3 ${styles.bg} border-[3px] border-black group cursor-pointer hover:shadow-[3px_3px_0px_0px_rgba(0,0,0,0.3)] transition-all`}
+                        style={{ borderRadius: '8px 10px 9px 11px' }}
                         onClick={() => handleTogglePointStatus(index)}
                       >
                         <div className="flex items-center gap-2 flex-1 min-w-0">
-                          {point.status === 'done' && <CheckCircle2 size={14} strokeWidth={2} className="text-green-600 flex-shrink-0 sm:w-4 sm:h-4" />}
-                          {point.status === 'working' && <Loader size={14} strokeWidth={2} className="text-purple-600 flex-shrink-0 sm:w-4 sm:h-4" />}
-                          {point.status === 'pending' && <Circle size={14} strokeWidth={2} className="text-red-600 flex-shrink-0 sm:w-4 sm:h-4" />}
-                          <span className={`flex-1 text-xs sm:text-sm font-medium ${colors.text} break-words`}>
+                          {point.status === 'done' && <CheckCircle2 size={14} strokeWidth={3} className={`${styles.icon} flex-shrink-0 sm:w-4 sm:h-4`} />}
+                          {point.status === 'working' && <Loader size={14} strokeWidth={3} className={`${styles.icon} flex-shrink-0 sm:w-4 sm:h-4`} />}
+                          {point.status === 'pending' && <Circle size={14} strokeWidth={3} className={`${styles.icon} flex-shrink-0 sm:w-4 sm:h-4`} />}
+                          <span className={`flex-1 text-xs sm:text-sm font-bold ${styles.textColor || 'text-black'} break-words`}>
                             {point.text}
                           </span>
-                          <span className={`text-[10px] sm:text-xs font-semibold ${colors.text} uppercase px-1.5 sm:px-2 py-0.5 rounded flex-shrink-0`}>
+                          <span 
+                            className={`text-[10px] sm:text-xs font-black ${styles.textColor || 'text-black'} uppercase px-1.5 sm:px-2 py-0.5 border-2 border-black flex-shrink-0`}
+                            style={{ borderRadius: '4px 6px 5px 7px' }}
+                          >
                             {point.status}
                           </span>
                         </div>
@@ -237,9 +250,9 @@ export default function TodoForm({ isOpen, onClose, onSubmit, initialData, mode 
                             e.stopPropagation();
                             handleRemovePoint(index);
                           }}
-                          className="p-1 sm:p-1.5 text-red-600 hover:bg-red-100 border border-red-200 rounded opacity-0 group-hover:opacity-100 transition-all flex-shrink-0"
+                          className="p-1 sm:p-1.5 text-black hover:bg-[#FFF8E7] border-2 border-black rounded opacity-0 group-hover:opacity-100 transition-all flex-shrink-0"
                         >
-                          <Trash2 size={12} strokeWidth={2} className="sm:w-3.5 sm:h-3.5" />
+                          <Trash2 size={12} strokeWidth={3} className="sm:w-3.5 sm:h-3.5" />
                         </button>
                       </div>
                     );
@@ -260,14 +273,16 @@ export default function TodoForm({ isOpen, onClose, onSubmit, initialData, mode 
                     }
                   }}
                   placeholder="Add a new point..."
-                  className="flex-1 px-3 sm:px-4 py-2 sm:py-2.5 text-sm sm:text-base border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all"
+                  className="flex-1 px-3 sm:px-4 py-2 sm:py-2.5 text-sm sm:text-base border-[3px] border-black bg-white focus:outline-none focus:shadow-[4px_4px_0px_0px_rgba(0,0,0,0.3)] transition-all font-medium"
+                  style={{ borderRadius: '8px 10px 9px 11px' }}
                 />
                 <button
                   type="button"
                   onClick={handleAddPoint}
-                  className="px-3 sm:px-5 py-2 sm:py-2.5 bg-orange-600 hover:bg-orange-700 text-white rounded-md font-medium transition-all flex items-center gap-1 sm:gap-2 text-sm sm:text-base flex-shrink-0"
+                  className="px-3 sm:px-5 py-2 sm:py-2.5 bg-black hover:bg-[#FFF8E7] text-white hover:text-black border-[3px] border-black font-black transition-all flex items-center gap-1 sm:gap-2 text-sm sm:text-base flex-shrink-0 shadow-[3px_3px_0px_0px_rgba(0,0,0,0.3)] hover:shadow-[5px_5px_0px_0px_rgba(0,0,0,0.3)]"
+                  style={{ borderRadius: '8px 10px 9px 11px' }}
                 >
-                  <Plus size={16} strokeWidth={2} className="sm:w-[18px] sm:h-[18px]" />
+                  <Plus size={16} strokeWidth={3} className="sm:w-[18px] sm:h-[18px]" />
                   <span className="hidden sm:inline">Add</span>
                 </button>
               </div>
@@ -275,7 +290,7 @@ export default function TodoForm({ isOpen, onClose, onSubmit, initialData, mode 
 
             {/* Links Section */}
             <div>
-              <label className="block text-xs sm:text-sm font-semibold text-gray-700 mb-3">
+              <label className="block text-xs sm:text-sm font-black text-black mb-3">
                 Attach Links
               </label>
               
@@ -285,19 +300,20 @@ export default function TodoForm({ isOpen, onClose, onSubmit, initialData, mode 
                   {links.map((link, index) => (
                     <div
                       key={index}
-                      className="flex items-center gap-2 p-2 sm:p-3 bg-blue-50 border border-blue-200 rounded-md group"
+                      className="flex items-center gap-2 p-2 sm:p-3 bg-[#F5E6D3] border-[3px] border-black group hover:shadow-[3px_3px_0px_0px_rgba(0,0,0,0.3)] transition-all"
+                      style={{ borderRadius: '8px 10px 9px 11px' }}
                     >
-                      <LinkIcon size={12} strokeWidth={2.5} className="text-blue-600 flex-shrink-0 sm:w-3.5 sm:h-3.5" />
+                      <LinkIcon size={12} strokeWidth={3} className="text-black flex-shrink-0 sm:w-3.5 sm:h-3.5" />
                       <div className="flex-1 min-w-0">
-                        <div className="text-xs sm:text-sm font-bold text-gray-900 truncate">{link.title}</div>
-                        <div className="text-[10px] sm:text-xs text-gray-600 truncate">{link.url}</div>
+                        <div className="text-xs sm:text-sm font-black text-black truncate">{link.title}</div>
+                        <div className="text-[10px] sm:text-xs text-black/70 truncate font-medium">{link.url}</div>
                       </div>
                       <button
                         type="button"
                         onClick={() => handleRemoveLink(index)}
-                        className="p-1 sm:p-1.5 text-red-600 hover:bg-red-100 border border-red-200 rounded opacity-0 group-hover:opacity-100 transition-all flex-shrink-0"
+                        className="p-1 sm:p-1.5 text-black hover:bg-white border-2 border-black rounded opacity-0 group-hover:opacity-100 transition-all flex-shrink-0"
                       >
-                        <Trash2 size={12} strokeWidth={2} className="sm:w-3.5 sm:h-3.5" />
+                        <Trash2 size={12} strokeWidth={3} className="sm:w-3.5 sm:h-3.5" />
                       </button>
                     </div>
                   ))}
@@ -311,7 +327,8 @@ export default function TodoForm({ isOpen, onClose, onSubmit, initialData, mode 
                   value={newLinkTitle}
                   onChange={(e) => setNewLinkTitle(e.target.value)}
                   placeholder="Link title..."
-                  className="w-full px-3 sm:px-4 py-2 sm:py-2.5 text-sm sm:text-base border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all"
+                  className="w-full px-3 sm:px-4 py-2 sm:py-2.5 text-sm sm:text-base border-[3px] border-black bg-white focus:outline-none focus:shadow-[4px_4px_0px_0px_rgba(0,0,0,0.3)] transition-all font-medium"
+                  style={{ borderRadius: '8px 10px 9px 11px' }}
                 />
                 <div className="flex gap-2">
                   <input
@@ -325,14 +342,16 @@ export default function TodoForm({ isOpen, onClose, onSubmit, initialData, mode 
                       }
                     }}
                     placeholder="https://example.com"
-                    className="flex-1 px-3 sm:px-4 py-2 sm:py-2.5 text-sm sm:text-base border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all"
+                    className="flex-1 px-3 sm:px-4 py-2 sm:py-2.5 text-sm sm:text-base border-[3px] border-black bg-white focus:outline-none focus:shadow-[4px_4px_0px_0px_rgba(0,0,0,0.3)] transition-all font-medium"
+                    style={{ borderRadius: '8px 10px 9px 11px' }}
                   />
                   <button
                     type="button"
                     onClick={handleAddLink}
-                    className="px-3 sm:px-5 py-2 sm:py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-md font-medium transition-all flex items-center gap-1 sm:gap-2 text-sm sm:text-base flex-shrink-0"
+                    className="px-3 sm:px-5 py-2 sm:py-2.5 bg-black hover:bg-[#FFF8E7] text-white hover:text-black border-[3px] border-black font-black transition-all flex items-center gap-1 sm:gap-2 text-sm sm:text-base flex-shrink-0 shadow-[3px_3px_0px_0px_rgba(0,0,0,0.3)] hover:shadow-[5px_5px_0px_0px_rgba(0,0,0,0.3)]"
+                    style={{ borderRadius: '8px 10px 9px 11px' }}
                   >
-                    <Plus size={16} strokeWidth={2} className="sm:w-[18px] sm:h-[18px]" />
+                    <Plus size={16} strokeWidth={3} className="sm:w-[18px] sm:h-[18px]" />
                     <span className="hidden sm:inline">Add</span>
                   </button>
                 </div>
@@ -377,9 +396,52 @@ export default function TodoForm({ isOpen, onClose, onSubmit, initialData, mode 
               </div>
             )}
 
+            {/* Persistence Option - Only show on create mode */}
+            {mode === 'create' && (
+              <div>
+                <label className="block text-xs sm:text-sm font-black text-black mb-3">
+                  Session Persistence
+                </label>
+                <div className="flex gap-2 sm:gap-3">
+                  <button
+                    type="button"
+                    onClick={() => setPersistFor('day')}
+                    className={`flex-1 px-3 sm:px-4 py-2 sm:py-2.5 text-xs sm:text-base border-[3px] border-black font-black transition-all shadow-[3px_3px_0px_0px_rgba(0,0,0,0.3)] hover:shadow-[5px_5px_0px_0px_rgba(0,0,0,0.3)] ${
+                      persistFor === 'day'
+                        ? 'bg-black text-white'
+                        : 'bg-white text-black hover:bg-[#FFF8E7]'
+                    }`}
+                    style={{ borderRadius: '8px 10px 9px 11px' }}
+                  >
+                    For 1 Day
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setPersistFor('always')}
+                    className={`flex-1 px-3 sm:px-4 py-2 sm:py-2.5 text-xs sm:text-base border-[3px] border-black font-black transition-all shadow-[3px_3px_0px_0px_rgba(0,0,0,0.3)] hover:shadow-[5px_5px_0px_0px_rgba(0,0,0,0.3)] ${
+                      persistFor === 'always'
+                        ? 'bg-black text-white'
+                        : 'bg-white text-black hover:bg-[#FFF8E7]'
+                    }`}
+                    style={{ borderRadius: '8px 10px 9px 11px' }}
+                  >
+                    Always
+                  </button>
+                </div>
+                <p className="text-[10px] sm:text-xs text-black/70 font-bold mt-2">
+                  {persistFor === 'day'
+                    ? 'You will need to enter password again after 24 hours'
+                    : 'You will stay authenticated until you manually logout'}
+                </p>
+              </div>
+            )}
+
             {/* Date & Time Display */}
-            <div className="bg-gray-50 border border-gray-200 rounded-md p-2 sm:p-3">
-              <div className="flex items-center justify-between text-xs sm:text-sm font-medium text-gray-600">
+            <div 
+              className="bg-[#F5E6D3] border-[3px] border-black p-2 sm:p-3"
+              style={{ borderRadius: '8px 10px 9px 11px' }}
+            >
+              <div className="flex items-center justify-between text-xs sm:text-sm font-black text-black">
                 <span>Date: {new Date().toLocaleDateString()}</span>
                 <span>Time: {new Date().toLocaleTimeString()}</span>
               </div>
@@ -387,18 +449,23 @@ export default function TodoForm({ isOpen, onClose, onSubmit, initialData, mode 
           </div>
 
           {/* Footer */}
-          <div className="border-t border-gray-200 p-3 sm:p-5 bg-gray-50 flex gap-2 sm:gap-3 sticky bottom-0">
+          <div 
+            className="border-t-[3px] border-black p-3 sm:p-5 bg-[#FFF8E7] flex gap-2 sm:gap-3 sticky bottom-0"
+            style={{ borderRadius: '0 0 23px 26px' }}
+          >
             <button
               type="button"
               onClick={onClose}
-              className="flex-1 px-3 sm:px-5 py-2 sm:py-2.5 text-sm sm:text-base bg-white border border-gray-300 rounded-md font-medium hover:bg-gray-100 transition-all shadow-md"
+              className="flex-1 px-3 sm:px-5 py-2 sm:py-2.5 text-sm sm:text-base bg-white border-[3px] border-black font-black hover:bg-[#F5E6D3] transition-all shadow-[3px_3px_0px_0px_rgba(0,0,0,0.3)] hover:shadow-[5px_5px_0px_0px_rgba(0,0,0,0.3)]"
+              style={{ borderRadius: '8px 10px 9px 11px' }}
             >
               Cancel
             </button>
             <button
               type="submit"
               disabled={isSubmitting}
-              className="flex-1 px-3 sm:px-5 py-2 sm:py-2.5 text-sm sm:text-base bg-gradient-to-r from-orange-600 to-orange-700 text-white border border-orange-800 rounded-md font-medium hover:from-orange-700 hover:to-orange-800 transition-all shadow-md hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
+              className="flex-1 px-3 sm:px-5 py-2 sm:py-2.5 text-sm sm:text-base bg-black text-white border-[3px] border-black font-black hover:bg-[#FFF8E7] hover:text-black transition-all shadow-[3px_3px_0px_0px_rgba(0,0,0,0.3)] hover:shadow-[5px_5px_0px_0px_rgba(0,0,0,0.3)] disabled:opacity-50 disabled:cursor-not-allowed"
+              style={{ borderRadius: '8px 10px 9px 11px' }}
             >
               {isSubmitting ? (
                 <div className="flex items-center justify-center gap-2">
