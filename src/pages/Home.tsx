@@ -19,19 +19,38 @@ const Home = memo(function Home() {
   }, []);
 
   const audioRef = useRef<HTMLAudioElement>(null);
-  const [isPlaying, setIsPlaying] = useState(true);
+  const [isPlaying, setIsPlaying] = useState(false);
   const [isMuted, setIsMuted] = useState(false);
+  const [userInteracted, setUserInteracted] = useState(false);
 
   useEffect(() => {
     if (audioRef.current) {
       audioRef.current.volume = 0.3; // Set volume to 30%
-      // Auto-play on mount
-      audioRef.current.play().catch(err => {
-        console.log('Autoplay prevented:', err);
-        setIsPlaying(false);
-      });
     }
-  }, []);
+
+    // Handle user interaction for mobile autoplay
+    const handleFirstInteraction = () => {
+      if (!userInteracted) {
+        setUserInteracted(true);
+        if (audioRef.current && !isPlaying) {
+          audioRef.current.play().then(() => {
+            setIsPlaying(true);
+          }).catch(err => {
+            console.log('Autoplay prevented:', err);
+          });
+        }
+      }
+    };
+
+    // Listen for any user interaction
+    document.addEventListener('click', handleFirstInteraction, { once: true });
+    document.addEventListener('touchstart', handleFirstInteraction, { once: true });
+
+    return () => {
+      document.removeEventListener('click', handleFirstInteraction);
+      document.removeEventListener('touchstart', handleFirstInteraction);
+    };
+  }, [userInteracted, isPlaying]);
 
   const togglePlay = () => {
     if (audioRef.current) {
@@ -61,23 +80,23 @@ const Home = memo(function Home() {
         preload="auto"
       />
 
-      {/* Music Control Button */}
+      {/* Music Control Button - Mobile Optimized */}
       <button
         onClick={togglePlay}
-        className={`fixed top-6 left-6 z-50 p-2 border-2 border-white rounded-full shadow-[2px_2px_0px_0px_rgba(255,255,255,0.5)] hover:shadow-[3px_3px_0px_0px_rgba(255,255,255,0.7)] transition-all hover:scale-110 active:scale-95 ${
+        className={`fixed top-4 left-4 md:top-6 md:left-6 z-50 p-2 md:p-3 border-2 border-white rounded-full shadow-[2px_2px_0px_0px_rgba(255,255,255,0.5)] hover:shadow-[3px_3px_0px_0px_rgba(255,255,255,0.7)] transition-all hover:scale-110 active:scale-95 ${
           isPlaying ? 'bg-green-500 animate-pulse' : 'bg-black'
         }`}
         aria-label={isPlaying ? "Pause music" : "Play music"}
-        title={isPlaying ? "Music playing" : "Click to play music"}
+        title={isPlaying ? "Music playing" : "Tap to play music"}
       >
         {isPlaying ? (
-          <Volume2 size={16} strokeWidth={2.5} className="text-white" />
+          <Volume2 size={18} strokeWidth={2.5} className="text-white md:w-4 md:h-4" />
         ) : (
-          <VolumeX size={16} strokeWidth={2.5} className="text-white" />
+          <VolumeX size={18} strokeWidth={2.5} className="text-white md:w-4 md:h-4" />
         )}
       </button>
 
-      {/* Animated Background Images - Slideshow with grayscale and blur */}
+      {/* Animated Background Images - Slideshow with grayscale - Mobile Optimized */}
       <div className="fixed inset-0 -z-[12]">
         <style>{`
           @keyframes backgroundSlideshow {
@@ -87,6 +106,17 @@ const Home = memo(function Home() {
             20% { opacity: 0; }
             100% { opacity: 0; }
           }
+          
+          @media (max-width: 768px) {
+            @keyframes backgroundSlideshow {
+              0% { opacity: 0; }
+              6% { opacity: 0.4; }
+              14% { opacity: 0.4; }
+              20% { opacity: 0; }
+              100% { opacity: 0; }
+            }
+          }
+          
           .bg-slide-1 { animation: backgroundSlideshow 91s ease-in-out infinite 0s; }
           .bg-slide-2 { animation: backgroundSlideshow 91s ease-in-out infinite 7s; }
           .bg-slide-3 { animation: backgroundSlideshow 91s ease-in-out infinite 14s; }
@@ -110,7 +140,8 @@ const Home = memo(function Home() {
             backgroundPosition: 'center',
             backgroundRepeat: 'no-repeat',
             filter: 'grayscale(100%)',
-            opacity: 0
+            opacity: 0,
+            willChange: 'opacity'
           }}
         />
         <div 
@@ -121,7 +152,8 @@ const Home = memo(function Home() {
             backgroundPosition: 'center',
             backgroundRepeat: 'no-repeat',
             filter: 'grayscale(100%)',
-            opacity: 0
+            opacity: 0,
+            willChange: 'opacity'
           }}
         />
         <div 
@@ -132,7 +164,8 @@ const Home = memo(function Home() {
             backgroundPosition: 'center',
             backgroundRepeat: 'no-repeat',
             filter: 'grayscale(100%)',
-            opacity: 0
+            opacity: 0,
+            willChange: 'opacity'
           }}
         />
         <div 
@@ -143,7 +176,8 @@ const Home = memo(function Home() {
             backgroundPosition: 'center',
             backgroundRepeat: 'no-repeat',
             filter: 'grayscale(100%)',
-            opacity: 0
+            opacity: 0,
+            willChange: 'opacity'
           }}
         />
         <div 
@@ -154,7 +188,8 @@ const Home = memo(function Home() {
             backgroundPosition: 'center',
             backgroundRepeat: 'no-repeat',
             filter: 'grayscale(100%)',
-            opacity: 0
+            opacity: 0,
+            willChange: 'opacity'
           }}
         />
         <div 
@@ -165,7 +200,8 @@ const Home = memo(function Home() {
             backgroundPosition: 'center',
             backgroundRepeat: 'no-repeat',
             filter: 'grayscale(100%)',
-            opacity: 0
+            opacity: 0,
+            willChange: 'opacity'
           }}
         />
         <div 
@@ -176,7 +212,8 @@ const Home = memo(function Home() {
             backgroundPosition: 'center',
             backgroundRepeat: 'no-repeat',
             filter: 'grayscale(100%)',
-            opacity: 0
+            opacity: 0,
+            willChange: 'opacity'
           }}
         />
         <div 
@@ -187,7 +224,8 @@ const Home = memo(function Home() {
             backgroundPosition: 'center',
             backgroundRepeat: 'no-repeat',
             filter: 'grayscale(100%)',
-            opacity: 0
+            opacity: 0,
+            willChange: 'opacity'
           }}
         />
         <div 
@@ -198,7 +236,8 @@ const Home = memo(function Home() {
             backgroundPosition: 'center',
             backgroundRepeat: 'no-repeat',
             filter: 'grayscale(100%)',
-            opacity: 0
+            opacity: 0,
+            willChange: 'opacity'
           }}
         />
         <div 
@@ -209,7 +248,8 @@ const Home = memo(function Home() {
             backgroundPosition: 'center',
             backgroundRepeat: 'no-repeat',
             filter: 'grayscale(100%)',
-            opacity: 0
+            opacity: 0,
+            willChange: 'opacity'
           }}
         />
         <div 
@@ -220,7 +260,8 @@ const Home = memo(function Home() {
             backgroundPosition: 'center',
             backgroundRepeat: 'no-repeat',
             filter: 'grayscale(100%)',
-            opacity: 0
+            opacity: 0,
+            willChange: 'opacity'
           }}
         />
         <div 
@@ -231,7 +272,8 @@ const Home = memo(function Home() {
             backgroundPosition: 'center',
             backgroundRepeat: 'no-repeat',
             filter: 'grayscale(100%)',
-            opacity: 0
+            opacity: 0,
+            willChange: 'opacity'
           }}
         />
         <div 
@@ -242,7 +284,8 @@ const Home = memo(function Home() {
             backgroundPosition: 'center',
             backgroundRepeat: 'no-repeat',
             filter: 'grayscale(100%)',
-            opacity: 0
+            opacity: 0,
+            willChange: 'opacity'
           }}
         />
       </div>
