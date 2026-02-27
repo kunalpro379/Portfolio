@@ -16,7 +16,7 @@ router.get('/', async (req, res) => {
     // Return only summary information for list view
     const todosSummary = todos.map(todo => {
       const points = todo.points || [];
-      const doneCount = points.filter(p => p.status === 'done').length;
+      const resolvedCount = points.filter(p => p.status === 'resolved').length;
       const workingCount = points.filter(p => p.status === 'working').length;
       const pendingCount = points.filter(p => p.status === 'pending').length;
       
@@ -24,7 +24,7 @@ router.get('/', async (req, res) => {
         todoId: todo.todoId,
         topic: todo.topic,
         pointsCount: points.length,
-        doneCount,
+        resolvedCount,
         workingCount,
         pendingCount,
         linksCount: (todo.links || []).length,
@@ -128,7 +128,7 @@ router.put('/:todoId', async (req, res) => {
   }
 });
 
-// Toggle todo point status (cycles through pending -> working -> done -> pending)
+// Toggle todo point status (cycles through pending -> working -> resolved -> pending)
 router.put('/:todoId/points/:index/toggle', async (req, res) => {
   try {
     const { todoId, index } = req.params;
@@ -149,7 +149,7 @@ router.put('/:todoId/points/:index/toggle', async (req, res) => {
     if (point.status === 'pending') {
       point.status = 'working';
     } else if (point.status === 'working') {
-      point.status = 'done';
+      point.status = 'resolved';
       point.completedAt = new Date();
     } else {
       point.status = 'pending';
@@ -172,8 +172,8 @@ router.put('/:todoId/points/:index/status', async (req, res) => {
     const { todoId, index } = req.params;
     const { status } = req.body;
     
-    if (!['pending', 'working', 'done'].includes(status)) {
-      return res.status(400).json({ message: 'Invalid status. Must be: pending, working, or done' });
+    if (!['pending', 'working', 'resolved'].includes(status)) {
+      return res.status(400).json({ message: 'Invalid status. Must be: pending, working, or resolved' });
     }
 
     const todo = await Todo.findOne({ todoId });
@@ -187,7 +187,7 @@ router.put('/:todoId/points/:index/status', async (req, res) => {
     }
 
     todo.points[pointIndex].status = status;
-    if (status === 'done') {
+    if (status === 'resolved') {
       todo.points[pointIndex].completedAt = new Date();
     } else {
       todo.points[pointIndex].completedAt = undefined;

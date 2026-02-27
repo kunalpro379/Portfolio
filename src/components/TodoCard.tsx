@@ -1,8 +1,9 @@
-import { CheckCircle2, Circle, Trash2, Edit, Calendar, Clock, Loader, Link as LinkIcon } from 'lucide-react';
+import { CheckCircle2, Circle, Trash2, Calendar, Clock, Loader, Link as LinkIcon } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 interface TodoPoint {
   text: string;
-  status: 'pending' | 'working' | 'done';
+  status: 'pending' | 'working' | 'resolved';
   completedAt?: string;
 }
 
@@ -19,26 +20,28 @@ interface TodoCardProps {
     points?: TodoPoint[];
     links?: TodoLink[];
     pointsCount?: number;
-    doneCount?: number;
+    resolvedCount?: number;
     workingCount?: number;
     pendingCount?: number;
     linksCount?: number;
     createdAt: string;
     updatedAt: string;
   };
-  onEdit: (todo: any) => void;
+  onEdit?: (todo: any) => void;
   onDelete: (todoId: string) => void;
   onTogglePoint?: (todoId: string, pointIndex: number) => void;
 }
 
 export default function TodoCard({ todo, onEdit, onDelete }: TodoCardProps) {
+  const navigate = useNavigate();
+  
   // Use summary data if available, otherwise calculate from full data
   const pointsCount = todo.pointsCount ?? (todo.points || []).length;
-  const doneCount = todo.doneCount ?? (todo.points || []).filter(p => p.status === 'done').length;
+  const resolvedCount = todo.resolvedCount ?? (todo.points || []).filter(p => p.status === 'resolved').length;
   const workingCount = todo.workingCount ?? (todo.points || []).filter(p => p.status === 'working').length;
   const pendingCount = todo.pendingCount ?? (todo.points || []).filter(p => p.status === 'pending').length;
   const linksCount = todo.linksCount ?? (todo.links || []).length;
-  const progress = pointsCount > 0 ? (doneCount / pointsCount) * 100 : 0;
+  const progress = pointsCount > 0 ? (resolvedCount / pointsCount) * 100 : 0;
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
@@ -57,11 +60,16 @@ export default function TodoCard({ todo, onEdit, onDelete }: TodoCardProps) {
     });
   };
 
+  const handleCardClick = () => {
+    // Navigate to todo detail page instead of opening modal
+    navigate(`/todo/${todo.todoId}`);
+  };
+
   return (
     <div 
       className="bg-gradient-to-br from-[#FFF8E7] to-white border-[3px] border-black p-4 hover:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] transition-all duration-300 hover:-translate-y-1 cursor-pointer group -rotate-1 hover:rotate-0"
       style={{ borderRadius: '16px 20px 18px 22px' }}
-      onClick={() => onEdit(todo)}
+      onClick={handleCardClick}
     >
       {/* Header */}
       <div className="flex items-start justify-between mb-3">
@@ -84,17 +92,6 @@ export default function TodoCard({ todo, onEdit, onDelete }: TodoCardProps) {
           <button
             onClick={(e) => {
               e.stopPropagation();
-              onEdit(todo);
-            }}
-            className="p-1.5 text-black hover:bg-white border-2 border-black rounded-lg transition-all opacity-0 group-hover:opacity-100"
-            style={{ borderRadius: '6px 8px 7px 9px' }}
-            title="Edit"
-          >
-            <Edit size={13} strokeWidth={2.5} />
-          </button>
-          <button
-            onClick={(e) => {
-              e.stopPropagation();
               onDelete(todo.todoId);
             }}
             className="p-1.5 text-black hover:bg-white border-2 border-black rounded-lg transition-all opacity-0 group-hover:opacity-100"
@@ -110,7 +107,7 @@ export default function TodoCard({ todo, onEdit, onDelete }: TodoCardProps) {
       <div className="grid grid-cols-3 gap-2 mb-3">
         <div className="flex items-center gap-1.5 px-2 py-1.5 bg-white border-2 border-black rounded-lg" style={{ borderRadius: '8px 10px 9px 11px' }}>
           <CheckCircle2 size={12} strokeWidth={2.5} className="text-black flex-shrink-0" />
-          <span className="text-xs font-black text-black">{doneCount}</span>
+          <span className="text-xs font-black text-black">{resolvedCount}</span>
         </div>
         <div className="flex items-center gap-1.5 px-2 py-1.5 bg-[#FFF8E7] border-2 border-black rounded-lg" style={{ borderRadius: '10px 8px 11px 9px' }}>
           <Loader size={12} strokeWidth={2.5} className="text-black flex-shrink-0" />
@@ -132,7 +129,7 @@ export default function TodoCard({ todo, onEdit, onDelete }: TodoCardProps) {
           <div className="h-2 bg-white border-2 border-black rounded-full overflow-hidden flex" style={{ borderRadius: '10px 12px 11px 13px' }}>
             <div
               className="h-full bg-black transition-all duration-300"
-              style={{ width: `${(doneCount / pointsCount) * 100}%` }}
+              style={{ width: `${(resolvedCount / pointsCount) * 100}%` }}
             />
             <div
               className="h-full bg-[#F5E6D3] transition-all duration-300"

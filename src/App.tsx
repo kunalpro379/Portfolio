@@ -12,6 +12,7 @@ import GuideNoteEditor from './pages/GuideNoteEditor';
 import GuideCreate from './pages/GuideCreate';
 import GuideView from './pages/GuideView';
 import TitleEditor from './pages/TitleEditor';
+import TodoDetail from './pages/TodoDetail';
 import PrivacyPolicy from './pages/PrivacyPolicy';
 import Terms from './pages/Terms';
 import About from './pages/About';
@@ -48,6 +49,9 @@ function App() {
         <Route path="/learnings/guide/:guideId/title/new" element={<TitleEditor />} />
         <Route path="/learnings/guide/:guideId/title/:titleId" element={<TitleEditor />} />
         <Route path="/learnings/guide/:guideId/title/:titleId/view" element={<GuideNoteEditor />} />
+        <Route path="/learnings/guide/:guideId/title/:titleId/edit" element={<GuideNoteEditor />} />
+        <Route path="/learn/:guideSlug/:titleSlug" element={<GuideNoteEditor />} />
+        <Route path="/todo/:todoId" element={<TodoDetail />} />
         <Route path="/learnings/guide/:guideId/title/:titleId/edit" element={<GuideNoteEditor />} />
         <Route path="/learn/:guideSlug/:titleSlug" element={<GuideNoteEditor />} />
         <Route path="/privacy-policy" element={<PrivacyPolicy />} />

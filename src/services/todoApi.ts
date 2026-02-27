@@ -2,13 +2,27 @@ import { API_BASE_URL, API_ENDPOINTS } from '@/config/api';
 
 export interface TodoPoint {
   text: string;
-  status: 'pending' | 'working' | 'done';
+  status: 'pending' | 'working' | 'resolved';
+  priority?: 'low' | 'medium' | 'high' | 'urgent';
+  assignee?: string;
+  dueDate?: string;
   completedAt?: string;
+  notes?: string;
+  customFields?: Record<string, string>;
 }
 
 export interface TodoLink {
   title: string;
   url: string;
+}
+
+export interface CustomColumn {
+  id: string;
+  name: string;
+  type: 'text' | 'select' | 'date' | 'number';
+  options?: string[];
+  visible: boolean;
+  width: number;
 }
 
 export interface Todo {
@@ -17,13 +31,14 @@ export interface Todo {
   content: string;
   points: TodoPoint[];
   links: TodoLink[];
+  customColumns?: CustomColumn[];
   createdAt: string;
   updatedAt: string;
 }
 
 export interface TodoStats {
   total: number;
-  done: number;
+  resolved: number;
   working: number;
   pending: number;
   percentage: number;
@@ -32,7 +47,7 @@ export interface TodoStats {
 export interface PerformanceStats {
   totalTodos: number;
   totalPoints: number;
-  donePoints: number;
+  resolvedPoints: number;
   workingPoints: number;
   pendingPoints: number;
   overallPercentage: number;
@@ -44,6 +59,7 @@ export interface CreateTodoData {
   content: string;
   points: TodoPoint[];
   links?: TodoLink[];
+  customColumns?: CustomColumn[];
 }
 
 export interface UpdateTodoData {
@@ -51,6 +67,7 @@ export interface UpdateTodoData {
   content?: string;
   points?: TodoPoint[];
   links?: TodoLink[];
+  customColumns?: CustomColumn[];
 }
 
 // Get authentication token from localStorage
@@ -218,7 +235,7 @@ export const toggleTodoPoint = async (
 export const updatePointStatus = async (
   todoId: string,
   pointIndex: number,
-  status: 'pending' | 'working' | 'done'
+  status: 'pending' | 'working' | 'resolved'
 ): Promise<Todo> => {
   try {
     const response = await fetch(
