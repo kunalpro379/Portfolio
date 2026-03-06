@@ -1,4 +1,4 @@
-import { Clock, Calendar, ArrowLeft, FolderOpen, FileText, BookOpen, Code, FileImage, Plus, Github, Menu, X, Home, LogOut, Eye, Edit, Trash2, ListTodo } from "lucide-react";
+import { Clock, Calendar, ArrowLeft, FolderOpen, FileText, BookOpen, Code, FileImage, Plus, Github, Menu, X, Home, LogOut, Eye, Edit, Trash2, ListTodo, ChevronRight } from "lucide-react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { API_ENDPOINTS, API_BASE_URL } from "@/config/api";
@@ -116,6 +116,12 @@ export default function LearningsPage() {
   const [showDeletePasswordModal, setShowDeletePasswordModal] = useState(false);
   const [deleteCanvasId, setDeleteCanvasId] = useState<string | null>(null);
   const [deletePassword, setDeletePassword] = useState('');
+  
+  // Code folder creation modal state
+  const [showCreateCodeFolderModal, setShowCreateCodeFolderModal] = useState(false);
+  const [codeFolderName, setCodeFolderName] = useState('');
+  const [codeFolderDescription, setCodeFolderDescription] = useState('');
+  const [codeFolderLanguage, setCodeFolderLanguage] = useState('javascript');
 
   // Check for canvas parameter in URL
   const canvasIdFromUrl = searchParams.get('canvas');
@@ -252,6 +258,46 @@ export default function LearningsPage() {
   const changeTab = (tab: 'guide' | 'files' | 'todo' | 'documentation' | 'blogs' | 'projects' | 'diagrams' | 'code') => {
     setSearchParams({ tab });
     setActiveTab(tab);
+  };
+
+  const handleCreateCodeFolder = async () => {
+    if (!codeFolderName.trim()) {
+      alert('Please enter a codebook name');
+      return;
+    }
+
+    try {
+      const timestamp = new Date().toISOString();
+      const response = await fetch(`${API_BASE_URL}${API_ENDPOINTS.code}/folders`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: codeFolderName,
+          description: codeFolderDescription,
+          language: codeFolderLanguage,
+          parentPath: '',
+          createdAt: timestamp,
+        }),
+      });
+
+      if (!response.ok) throw new Error('Failed to create codebook');
+
+      const data = await response.json();
+      
+      // Close modal and reset form
+      setShowCreateCodeFolderModal(false);
+      setCodeFolderName('');
+      setCodeFolderDescription('');
+      setCodeFolderLanguage('javascript');
+      
+      // Navigate to code editor with the new folder
+      if (data.folder) {
+        navigate(`/learnings/code-editor?folder=${encodeURIComponent(data.folder.path)}`);
+      }
+    } catch (error) {
+      console.error('Error creating codebook:', error);
+      alert('Failed to create codebook');
+    }
   };
 
   const loadCanvasFromShare = async (canvasId: string) => {
@@ -521,7 +567,7 @@ export default function LearningsPage() {
       />
       
       {/* Fixed Header */}
-      <div className="bg-gray-50/80 backdrop-blur-sm border-b-4 border-black p-4 md:p-6 z-50 shadow-lg relative flex-shrink-0">
+      <div className="bg-gray-50/80 backdrop-blur-sm border-b-4 border-black py-3 md:py-4 px-4 md:px-6 z-50 shadow-lg relative flex-shrink-0">
         <div className="max-w-7xl mx-auto">
           {/* Mobile Layout - Original */}
           <div className="block md:hidden">
@@ -549,26 +595,94 @@ export default function LearningsPage() {
             </div>
           </div>
 
-          {/* Desktop Layout - New */}
+          {/* Desktop Layout - Professional Navbar */}
           <div className="hidden md:block">
-            <div className="flex items-start justify-between mb-4">
-              <button
-                onClick={() => navigate('/')}
-                className="flex items-center gap-2 text-gray-600 hover:text-black font-bold text-base transition-all hover:gap-3 self-start"
-              >
-                <ArrowLeft className="w-5 h-5" strokeWidth={2.5} />
-                Back to Home
-              </button>
+            <div className="flex items-center justify-between">
+              {/* Left: Back Arrow + Title */}
+              <div className="flex items-center gap-4">
+                <button
+                  onClick={() => navigate('/')}
+                  className="p-2 hover:bg-gray-200 rounded-lg transition-all group"
+                  aria-label="Back to home"
+                >
+                  <ArrowLeft className="w-7 h-7 text-gray-700 group-hover:text-black transition-colors" strokeWidth={2.5} />
+                </button>
+                <h1 className="text-2xl font-black text-black">My Learning Repository</h1>
+              </div>
+              
+              {/* Professional Navbar for Desktop */}
+              <nav className="flex items-center gap-1 bg-white border-3 border-black rounded-2xl p-1.5 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+                <button
+                  onClick={() => changeTab('blogs')}
+                  className={`px-6 py-2.5 rounded-xl font-bold text-sm transition-all ${
+                    activeTab === 'blogs'
+                      ? 'bg-pink-400 text-white shadow-[2px_2px_0px_0px_rgba(0,0,0,0.3)]'
+                      : 'text-gray-700 hover:bg-gray-100'
+                  }`}
+                >
+                  Blogs
+                </button>
+                <button
+                  onClick={() => changeTab('documentation')}
+                  className={`px-6 py-2.5 rounded-xl font-bold text-sm transition-all ${
+                    activeTab === 'documentation'
+                      ? 'bg-blue-400 text-white shadow-[2px_2px_0px_0px_rgba(0,0,0,0.3)]'
+                      : 'text-gray-700 hover:bg-gray-100'
+                  }`}
+                >
+                  Docs
+                </button>
+                <button
+                  onClick={() => changeTab('guide')}
+                  className={`px-6 py-2.5 rounded-xl font-bold text-sm transition-all ${
+                    activeTab === 'guide'
+                      ? 'bg-yellow-400 text-white shadow-[2px_2px_0px_0px_rgba(0,0,0,0.3)]'
+                      : 'text-gray-700 hover:bg-gray-100'
+                  }`}
+                >
+                  Guide
+                </button>
+                <button
+                  onClick={() => changeTab('code')}
+                  className={`px-6 py-2.5 rounded-xl font-bold text-sm transition-all ${
+                    activeTab === 'code'
+                      ? 'bg-orange-400 text-white shadow-[2px_2px_0px_0px_rgba(0,0,0,0.3)]'
+                      : 'text-gray-700 hover:bg-gray-100'
+                  }`}
+                >
+                  Code
+                </button>
+                <button
+                  onClick={() => changeTab('diagrams')}
+                  className={`px-6 py-2.5 rounded-xl font-bold text-sm transition-all ${
+                    activeTab === 'diagrams'
+                      ? 'bg-purple-400 text-white shadow-[2px_2px_0px_0px_rgba(0,0,0,0.3)]'
+                      : 'text-gray-700 hover:bg-gray-100'
+                  }`}
+                >
+                  Architectures
+                </button>
+                <button
+                  onClick={() => changeTab('projects')}
+                  className={`px-6 py-2.5 rounded-xl font-bold text-sm transition-all ${
+                    activeTab === 'projects'
+                      ? 'bg-green-400 text-white shadow-[2px_2px_0px_0px_rgba(0,0,0,0.3)]'
+                      : 'text-gray-700 hover:bg-gray-100'
+                  }`}
+                >
+                  Projects
+                </button>
+              </nav>
             </div>
           </div>
 
-          {/* Tabs - 8 tabs in grid */}
-          <div className="grid grid-cols-4 gap-1 md:gap-2 mt-4">
+          {/* Tabs - Mobile only - 8 tabs in grid */}
+          <div className="grid grid-cols-4 gap-1 mt-4 md:hidden">
             <button
               onClick={() => changeTab('blogs')}
-              className={`px-1 md:px-6 py-1.5 md:py-3 rounded-lg md:rounded-xl font-bold text-[9px] md:text-sm transition-all border-2 md:border-3 border-black ${activeTab === 'blogs'
-                  ? 'bg-pink-400 text-white shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] md:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transform -translate-y-0.5'
-                  : 'bg-white hover:bg-pink-50 hover:shadow-[1px_1px_0px_0px_rgba(0,0,0,1)] md:hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]'
+              className={`px-1 py-1.5 rounded-lg font-bold text-[9px] transition-all border-2 border-black ${activeTab === 'blogs'
+                  ? 'bg-pink-400 text-white shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transform -translate-y-0.5'
+                  : 'bg-white hover:bg-pink-50 hover:shadow-[1px_1px_0px_0px_rgba(0,0,0,1)]'
                 }`}
               style={{
                 borderRadius: '12px 15px 13px 14px',
@@ -578,9 +692,9 @@ export default function LearningsPage() {
             </button>
             <button
               onClick={() => changeTab('documentation')}
-              className={`px-1 md:px-6 py-1.5 md:py-3 rounded-lg md:rounded-xl font-bold text-[9px] md:text-sm transition-all border-2 md:border-3 border-black ${activeTab === 'documentation'
-                  ? 'bg-blue-400 text-white shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] md:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transform -translate-y-0.5'
-                  : 'bg-white hover:bg-blue-50 hover:shadow-[1px_1px_0px_0px_rgba(0,0,0,1)] md:hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]'
+              className={`px-1 py-1.5 rounded-lg font-bold text-[9px] transition-all border-2 border-black ${activeTab === 'documentation'
+                  ? 'bg-blue-400 text-white shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transform -translate-y-0.5'
+                  : 'bg-white hover:bg-blue-50 hover:shadow-[1px_1px_0px_0px_rgba(0,0,0,1)]'
                 }`}
               style={{
                 borderRadius: '14px 12px 15px 13px',
@@ -590,9 +704,9 @@ export default function LearningsPage() {
             </button>
             <button
               onClick={() => changeTab('guide')}
-              className={`px-1 md:px-6 py-1.5 md:py-3 rounded-lg md:rounded-xl font-bold text-[9px] md:text-sm transition-all border-2 md:border-3 border-black ${activeTab === 'guide'
-                  ? 'bg-yellow-400 text-white shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] md:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transform -translate-y-0.5'
-                  : 'bg-white hover:bg-yellow-50 hover:shadow-[1px_1px_0px_0px_rgba(0,0,0,1)] md:hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]'
+              className={`px-1 py-1.5 rounded-lg font-bold text-[9px] transition-all border-2 border-black ${activeTab === 'guide'
+                  ? 'bg-yellow-400 text-white shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transform -translate-y-0.5'
+                  : 'bg-white hover:bg-yellow-50 hover:shadow-[1px_1px_0px_0px_rgba(0,0,0,1)]'
                 }`}
               style={{
                 borderRadius: '13px 14px 12px 15px',
@@ -602,9 +716,9 @@ export default function LearningsPage() {
             </button>
             <button
               onClick={() => changeTab('files')}
-              className={`px-1 md:px-6 py-1.5 md:py-3 rounded-lg md:rounded-xl font-bold text-[9px] md:text-sm transition-all border-2 md:border-3 border-black ${activeTab === 'files'
-                  ? 'bg-cyan-400 text-white shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] md:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transform -translate-y-0.5'
-                  : 'bg-white hover:bg-cyan-50 hover:shadow-[1px_1px_0px_0px_rgba(0,0,0,1)] md:hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]'
+              className={`px-1 py-1.5 rounded-lg font-bold text-[9px] transition-all border-2 border-black ${activeTab === 'files'
+                  ? 'bg-cyan-400 text-white shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transform -translate-y-0.5'
+                  : 'bg-white hover:bg-cyan-50 hover:shadow-[1px_1px_0px_0px_rgba(0,0,0,1)]'
                 }`}
               style={{
                 borderRadius: '15px 13px 14px 12px',
@@ -614,9 +728,9 @@ export default function LearningsPage() {
             </button>
             <button
               onClick={() => changeTab('todo')}
-              className={`px-1 md:px-6 py-1.5 md:py-3 rounded-lg md:rounded-xl font-bold text-[9px] md:text-sm transition-all border-2 md:border-3 border-black ${activeTab === 'todo'
-                  ? 'bg-red-400 text-white shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] md:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transform -translate-y-0.5'
-                  : 'bg-white hover:bg-red-50 hover:shadow-[1px_1px_0px_0px_rgba(0,0,0,1)] md:hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]'
+              className={`px-1 py-1.5 rounded-lg font-bold text-[9px] transition-all border-2 border-black ${activeTab === 'todo'
+                  ? 'bg-red-400 text-white shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transform -translate-y-0.5'
+                  : 'bg-white hover:bg-red-50 hover:shadow-[1px_1px_0px_0px_rgba(0,0,0,1)]'
                 }`}
               style={{
                 borderRadius: '12px 15px 13px 14px',
@@ -626,9 +740,9 @@ export default function LearningsPage() {
             </button>
             <button
               onClick={() => changeTab('code')}
-              className={`px-1 md:px-6 py-1.5 md:py-3 rounded-lg md:rounded-xl font-bold text-[9px] md:text-sm transition-all border-2 md:border-3 border-black ${activeTab === 'code'
-                  ? 'bg-orange-400 text-white shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] md:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transform -translate-y-0.5'
-                  : 'bg-white hover:bg-orange-50 hover:shadow-[1px_1px_0px_0px_rgba(0,0,0,1)] md:hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]'
+              className={`px-1 py-1.5 rounded-lg font-bold text-[9px] transition-all border-2 border-black ${activeTab === 'code'
+                  ? 'bg-orange-400 text-white shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transform -translate-y-0.5'
+                  : 'bg-white hover:bg-orange-50 hover:shadow-[1px_1px_0px_0px_rgba(0,0,0,1)]'
                 }`}
               style={{
                 borderRadius: '15px 13px 14px 12px',
@@ -638,9 +752,9 @@ export default function LearningsPage() {
             </button>
             <button
               onClick={() => changeTab('diagrams')}
-              className={`px-1 md:px-6 py-1.5 md:py-3 rounded-lg md:rounded-xl font-bold text-[9px] md:text-sm transition-all border-2 md:border-3 border-black ${activeTab === 'diagrams'
-                  ? 'bg-purple-400 text-white shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] md:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transform -translate-y-0.5'
-                  : 'bg-white hover:bg-purple-50 hover:shadow-[1px_1px_0px_0px_rgba(0,0,0,1)] md:hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]'
+              className={`px-1 py-1.5 rounded-lg font-bold text-[9px] transition-all border-2 border-black ${activeTab === 'diagrams'
+                  ? 'bg-purple-400 text-white shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transform -translate-y-0.5'
+                  : 'bg-white hover:bg-purple-50 hover:shadow-[1px_1px_0px_0px_rgba(0,0,0,1)]'
                 }`}
               style={{
                 borderRadius: '15px 13px 14px 12px',
@@ -650,9 +764,9 @@ export default function LearningsPage() {
             </button>
             <button
               onClick={() => changeTab('projects')}
-              className={`px-1 md:px-6 py-1.5 md:py-3 rounded-lg md:rounded-xl font-bold text-[9px] md:text-sm transition-all border-2 md:border-3 border-black ${activeTab === 'projects'
-                  ? 'bg-green-400 text-white shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] md:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transform -translate-y-0.5'
-                  : 'bg-white hover:bg-green-50 hover:shadow-[1px_1px_0px_0px_rgba(0,0,0,1)] md:hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]'
+              className={`px-1 py-1.5 rounded-lg font-bold text-[9px] transition-all border-2 border-black ${activeTab === 'projects'
+                  ? 'bg-green-400 text-white shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transform -translate-y-0.5'
+                  : 'bg-white hover:bg-green-50 hover:shadow-[1px_1px_0px_0px_rgba(0,0,0,1)]'
                 }`}
               style={{
                 borderRadius: '12px 15px 13px 14px',
@@ -1089,49 +1203,52 @@ export default function LearningsPage() {
               {/* CODE TAB */}
               {activeTab === 'code' && (
                 <>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+                  {/* Create Codebook Button */}
+                  <div className="flex justify-end mb-6">
+                    <button
+                      onClick={() => setShowCreateCodeFolderModal(true)}
+                      className="px-6 py-2.5 bg-stone-900 text-white rounded-xl font-medium hover:bg-stone-800 transition-all shadow-sm hover:shadow-md text-sm flex items-center gap-2"
+                    >
+                      <Plus size={18} strokeWidth={2} />
+                      <span>Create Codebook</span>
+                    </button>
+                  </div>
+
+                  {/* Compact Strip Design - 2 Columns */}
+                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-2">
                     {/* Local Code Folders */}
                     {codeFiles.map((folder, idx) => {
-                      const rotations = ['-rotate-1', 'rotate-1', '-rotate-2', 'rotate-2'];
-                      const hoverRotations = ['hover:rotate-1', 'hover:-rotate-1', 'hover:rotate-2', 'hover:-rotate-2'];
-                      const shadows = [
-                        'shadow-[5px_5px_0px_0px_rgba(251,146,60,0.5)]',
-                        'shadow-[6px_5px_0px_0px_rgba(249,115,22,0.5)]',
-                        'shadow-[5px_6px_0px_0px_rgba(234,88,12,0.5)]',
-                        'shadow-[6px_6px_0px_0px_rgba(251,146,60,0.5)]'
-                      ];
-                      const hoverShadows = [
-                        'hover:shadow-[9px_9px_0px_0px_rgba(251,146,60,0.7)]',
-                        'hover:shadow-[10px_9px_0px_0px_rgba(249,115,22,0.7)]',
-                        'hover:shadow-[9px_10px_0px_0px_rgba(234,88,12,0.7)]',
-                        'hover:shadow-[10px_10px_0px_0px_rgba(251,146,60,0.7)]'
-                      ];
-                      const bgGradients = [
-                        'bg-gradient-to-br from-orange-50 to-white',
-                        'bg-gradient-to-br from-orange-100 to-orange-50',
-                        'bg-gradient-to-br from-amber-50 to-white',
-                        'bg-gradient-to-br from-amber-100 to-amber-50'
-                      ];
-                      
                       return (
                       <div
                         key={folder.folderId}
                         onClick={() => {
-                          handleNavigate(`/learnings/code?folder=${encodeURIComponent(folder.path)}`);
+                          handleNavigate(`/learnings/code-editor?folder=${encodeURIComponent(folder.path)}`);
                         }}
-                        className={`${bgGradients[idx % 4]} backdrop-blur-sm border-[3px] border-black p-4 transition-all duration-300 cursor-pointer hover:-translate-y-2 group ${rotations[idx % 4]} ${hoverRotations[idx % 4]} ${shadows[idx % 4]} ${hoverShadows[idx % 4]}`}
-                        style={{ 
-                          borderRadius: idx % 2 === 0 ? '16px 20px 18px 22px' : '20px 16px 22px 18px'
-                        }}
+                        className="group relative bg-gradient-to-br from-stone-900 to-stone-800 hover:from-stone-800 hover:to-stone-700 border-2 border-white/20 hover:border-white/40 rounded-lg p-3 transition-all duration-300 cursor-pointer hover:shadow-lg flex items-center gap-3"
                       >
-                        <div className="flex items-start gap-3">
-                          <div className="p-2.5 bg-gradient-to-br from-orange-300 to-orange-400 border-[3px] border-black rounded-lg group-hover:rotate-12 transition-transform flex-shrink-0" style={{ borderRadius: '10px 12px 11px 13px' }}>
-                            <Code size={20} strokeWidth={2.5} />
+                        {/* Icon */}
+                        <div className="flex-shrink-0 w-9 h-9 bg-gradient-to-br from-amber-400/20 to-stone-400/20 border border-amber-400/30 rounded-lg flex items-center justify-center group-hover:scale-105 transition-transform">
+                          <FolderOpen size={16} strokeWidth={1.5} className="text-amber-400" />
+                        </div>
+
+                        {/* Content */}
+                        <div className="flex-1 min-w-0">
+                          <h3 className="text-sm font-semibold text-white group-hover:text-amber-100 transition-colors line-clamp-1 mb-1">
+                            {folder.name}
+                          </h3>
+                          <div className="flex items-center gap-2 text-[10px]">
+                            <span className="text-stone-400 font-medium">Local Folder</span>
+                            {folder.language && (
+                              <span className="px-2 py-0.5 bg-stone-700/50 text-stone-300 border border-stone-600 rounded-full font-medium text-[9px]">
+                                {folder.language}
+                              </span>
+                            )}
                           </div>
-                          <div className="flex-1 min-w-0">
-                            <h3 className="text-sm font-black text-black mb-1 leading-tight">{folder.name}</h3>
-                            <p className="text-xs text-gray-600 font-bold">Local Folder</p>
-                          </div>
+                        </div>
+
+                        {/* Arrow - Always at Right End */}
+                        <div className="flex-shrink-0 opacity-60 group-hover:opacity-100 transition-all">
+                          <ChevronRight size={18} strokeWidth={2} className="text-amber-400" />
                         </div>
                       </div>
                       );
@@ -1139,57 +1256,41 @@ export default function LearningsPage() {
 
                     {/* GitHub Repositories */}
                     {githubRepos.map((repo, idx) => {
-                      const rotations = ['rotate-1', '-rotate-1', 'rotate-2', '-rotate-2'];
-                      const hoverRotations = ['hover:-rotate-1', 'hover:rotate-1', 'hover:-rotate-2', 'hover:rotate-2'];
-                      const shadows = [
-                        'shadow-[5px_5px_0px_0px_rgba(107,114,128,0.5)]',
-                        'shadow-[6px_5px_0px_0px_rgba(75,85,99,0.5)]',
-                        'shadow-[5px_6px_0px_0px_rgba(55,65,81,0.5)]',
-                        'shadow-[6px_6px_0px_0px_rgba(107,114,128,0.5)]'
-                      ];
-                      const hoverShadows = [
-                        'hover:shadow-[9px_9px_0px_0px_rgba(107,114,128,0.7)]',
-                        'hover:shadow-[10px_9px_0px_0px_rgba(75,85,99,0.7)]',
-                        'hover:shadow-[9px_10px_0px_0px_rgba(55,65,81,0.7)]',
-                        'hover:shadow-[10px_10px_0px_0px_rgba(107,114,128,0.7)]'
-                      ];
-                      const bgGradients = [
-                        'bg-gradient-to-br from-gray-50 to-white',
-                        'bg-gradient-to-br from-slate-50 to-white',
-                        'bg-gradient-to-br from-gray-100 to-gray-50',
-                        'bg-gradient-to-br from-slate-100 to-slate-50'
-                      ];
-                      
                       return (
                       <div
                         key={repo._id}
                         onClick={() => {
                           handleNavigate(`/learnings/code?repo=${repo._id}`);
                         }}
-                        className={`${bgGradients[idx % 4]} backdrop-blur-sm border-[3px] border-black p-4 transition-all duration-300 cursor-pointer hover:-translate-y-2 group ${rotations[idx % 4]} ${hoverRotations[idx % 4]} ${shadows[idx % 4]} ${hoverShadows[idx % 4]}`}
-                        style={{ 
-                          borderRadius: idx % 2 === 0 ? '16px 20px 18px 22px' : '20px 16px 22px 18px'
-                        }}
+                        className="group relative bg-gradient-to-br from-stone-900 to-stone-800 hover:from-stone-800 hover:to-stone-700 border-2 border-white/20 hover:border-white/40 rounded-lg p-3 transition-all duration-300 cursor-pointer hover:shadow-lg flex items-center gap-3"
                       >
-                        <div className="flex items-start gap-3">
-                          <div className="p-2.5 bg-gradient-to-br from-gray-300 to-gray-400 border-[3px] border-black rounded-lg group-hover:rotate-12 transition-transform flex-shrink-0" style={{ borderRadius: '10px 12px 11px 13px' }}>
-                            <Github size={20} strokeWidth={2.5} />
-                          </div>
-                          <div className="flex-1 min-w-0">
-                            <div className="flex items-center gap-2 mb-1">
-                              <h3 className="text-sm font-black text-black truncate leading-tight">{repo.name}</h3>
-                              {repo.isPrivate && (
-                                <span className="px-2 py-0.5 bg-red-100 border-2 border-red-300 rounded text-[8px] font-black text-red-800" style={{ borderRadius: '4px 6px 5px 7px' }}>
-                                  Private
-                                </span>
-                              )}
-                            </div>
-                            {repo.description ? (
-                              <p className="text-xs text-gray-600 line-clamp-2 font-medium">{repo.description}</p>
-                            ) : (
-                              <p className="text-xs text-gray-600 font-medium">{repo.fullName}</p>
+                        {/* Icon */}
+                        <div className="flex-shrink-0 w-9 h-9 bg-gradient-to-br from-slate-400/20 to-stone-400/20 border border-slate-400/30 rounded-lg flex items-center justify-center group-hover:scale-105 transition-transform">
+                          <Github size={16} strokeWidth={1.5} className="text-slate-300" />
+                        </div>
+
+                        {/* Content */}
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center gap-2 mb-1">
+                            <h3 className="text-sm font-semibold text-white group-hover:text-slate-200 transition-colors line-clamp-1">
+                              {repo.name}
+                            </h3>
+                            {repo.isPrivate && (
+                              <span className="px-2 py-0.5 bg-red-500/20 text-red-400 border border-red-500/30 rounded-full font-medium text-[9px]">
+                                Private
+                              </span>
                             )}
                           </div>
+                          {repo.description ? (
+                            <p className="text-[10px] text-stone-400 line-clamp-1 font-medium">{repo.description}</p>
+                          ) : (
+                            <p className="text-[10px] text-stone-500 font-medium">{repo.fullName}</p>
+                          )}
+                        </div>
+
+                        {/* Arrow - Always at Right End */}
+                        <div className="flex-shrink-0 opacity-60 group-hover:opacity-100 transition-all">
+                          <ChevronRight size={18} strokeWidth={2} className="text-slate-300" />
                         </div>
                       </div>
                       );
@@ -1197,10 +1298,20 @@ export default function LearningsPage() {
 
                     {/* Empty State */}
                     {codeFiles.length === 0 && githubRepos.length === 0 && (
-                      <div className="col-span-full text-center py-16">
-                        <div className="bg-gray-50/70 backdrop-blur-sm border-3 border-black rounded-2xl p-10 inline-block shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]">
-                          <Code size={48} strokeWidth={2.5} className="mx-auto mb-3 text-orange-500" />
-                          <p className="text-gray-600 text-base font-bold">No code files or repositories found</p>
+                      <div className="col-span-full text-center py-20">
+                        <div className="bg-gradient-to-br from-amber-50 to-stone-50 border-2 border-dashed border-stone-400 rounded-2xl p-12 inline-block shadow-sm">
+                          <div className="w-16 h-16 bg-gradient-to-br from-amber-100 to-stone-100 rounded-xl flex items-center justify-center mx-auto mb-4">
+                            <Code size={32} strokeWidth={1.5} className="text-stone-600" />
+                          </div>
+                          <p className="text-stone-800 text-lg font-semibold mb-2">No codebooks yet</p>
+                          <p className="text-stone-500 text-sm mb-6">Create your first codebook to start organizing your code</p>
+                          <button
+                            onClick={() => setShowCreateCodeFolderModal(true)}
+                            className="px-6 py-2.5 bg-stone-900 text-white rounded-xl font-medium hover:bg-stone-800 transition-all shadow-sm hover:shadow-md text-sm inline-flex items-center gap-2"
+                          >
+                            <Plus size={18} strokeWidth={2} />
+                            Create Codebook
+                          </button>
                         </div>
                       </div>
                     )}
@@ -1212,75 +1323,77 @@ export default function LearningsPage() {
               {activeTab === 'diagrams' && (
                 <>
                   {/* Create Button */}
-                  <div className="flex justify-end mb-4">
+                  <div className="flex justify-end mb-6">
                     <button
                       onClick={() => setShowCreateModal(true)}
-                      className="px-6 py-2.5 bg-purple-500 text-white border-3 border-black rounded-xl font-bold hover:bg-purple-600 transition-all shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:shadow-[5px_5px_0px_0px_rgba(0,0,0,1)] text-sm flex items-center gap-2"
-                      style={{ borderRadius: '12px 15px 13px 14px' }}
+                      className="px-6 py-2.5 bg-stone-900 text-white rounded-xl font-medium hover:bg-stone-800 transition-all shadow-sm hover:shadow-md text-sm flex items-center gap-2"
                     >
-                      <Plus size={20} strokeWidth={2.5} />
+                      <Plus size={18} strokeWidth={2} />
                       <span>New Canvas</span>
                     </button>
                   </div>
 
-                  <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3 md:gap-4">
+                  {/* Compact Strip Design - 2 Columns */}
+                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-2">
                     {diagrams.length === 0 ? (
-                      <div className="col-span-full text-center py-16">
-                        <div className="bg-gray-50/70 backdrop-blur-sm border-3 border-black rounded-2xl p-10 inline-block shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]" style={{ borderRadius: '20px 25px 22px 24px' }}>
-                          <FileImage size={48} strokeWidth={2.5} className="mx-auto mb-3 text-purple-500" />
-                          <p className="text-gray-600 text-base font-bold">No architectures yet</p>
+                      <div className="col-span-full text-center py-20">
+                        <div className="bg-gradient-to-br from-stone-900 to-stone-800 border-2 border-white/20 rounded-2xl p-12 inline-block shadow-lg">
+                          <div className="w-16 h-16 bg-gradient-to-br from-amber-400/20 to-stone-400/20 border border-amber-400/30 rounded-xl flex items-center justify-center mx-auto mb-4">
+                            <FileImage size={32} strokeWidth={1.5} className="text-amber-400" />
+                          </div>
+                          <p className="text-white text-lg font-semibold mb-2">No architectures yet</p>
+                          <p className="text-stone-300 text-sm">Create your first architecture diagram</p>
                         </div>
                       </div>
                     ) : (
                       diagrams.map((diagram, idx) => {
-                        const rotations = ['-rotate-1', 'rotate-1', '-rotate-2', 'rotate-2', '-rotate-1'];
-                        const hoverRotations = ['hover:rotate-1', 'hover:-rotate-1', 'hover:rotate-2', 'hover:-rotate-2', 'hover:rotate-1'];
-                        const shadows = [
-                          'shadow-[5px_5px_0px_0px_rgba(168,85,247,0.5)]',
-                          'shadow-[6px_5px_0px_0px_rgba(147,51,234,0.5)]',
-                          'shadow-[5px_6px_0px_0px_rgba(126,34,206,0.5)]',
-                          'shadow-[6px_6px_0px_0px_rgba(168,85,247,0.5)]',
-                          'shadow-[5px_5px_0px_0px_rgba(147,51,234,0.5)]'
-                        ];
-                        const hoverShadows = [
-                          'hover:shadow-[9px_9px_0px_0px_rgba(168,85,247,0.7)]',
-                          'hover:shadow-[10px_9px_0px_0px_rgba(147,51,234,0.7)]',
-                          'hover:shadow-[9px_10px_0px_0px_rgba(126,34,206,0.7)]',
-                          'hover:shadow-[10px_10px_0px_0px_rgba(168,85,247,0.7)]',
-                          'hover:shadow-[9px_9px_0px_0px_rgba(147,51,234,0.7)]'
-                        ];
-                        const bgGradients = [
-                          'bg-gradient-to-br from-purple-50 to-white',
-                          'bg-gradient-to-br from-violet-50 to-white',
-                          'bg-gradient-to-br from-purple-100 to-purple-50',
-                          'bg-gradient-to-br from-violet-100 to-violet-50',
-                          'bg-gradient-to-br from-purple-50 to-white'
-                        ];
-                        
                         return (
                         <div
                           key={diagram.canvasId}
-                          className={`${bgGradients[idx % 5]} backdrop-blur-sm border-[3px] border-black p-4 transition-all duration-300 group cursor-pointer hover:-translate-y-2 ${rotations[idx % 5]} ${hoverRotations[idx % 5]} ${shadows[idx % 5]} ${hoverShadows[idx % 5]} relative`}
-                          style={{ 
-                            borderRadius: idx % 2 === 0 ? '16px 20px 18px 22px' : '20px 16px 22px 18px'
-                          }}
+                          onClick={() => handleCanvasClick(diagram)}
+                          className="group relative bg-gradient-to-br from-stone-900 to-stone-800 hover:from-stone-800 hover:to-stone-700 border-2 border-white/20 hover:border-white/40 rounded-lg p-3 transition-all duration-300 cursor-pointer hover:shadow-lg flex items-center gap-3"
                         >
+                          {/* Icon */}
+                          <div className="flex-shrink-0 w-9 h-9 bg-gradient-to-br from-amber-400/20 to-stone-400/20 border border-amber-400/30 rounded-lg flex items-center justify-center group-hover:scale-105 transition-transform">
+                            <FileImage size={16} strokeWidth={1.5} className="text-amber-400" />
+                          </div>
+
+                          {/* Content */}
+                          <div className="flex-1 min-w-0">
+                            <h3 className="text-sm font-semibold text-white group-hover:text-amber-100 transition-colors line-clamp-1 mb-1">
+                              {diagram.name}
+                            </h3>
+                            <div className="flex items-center gap-2 text-[10px]">
+                              <span className="flex items-center gap-1 text-stone-400">
+                                <Calendar size={10} strokeWidth={2} />
+                                <span className="font-medium">
+                                  {new Date(diagram.updatedAt).toLocaleDateString('en-US', {
+                                    month: 'short',
+                                    day: 'numeric',
+                                    year: 'numeric'
+                                  })}
+                                </span>
+                              </span>
+                              {diagram.isPublic && (
+                                <span className="px-2 py-0.5 bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 rounded-full font-medium text-[9px]">
+                                  Public
+                                </span>
+                              )}
+                            </div>
+                          </div>
+
+                          {/* Delete Button */}
                           <button
                             onClick={(e) => handleDeleteDiagram(diagram.canvasId, e)}
-                            className="absolute top-2 right-2 p-1.5 bg-red-500 text-white border-2 border-black rounded-lg hover:bg-red-600 transition-all opacity-0 group-hover:opacity-100 z-10"
-                            style={{ borderRadius: '6px 8px 7px 9px' }}
+                            className="flex-shrink-0 p-1.5 bg-stone-800/80 border border-red-400/40 text-red-400 rounded-md hover:bg-red-500 hover:text-white hover:border-red-500 transition-all opacity-0 group-hover:opacity-100 z-10"
                             title="Delete architecture"
                           >
-                            <Trash2 size={14} strokeWidth={2.5} />
+                            <Trash2 size={12} strokeWidth={2} />
                           </button>
-                          <div onClick={() => handleCanvasClick(diagram)} className="flex flex-col items-center text-center gap-2">
-                            <div className="p-2.5 bg-gradient-to-br from-purple-300 to-purple-400 border-[3px] border-black rounded-lg group-hover:rotate-12 transition-transform" style={{ borderRadius: '10px 12px 11px 13px' }}>
-                              <FileImage size={24} strokeWidth={2.5} />
-                            </div>
-                            <h3 className="text-sm font-black text-black line-clamp-2 leading-tight">{diagram.name}</h3>
-                            <p className="text-[10px] text-gray-600 font-black">
-                              {new Date(diagram.updatedAt).toLocaleDateString()}
-                            </p>
+
+                          {/* Arrow - Always at Right End */}
+                          <div className="flex-shrink-0 opacity-60 group-hover:opacity-100 transition-all">
+                            <ChevronRight size={18} strokeWidth={2} className="text-amber-400" />
                           </div>
                         </div>
                         );
@@ -1552,6 +1665,94 @@ export default function LearningsPage() {
                 style={{ borderRadius: '10px 12px 11px 13px' }}
               >
                 Delete
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Create Code Folder Modal */}
+      {showCreateCodeFolderModal && (
+        <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-[100] p-4">
+          <div className="bg-white border border-stone-200 rounded-2xl p-8 max-w-lg w-full shadow-2xl">
+            <h2 className="text-2xl font-semibold text-stone-900 mb-6">Create New Codebook</h2>
+            
+            <div className="space-y-5">
+              <div>
+                <label className="block text-sm font-medium text-stone-700 mb-2">
+                  Codebook Name <span className="text-red-500">*</span>
+                </label>
+                <input
+                  type="text"
+                  value={codeFolderName}
+                  onChange={(e) => setCodeFolderName(e.target.value)}
+                  className="w-full px-4 py-2.5 border border-stone-300 rounded-xl font-normal text-stone-900 focus:outline-none focus:ring-2 focus:ring-stone-400 focus:border-transparent transition-all"
+                  placeholder="my-awesome-project"
+                  autoFocus
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-stone-700 mb-2">Description</label>
+                <textarea
+                  value={codeFolderDescription}
+                  onChange={(e) => setCodeFolderDescription(e.target.value)}
+                  className="w-full px-4 py-2.5 border border-stone-300 rounded-xl font-normal text-stone-900 focus:outline-none focus:ring-2 focus:ring-stone-400 focus:border-transparent resize-none transition-all"
+                  rows={3}
+                  placeholder="Brief description of your project..."
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-stone-700 mb-2">
+                  Primary Language <span className="text-red-500">*</span>
+                </label>
+                <select
+                  value={codeFolderLanguage}
+                  onChange={(e) => setCodeFolderLanguage(e.target.value)}
+                  className="w-full px-4 py-2.5 border border-stone-300 rounded-xl font-medium text-stone-900 focus:outline-none focus:ring-2 focus:ring-stone-400 focus:border-transparent bg-white transition-all cursor-pointer"
+                >
+                  <option value="javascript">JavaScript</option>
+                  <option value="typescript">TypeScript</option>
+                  <option value="python">Python</option>
+                  <option value="java">Java</option>
+                  <option value="cpp">C++</option>
+                  <option value="c">C</option>
+                  <option value="rust">Rust</option>
+                  <option value="go">Go</option>
+                </select>
+              </div>
+
+              <div className="bg-gradient-to-br from-amber-50 to-stone-50 border border-stone-200 rounded-xl p-4">
+                <p className="text-xs text-stone-600 font-medium">
+                  <span className="font-semibold text-stone-700">Created:</span> {new Date().toLocaleString('en-US', {
+                    month: 'short',
+                    day: 'numeric',
+                    year: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit'
+                  })}
+                </p>
+              </div>
+            </div>
+
+            <div className="flex gap-3 mt-8">
+              <button
+                onClick={() => {
+                  setShowCreateCodeFolderModal(false);
+                  setCodeFolderName('');
+                  setCodeFolderDescription('');
+                  setCodeFolderLanguage('javascript');
+                }}
+                className="flex-1 px-5 py-2.5 bg-white border border-stone-300 text-stone-700 rounded-xl font-medium hover:bg-stone-50 transition-all"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleCreateCodeFolder}
+                className="flex-1 px-5 py-2.5 bg-stone-900 text-white rounded-xl font-medium hover:bg-stone-800 transition-all shadow-sm hover:shadow-md"
+              >
+                Create & Open
               </button>
             </div>
           </div>

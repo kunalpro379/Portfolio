@@ -1,0 +1,71 @@
+{
+  "id": "5af8c672-7df5-4912-b4a5-4e6e1bb496c1",
+  "title": "contractor_water_department_prajwal_atmaram_bhide.pdf",
+  "file_name": "contractor_water_department_prajwal_atmaram_bhide.pdf",
+  "file_type": "pdf",
+  "description": "{\"The contractor, Mr. Prajwal Atmaram Bhide, submits an application for water infrastructure development work.\",\"The project involves development, repair, and enhancement of water supply infrastructure.\",\"The contractor assures adherence to departmental guidelines, safety standards, and quality requirements.\"}",
+  "status": "completed",
+  "knowledge": {
+    "summary": [
+      "The contractor, Mr. Prajwal Atmaram Bhide, submits an application for water infrastructure development work.",
+      "The project involves development, repair, and enhancement of water supply infrastructure.",
+      "The contractor assures adherence to departmental guidelines, safety standards, and quality requirements."
+    ],
+    "policies": [
+      "Strict adherence to safety protocols",
+      "Quality inspections",
+      "Pipeline testing and quality verification"
+    ],
+    "resources": [
+      {
+        "name": "Water Department rules and regulations",
+        "type": "guidelines"
+      }
+    ],
+    "department": "Water Supply and Sanitation Department",
+    "key_topics": [
+      "Contractor Application",
+      "Technical Proposal",
+      "Water Infrastructure Development",
+      "Project Scope",
+      "Execution Strategy",
+      "Equipment and Machinery",
+      "Manpower Deployment",
+      "Project Timeline",
+      "Safety and Quality Assurance",
+      "Declaration"
+    ],
+    "source_url": "https://igrs.blob.core.windows.net/igrs/knowledgebase/1772220981958_contractor_water_department_prajwal_atmaram_bhide.pdf",
+    "source_type": "pdf",
+    "contact_info": [
+      {
+        "name": "Prajwal Atmaram Bhide",
+        "email": null,
+        "phone": null,
+        "address": "Maharashtra, India"
+      }
+    ],
+    "extracted_at": "2026-02-27T19:38:08.460774Z",
+    "extracted_urls": [],
+    "useful_for_grievances": [
+      "Water supply infrastructure development",
+      "Pipeline installation",
+      "Infrastructure construction",
+      "Pump installation and maintenance"
+    ]
+  },
+  "processed_files": {
+    "text_url": "https://igrs.blob.core.windows.net/igrs/knowledgebase/processed/5af8c672-7df5-4912-b4a5-4e6e1bb496c1/extracted_text.txt",
+    "result_url": "https://igrs.blob.core.windows.net/igrs/knowledgebase/processed/5af8c672-7df5-4912-b4a5-4e6e1bb496c1/result.json",
+    "knowledge_url": "https://igrs.blob.core.windows.net/igrs/knowledgebase/processed/5af8c672-7df5-4912-b4a5-4e6e1bb496c1/knowledge.json",
+    "embeddings_url": "https://igrs.blob.core.windows.net/igrs/knowledgebase/processed/5af8c672-7df5-4912-b4a5-4e6e1bb496c1/embeddings.json"
+  },
+  "stats": {
+    "num_pages": 2,
+    "num_chunks": 2,
+    "text_length": 2428,
+    "num_urls_found": 0
+  },
+  "created_at": "2026-02-27T19:36:23.568Z",
+  "updated_at": "2026-02-27T19:38:10.991Z"
+}

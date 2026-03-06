@@ -52,10 +52,17 @@ export async function fetchGuideById(guideId: string): Promise<Guide> {
 }
 
 export async function fetchGuideBySlug(guideSlug: string, titleSlug: string): Promise<{ guide: Guide; title: Title }> {
-  const response = await fetch(`${API_BASE_URL}/api/guide-notes/view/${guideSlug}/${titleSlug}`);
-  if (!response.ok) throw new Error('Failed to fetch guide');
-  const data = await response.json();
-  return { guide: data.guide, title: data.title };
+  try {
+    const response = await fetch(`${API_BASE_URL}/api/guide-notes/view/${guideSlug}/${titleSlug}`);
+    if (!response.ok) {
+      throw new Error('Guide not found');
+    }
+    const data = await response.json();
+    return { guide: data.guide, title: data.title };
+  } catch (error) {
+    // Silently fail - no console logging
+    throw new Error('Guide not found');
+  }
 }
 
 export async function createGuide(data: { name: string; topic: string; description?: string }): Promise<Guide> {

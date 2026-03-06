@@ -1,0 +1,92 @@
+{
+  "id": "041e54f3-e8a8-4e99-9214-ebdf40159486",
+  "title": "20250820645273833 (1).pdf",
+  "file_name": "20250820645273833 (1).pdf",
+  "file_type": "pdf",
+  "description": "The Water Supply and Sanitation Department is a government department responsible for providing clean and sufficient drinking water to the rural population, coordinating and monitoring sanitation programs, and implementing urban and rural water supply and sewage disposal programs.",
+  "status": "completed",
+  "knowledge": {
+    "summary": "The Water Supply and Sanitation Department is a government department responsible for providing clean and sufficient drinking water to the rural population, coordinating and monitoring sanitation programs, and implementing urban and rural water supply and sewage disposal programs.",
+    "policies": [
+      "Maharashtra Groundwater (Development and Management) Act, 2009",
+      "Maharashtra Water Supply and Sewerage Board Act, 1976"
+    ],
+    "resources": [
+      {
+        "name": "Atal Bhujal Yojana",
+        "description": "A scheme to address the groundwater crisis in the state"
+      },
+      {
+        "name": "Jal Jeevan Mission",
+        "description": "A mission to provide clean drinking water to all households in the state"
+      },
+      {
+        "name": "Swachh Bharat Mission",
+        "description": "A mission to improve sanitation and hygiene in rural areas"
+      },
+      {
+        "name": "Maharashtra Jeevan Pradhikaran",
+        "description": "A board responsible for providing urban and rural water supply and sewerage services"
+      },
+      {
+        "name": "Groundwater Surveys and Development Agency",
+        "description": "An agency responsible for conducting groundwater surveys and development"
+      },
+      {
+        "name": "State Water and Sanitation Mission",
+        "description": "A mission responsible for coordinating and monitoring water supply and sanitation programs"
+      }
+    ],
+    "department": "Water Supply and Sanitation Department",
+    "key_topics": [
+      "Water Supply",
+      "Sanitation",
+      "Groundwater Survey and Development",
+      "Jal Jeevan Mission",
+      "Swachh Bharat Mission",
+      "Maharashtra Jeevan Pradhikaran",
+      "Groundwater Surveys and Development Agency",
+      "State Water and Sanitation Mission",
+      "Rural Water Supply and Sanitation",
+      "Urban Water Supply and Sewerage"
+    ],
+    "source_url": "https://igrs.blob.core.windows.net/igrs/knowledgebase/1772221361178_20250820645273833%20(1).pdf",
+    "source_type": "pdf",
+    "contact_info": [
+      {
+        "name": "Water Supply and Sanitation Department",
+        "email": "",
+        "phone": "",
+        "address": "Gokuldas Tejpal Hospital Complex, 7th & 8th Floor, Near Crawford Market, Lokmanya Tilak Marg, Mumbai - 400 001"
+      },
+      {
+        "name": "State Water and Sanitation Mission",
+        "email": "",
+        "phone": "",
+        "address": "1st Floor, CIDCO Bhavan, CBD Belapur, Navi Mumbai - 400 614"
+      }
+    ],
+    "extracted_at": "2026-02-27T19:42:50.687083Z",
+    "extracted_urls": [],
+    "useful_for_grievances": [
+      "Water supply and sanitation-related grievances",
+      "Groundwater-related grievances",
+      "Jal Jeevan Mission-related grievances",
+      "Swachh Bharat Mission-related grievances"
+    ]
+  },
+  "processed_files": {
+    "text_url": "https://igrs.blob.core.windows.net/igrs/knowledgebase/processed/041e54f3-e8a8-4e99-9214-ebdf40159486/extracted_text.txt",
+    "result_url": "https://igrs.blob.core.windows.net/igrs/knowledgebase/processed/041e54f3-e8a8-4e99-9214-ebdf40159486/result.json",
+    "knowledge_url": "https://igrs.blob.core.windows.net/igrs/knowledgebase/processed/041e54f3-e8a8-4e99-9214-ebdf40159486/knowledge.json",
+    "embeddings_url": "https://igrs.blob.core.windows.net/igrs/knowledgebase/processed/041e54f3-e8a8-4e99-9214-ebdf40159486/embeddings.json"
+  },
+  "stats": {
+    "num_pages": 15,
+    "num_chunks": 15,
+    "text_length": 31911,
+    "num_urls_found": 0
+  },
+  "created_at": "2026-02-27T19:42:42.817Z",
+  "updated_at": "2026-02-27T19:42:53.152Z"
+}

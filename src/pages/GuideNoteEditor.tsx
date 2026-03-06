@@ -117,12 +117,12 @@ export default function GuideNoteEditorPage() {
         try {
           setCanvasData(JSON.parse(firstDiagram.content));
         } catch (e) {
-          console.error('Error parsing diagram data:', e);
+          // Silently handle diagram parsing errors
         }
       }
     } catch (err) {
-      console.error('Error loading guide by slug:', err);
-      alert('Failed to load guide');
+      // Silently redirect to guides page if not found
+      navigate('/learnings?tab=guide');
     } finally {
       setLoading(false);
     }
@@ -157,7 +157,7 @@ export default function GuideNoteEditorPage() {
         }
       }
     } catch (err) {
-      console.error('Error loading guide:', err);
+      // Silently handle error and show alert
       alert('Failed to load guide');
     } finally {
       setLoading(false);
@@ -180,7 +180,7 @@ export default function GuideNoteEditorPage() {
         await loadGuideAndTitle();
       }
     } catch (err) {
-      console.error('Error saving document:', err);
+      // Silently handle error
       alert('Failed to save document');
     } finally {
       setSaving(false);
@@ -208,7 +208,7 @@ export default function GuideNoteEditorPage() {
         await loadGuideAndTitle();
       }
     } catch (error) {
-      console.error('Upload error:', error);
+      // Silently handle error
       alert('Failed to upload file');
     } finally {
       setUploading(false);
@@ -226,7 +226,7 @@ export default function GuideNoteEditorPage() {
         await loadGuideAndTitle();
       }
     } catch (error) {
-      console.error('Delete error:', error);
+      // Silently handle error
       alert('Failed to delete document');
     }
   };
@@ -245,7 +245,7 @@ export default function GuideNoteEditorPage() {
         await loadGuideAndTitle();
       }
     } catch (error) {
-      console.error('Error creating markdown:', error);
+      // Silently handle error
       alert('Failed to create markdown document');
     }
   };
@@ -265,7 +265,7 @@ export default function GuideNoteEditorPage() {
       }
       setActiveView('diagram');
     } catch (error) {
-      console.error('Error creating diagram:', error);
+      // Silently handle error
       alert('Failed to create diagram');
     }
   };
@@ -282,7 +282,7 @@ export default function GuideNoteEditorPage() {
       });
       setCanvasData(data);
     } catch (error) {
-      console.error('Error saving diagram:', error);
+      // Silently handle error
       throw error;
     }
   };
@@ -425,7 +425,7 @@ export default function GuideNoteEditorPage() {
                           try {
                             setCanvasData(JSON.parse(doc.content));
                           } catch (e) {
-                            console.error('Error parsing diagram:', e);
+                            // Silently handle diagram parsing errors
                           }
                         }
                         setShowDiagramCanvas(true);
@@ -751,7 +751,7 @@ export default function GuideNoteEditorPage() {
                         try {
                           setCanvasData(JSON.parse(doc.content));
                         } catch (e) {
-                          console.error('Error parsing diagram:', e);
+                          // Silently handle diagram parsing errors
                         }
                       }
                       setShowDiagramCanvas(true);

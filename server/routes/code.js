@@ -435,4 +435,219 @@ router.delete('/folders/:folderId', async (req, res) => {
   }
 });
 
+// Create folder with language support
+router.post('/folders', async (req, res) => {
+  try {
+    const { name, description, language, parentPath = '', createdAt } = req.body;
+    
+    if (!name) {
+      return res.status(400).json({ error: 'Folder name is required' });
+    }
+    
+    const folderId = generateId();
+    const path = parentPath ? `${parentPath}/${name}` : name;
+    
+    const folderData = {
+      folderId,
+      name,
+      path,
+      parentPath,
+      description: description || '',
+      language: language || 'javascript',
+      createdAt: createdAt || new Date().toISOString()
+    };
+    
+    const client = new MongoClient(MONGODB_URI);
+    await client.connect();
+    
+    const db = client.db(DATABASE_NAME);
+    const collection = db.collection('codeFolders');
+    
+    await collection.insertOne(folderData);
+    
+    // Create a default main file based on language
+    const defaultContent = getDefaultTemplate(language || 'javascript');
+    const defaultFilename = getDefaultFilename(language || 'javascript');
+    
+    // Create default file
+    const fileId = generateId();
+    const detectedLanguage = language || getLanguageFromExtension(defaultFilename);
+    
+    // Store content in Azure Blob Storage
+    let blobUrl = '';
+    if (containerClient) {
+      try {
+        const blobName = `${path}/${defaultFilename}`;
+        const blockBlobClient = containerClient.getBlockBlobClient(blobName);
+        
+        await blockBlobClient.upload(defaultContent, Buffer.byteLength(defaultContent, 'utf8'), {
+          blobHTTPHeaders: {
+            blobContentType: 'text/plain'
+          }
+        });
+        
+        blobUrl = blockBlobClient.url;
+      } catch (blobError) {
+        console.error('Error uploading to blob storage:', blobError);
+      }
+    }
+    
+    const fileData = {
+      fileId,
+      filename: defaultFilename,
+      folderPath: path,
+      content: defaultContent,
+      language: detectedLanguage,
+      size: Buffer.byteLength(defaultContent, 'utf8'),
+      blobUrl,
+      output: '',
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString()
+    };
+    
+    const filesCollection = db.collection('codeFiles');
+    await filesCollection.insertOne(fileData);
+    
+    await client.close();
+    
+    res.json({ success: true, folder: folderData, file: fileData });
+  } catch (error) {
+    console.error('Error creating code folder:', error);
+    res.status(500).json({ error: 'Failed to create folder' });
+  }
+});
+
+// Update file output
+router.put('/files/:fileId/output', async (req, res) => {
+  try {
+    const { fileId } = req.params;
+    const { output } = req.body;
+    
+    if (output === undefined) {
+      return res.status(400).json({ error: 'Output is required' });
+    }
+    
+    const client = new MongoClient(MONGODB_URI);
+    await client.connect();
+    
+    const db = client.db(DATABASE_NAME);
+    const collection = db.collection('codeFiles');
+    
+    const updateData = {
+      output,
+      lastRunAt: new Date().toISOString()
+    };
+    
+    await collection.updateOne({ fileId }, { $set: updateData });
+    
+    await client.close();
+    
+    res.json({ success: true });
+  } catch (error) {
+    console.error('Error updating file output:', error);
+    res.status(500).json({ error: 'Failed to update output' });
+  }
+});
+
+// Get file output
+router.get('/files/:fileId/output', async (req, res) => {
+  try {
+    const { fileId } = req.params;
+    
+    const client = new MongoClient(MONGODB_URI);
+    await client.connect();
+    
+    const db = client.db(DATABASE_NAME);
+    const collection = db.collection('codeFiles');
+    
+    const file = await collection.findOne({ fileId });
+    
+    await client.close();
+    
+    if (!file) {
+      return res.status(404).json({ error: 'File not found' });
+    }
+    
+    res.json({ output: file.output || '', lastRunAt: file.lastRunAt || null });
+  } catch (error) {
+    console.error('Error fetching file output:', error);
+    res.status(500).json({ error: 'Failed to fetch output' });
+  }
+});
+
+// Helper function to get default template based on language
+function getDefaultTemplate(language) {
+  const templates = {
+    java: `public class Main {
+    public static void main(String[] args) {
+        System.out.println("Hello, World!");
+        // Write your code here in the main class only
+    }
+}`,
+    python: `# Write your code in the main function only
+def main():
+    print("Hello, World!")
+
+if __name__ == "__main__":
+    main()`,
+    javascript: `// Write your code in the main function only
+function main() {
+    console.log("Hello, World!");
+}
+
+main();`,
+    typescript: `// Write your code in the main function only
+function main(): void {
+    console.log("Hello, World!");
+}
+
+main();`,
+    cpp: `#include <iostream>
+using namespace std;
+
+// Write your code in the main function only
+int main() {
+    cout << "Hello, World!" << endl;
+    return 0;
+}`,
+    c: `#include <stdio.h>
+
+// Write your code in the main function only
+int main() {
+    printf("Hello, World!\\n");
+    return 0;
+}`,
+    rust: `// Write your code in the main function only
+fn main() {
+    println!("Hello, World!");
+}`,
+    go: `package main
+
+import "fmt"
+
+// Write your code in the main function only
+func main() {
+    fmt.Println("Hello, World!")
+}`
+  };
+  
+  return templates[language] || templates.javascript;
+}
+
+// Helper function to get default filename based on language
+function getDefaultFilename(language) {
+  const filenames = {
+    java: 'Main.java',
+    python: 'main.py',
+    javascript: 'main.js',
+    typescript: 'main.ts',
+    cpp: 'main.cpp',
+    c: 'main.c',
+    rust: 'main.rs',
+    go: 'main.go'
+  };
+  
+  return filenames[language] || 'main.js';
+}
+
 export default router;
