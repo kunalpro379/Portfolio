@@ -584,51 +584,50 @@ function getDefaultTemplate(language) {
         // Write your code here in the main class only
     }
 }`,
-    python: `# Write your code in the main function only
-def main():
-    print("Hello, World!")
+    python: `# Write your code here
+print("Hello, World!")
 
-if __name__ == "__main__":
-    main()`,
-    javascript: `// Write your code in the main function only
-function main() {
-    console.log("Hello, World!");
-}
+# Example: Calculate sum
+a = 5
+b = 3
+print(f"Sum = {a + b}")`,
+    javascript: `// Write your code here
+console.log("Hello, World!");
 
-main();`,
-    typescript: `// Write your code in the main function only
-function main(): void {
-    console.log("Hello, World!");
-}
-
-main();`,
+// Example: Calculate sum
+const a = 5;
+const b = 3;
+console.log(\`Sum: \${a + b}\`);`,
     cpp: `#include <iostream>
 using namespace std;
 
-// Write your code in the main function only
 int main() {
-    cout << "Hello, World!" << endl;
+    cout << "Hello World!" << endl;
+    
+    // Example: Calculate sum
+    int a = 5, b = 3;
+    cout << "Sum = " << (a + b) << endl;
+    
     return 0;
 }`,
     c: `#include <stdio.h>
 
-// Write your code in the main function only
 int main() {
-    printf("Hello, World!\\n");
+    printf("Hello World!\\n");
+    
+    // Example: Calculate sum
+    int a = 5, b = 3;
+    printf("Sum = %d\\n", a + b);
+    
     return 0;
 }`,
-    rust: `// Write your code in the main function only
-fn main() {
-    println!("Hello, World!");
-}`,
-    go: `package main
+    sql: `-- Write your SQL queries here
+SELECT NOW();
 
-import "fmt"
-
-// Write your code in the main function only
-func main() {
-    fmt.Println("Hello, World!")
-}`
+-- Example: Create and query a table
+-- CREATE TABLE users (id INT, name VARCHAR(50));
+-- INSERT INTO users VALUES (1, 'John');
+-- SELECT * FROM users;`
   };
   
   return templates[language] || templates.javascript;
@@ -640,11 +639,9 @@ function getDefaultFilename(language) {
     java: 'Main.java',
     python: 'main.py',
     javascript: 'main.js',
-    typescript: 'main.ts',
     cpp: 'main.cpp',
     c: 'main.c',
-    rust: 'main.rs',
-    go: 'main.go'
+    sql: 'query.sql'
   };
   
   return filenames[language] || 'main.js';

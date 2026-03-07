@@ -49,6 +49,8 @@ interface CodeFolder {
   path: string;
   parentPath: string;
   createdAt: string;
+  language?: string;
+  description?: string;
 }
 
 interface Documentation {
@@ -1245,6 +1247,38 @@ export default function LearningsPage() {
                             )}
                           </div>
                         </div>
+
+                        {/* Delete Button */}
+                        <button
+                          onClick={async (e) => {
+                            e.stopPropagation();
+                            if (!confirm(`Delete codebook "${folder.name}"? This will delete all files inside.`)) return;
+                            
+                            try {
+                              const response = await fetch(`${API_BASE_URL}${API_ENDPOINTS.code}/folders/${folder.folderId}`, {
+                                method: 'DELETE',
+                              });
+                              
+                              if (!response.ok) throw new Error('Failed to delete codebook');
+                              
+                              // Refresh code folders list
+                              const codeRes = await fetch(`${API_BASE_URL}${API_ENDPOINTS.code}/folders?parentPath=`);
+                              if (codeRes.ok) {
+                                const codeData = await codeRes.json();
+                                setCodeFiles(codeData.folders || []);
+                              }
+                              
+                              alert('Codebook deleted successfully');
+                            } catch (error) {
+                              console.error('Error deleting codebook:', error);
+                              alert('Failed to delete codebook');
+                            }
+                          }}
+                          className="flex-shrink-0 p-1.5 bg-stone-800/80 border border-red-400/40 text-red-400 rounded-md hover:bg-red-500 hover:text-white hover:border-red-500 transition-all opacity-0 group-hover:opacity-100 z-10"
+                          title="Delete codebook"
+                        >
+                          <Trash2 size={12} strokeWidth={2} />
+                        </button>
 
                         {/* Arrow - Always at Right End */}
                         <div className="flex-shrink-0 opacity-60 group-hover:opacity-100 transition-all">

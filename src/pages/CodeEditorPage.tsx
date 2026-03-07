@@ -32,12 +32,10 @@ interface CodeFolder {
 const LANGUAGES = [
   { value: 'python', label: 'Python' },
   { value: 'javascript', label: 'JavaScript' },
-  { value: 'typescript', label: 'TypeScript' },
   { value: 'java', label: 'Java' },
   { value: 'cpp', label: 'C++' },
   { value: 'c', label: 'C' },
-  { value: 'rust', label: 'Rust' },
-  { value: 'go', label: 'Go' },
+  { value: 'sql', label: 'SQL' },
 ];
 
 export default function CodeEditorPage() {
@@ -311,19 +309,38 @@ export default function CodeEditorPage() {
       
       setOutput('Running code...\n');
 
-      // Get the language-specific endpoint
-      const languageEndpoints: Record<string, string> = {
-        java: 'https://portfolio-coding379-c3egfsfuagefb3bv.centralindia-01.azurewebsites.net/api/RunJavaCode',
-        python: 'https://portfolio-coding379-c3egfsfuagefb3bv.centralindia-01.azurewebsites.net/api/RunPythonCode',
-        javascript: 'https://portfolio-coding379-c3egfsfuagefb3bv.centralindia-01.azurewebsites.net/api/RunJavaScriptCode',
-        cpp: 'https://portfolio-coding379-c3egfsfuagefb3bv.centralindia-01.azurewebsites.net/api/RunCppCode',
-        c: 'https://portfolio-coding379-c3egfsfuagefb3bv.centralindia-01.azurewebsites.net/api/RunCCode',
+      // Get the language-specific endpoint and request format
+      const languageEndpoints: Record<string, { url: string; bodyKey: string }> = {
+        java: { 
+          url: 'https://portfolio-coding379-c3egfsfuagefb3bv.centralindia-01.azurewebsites.net/api/RunJavaCode',
+          bodyKey: 'blob_url'
+        },
+        python: { 
+          url: 'https://pyenv.azurewebsites.net/api/runPythonFromBlob',
+          bodyKey: 'url'
+        },
+        javascript: { 
+          url: 'https://nodejsenv.azurewebsites.net/api/runJsFromBlob',
+          bodyKey: 'url'
+        },
+        cpp: { 
+          url: 'https://cpp-env.ambitioussky-ca288612.southindia.azurecontainerapps.io/api/run',
+          bodyKey: 'blob_url'
+        },
+        c: { 
+          url: 'https://cpp-env.ambitioussky-ca288612.southindia.azurecontainerapps.io/api/run',
+          bodyKey: 'blob_url'
+        },
+        sql: { 
+          url: 'https://sqldp379.azurewebsites.net/api/httpTriggerSQL',
+          bodyKey: 'query'
+        },
       };
 
       const language = selectedFolder.language || 'java';
-      const endpoint = languageEndpoints[language];
+      const endpointConfig = languageEndpoints[language];
 
-      if (!endpoint) {
+      if (!endpointConfig) {
         setOutput(`Error: Language ${language} is not supported for execution`);
         return;
       }
@@ -338,13 +355,22 @@ export default function CodeEditorPage() {
       const blobUrl = fileMetadata.file.blobUrl;
 
       console.log('Running code with blob URL:', blobUrl);
-      console.log('Current file content:', fileContent);
+      console.log('Language:', language);
+      console.log('Endpoint:', endpointConfig.url);
+
+      // For SQL, send the code content directly as query
+      let requestBody: any;
+      if (language === 'sql') {
+        requestBody = { [endpointConfig.bodyKey]: fileContent };
+      } else {
+        requestBody = { [endpointConfig.bodyKey]: blobUrl };
+      }
 
       // Call the Azure Function
-      const response = await fetch(endpoint, {
+      const response = await fetch(endpointConfig.url, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ blob_url: blobUrl }),
+        body: JSON.stringify(requestBody),
       });
 
       if (!response.ok) {
@@ -352,7 +378,19 @@ export default function CodeEditorPage() {
       }
 
       const result = await response.json();
-      const outputText = result.output || result.error || 'No output';
+      
+      // Handle different response formats
+      let outputText = '';
+      if (language === 'sql') {
+        // SQL returns { rows: [...], rowCount: number }
+        outputText = JSON.stringify(result, null, 2);
+      } else if (language === 'cpp' || language === 'c') {
+        // C/C++ returns { success: boolean, output: string }
+        outputText = result.output || result.error || 'No output';
+      } else {
+        // Python, JavaScript, Java return plain text or { output: string }
+        outputText = result.output || result.error || result || 'No output';
+      }
       
       setOutput(outputText);
 
@@ -418,8 +456,8 @@ export default function CodeEditorPage() {
 
   const getFileExtension = (language: string) => {
     const extMap: Record<string, string> = {
-      python: 'py', javascript: 'js', typescript: 'ts', java: 'java',
-      cpp: 'cpp', c: 'c', rust: 'rs', go: 'go',
+      python: 'py', javascript: 'js', java: 'java',
+      cpp: 'cpp', c: 'c', sql: 'sql',
     };
     return extMap[language] || 'txt';
   };
@@ -428,12 +466,10 @@ export default function CodeEditorPage() {
     const langMap: Record<string, string> = {
       python: 'python',
       javascript: 'javascript',
-      typescript: 'typescript',
       java: 'java',
       cpp: 'cpp',
       c: 'c',
-      rust: 'rust',
-      go: 'go',
+      sql: 'sql',
     };
     return langMap[language.toLowerCase()] || 'plaintext';
   };
