@@ -9,6 +9,7 @@ import TodoPerformanceStats from './TodoPerformanceStats';
 import {
   fetchGuides,
   deleteGuide,
+  createGuide,
   type Guide
 } from '@/services/guideNotesApi';
 import {
@@ -54,6 +55,9 @@ export default function NotesTabContent({ notes, activeSubTab: propActiveSubTab 
   // Guide Notes State
   const [guides, setGuides] = useState<Guide[]>([]);
   const [guidesLoading, setGuidesLoading] = useState(false);
+  const [showCreateGuideModal, setShowCreateGuideModal] = useState(false);
+  const [guideFormData, setGuideFormData] = useState({ name: '', topic: '', description: '' });
+  const [creatingGuide, setCreatingGuide] = useState(false);
 
   // Todo State
   const [todos, setTodos] = useState<Todo[]>([]);
@@ -109,7 +113,37 @@ export default function NotesTabContent({ notes, activeSubTab: propActiveSubTab 
   };
 
   const handleCreateGuide = () => {
-    navigate('/learnings/guide/create');
+    setShowCreateGuideModal(true);
+  };
+
+  const handleGuideFormSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    if (!guideFormData.name.trim() || !guideFormData.topic.trim()) {
+      alert('Please fill in all required fields');
+      return;
+    }
+
+    try {
+      setCreatingGuide(true);
+      const newGuide = await createGuide({
+        name: guideFormData.name,
+        topic: guideFormData.topic,
+        description: guideFormData.description
+      });
+      
+      setShowCreateGuideModal(false);
+      setGuideFormData({ name: '', topic: '', description: '' });
+      await loadGuides();
+      
+      // Navigate to the newly created guide
+      navigate(`/learnings/guide/${newGuide.guideId}`);
+    } catch (err) {
+      console.error('Error creating guide:', err);
+      alert('Failed to create guide. Please try again.');
+    } finally {
+      setCreatingGuide(false);
+    }
   };
 
   const handleViewGuide = (guide: Guide) => {
@@ -540,6 +574,90 @@ export default function NotesTabContent({ notes, activeSubTab: propActiveSubTab 
         } : undefined}
         mode={todoFormMode}
       />
+
+      {/* Create Guide Modal */}
+      {showCreateGuideModal && (
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-[500] p-4" onClick={() => setShowCreateGuideModal(false)}>
+          <div className="bg-white border-4 border-black rounded-2xl p-8 max-w-2xl w-full shadow-2xl" onClick={(e) => e.stopPropagation()}>
+            <h2 className="text-3xl font-black text-black mb-6">Create New Guide</h2>
+            
+            <form onSubmit={handleGuideFormSubmit} className="space-y-6">
+              <div>
+                <label className="block text-sm font-bold text-black mb-2">
+                  Guide Name <span className="text-red-500">*</span>
+                </label>
+                <input
+                  type="text"
+                  value={guideFormData.name}
+                  onChange={(e) => setGuideFormData({ ...guideFormData, name: e.target.value })}
+                  className="w-full px-4 py-3 border-3 border-black rounded-xl font-medium text-black focus:outline-none focus:ring-4 focus:ring-yellow-200 transition-all"
+                  placeholder="e.g., React Best Practices"
+                  required
+                  autoFocus
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-bold text-black mb-2">
+                  Topic <span className="text-red-500">*</span>
+                </label>
+                <input
+                  type="text"
+                  value={guideFormData.topic}
+                  onChange={(e) => setGuideFormData({ ...guideFormData, topic: e.target.value })}
+                  className="w-full px-4 py-3 border-3 border-black rounded-xl font-medium text-black focus:outline-none focus:ring-4 focus:ring-yellow-200 transition-all"
+                  placeholder="e.g., Web Development"
+                  required
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-bold text-black mb-2">
+                  Description
+                </label>
+                <textarea
+                  value={guideFormData.description}
+                  onChange={(e) => setGuideFormData({ ...guideFormData, description: e.target.value })}
+                  className="w-full px-4 py-3 border-3 border-black rounded-xl font-medium text-black focus:outline-none focus:ring-4 focus:ring-yellow-200 transition-all resize-none"
+                  placeholder="Brief description of your guide..."
+                  rows={4}
+                />
+              </div>
+
+              <div className="flex gap-3 pt-4">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setShowCreateGuideModal(false);
+                    setGuideFormData({ name: '', topic: '', description: '' });
+                  }}
+                  disabled={creatingGuide}
+                  className="flex-1 px-6 py-3 bg-gray-200 border-3 border-black rounded-xl font-bold text-black hover:bg-gray-300 transition-all shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  disabled={creatingGuide}
+                  className="flex-1 px-6 py-3 bg-gradient-to-r from-yellow-400 to-yellow-500 border-3 border-black rounded-xl font-bold text-black hover:from-yellow-500 hover:to-yellow-600 transition-all shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                >
+                  {creatingGuide ? (
+                    <>
+                      <div className="w-5 h-5 border-3 border-black border-t-transparent rounded-full animate-spin"></div>
+                      <span>Creating...</span>
+                    </>
+                  ) : (
+                    <>
+                      <Plus size={20} strokeWidth={2.5} />
+                      <span>Create Guide</span>
+                    </>
+                  )}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
