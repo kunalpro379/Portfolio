@@ -128,6 +128,27 @@ async function loadRoutes() {
       console.log('✓ Knowledge Base fallback route registered');
     }
 
+    // Load YouTube Transcript routes
+    try {
+      const youtubeTranscriptModule = await import('./routes/youtube-transcript.js');
+      if (youtubeTranscriptModule && youtubeTranscriptModule.default) {
+        app.use('/api/youtube-transcript', youtubeTranscriptModule.default);
+        console.log('✓ YouTube Transcript route loaded successfully');
+      } else {
+        throw new Error('YouTube Transcript route export not found');
+      }
+    } catch (youtubeError) {
+      console.error('✗ Failed to load YouTube Transcript route:', youtubeError.message);
+      app.use('/api/youtube-transcript', (req, res) => {
+        res.status(503).json({ 
+          success: false,
+          message: 'YouTube Transcript service not available', 
+          error: 'Service temporarily unavailable' 
+        });
+      });
+      console.log('✓ YouTube Transcript fallback route registered');
+    }
+
     // Load diagrams route with error handling
     try {
       const diagramsModule = await import('./routes/diagrams.js');

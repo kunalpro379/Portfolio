@@ -1,11 +1,12 @@
 ﻿import { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { ArrowLeft, Save, Upload, Image as ImageIcon, Trash2, FileText, Plus } from 'lucide-react';
+import { ArrowLeft, Save, Upload, Image as ImageIcon, Trash2, FileText, Plus, Youtube } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { vscDarkPlus } from 'react-syntax-highlighter/dist/esm/styles/prism';
 import ExcalidrawCanvas from '@/components/ExcalidrawCanvas';
 import LoadingSpinner from '@/components/LoadingSpinner';
+import YouTubeTranscriptModal from '@/components/YouTubeTranscriptModal';
 import {
   fetchGuideById,
   fetchGuideBySlug,
@@ -41,6 +42,7 @@ export default function GuideNoteEditorPage() {
   const [uploading, setUploading] = useState(false);
   const [showDiagramCanvas, setShowDiagramCanvas] = useState(false);
   const [showMobileSidebar, setShowMobileSidebar] = useState(false);
+  const [showYouTubeModal, setShowYouTubeModal] = useState(false);
 
   // Markdown formatting helpers
   const insertMarkdown = (before: string, after: string = '') => {
@@ -660,18 +662,30 @@ export default function GuideNoteEditorPage() {
         <div className={`${
           showMobileSidebar ? 'translate-x-0' : '-translate-x-full'
         } md:translate-x-0 fixed md:relative z-50 md:z-0 w-72 md:w-64 h-full bg-white border-r-2 md:border-r-4 border-black flex flex-col overflow-hidden transition-transform duration-300`}>
-          <div className="p-2 md:p-3 border-b-2 border-gray-200 flex-shrink-0">
+          <div className="p-2 md:p-3 border-b-2 border-gray-200 flex-shrink-0 space-y-2">
             {!isViewMode && (
-              <button 
-                onClick={() => {
-                  handleCreateMarkdown();
-                  setShowMobileSidebar(false);
-                }}
-                className="w-full px-3 md:px-4 py-2 bg-green-100 border-2 border-black rounded-lg font-bold text-xs md:text-sm hover:bg-green-200 transition-all flex items-center justify-center gap-2"
-              >
-                <Plus size={16} strokeWidth={2.5} />
-                New File
-              </button>
+              <>
+                <button 
+                  onClick={() => {
+                    handleCreateMarkdown();
+                    setShowMobileSidebar(false);
+                  }}
+                  className="w-full px-3 md:px-4 py-2 bg-green-100 border-2 border-black rounded-lg font-bold text-xs md:text-sm hover:bg-green-200 transition-all flex items-center justify-center gap-2"
+                >
+                  <Plus size={16} strokeWidth={2.5} />
+                  New File
+                </button>
+                <button 
+                  onClick={() => {
+                    setShowYouTubeModal(true);
+                    setShowMobileSidebar(false);
+                  }}
+                  className="w-full px-3 md:px-4 py-2 bg-red-100 border-2 border-black rounded-lg font-bold text-xs md:text-sm hover:bg-red-200 transition-all flex items-center justify-center gap-2"
+                >
+                  <Youtube size={16} strokeWidth={2.5} />
+                  YouTube Video
+                </button>
+              </>
             )}
           </div>
 
@@ -1034,6 +1048,23 @@ export default function GuideNoteEditorPage() {
           )}
         </div>
       </div>
+
+      {/* YouTube Transcript Modal */}
+      {guide && title && (
+        <YouTubeTranscriptModal
+          isOpen={showYouTubeModal}
+          onClose={() => setShowYouTubeModal(false)}
+          guideId={guide.guideId}
+          titleId={title.titleId}
+          onSuccess={() => {
+            if (isSlugBased) {
+              loadGuideBySlug();
+            } else {
+              loadGuideAndTitle();
+            }
+          }}
+        />
+      )}
     </div>
   );
 }

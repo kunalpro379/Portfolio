@@ -7,7 +7,7 @@ import LoadingSpinner from "@/components/LoadingSpinner";
 import NotesTabContent from "@/components/NotesTabContent";
 
 interface ProjectData {
-  size?: "big" | "small" | "large" | "medium";
+  size?: "big" | "small" | "large" | "medium"
   title: string;
   tagline: string;
   badges: string[];
