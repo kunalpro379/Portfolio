@@ -333,7 +333,7 @@ export default function NotesTabContent({ notes, activeSubTab: propActiveSubTab 
         </div>
       )}
 
-      {/* Notes Tab Content (Existing folders) */}
+      {/* Notes Tab Content (Premium File Explorer) */}
       {activeSubTab === 'notes' && (
         <div>
           <div className="mb-6">
@@ -341,42 +341,25 @@ export default function NotesTabContent({ notes, activeSubTab: propActiveSubTab 
             <p className="text-sm text-gray-600 font-medium">Browse your file folders</p>
           </div>
 
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3 md:gap-4">
-            {notes.length === 0 ? (
-              <div className="col-span-full text-center py-16">
-                <div className="bg-gray-50/70 backdrop-blur-sm border-3 border-black rounded-2xl p-10 inline-block shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]">
-                  <FolderOpen size={48} strokeWidth={2.5} className="mx-auto mb-3 text-yellow-500" />
-                  <p className="text-gray-600 text-base font-bold">No file folders yet</p>
+          {notes.length === 0 ? (
+            <div className="text-center py-20">
+              <div className="bg-gradient-to-br from-amber-50 to-stone-50 border-3 border-black rounded-2xl p-12 inline-block shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]">
+                <div className="w-16 h-16 bg-gradient-to-br from-amber-400 to-yellow-500 border-3 border-black rounded-xl flex items-center justify-center mx-auto mb-4">
+                  <FolderOpen size={32} strokeWidth={2.5} className="text-white" />
                 </div>
+                <p className="text-black text-lg font-black mb-2">No file folders yet</p>
+                <p className="text-gray-700 text-sm font-medium">Create your first folder to get started</p>
               </div>
-            ) : (
-              notes.map((note, idx) => {
-                const rotations = ['-rotate-1', 'rotate-1', '-rotate-2', 'rotate-2', '-rotate-1', 'rotate-1'];
-                const hoverRotations = ['hover:rotate-1', 'hover:-rotate-1', 'hover:rotate-2', 'hover:-rotate-2', 'hover:rotate-1', 'hover:-rotate-1'];
-                const shadows = [
-                  'shadow-[5px_5px_0px_0px_rgba(251,191,36,0.5)]',
-                  'shadow-[6px_5px_0px_0px_rgba(245,158,11,0.5)]',
-                  'shadow-[5px_6px_0px_0px_rgba(234,179,8,0.5)]',
-                  'shadow-[6px_6px_0px_0px_rgba(251,191,36,0.5)]',
-                  'shadow-[5px_5px_0px_0px_rgba(245,158,11,0.5)]',
-                  'shadow-[6px_5px_0px_0px_rgba(234,179,8,0.5)]'
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {notes.map((note, idx) => {
+                const styles = [
+                  { bg: 'from-white to-stone-50', icon: 'from-amber-400 to-yellow-500', border: 'border-amber-200', shadow: 'shadow-[5px_5px_0px_0px_rgba(251,191,36,0.3)]', hoverShadow: 'hover:shadow-[8px_8px_0px_0px_rgba(251,191,36,0.5)]' },
+                  { bg: 'from-amber-50 to-yellow-50', icon: 'from-yellow-500 to-amber-600', border: 'border-yellow-200', shadow: 'shadow-[5px_5px_0px_0px_rgba(234,179,8,0.3)]', hoverShadow: 'hover:shadow-[8px_8px_0px_0px_rgba(234,179,8,0.5)]' },
+                  { bg: 'from-stone-50 to-white', icon: 'from-amber-500 to-orange-500', border: 'border-stone-200', shadow: 'shadow-[5px_5px_0px_0px_rgba(120,113,108,0.3)]', hoverShadow: 'hover:shadow-[8px_8px_0px_0px_rgba(120,113,108,0.5)]' },
                 ];
-                const hoverShadows = [
-                  'hover:shadow-[9px_9px_0px_0px_rgba(251,191,36,0.7)]',
-                  'hover:shadow-[10px_9px_0px_0px_rgba(245,158,11,0.7)]',
-                  'hover:shadow-[9px_10px_0px_0px_rgba(234,179,8,0.7)]',
-                  'hover:shadow-[10px_10px_0px_0px_rgba(251,191,36,0.7)]',
-                  'hover:shadow-[9px_9px_0px_0px_rgba(245,158,11,0.7)]',
-                  'hover:shadow-[10px_9px_0px_0px_rgba(234,179,8,0.7)]'
-                ];
-                const bgGradients = [
-                  'bg-gradient-to-br from-yellow-50 to-white',
-                  'bg-gradient-to-br from-amber-50 to-white',
-                  'bg-gradient-to-br from-yellow-100 to-yellow-50',
-                  'bg-gradient-to-br from-amber-100 to-amber-50',
-                  'bg-gradient-to-br from-yellow-50 to-white',
-                  'bg-gradient-to-br from-amber-50 to-white'
-                ];
+                const style = styles[idx % styles.length];
                 
                 return (
                   <div
@@ -386,22 +369,41 @@ export default function NotesTabContent({ notes, activeSubTab: propActiveSubTab 
                         navigate(`/learnings/notes/${note.folderId}`);
                       }
                     }}
-                    className={`${bgGradients[idx % 6]} backdrop-blur-sm border-[3px] border-black p-4 transition-all duration-300 cursor-pointer hover:-translate-y-2 group ${rotations[idx % 6]} ${hoverRotations[idx % 6]} ${shadows[idx % 6]} ${hoverShadows[idx % 6]}`}
+                    className={`bg-gradient-to-br ${style.bg} border-3 border-black rounded-2xl p-5 transition-all duration-300 cursor-pointer hover:-translate-y-2 ${style.shadow} ${style.hoverShadow} group`}
                     style={{ 
                       borderRadius: idx % 2 === 0 ? '16px 20px 18px 22px' : '20px 16px 22px 18px'
                     }}
                   >
-                    <div className="flex flex-col items-center text-center gap-2">
-                      <div className="p-2.5 bg-gradient-to-br from-yellow-300 to-yellow-400 border-[3px] border-black rounded-lg group-hover:rotate-12 transition-transform">
-                        <FolderOpen size={24} strokeWidth={2.5} />
+                    <div className="flex items-start gap-3 mb-3">
+                      <div className={`p-3 bg-gradient-to-br ${style.icon} border-3 border-black rounded-xl group-hover:rotate-12 transition-transform flex-shrink-0 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]`}>
+                        <FolderOpen size={24} strokeWidth={2.5} className="text-white" />
                       </div>
-                      <h3 className="text-sm font-black text-black line-clamp-2 leading-tight">{note.name}</h3>
+                      <div className="flex-1 min-w-0">
+                        <h3 className="text-base font-black text-black mb-2 leading-tight line-clamp-2">
+                          {note.name}
+                        </h3>
+                      </div>
+                    </div>
+                    
+                    <div className={`pt-3 border-t-2 border-dashed ${style.border}`}>
+                      <div className="flex items-center gap-2 text-xs text-gray-600 font-bold">
+                        <svg className="w-3.5 h-3.5 text-amber-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                        </svg>
+                        <span>
+                          {new Date(note.createdAt).toLocaleDateString('en-US', {
+                            month: 'short',
+                            day: 'numeric',
+                            year: 'numeric'
+                          })}
+                        </span>
+                      </div>
                     </div>
                   </div>
                 );
-              })
-            )}
-          </div>
+              })}
+            </div>
+          )}
         </div>
       )}
 

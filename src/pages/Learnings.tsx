@@ -123,7 +123,8 @@ export default function LearningsPage() {
   const [showCreateCodeFolderModal, setShowCreateCodeFolderModal] = useState(false);
   const [codeFolderName, setCodeFolderName] = useState('');
   const [codeFolderDescription, setCodeFolderDescription] = useState('');
-  const [codeFolderLanguage, setCodeFolderLanguage] = useState('javascript');
+  const [codeFolderLanguage, setCodeFolderLanguage] = useState('python');
+  const [creatingCodeFolder, setCreatingCodeFolder] = useState(false);
 
   // Check for canvas parameter in URL
   const canvasIdFromUrl = searchParams.get('canvas');
@@ -269,6 +270,7 @@ export default function LearningsPage() {
     }
 
     try {
+      setCreatingCodeFolder(true);
       const timestamp = new Date().toISOString();
       const response = await fetch(`${API_BASE_URL}${API_ENDPOINTS.code}/folders`, {
         method: 'POST',
@@ -290,7 +292,7 @@ export default function LearningsPage() {
       setShowCreateCodeFolderModal(false);
       setCodeFolderName('');
       setCodeFolderDescription('');
-      setCodeFolderLanguage('javascript');
+      setCodeFolderLanguage('python');
       
       // Navigate to code editor with the new folder
       if (data.folder) {
@@ -299,6 +301,8 @@ export default function LearningsPage() {
     } catch (error) {
       console.error('Error creating codebook:', error);
       alert('Failed to create codebook');
+    } finally {
+      setCreatingCodeFolder(false);
     }
   };
 
@@ -643,6 +647,26 @@ export default function LearningsPage() {
                   }`}
                 >
                   Guide
+                </button>
+                <button
+                  onClick={() => changeTab('files')}
+                  className={`px-6 py-2.5 rounded-xl font-bold text-sm transition-all ${
+                    activeTab === 'files'
+                      ? 'bg-cyan-400 text-white shadow-[2px_2px_0px_0px_rgba(0,0,0,0.3)]'
+                      : 'text-gray-700 hover:bg-gray-100'
+                  }`}
+                >
+                  Files
+                </button>
+                <button
+                  onClick={() => changeTab('todo')}
+                  className={`px-6 py-2.5 rounded-xl font-bold text-sm transition-all ${
+                    activeTab === 'todo'
+                      ? 'bg-red-400 text-white shadow-[2px_2px_0px_0px_rgba(0,0,0,0.3)]'
+                      : 'text-gray-700 hover:bg-gray-100'
+                  }`}
+                >
+                  Todo
                 </button>
                 <button
                   onClick={() => changeTab('code')}
@@ -1744,16 +1768,15 @@ export default function LearningsPage() {
                 <select
                   value={codeFolderLanguage}
                   onChange={(e) => setCodeFolderLanguage(e.target.value)}
-                  className="w-full px-4 py-2.5 border border-stone-300 rounded-xl font-medium text-stone-900 focus:outline-none focus:ring-2 focus:ring-stone-400 focus:border-transparent bg-white transition-all cursor-pointer"
+                  className="w-full px-4 py-2.5 border border-stone-300 rounded-xl font-medium text-stone-900 focus:outline-none focus:ring-2 focus:ring-stone-400 focus:border-transparent bg-white transition-all cursor-pointer max-h-48 overflow-y-auto"
+                  size={1}
                 >
-                  <option value="javascript">JavaScript</option>
-                  <option value="typescript">TypeScript</option>
                   <option value="python">Python</option>
+                  <option value="javascript">JavaScript</option>
                   <option value="java">Java</option>
                   <option value="cpp">C++</option>
                   <option value="c">C</option>
-                  <option value="rust">Rust</option>
-                  <option value="go">Go</option>
+                  <option value="sql">SQL</option>
                 </select>
               </div>
 
@@ -1776,17 +1799,26 @@ export default function LearningsPage() {
                   setShowCreateCodeFolderModal(false);
                   setCodeFolderName('');
                   setCodeFolderDescription('');
-                  setCodeFolderLanguage('javascript');
+                  setCodeFolderLanguage('python');
                 }}
-                className="flex-1 px-5 py-2.5 bg-white border border-stone-300 text-stone-700 rounded-xl font-medium hover:bg-stone-50 transition-all"
+                disabled={creatingCodeFolder}
+                className="flex-1 px-5 py-2.5 bg-white border border-stone-300 text-stone-700 rounded-xl font-medium hover:bg-stone-50 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 Cancel
               </button>
               <button
                 onClick={handleCreateCodeFolder}
-                className="flex-1 px-5 py-2.5 bg-stone-900 text-white rounded-xl font-medium hover:bg-stone-800 transition-all shadow-sm hover:shadow-md"
+                disabled={creatingCodeFolder}
+                className="flex-1 px-5 py-2.5 bg-stone-900 text-white rounded-xl font-medium hover:bg-stone-800 transition-all shadow-sm hover:shadow-md disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
               >
-                Create & Open
+                {creatingCodeFolder ? (
+                  <>
+                    <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                    <span>Creating...</span>
+                  </>
+                ) : (
+                  'Create & Open'
+                )}
               </button>
             </div>
           </div>

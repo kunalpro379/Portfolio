@@ -43,6 +43,11 @@ export default function NotesDetail() {
     return getFileExtension(filename) === 'pdf';
   };
 
+  const isPptxFile = (filename: string) => {
+    const ext = getFileExtension(filename);
+    return ext === 'pptx' || ext === 'ppt';
+  };
+
   const isTextFile = (filename: string) => {
     const textExtensions = ['txt', 'md', 'java', 'cpp', 'c', 'py', 'js', 'ts', 'jsx', 'tsx', 'html', 'css', 'json', 'xml', 'yaml', 'yml', 'sh', 'bash'];
     return textExtensions.includes(getFileExtension(filename));
@@ -124,7 +129,7 @@ export default function NotesDetail() {
       }
 
       // For PDFs and other non-text files, just set the file directly
-      if (isPdfFile(file.filename) || !isTextFile(file.filename)) {
+      if (isPdfFile(file.filename) || isPptxFile(file.filename) || !isTextFile(file.filename)) {
         console.log('Setting non-text file directly');
         setSelectedFile(file);
         return;
@@ -273,7 +278,7 @@ export default function NotesDetail() {
           
           {selectedFile && (
             <div className="flex items-center gap-2 flex-shrink-0">
-              {isPdfFile(selectedFile.filename) && (
+              {(isPdfFile(selectedFile.filename) || isPptxFile(selectedFile.filename)) && (
                 <button
                   onClick={() => {
                     const iframe = document.querySelector('iframe[title="' + selectedFile.filename + '"]') as HTMLIFrameElement;
@@ -351,6 +356,18 @@ export default function NotesDetail() {
                     <div className="h-full w-full">
                       <iframe 
                         src={selectedFile.cloudinaryUrl} 
+                        className="w-full h-full" 
+                        title={selectedFile.filename}
+                        style={{ border: 'none' }}
+                      />
+                    </div>
+                  </>
+                ) : isPptxFile(selectedFile.filename) ? (
+                  <>
+                    {/* PPTX Viewer using Microsoft Office Online */}
+                    <div className="h-full w-full">
+                      <iframe 
+                        src={`https://view.officeapps.live.com/op/embed.aspx?src=${encodeURIComponent(selectedFile.cloudinaryUrl)}`}
                         className="w-full h-full" 
                         title={selectedFile.filename}
                         style={{ border: 'none' }}
