@@ -21,6 +21,7 @@ const Home = memo(function Home() {
   const audioRef = useRef<HTMLAudioElement>(null);
   const [isPlaying, setIsPlaying] = useState(true);
   const [isMuted, setIsMuted] = useState(false);
+  const [showMap, setShowMap] = useState(false);
 
   useEffect(() => {
     if (audioRef.current) {
@@ -218,6 +219,22 @@ const Home = memo(function Home() {
       {/* Background Texture Pattern on Top */}
       <div className="fixed inset-0 -z-[8] opacity-20 mix-blend-multiply" style={{ backgroundImage: 'url(/page7.png)', backgroundRepeat: 'repeat', filter: 'grayscale(100%) brightness(0)' }} />
 
+      {/* Red MAP Ribbon - Left Side - Small Horizontal Gift Tag Style */}
+      <button
+        onClick={() => setShowMap(!showMap)}
+        className="fixed left-0 top-1/3 z-[300] bg-gradient-to-br from-red-600 via-red-500 to-red-600 text-white font-black text-[9px] px-2.5 py-1.5 transition-all hover:scale-110 active:scale-95"
+        style={{
+          clipPath: 'polygon(0 0, 100% 0, 85% 50%, 100% 100%, 0 100%)',
+          letterSpacing: '0.5px',
+          minWidth: '90px',
+          boxShadow: '3px 3px 0px 0px rgba(0,0,0,1), inset -2px -2px 4px rgba(0,0,0,0.3), inset 2px 2px 4px rgba(255,255,255,0.3)',
+          border: '2px solid black',
+          textShadow: '1px 1px 2px rgba(0,0,0,0.8)'
+        }}
+      >
+        MAP
+      </button>
+
       {/* Fixed Navigation Bar */}
       <Navbar scrollToSection={scrollToSection} />
 
@@ -246,10 +263,80 @@ const Home = memo(function Home() {
         <EducationSection />
       </div>
 
+      {/*  Section */}
+      {/* GTAVI Mumbai Map Section */}
+      <div id="map" className="py-16 md:py-24 px-4 md:px-8 relative">
+        <div className="max-w-7xl mx-auto">
+          {/* Section Header */}
+          <div className="text-center mb-12">
+            <h2 className="text-4xl md:text-5xl lg:text-6xl font-black mb-4 text-black">
+              
+            </h2>
+            <p className="text-lg md:text-xl text-gray-700 font-medium max-w-2xl mx-auto">
+              
+            </p>
+          </div>
+
+          {/* Map Container */}
+          <div className="relative">
+            <div className="bg-white/80 backdrop-blur-sm border-4 border-black rounded-3xl overflow-hidden shadow-[12px_12px_0px_0px_rgba(0,0,0,1)] hover:shadow-[16px_16px_0px_0px_rgba(0,0,0,1)] transition-all">
+              <div className="bg-gradient-to-r from-red-600 via-red-500 to-red-600 text-white px-6 py-4 border-b-4 border-black">
+                <h3 className="text-xl md:text-2xl font-black flex items-center gap-3">
+                  <span></span>
+                  <span>GTAV Mumbai</span>
+                </h3>
+              </div>
+              <div className="p-4 md:p-6 bg-gradient-to-br from-gray-50 to-gray-100">
+                <div className="relative group">
+                  <img 
+                    src="/map.png" 
+                    alt="GTAVI Mumbai Map" 
+                    className="w-full h-auto border-4 border-black rounded-2xl shadow-lg group-hover:scale-[1.02] transition-transform duration-300"
+                  />
+                  {/* Overlay on hover */}
+                  <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-all duration-300 rounded-2xl pointer-events-none"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
       {/* Contact Section */}
       <div id="contact">
         <ContactSection />
       </div>
+
+      {/* GTA5 Mumbai Map Modal */}
+      {showMap && (
+        <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-[400] p-4" onClick={() => setShowMap(false)}>
+          <div className="relative max-w-6xl w-full" onClick={(e) => e.stopPropagation()}>
+            {/* Close Button */}
+            <button
+              onClick={() => setShowMap(false)}
+              className="absolute -top-4 -right-4 bg-red-600 text-white w-12 h-12 rounded-full border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] transition-all hover:scale-110 font-black text-xl z-10"
+            >
+              ✕
+            </button>
+            
+            {/* Map Container */}
+            <div className="bg-white border-4 border-black rounded-2xl overflow-hidden shadow-2xl">
+              <div className="bg-gradient-to-r from-red-600 to-red-500 text-white px-6 py-4 border-b-4 border-black">
+                <h2 className="text-2xl font-black flex items-center gap-3">
+                  GTAVI Mumbai
+                </h2>
+              </div>
+              <div className="p-4 bg-gray-100">
+                <img 
+                  src="/map.png" 
+                  alt="MAP" 
+                  className="w-full h-auto border-4 border-black rounded-xl shadow-lg"
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 });

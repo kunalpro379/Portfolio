@@ -125,6 +125,7 @@ export default function LearningsPage() {
   const [codeFolderDescription, setCodeFolderDescription] = useState('');
   const [codeFolderLanguage, setCodeFolderLanguage] = useState('python');
   const [creatingCodeFolder, setCreatingCodeFolder] = useState(false);
+  const [showMap, setShowMap] = useState(false);
 
   // Check for canvas parameter in URL
   const canvasIdFromUrl = searchParams.get('canvas');
@@ -553,7 +554,7 @@ export default function LearningsPage() {
   }
 
   return (
-    <div className="h-screen bg-gray-100 flex flex-col overflow-hidden">
+    <div className="h-screen bg-transparent flex flex-col overflow-hidden relative">
       {/* Loading Overlay */}
       {navigating && (
         <div className="fixed inset-0 bg-gray-100 z-[9999] flex items-center justify-center">
@@ -561,19 +562,144 @@ export default function LearningsPage() {
         </div>
       )}
       
-      {/* Background Image */}
-      <div 
-        className="fixed inset-0 z-0 opacity-30"
+      {/* Static Background Image for Mobile */}
+      <div className="fixed inset-0 z-0 md:hidden">
+        <div 
+          className="absolute inset-0"
+          style={{
+            backgroundImage: 'url(/back11.png)',
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
+            backgroundRepeat: 'no-repeat',
+            filter: 'grayscale(100%)',
+            opacity: 0.45
+          }}
+        />
+      </div>
+
+      {/* Animated Background Images - Desktop Only */}
+      <div className="fixed inset-0 z-0 hidden md:block">
+        <style>{`
+          @keyframes backgroundSlideshow {
+            0% { opacity: 0; }
+            8% { opacity: 0.55; }
+            16% { opacity: 0.55; }
+            24% { opacity: 0; }
+            100% { opacity: 0; }
+          }
+          
+          .bg-slide {
+            position: absolute;
+            inset: 0;
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            filter: grayscale(100%);
+            opacity: 0;
+            transform: translateZ(0);
+            -webkit-transform: translateZ(0);
+            backface-visibility: hidden;
+            -webkit-backface-visibility: hidden;
+          }
+          
+          .bg-slide-1 { 
+            animation: backgroundSlideshow 104s ease-in-out infinite 0s; 
+            background-image: url(/back1.png); 
+          }
+          .bg-slide-2 { 
+            animation: backgroundSlideshow 104s ease-in-out infinite 8s; 
+            background-image: url(/back2.png); 
+          }
+          .bg-slide-3 { 
+            animation: backgroundSlideshow 104s ease-in-out infinite 16s; 
+            background-image: url(/back3.png); 
+          }
+          .bg-slide-4 { 
+            animation: backgroundSlideshow 104s ease-in-out infinite 24s; 
+            background-image: url(/back4.png); 
+          }
+          .bg-slide-5 { 
+            animation: backgroundSlideshow 104s ease-in-out infinite 32s; 
+            background-image: url(/back5.png); 
+          }
+          .bg-slide-6 { 
+            animation: backgroundSlideshow 104s ease-in-out infinite 40s; 
+            background-image: url(/back6.png); 
+          }
+          .bg-slide-7 { 
+            animation: backgroundSlideshow 104s ease-in-out infinite 48s; 
+            background-image: url(/back7.png); 
+          }
+          .bg-slide-8 { 
+            animation: backgroundSlideshow 104s ease-in-out infinite 56s; 
+            background-image: url(/back8.png); 
+          }
+          .bg-slide-9 { 
+            animation: backgroundSlideshow 104s ease-in-out infinite 64s; 
+            background-image: url(/back9.png); 
+          }
+          .bg-slide-10 { 
+            animation: backgroundSlideshow 104s ease-in-out infinite 72s; 
+            background-image: url(/back10.png); 
+          }
+          .bg-slide-11 { 
+            animation: backgroundSlideshow 104s ease-in-out infinite 80s; 
+            background-image: url(/back11.png); 
+          }
+          .bg-slide-12 { 
+            animation: backgroundSlideshow 104s ease-in-out infinite 88s; 
+            background-image: url(/back12.png); 
+          }
+          .bg-slide-13 { 
+            animation: backgroundSlideshow 104s ease-in-out infinite 96s; 
+            background-image: url(/back13.png); 
+          }
+        `}</style>
+        
+        <div className="bg-slide bg-slide-1" />
+        <div className="bg-slide bg-slide-2" />
+        <div className="bg-slide bg-slide-3" />
+        <div className="bg-slide bg-slide-4" />
+        <div className="bg-slide bg-slide-5" />
+        <div className="bg-slide bg-slide-6" />
+        <div className="bg-slide bg-slide-7" />
+        <div className="bg-slide bg-slide-8" />
+        <div className="bg-slide bg-slide-9" />
+        <div className="bg-slide bg-slide-10" />
+        <div className="bg-slide bg-slide-11" />
+        <div className="bg-slide bg-slide-12" />
+        <div className="bg-slide bg-slide-13" />
+      </div>
+      
+      {/* Beautiful Gradient Background - Top to Bottom */}
+      <div
+        className="fixed inset-0 z-[1]"
         style={{
-          backgroundImage: 'url(/page14.png)',
-          backgroundSize: 'auto',
-          backgroundPosition: 'top left',
-          backgroundRepeat: 'repeat',
+          background: 'linear-gradient(to bottom, rgba(243, 232, 255, 0.6) 0%, rgba(219, 234, 254, 0.6) 16.67%, rgba(220, 252, 231, 0.6) 33.33%, rgba(254, 252, 232, 0.6) 50%, rgba(255, 237, 213, 0.6) 66.67%, rgba(254, 226, 226, 0.6) 83.33%, rgba(254, 226, 226, 0.5) 100%)'
         }}
       />
+
+      {/* Background Texture Pattern on Top */}
+      <div className="fixed inset-0 z-[2] opacity-20 mix-blend-multiply" style={{ backgroundImage: 'url(/page7.png)', backgroundRepeat: 'repeat', filter: 'grayscale(100%) brightness(0)' }} />
+      
+      {/* Red MAP Ribbon - Left Side - Small Horizontal Gift Tag Style */}
+      <button
+        onClick={() => setShowMap(!showMap)}
+        className="fixed left-0 top-1/3 z-[300] bg-gradient-to-br from-red-600 via-red-500 to-red-600 text-white font-black text-[9px] px-2.5 py-1.5 transition-all hover:scale-110 active:scale-95"
+        style={{
+          clipPath: 'polygon(0 0, 100% 0, 85% 50%, 100% 100%, 0 100%)',
+          letterSpacing: '0.5px',
+          minWidth: '90px',
+          boxShadow: '3px 3px 0px 0px rgba(0,0,0,1), inset -2px -2px 4px rgba(0,0,0,0.3), inset 2px 2px 4px rgba(255,255,255,0.3)',
+          border: '2px solid black',
+          textShadow: '1px 1px 2px rgba(0,0,0,0.8)'
+        }}
+      >
+        MAP
+      </button>
       
       {/* Fixed Header */}
-      <div className="bg-gray-50/80 backdrop-blur-sm border-b-4 border-black py-3 md:py-4 px-4 md:px-6 z-50 shadow-lg relative flex-shrink-0">
+      <div className="fixed top-0 left-0 right-0 bg-white/20 backdrop-blur-3xl border-b-4 border-black py-3 md:py-4 px-4 md:px-6 z-[200] shadow-lg flex-shrink-0" style={{ backdropFilter: 'blur(80px) saturate(200%)' }}>
         <div className="max-w-7xl mx-auto">
           {/* Mobile Layout - Original */}
           <div className="block md:hidden">
@@ -806,7 +932,7 @@ export default function LearningsPage() {
 
       {/* Mobile Menu Dropdown */}
       {mobileMenuOpen && (
-        <div className="md:hidden fixed inset-0 z-[100] bg-black/50 backdrop-blur-sm" onClick={() => setMobileMenuOpen(false)}>
+        <div className="md:hidden fixed inset-0 z-[250] bg-black/50 backdrop-blur-sm" onClick={() => setMobileMenuOpen(false)}>
           <div 
             className="absolute top-20 right-4 left-4 bg-white border-4 border-black rounded-2xl shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] overflow-hidden"
             onClick={(e) => e.stopPropagation()}
@@ -951,7 +1077,7 @@ export default function LearningsPage() {
       )}
 
       {/* Scrollable Main Content */}
-      <main className="flex-1 overflow-y-auto bg-transparent p-4 md:p-6 relative z-10 pt-0">
+      <main className="flex-1 overflow-y-auto bg-transparent p-4 md:p-6 relative z-[50] pt-[120px] md:pt-[100px]">
         <div className="max-w-7xl mx-auto pt-4">
           {/* Loading State */}
           {loading && (
@@ -1820,6 +1946,37 @@ export default function LearningsPage() {
                   'Create & Open'
                 )}
               </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* GTA5 Mumbai Map Modal */}
+      {showMap && (
+        <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-[400] p-4" onClick={() => setShowMap(false)}>
+          <div className="relative max-w-6xl w-full" onClick={(e) => e.stopPropagation()}>
+            {/* Close Button */}
+            <button
+              onClick={() => setShowMap(false)}
+              className="absolute -top-4 -right-4 bg-red-600 text-white w-12 h-12 rounded-full border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] transition-all hover:scale-110 font-black text-xl z-10"
+            >
+              ✕
+            </button>
+            
+            {/* Map Container */}
+            <div className="bg-white border-4 border-black rounded-2xl overflow-hidden shadow-2xl">
+              <div className="bg-gradient-to-r from-red-600 to-red-500 text-white px-6 py-4 border-b-4 border-black">
+                <h2 className="text-2xl font-black flex items-center gap-3">
+                  GTAVI Mumbai
+                </h2>
+              </div>
+              <div className="p-4 bg-gray-100">
+                <img 
+                  src="/map.png" 
+                  alt="" 
+                  className="w-full h-auto border-4 border-black rounded-xl shadow-lg"
+                />
+              </div>
             </div>
           </div>
         </div>
