@@ -3,12 +3,14 @@ const getApiBaseUrl = (): string => {
   // Check if we're in development (localhost)
   if (typeof window !== 'undefined') {
     const hostname = window.location.hostname;
+    
+    // If running on localhost, use local backend
     if (hostname === 'localhost' || hostname === '127.0.0.1') {
-      return 'https://api.kunalpatil.me'; // Still use production API even in dev
+      return 'http://localhost:5000';
     }
   }
   
-  // Always use production API
+  // For production/deployed version, use production API
   return 'https://api.kunalpatil.me';
 };
 

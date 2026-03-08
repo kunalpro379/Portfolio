@@ -9,7 +9,6 @@
   },
   "dependencies": {
     "@azure/storage-blob": "^12.29.1",
-    "@distube/ytdl-core": "^4.16.12",
     "@qdrant/js-client-rest": "^1.16.2",
     "bcryptjs": "^2.4.3",
     "cors": "^2.8.5",
@@ -20,7 +19,8 @@
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.0.0",
     "multer": "^2.0.2",
-    "youtube-transcript": "^1.2.1"
+    "node-fetch": "^3.3.2",
+    "youtube-captions-scraper": "^2.0.3"
   },
   "devDependencies": {
     "nodemon": "^3.0.1"

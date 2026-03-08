@@ -20,16 +20,16 @@ async function testKnowledgeBaseRoute() {
       const data = await response.json();
       
       if (response.ok) {
-        console.log(`✅ ${test.name}: SUCCESS`);
+        console.log(` ${test.name}: SUCCESS`);
         console.log(`   Status: ${response.status}`);
         console.log(`   Response: ${JSON.stringify(data, null, 2)}\n`);
       } else {
-        console.log(`❌ ${test.name}: FAILED`);
+        console.log(`${test.name}: FAILED`);
         console.log(`   Status: ${response.status}`);
         console.log(`   Response: ${JSON.stringify(data, null, 2)}\n`);
       }
     } catch (error) {
-      console.log(`❌ ${test.name}: ERROR`);
+      console.log(`${test.name}: ERROR`);
       console.log(`   Error: ${error.message}\n`);
     }
   }

@@ -1,0 +1,27 @@
+{
+  "name": "Kunal Patil - AI Engineer Portfolio",
+  "short_name": "Kunal Patil",
+  "description": "AI Engineer specializing in Machine Learning, Deep Learning, NLP, and Full Stack Development",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#000000",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/me.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/me.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["portfolio", "technology", "ai", "machine-learning"],
+  "lang": "en-US",
+  "dir": "ltr"
+}

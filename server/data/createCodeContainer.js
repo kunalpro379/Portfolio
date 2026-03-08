@@ -9,7 +9,7 @@ const CONTAINER_NAME = 'code';
 async function createCodeContainer() {
   try {
     if (!AZURE_STORAGE_CONNECTION_STRING) {
-      console.error('❌ AZURE_STORAGE_CONNECTION_STRING not found in environment variables');
+      console.error('AZURE_STORAGE_CONNECTION_STRING not found in environment variables');
       process.exit(1);
     }
 
@@ -24,7 +24,7 @@ async function createCodeContainer() {
     });
 
     if (createContainerResponse.succeeded) {
-      console.log(`✅ Container "${CONTAINER_NAME}" created successfully!`);
+      console.log(` Container "${CONTAINER_NAME}" created successfully!`);
     } else {
       console.log(`ℹ️  Container "${CONTAINER_NAME}" already exists.`);
     }
@@ -32,12 +32,12 @@ async function createCodeContainer() {
     // Verify container exists
     const exists = await containerClient.exists();
     if (exists) {
-      console.log(`✅ Container "${CONTAINER_NAME}" is ready to use!`);
+      console.log(` Container "${CONTAINER_NAME}" is ready to use!`);
       console.log(`📦 Container URL: ${containerClient.url}`);
     }
 
   } catch (error) {
-    console.error('❌ Error creating container:', error.message);
+    console.error('Error creating container:', error.message);
     process.exit(1);
   }
 }

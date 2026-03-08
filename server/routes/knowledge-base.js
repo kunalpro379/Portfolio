@@ -39,7 +39,7 @@ try {
     blobServiceClient = BlobServiceClient.fromConnectionString(AZURE_STORAGE_CONNECTION_STRING);
   }
 } catch (error) {
-  console.error('❌ Error initializing Azure Blob Service:', error.message);
+  console.error('Error initializing Azure Blob Service:', error.message);
 }
 
 const storage = multer.memoryStorage();
@@ -178,7 +178,7 @@ router.post('/upload', upload.single('file'), async (req, res) => {
       const uploadResult = await uploadFileToAzure(buffer, originalname, fileId);
       blobPath = uploadResult.blobPath;
       blobUrl = uploadResult.blobUrl;
-      console.log('✅ File uploaded to Azure Blob Storage');
+      console.log(' File uploaded to Azure Blob Storage');
     } catch (azureError) {
       console.error('Azure upload failed:', azureError);
       // Continue without Azure storage
@@ -189,7 +189,7 @@ router.post('/upload', upload.single('file'), async (req, res) => {
     
     // Process file content
     const { processedContent, metadata } = processFileContent(buffer, originalname);
-    console.log('✅ File content processed');
+    console.log(' File content processed');
     
     // Save to database
     const knowledgeBaseEntry = new KnowledgeBase({
@@ -207,7 +207,7 @@ router.post('/upload', upload.single('file'), async (req, res) => {
     });
 
     await knowledgeBaseEntry.save();
-    console.log('✅ File saved to database');
+    console.log(' File saved to database');
     
     res.json({ 
       success: true,
@@ -378,7 +378,7 @@ router.post('/process-existing', async (req, res) => {
           type: item.type
         });
         
-        console.log(`✅ Processed ${item.type}: ${item.title}`);
+        console.log(` Processed ${item.type}: ${item.title}`);
         
       } catch (itemError) {
         console.error(`Error processing ${item.title}:`, itemError);

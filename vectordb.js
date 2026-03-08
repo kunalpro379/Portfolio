@@ -17,7 +17,7 @@ let client;
         apiKey: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhY2Nlc3MiOiJtIn0.zcqrYkhc3IXkBdwrGDmPil85DjVljwWlN0Msft-Y6Kg',
     });
     
-    console.log('✅ Qdrant client initialized successfully');
+    console.log(' Qdrant client initialized successfully');
   } catch (error) {
     console.warn('⚠️ Qdrant client not available:', error.message);
     console.warn('⚠️ Vector database features will be disabled');
@@ -152,7 +152,7 @@ async function uploadDocumentToQdrant(content = null, metadata = {}) {
         // Check if collection exists, create if not
         try {
             await client.getCollection(COLLECTION_NAME);
-            console.log(`✅ Collection '${COLLECTION_NAME}' exists`);
+            console.log(` Collection '${COLLECTION_NAME}' exists`);
         } catch (error) {
             console.log(`📦 Creating collection '${COLLECTION_NAME}'...`);
             await client.createCollection(COLLECTION_NAME, {
@@ -161,7 +161,7 @@ async function uploadDocumentToQdrant(content = null, metadata = {}) {
                     distance: 'Cosine'
                 }
             });
-            console.log(`✅ Collection '${COLLECTION_NAME}' created`);
+            console.log(` Collection '${COLLECTION_NAME}' created`);
         }
         
         // Split document into sections
@@ -248,7 +248,7 @@ async function uploadDocumentToQdrant(content = null, metadata = {}) {
         };
         
     } catch (error) {
-        console.error('❌ Error uploading document:', error);
+        console.error('Error uploading document:', error);
         throw error;
     }
 }
@@ -261,7 +261,7 @@ async function searchKnowledgeBase(query, limit = 5) {
             throw new Error('Qdrant client not available - vector database features are disabled');
         }
         
-        console.log(`🔍 Searching for: "${query}"`);
+        console.log(`Searching for: "${query}"`);
         
         const embedding = await generateEmbedding(query);
         const results = await client.search(COLLECTION_NAME, {
@@ -281,7 +281,7 @@ async function searchKnowledgeBase(query, limit = 5) {
         
         return results;
     } catch (error) {
-        console.error('❌ Error searching knowledge base:', error);
+        console.error('Error searching knowledge base:', error);
         throw error;
     }
 }
@@ -310,7 +310,7 @@ async function getCollectionStats() {
             console.log(`   Distance metric: ${info.config.params.vectors.distance}`);
         }
     } catch (error) {
-        console.error('❌ Error getting collection stats:', error);
+        console.error('Error getting collection stats:', error);
     }
 }
 

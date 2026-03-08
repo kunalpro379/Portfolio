@@ -5,7 +5,6 @@ import LoadingSpinner from './LoadingSpinner';
 import TodoCard from './TodoCard';
 import TodoForm from './TodoForm';
 import TodoPasswordModal from './TodoPasswordModal';
-import TodoPerformanceStats from './TodoPerformanceStats';
 import {
   fetchGuides,
   deleteGuide,
@@ -531,12 +530,6 @@ export default function NotesTabContent({ notes, activeSubTab: propActiveSubTab 
             </div>
           ) : (
             <>
-              {performanceStats && todos.length > 0 && (
-                <div className="mb-6">
-                  <TodoPerformanceStats stats={performanceStats} />
-                </div>
-              )}
-
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
                 {todos.map((todo) => (
                   <TodoCard

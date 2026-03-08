@@ -361,7 +361,7 @@ class AIChatService {
   // Search using vector database for non-timetable content
   async searchVectorDatabase(query, limit = 5) {
     try {
-      console.log(`🔍 Searching vector database for: "${query}"`);
+      console.log(`Searching vector database for: "${query}"`);
       
       // Use the vector database search function
       const results = await vectorSearch(query, limit);
@@ -380,7 +380,7 @@ class AIChatService {
       return transformedResults;
       
     } catch (error) {
-      console.error('❌ Vector database search error:', error);
+      console.error('Vector database search error:', error);
       // Fallback to empty results if vector search fails
       return [];
     }
@@ -572,7 +572,7 @@ Guidelines:
         }
       } else {
         // Use vector database for non-schedule queries
-        console.log('🔍 Using vector database search for general query');
+        console.log('Using vector database search for general query');
         const vectorResults = await this.searchVectorDatabase(userQuery, 5);
         allResults = [...vectorResults];
         

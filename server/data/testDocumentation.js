@@ -39,7 +39,7 @@ async function testDocumentation() {
       body: JSON.stringify(sampleDoc)
     });
     const created = await createResponse.json();
-    console.log('✅ Created:', created.doc.title);
+    console.log(' Created:', created.doc.title);
     console.log('   DocID:', created.doc.docId);
     console.log('   Slug:', created.doc.slug);
     console.log('   Azure URL:', created.doc.azureBlobUrl);
@@ -51,14 +51,14 @@ async function testDocumentation() {
     console.log('2️⃣ Fetching all documents...');
     const allResponse = await fetch(API_URL);
     const allDocs = await allResponse.json();
-    console.log(`✅ Found ${allDocs.docs.length} document(s)`);
+    console.log(` Found ${allDocs.docs.length} document(s)`);
     console.log('');
 
     // 3. Get single document with content
     console.log('3️⃣ Fetching single document with content...');
     const singleResponse = await fetch(`${API_URL}/${docId}`);
     const singleDoc = await singleResponse.json();
-    console.log('✅ Retrieved:', singleDoc.doc.title);
+    console.log(' Retrieved:', singleDoc.doc.title);
     console.log('   Content length:', singleDoc.doc.content.length, 'characters');
     console.log('');
 
@@ -73,7 +73,7 @@ async function testDocumentation() {
       })
     });
     const updated = await updateResponse.json();
-    console.log('✅ Updated:', updated.doc.title);
+    console.log(' Updated:', updated.doc.title);
     console.log('   New slug:', updated.doc.slug);
     console.log('   Is public:', updated.doc.isPublic);
     console.log('');
@@ -84,12 +84,12 @@ async function testDocumentation() {
       method: 'DELETE'
     });
     const deleted = await deleteResponse.json();
-    console.log('✅', deleted.message);
+    console.log('', deleted.message);
     console.log('');
 
     console.log('🎉 All tests passed!');
   } catch (error) {
-    console.error('❌ Test failed:', error.message);
+    console.error('Test failed:', error.message);
   }
 }
 

@@ -46,10 +46,10 @@ async function uploadJsonFile(filePath, metadata = {}) {
       original_format: 'json'
     });
     
-    console.log(`✅ Successfully uploaded ${filePath}`);
+    console.log(` Successfully uploaded ${filePath}`);
     
   } catch (error) {
-    console.error(`❌ Error uploading ${filePath}:`, error);
+    console.error(`Error uploading ${filePath}:`, error);
   }
 }
 
@@ -68,10 +68,10 @@ async function uploadTextFile(filePath, metadata = {}) {
       original_format: path.extname(filePath).slice(1)
     });
     
-    console.log(`✅ Successfully uploaded ${filePath}`);
+    console.log(` Successfully uploaded ${filePath}`);
     
   } catch (error) {
-    console.error(`❌ Error uploading ${filePath}:`, error);
+    console.error(`Error uploading ${filePath}:`, error);
   }
 }
 
@@ -130,7 +130,7 @@ async function uploadAllDataFiles() {
     await getCollectionStats();
     
   } catch (error) {
-    console.error('❌ Error during upload process:', error);
+    console.error('Error during upload process:', error);
   }
 }
 

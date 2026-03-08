@@ -17,16 +17,16 @@ async function checkServer(server) {
     
     if (response.ok) {
       const data = await response.json();
-      console.log(`✅ ${server.name}: ONLINE`);
+      console.log(` ${server.name}: ONLINE`);
       console.log(`   Status: ${response.status}`);
       console.log(`   Message: ${data.message || 'OK'}\n`);
       return true;
     } else {
-      console.log(`❌ ${server.name}: HTTP ${response.status}`);
+      console.log(`${server.name}: HTTP ${response.status}`);
       return false;
     }
   } catch (error) {
-    console.log(`❌ ${server.name}: ${error.message}`);
+    console.log(`${server.name}: ${error.message}`);
     return false;
   }
 }
@@ -42,9 +42,9 @@ async function checkAllServers() {
   }
   
   if (anyOnline) {
-    console.log('✅ At least one server is available!');
+    console.log(' At least one server is available!');
   } else {
-    console.log('❌ No servers are available. Please start the local server:');
+    console.log('No servers are available. Please start the local server:');
     console.log('   cd server && npm run dev');
   }
 }

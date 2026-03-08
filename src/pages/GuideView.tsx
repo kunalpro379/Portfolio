@@ -92,61 +92,128 @@ export default function GuideView() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-stone-50 to-amber-50/20 p-4 md:p-8">
+    <div className="min-h-screen p-4 md:p-8 relative">
+      {/* Animated Background - Same as Learnings Page */}
+      {/* Static Background Image for Mobile */}
+      <div className="fixed inset-0 z-0 md:hidden">
+        <div 
+          className="absolute inset-0"
+          style={{
+            backgroundImage: 'url(/back11.png)',
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
+            backgroundRepeat: 'no-repeat',
+            filter: 'grayscale(100%)',
+            opacity: 0.45
+          }}
+        />
+      </div>
+
+      {/* Animated Background Images - Desktop Only */}
+      <div className="fixed inset-0 z-0 hidden md:block">
+        <style>{`
+          @keyframes backgroundSlideshow {
+            0% { opacity: 0; }
+            8% { opacity: 0.55; }
+            16% { opacity: 0; }
+            100% { opacity: 0; }
+          }
+          
+          .bg-slide {
+            position: absolute;
+            inset: 0;
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            filter: grayscale(100%);
+            opacity: 0;
+          }
+          
+          .bg-slide-1 { animation: backgroundSlideshow 104s ease-in-out infinite 0s; background-image: url(/back1.png); }
+          .bg-slide-2 { animation: backgroundSlideshow 104s ease-in-out infinite 8s; background-image: url(/back2.png); }
+          .bg-slide-3 { animation: backgroundSlideshow 104s ease-in-out infinite 16s; background-image: url(/back3.png); }
+          .bg-slide-4 { animation: backgroundSlideshow 104s ease-in-out infinite 24s; background-image: url(/back4.png); }
+          .bg-slide-5 { animation: backgroundSlideshow 104s ease-in-out infinite 32s; background-image: url(/back5.png); }
+          .bg-slide-6 { animation: backgroundSlideshow 104s ease-in-out infinite 40s; background-image: url(/back6.png); }
+          .bg-slide-7 { animation: backgroundSlideshow 104s ease-in-out infinite 48s; background-image: url(/back7.png); }
+          .bg-slide-8 { animation: backgroundSlideshow 104s ease-in-out infinite 56s; background-image: url(/back8.png); }
+          .bg-slide-9 { animation: backgroundSlideshow 104s ease-in-out infinite 64s; background-image: url(/back9.png); }
+          .bg-slide-10 { animation: backgroundSlideshow 104s ease-in-out infinite 72s; background-image: url(/back10.png); }
+          .bg-slide-11 { animation: backgroundSlideshow 104s ease-in-out infinite 80s; background-image: url(/back11.png); }
+          .bg-slide-12 { animation: backgroundSlideshow 104s ease-in-out infinite 88s; background-image: url(/back12.png); }
+          .bg-slide-13 { animation: backgroundSlideshow 104s ease-in-out infinite 96s; background-image: url(/back13.png); }
+        `}</style>
+        <div className="bg-slide bg-slide-1" />
+        <div className="bg-slide bg-slide-2" />
+        <div className="bg-slide bg-slide-3" />
+        <div className="bg-slide bg-slide-4" />
+        <div className="bg-slide bg-slide-5" />
+        <div className="bg-slide bg-slide-6" />
+        <div className="bg-slide bg-slide-7" />
+        <div className="bg-slide bg-slide-8" />
+        <div className="bg-slide bg-slide-9" />
+        <div className="bg-slide bg-slide-10" />
+        <div className="bg-slide bg-slide-11" />
+        <div className="bg-slide bg-slide-12" />
+        <div className="bg-slide bg-slide-13" />
+      </div>
+      
+      {/* Beautiful Gradient Background - Top to Bottom */}
+      <div
+        className="fixed inset-0 z-[1]"
+        style={{
+          background: 'linear-gradient(to bottom, rgba(243, 232, 255, 0.6) 0%, rgba(219, 234, 254, 0.6) 16.67%, rgba(220, 252, 231, 0.6) 33.33%, rgba(254, 252, 232, 0.6) 50%, rgba(255, 237, 213, 0.6) 66.67%, rgba(254, 226, 226, 0.6) 83.33%, rgba(254, 226, 226, 0.5) 100%)'
+        }}
+      />
+
+      {/* Background Texture Pattern on Top */}
+      <div className="fixed inset-0 z-[2] opacity-20 mix-blend-multiply" style={{ backgroundImage: 'url(/page7.png)', backgroundRepeat: 'repeat', filter: 'grayscale(100%) brightness(0)' }} />
+      
       {/* Header */}
-      <div className="max-w-7xl mx-auto mb-8">
+      <div className="max-w-7xl mx-auto mb-8 relative z-[3]">
         <button
           onClick={() => navigate('/learnings?tab=guide')}
-          className="flex items-center gap-2 text-stone-600 hover:text-stone-900 font-medium text-sm transition-all mb-6 group"
+          className="flex items-center gap-2 text-black hover:text-gray-700 font-bold text-sm transition-all mb-6 group"
         >
-          <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" strokeWidth={2} />
+          <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" strokeWidth={2.5} />
           Back to Guides
         </button>
 
-        <div className="bg-gradient-to-br from-stone-900 to-stone-800 border-2 border-white/20 rounded-2xl p-6 md:p-8 shadow-lg">
-          <div className="flex flex-col md:flex-row items-start justify-between gap-6">
-            <div className="flex items-start gap-5 flex-1">
-              <div className="w-14 h-14 bg-gradient-to-br from-amber-400/20 to-stone-400/20 border border-amber-400/30 rounded-xl flex items-center justify-center flex-shrink-0">
-                <BookOpen size={24} className="text-amber-400" strokeWidth={1.5} />
-              </div>
-              <div className="flex-1 min-w-0">
-                <p className="text-[10px] md:text-xs text-stone-400 font-medium uppercase tracking-wider mb-2">
-                  {guide.topic}
-                </p>
-                <h1 className="text-2xl md:text-3xl font-bold text-white mb-2 break-words">
-                  {guide.name}
-                </h1>
-                {guide.description && (
-                  <p className="text-sm text-stone-300 font-normal break-words">{guide.description}</p>
-                )}
-              </div>
-            </div>
-            <button
-              onClick={handleCreateTitle}
-              className="w-full md:w-auto flex items-center justify-center gap-2 px-5 py-2.5 bg-amber-500 hover:bg-amber-600 text-white rounded-lg font-medium transition-all shadow-sm hover:shadow-md text-sm"
-            >
-              <Plus size={16} strokeWidth={2} />
-              New Title
-            </button>
+        <div className="flex flex-col md:flex-row items-start justify-between gap-6 mb-2">
+          <div className="flex-1 min-w-0">
+            <p className="text-xs text-gray-600 font-black uppercase tracking-wider mb-2">
+              {guide.topic}
+            </p>
+            <h1 className="text-4xl md:text-5xl font-black text-black mb-2 break-words">
+              {guide.name}
+            </h1>
+            {guide.description && (
+              <p className="text-base text-gray-700 font-medium break-words">{guide.description}</p>
+            )}
           </div>
+          <button
+            onClick={handleCreateTitle}
+            className="w-full md:w-auto flex items-center justify-center gap-2 px-6 py-3 bg-white text-black border-3 border-black rounded-xl font-black transition-all shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:-translate-y-1 text-sm"
+          >
+            <Plus size={18} strokeWidth={2.5} />
+            New Title
+          </button>
         </div>
       </div>
 
       {/* Titles Grid */}
-      <div className="max-w-7xl mx-auto">
+      <div className="max-w-7xl mx-auto relative z-[3]">
         {guide.titles.length === 0 ? (
           <div className="text-center py-20">
-            <div className="bg-gradient-to-br from-stone-900 to-stone-800 border-2 border-white/20 rounded-2xl p-12 inline-block shadow-lg">
-              <div className="w-16 h-16 bg-gradient-to-br from-amber-400/20 to-stone-400/20 border border-amber-400/30 rounded-xl flex items-center justify-center mx-auto mb-4">
-                <FileText size={32} className="text-amber-400" strokeWidth={1.5} />
-              </div>
-              <p className="text-white text-lg font-semibold mb-2">No titles yet</p>
-              <p className="text-stone-300 text-sm mb-6">Create your first title to organize your documents</p>
+            <div className="bg-white/80 backdrop-blur-sm border-3 border-black rounded-2xl p-12 inline-block shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]">
+              <FileText size={48} className="mx-auto mb-4 text-black" strokeWidth={2.5} />
+              <p className="text-black text-lg font-black mb-2">No titles yet</p>
+              <p className="text-gray-700 text-sm font-medium mb-6">Create your first title to organize your documents</p>
               <button
                 onClick={handleCreateTitle}
-                className="px-6 py-3 bg-amber-500 hover:bg-amber-600 text-white rounded-lg font-medium transition-all shadow-sm hover:shadow-md text-sm inline-flex items-center gap-2"
+                className="px-6 py-3 bg-white text-black border-3 border-black rounded-xl font-black transition-all shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:-translate-y-1 text-sm inline-flex items-center gap-2"
               >
-                <Plus size={16} strokeWidth={2} />
+                <Plus size={18} strokeWidth={2.5} />
                 Create Title
               </button>
             </div>
@@ -161,48 +228,48 @@ export default function GuideView() {
               return (
                 <div
                   key={title.titleId}
-                  className="group bg-gradient-to-br from-stone-900 to-stone-800 hover:from-stone-800 hover:to-stone-700 border-2 border-white/20 hover:border-white/30 rounded-xl p-5 transition-all duration-300 hover:shadow-lg relative"
+                  className="group bg-black border-3 border-black rounded-xl p-5 transition-all duration-300 hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:-translate-y-1 relative"
                 >
                   <button
                     onClick={() => handleDeleteTitle(title.titleId)}
-                    className="absolute top-3 right-3 p-1.5 bg-stone-800/80 border border-red-400/40 text-red-400 rounded-lg hover:bg-red-500 hover:text-white hover:border-red-500 transition-all opacity-0 group-hover:opacity-100 z-10"
+                    className="absolute top-3 right-3 p-1.5 bg-white text-black border-2 border-black rounded-lg hover:bg-red-500 hover:text-white hover:border-red-500 transition-all opacity-0 group-hover:opacity-100 z-10"
                   >
-                    <Trash2 size={12} strokeWidth={2} />
+                    <Trash2 size={12} strokeWidth={2.5} />
                   </button>
 
                   <div className="flex items-start gap-3 mb-4">
-                    <div className="w-11 h-11 bg-gradient-to-br from-amber-400/20 to-stone-400/20 border border-amber-400/30 rounded-lg flex items-center justify-center flex-shrink-0 group-hover:scale-105 transition-transform">
-                      <FileText size={18} strokeWidth={1.5} className="text-amber-400" />
+                    <div className="w-11 h-11 bg-white border-2 border-black rounded-lg flex items-center justify-center flex-shrink-0 group-hover:scale-105 transition-transform">
+                      <FileText size={18} strokeWidth={2.5} className="text-black" />
                     </div>
                     <div className="flex-1 min-w-0 pt-0.5">
-                      <h3 className="text-sm font-semibold text-white mb-1 leading-tight line-clamp-2">
+                      <h3 className="text-sm font-black text-white mb-1 leading-tight line-clamp-2">
                         {title.name}
                       </h3>
                       {title.description && (
-                        <p className="text-stone-400 text-[11px] font-normal line-clamp-2">{title.description}</p>
+                        <p className="text-gray-300 text-[11px] font-medium line-clamp-2">{title.description}</p>
                       )}
                     </div>
                   </div>
                   
-                  <div className="mb-4 pt-3 border-t border-white/10">
-                    <div className="flex flex-wrap gap-1.5 text-[10px] font-medium">
+                  <div className="mb-4 pt-3 border-t-2 border-white/20">
+                    <div className="flex flex-wrap gap-1.5 text-[10px] font-black">
                       {markdownCount > 0 && (
-                        <span className="px-2 py-0.5 bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 rounded-full">
+                        <span className="px-2 py-0.5 bg-white text-black border-2 border-black rounded-full">
                           {markdownCount} MD
                         </span>
                       )}
                       {diagramCount > 0 && (
-                        <span className="px-2 py-0.5 bg-purple-500/20 text-purple-400 border border-purple-500/30 rounded-full">
+                        <span className="px-2 py-0.5 bg-white text-black border-2 border-black rounded-full">
                           {diagramCount} Diagram
                         </span>
                       )}
                       {attachmentCount > 0 && (
-                        <span className="px-2 py-0.5 bg-blue-500/20 text-blue-400 border border-blue-500/30 rounded-full">
+                        <span className="px-2 py-0.5 bg-white text-black border-2 border-black rounded-full">
                           {attachmentCount} Files
                         </span>
                       )}
                       {title.documents.length === 0 && (
-                        <span className="px-2 py-0.5 bg-stone-700/50 text-stone-400 border border-stone-600 rounded-full">
+                        <span className="px-2 py-0.5 bg-gray-800 text-white border-2 border-white rounded-full">
                           Empty
                         </span>
                       )}
@@ -212,16 +279,16 @@ export default function GuideView() {
                   <div className="flex gap-2">
                     <button
                       onClick={() => handleTitleClick(title, 'view')}
-                      className="flex-1 flex items-center justify-center gap-1.5 px-3 py-2 bg-white/10 hover:bg-white/20 text-white border border-white/20 hover:border-white/30 rounded-lg font-medium transition-all text-xs"
+                      className="flex-1 flex items-center justify-center gap-1.5 px-3 py-2 bg-white text-black border-2 border-black rounded-lg font-black transition-all text-xs hover:shadow-[2px_2px_0px_0px_rgba(255,255,255,1)]"
                     >
-                      <Eye size={12} strokeWidth={2} />
+                      <Eye size={12} strokeWidth={2.5} />
                       View
                     </button>
                     <button
                       onClick={() => handleTitleClick(title, 'edit')}
-                      className="flex-1 flex items-center justify-center gap-1.5 px-3 py-2 bg-amber-500/90 hover:bg-amber-500 text-white rounded-lg font-medium transition-all text-xs"
+                      className="flex-1 flex items-center justify-center gap-1.5 px-3 py-2 bg-white text-black border-2 border-black rounded-lg font-black transition-all text-xs hover:shadow-[2px_2px_0px_0px_rgba(255,255,255,1)]"
                     >
-                      <Edit size={12} strokeWidth={2} />
+                      <Edit size={12} strokeWidth={2.5} />
                       Edit
                     </button>
                   </div>

@@ -3,8 +3,11 @@ import CONFIG from '../config.shared.js';
 import dbConnection from './config/database.js';
 import serverConfig from './config/server.js';
 
-// Load environment variables FIRST
-dotenv.config();
+// Load environment variables FIRST - override system variables
+dotenv.config({ override: true });
+
+// Force log the API key being used
+console.log('GROQ_API_KEY from .env:', process.env.GROQ_API_KEY?.substring(0, 20) + '...');
 
 // Initialize database connection using singleton
 await dbConnection.connect();

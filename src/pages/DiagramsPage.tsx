@@ -419,7 +419,7 @@ export default function DiagramsPage() {
               
               {passwordError && (
                 <div className="p-3 bg-red-100 border-2 border-red-500 rounded-lg">
-                  <p className="text-red-600 text-sm font-bold">❌ {passwordError}</p>
+                  <p className="text-red-600 text-sm font-bold">{passwordError}</p>
                 </div>
               )}
               

@@ -96,6 +96,14 @@ export default function LearningsPage() {
   const [error, setError] = useState<string | null>(null);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [navigating, setNavigating] = useState(false);
+  
+  // Search states
+  const [blogSearch, setBlogSearch] = useState('');
+  const [docSearch, setDocSearch] = useState('');
+  const [projectSearch, setProjectSearch] = useState('');
+  const [diagramSearch, setDiagramSearch] = useState('');
+  const [todoSearch, setTodoSearch] = useState('');
+  const [guideSearch, setGuideSearch] = useState('');
 
   // Canvas state
   const [activeCanvas, setActiveCanvas] = useState<string | null>(null);
@@ -746,7 +754,7 @@ export default function LearningsPage() {
               <nav className="flex items-center gap-1 bg-white border-3 border-black rounded-2xl p-1.5 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
                 <button
                   onClick={() => changeTab('blogs')}
-                  className={`px-6 py-2.5 rounded-xl font-bold text-sm transition-all ${
+                  className={`px-6 py-2.5 rounded-xl font-bold text-sm transition-all border-r border-gray-300 ${
                     activeTab === 'blogs'
                       ? 'bg-pink-400 text-white shadow-[2px_2px_0px_0px_rgba(0,0,0,0.3)]'
                       : 'text-gray-700 hover:bg-gray-100'
@@ -756,7 +764,7 @@ export default function LearningsPage() {
                 </button>
                 <button
                   onClick={() => changeTab('documentation')}
-                  className={`px-6 py-2.5 rounded-xl font-bold text-sm transition-all ${
+                  className={`px-6 py-2.5 rounded-xl font-bold text-sm transition-all border-r border-gray-300 ${
                     activeTab === 'documentation'
                       ? 'bg-blue-400 text-white shadow-[2px_2px_0px_0px_rgba(0,0,0,0.3)]'
                       : 'text-gray-700 hover:bg-gray-100'
@@ -766,7 +774,7 @@ export default function LearningsPage() {
                 </button>
                 <button
                   onClick={() => changeTab('guide')}
-                  className={`px-6 py-2.5 rounded-xl font-bold text-sm transition-all ${
+                  className={`px-6 py-2.5 rounded-xl font-bold text-sm transition-all border-r border-gray-300 ${
                     activeTab === 'guide'
                       ? 'bg-yellow-400 text-white shadow-[2px_2px_0px_0px_rgba(0,0,0,0.3)]'
                       : 'text-gray-700 hover:bg-gray-100'
@@ -776,7 +784,7 @@ export default function LearningsPage() {
                 </button>
                 <button
                   onClick={() => changeTab('files')}
-                  className={`px-6 py-2.5 rounded-xl font-bold text-sm transition-all ${
+                  className={`px-6 py-2.5 rounded-xl font-bold text-sm transition-all border-r border-gray-300 ${
                     activeTab === 'files'
                       ? 'bg-cyan-400 text-white shadow-[2px_2px_0px_0px_rgba(0,0,0,0.3)]'
                       : 'text-gray-700 hover:bg-gray-100'
@@ -786,7 +794,7 @@ export default function LearningsPage() {
                 </button>
                 <button
                   onClick={() => changeTab('todo')}
-                  className={`px-6 py-2.5 rounded-xl font-bold text-sm transition-all ${
+                  className={`px-6 py-2.5 rounded-xl font-bold text-sm transition-all border-r border-gray-300 ${
                     activeTab === 'todo'
                       ? 'bg-red-400 text-white shadow-[2px_2px_0px_0px_rgba(0,0,0,0.3)]'
                       : 'text-gray-700 hover:bg-gray-100'
@@ -796,7 +804,7 @@ export default function LearningsPage() {
                 </button>
                 <button
                   onClick={() => changeTab('code')}
-                  className={`px-6 py-2.5 rounded-xl font-bold text-sm transition-all ${
+                  className={`px-6 py-2.5 rounded-xl font-bold text-sm transition-all border-r border-gray-300 ${
                     activeTab === 'code'
                       ? 'bg-orange-400 text-white shadow-[2px_2px_0px_0px_rgba(0,0,0,0.3)]'
                       : 'text-gray-700 hover:bg-gray-100'
@@ -806,7 +814,7 @@ export default function LearningsPage() {
                 </button>
                 <button
                   onClick={() => changeTab('diagrams')}
-                  className={`px-6 py-2.5 rounded-xl font-bold text-sm transition-all ${
+                  className={`px-6 py-2.5 rounded-xl font-bold text-sm transition-all border-r border-gray-300 ${
                     activeTab === 'diagrams'
                       ? 'bg-purple-400 text-white shadow-[2px_2px_0px_0px_rgba(0,0,0,0.3)]'
                       : 'text-gray-700 hover:bg-gray-100'
@@ -1116,16 +1124,44 @@ export default function LearningsPage() {
               {/* DOCUMENTATION TAB */}
               {activeTab === 'documentation' && (
                 <>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-                    {documentation.length === 0 ? (
+                  {/* Search Bar */}
+                  <div className="mb-6">
+                    <div className="relative max-w-2xl">
+                      <input
+                        type="text"
+                        placeholder="Search documentation..."
+                        value={docSearch}
+                        onChange={(e) => setDocSearch(e.target.value)}
+                        className="w-full px-4 py-3 pl-12 bg-white/80 backdrop-blur-sm border-3 border-black rounded-xl font-bold text-sm focus:outline-none focus:ring-4 focus:ring-blue-300 transition-all shadow-[3px_3px_0px_0px_rgba(0,0,0,1)]"
+                      />
+                      <svg className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                      </svg>
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+                    {documentation.filter(doc =>
+                      doc.title.toLowerCase().includes(docSearch.toLowerCase()) ||
+                      doc.description?.toLowerCase().includes(docSearch.toLowerCase()) ||
+                      doc.subject.toLowerCase().includes(docSearch.toLowerCase()) ||
+                      doc.tags?.some(tag => tag.toLowerCase().includes(docSearch.toLowerCase()))
+                    ).length === 0 ? (
                       <div className="col-span-full text-center py-16">
                         <div className="bg-gray-50/70 backdrop-blur-sm border-3 border-black rounded-2xl p-10 inline-block shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]">
                           <BookOpen size={48} strokeWidth={2.5} className="mx-auto mb-3 text-blue-500" />
-                          <p className="text-gray-600 text-base font-bold">No documentation yet</p>
+                          <p className="text-gray-600 text-base font-bold">
+                            {docSearch ? 'No documentation found' : 'No documentation yet'}
+                          </p>
                         </div>
                       </div>
                     ) : (
-                      documentation.map((doc, idx) => {
+                      documentation.filter(doc =>
+                        doc.title.toLowerCase().includes(docSearch.toLowerCase()) ||
+                        doc.description?.toLowerCase().includes(docSearch.toLowerCase()) ||
+                        doc.subject.toLowerCase().includes(docSearch.toLowerCase()) ||
+                        doc.tags?.some(tag => tag.toLowerCase().includes(docSearch.toLowerCase()))
+                      ).map((doc, idx) => {
                         const rotations = ['rotate-2', '-rotate-1', 'rotate-1', '-rotate-2'];
                         const hoverRotations = ['hover:-rotate-1', 'hover:rotate-1', 'hover:-rotate-1', 'hover:rotate-2'];
                         const shadows = [
@@ -1225,16 +1261,42 @@ export default function LearningsPage() {
               {/* BLOGS TAB */}
               {activeTab === 'blogs' && (
                 <>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-                    {blogs.length === 0 ? (
+                  {/* Search Bar */}
+                  <div className="mb-6">
+                    <div className="relative max-w-2xl">
+                      <input
+                        type="text"
+                        placeholder="Search blogs..."
+                        value={blogSearch}
+                        onChange={(e) => setBlogSearch(e.target.value)}
+                        className="w-full px-4 py-3 pl-12 bg-white/80 backdrop-blur-sm border-3 border-black rounded-xl font-bold text-sm focus:outline-none focus:ring-4 focus:ring-pink-300 transition-all shadow-[3px_3px_0px_0px_rgba(0,0,0,1)]"
+                      />
+                      <svg className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                      </svg>
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+                    {blogs.filter(blog => 
+                      blog.title.toLowerCase().includes(blogSearch.toLowerCase()) ||
+                      blog.shortDescription.toLowerCase().includes(blogSearch.toLowerCase()) ||
+                      blog.subject.toLowerCase().includes(blogSearch.toLowerCase())
+                    ).length === 0 ? (
                       <div className="col-span-full text-center py-16">
                         <div className="bg-gray-50/70 backdrop-blur-sm border-3 border-black rounded-2xl p-10 inline-block shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]">
                           <FileText size={48} strokeWidth={2.5} className="mx-auto mb-3 text-pink-500" />
-                          <p className="text-gray-600 text-base font-bold">No blogs yet</p>
+                          <p className="text-gray-600 text-base font-bold">
+                            {blogSearch ? 'No blogs found' : 'No blogs yet'}
+                          </p>
                         </div>
                       </div>
                     ) : (
-                      blogs.map((blog, idx) => {
+                      blogs.filter(blog => 
+                        blog.title.toLowerCase().includes(blogSearch.toLowerCase()) ||
+                        blog.shortDescription.toLowerCase().includes(blogSearch.toLowerCase()) ||
+                        blog.subject.toLowerCase().includes(blogSearch.toLowerCase())
+                      ).map((blog, idx) => {
                         const rotations = ['-rotate-1', 'rotate-1', '-rotate-2', 'rotate-2'];
                         const hoverRotations = ['hover:rotate-0', 'hover:-rotate-1', 'hover:rotate-1', 'hover:-rotate-2'];
                         const shadows = [
@@ -1306,16 +1368,42 @@ export default function LearningsPage() {
               {/* PROJECTS TAB */}
               {activeTab === 'projects' && (
                 <>
+                  {/* Search Bar */}
+                  <div className="mb-6">
+                    <div className="relative max-w-2xl">
+                      <input
+                        type="text"
+                        placeholder="Search projects..."
+                        value={projectSearch}
+                        onChange={(e) => setProjectSearch(e.target.value)}
+                        className="w-full px-4 py-3 pl-12 bg-white/80 backdrop-blur-sm border-3 border-black rounded-xl font-bold text-sm focus:outline-none focus:ring-4 focus:ring-green-300 transition-all shadow-[3px_3px_0px_0px_rgba(0,0,0,1)]"
+                      />
+                      <svg className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                      </svg>
+                    </div>
+                  </div>
+
                   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-                    {projects.length === 0 ? (
+                    {projects.filter(project =>
+                      project.title.toLowerCase().includes(projectSearch.toLowerCase()) ||
+                      project.tagline.toLowerCase().includes(projectSearch.toLowerCase()) ||
+                      project.badges.some(badge => badge.toLowerCase().includes(projectSearch.toLowerCase()))
+                    ).length === 0 ? (
                       <div className="col-span-full text-center py-16">
                         <div className="bg-gray-50/70 backdrop-blur-sm border-3 border-black rounded-2xl p-10 inline-block shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]">
                           <Code size={48} strokeWidth={2.5} className="mx-auto mb-3 text-green-500" />
-                          <p className="text-gray-600 text-base font-bold">No projects yet</p>
+                          <p className="text-gray-600 text-base font-bold">
+                            {projectSearch ? 'No projects found' : 'No projects yet'}
+                          </p>
                         </div>
                       </div>
                     ) : (
-                      projects.map((project) => (
+                      projects.filter(project =>
+                        project.title.toLowerCase().includes(projectSearch.toLowerCase()) ||
+                        project.tagline.toLowerCase().includes(projectSearch.toLowerCase()) ||
+                        project.badges.some(badge => badge.toLowerCase().includes(projectSearch.toLowerCase()))
+                      ).map((project) => (
                         <div
                           key={project.id}
                           onClick={() => handleNavigate(`/projects/${project.id}`)}

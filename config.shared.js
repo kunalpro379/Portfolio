@@ -14,7 +14,7 @@ const CONFIG = {
     PRODUCTION_URL: 'https://api.kunalpatil.me',
     
     // Development API URL
-    DEVELOPMENT_URL: 'https://api.kunalpatil.me',
+    DEVELOPMENT_URL: 'http://localhost:5000',
     
     // Get current API URL based on environment
     get BASE_URL() {

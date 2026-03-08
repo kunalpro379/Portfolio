@@ -1,0 +1,29 @@
+# robots.txt for kunalpatil.me
+User-agent: *
+Allow: /
+Allow: /projects
+Allow: /learnings
+Allow: /blogs
+Allow: /documentation
+Allow: /about
+Allow: /contact
+
+# Disallow admin and private areas
+Disallow: /admin
+Disallow: /api
+Disallow: /private
+Disallow: /*.json$
+Disallow: /*?*mode=edit
+
+# Allow search engines to crawl images
+Allow: /*.png$
+Allow: /*.jpg$
+Allow: /*.jpeg$
+Allow: /*.webp$
+Allow: /*.svg$
+
+# Crawl delay
+Crawl-delay: 0
+
+# Sitemap location
+Sitemap: https://kunalpatil.me/sitemap.xml

@@ -318,9 +318,85 @@ export default function GuideNoteEditorPage() {
 // VIEW MODE - Clean read-only interface with mobile sidebar
   if (isViewMode) {
     return (
-      <div className="min-h-screen bg-white flex flex-col">
+      <div className="min-h-screen flex flex-col relative">
+        {/* Animated Background - Same as Learnings Page */}
+        {/* Static Background Image for Mobile */}
+        <div className="fixed inset-0 z-0 md:hidden">
+          <div 
+            className="absolute inset-0"
+            style={{
+              backgroundImage: 'url(/back11.png)',
+              backgroundSize: 'cover',
+              backgroundPosition: 'center',
+              backgroundRepeat: 'no-repeat',
+              filter: 'grayscale(100%)',
+              opacity: 0.45
+            }}
+          />
+        </div>
+
+        {/* Animated Background Images - Desktop Only */}
+        <div className="fixed inset-0 z-0 hidden md:block">
+          <style>{`
+            @keyframes backgroundSlideshow {
+              0% { opacity: 0; }
+              8% { opacity: 0.55; }
+              16% { opacity: 0; }
+              100% { opacity: 0; }
+            }
+            
+            .bg-slide {
+              position: absolute;
+              inset: 0;
+              background-size: cover;
+              background-position: center;
+              background-repeat: no-repeat;
+              filter: grayscale(100%);
+              opacity: 0;
+            }
+            
+            .bg-slide-1 { animation: backgroundSlideshow 104s ease-in-out infinite 0s; background-image: url(/back1.png); }
+            .bg-slide-2 { animation: backgroundSlideshow 104s ease-in-out infinite 8s; background-image: url(/back2.png); }
+            .bg-slide-3 { animation: backgroundSlideshow 104s ease-in-out infinite 16s; background-image: url(/back3.png); }
+            .bg-slide-4 { animation: backgroundSlideshow 104s ease-in-out infinite 24s; background-image: url(/back4.png); }
+            .bg-slide-5 { animation: backgroundSlideshow 104s ease-in-out infinite 32s; background-image: url(/back5.png); }
+            .bg-slide-6 { animation: backgroundSlideshow 104s ease-in-out infinite 40s; background-image: url(/back6.png); }
+            .bg-slide-7 { animation: backgroundSlideshow 104s ease-in-out infinite 48s; background-image: url(/back7.png); }
+            .bg-slide-8 { animation: backgroundSlideshow 104s ease-in-out infinite 56s; background-image: url(/back8.png); }
+            .bg-slide-9 { animation: backgroundSlideshow 104s ease-in-out infinite 64s; background-image: url(/back9.png); }
+            .bg-slide-10 { animation: backgroundSlideshow 104s ease-in-out infinite 72s; background-image: url(/back10.png); }
+            .bg-slide-11 { animation: backgroundSlideshow 104s ease-in-out infinite 80s; background-image: url(/back11.png); }
+            .bg-slide-12 { animation: backgroundSlideshow 104s ease-in-out infinite 88s; background-image: url(/back12.png); }
+            .bg-slide-13 { animation: backgroundSlideshow 104s ease-in-out infinite 96s; background-image: url(/back13.png); }
+          `}</style>
+          <div className="bg-slide bg-slide-1" />
+          <div className="bg-slide bg-slide-2" />
+          <div className="bg-slide bg-slide-3" />
+          <div className="bg-slide bg-slide-4" />
+          <div className="bg-slide bg-slide-5" />
+          <div className="bg-slide bg-slide-6" />
+          <div className="bg-slide bg-slide-7" />
+          <div className="bg-slide bg-slide-8" />
+          <div className="bg-slide bg-slide-9" />
+          <div className="bg-slide bg-slide-10" />
+          <div className="bg-slide bg-slide-11" />
+          <div className="bg-slide bg-slide-12" />
+          <div className="bg-slide bg-slide-13" />
+        </div>
+        
+        {/* Beautiful Gradient Background - Top to Bottom */}
+        <div
+          className="fixed inset-0 z-[1]"
+          style={{
+            background: 'linear-gradient(to bottom, rgba(243, 232, 255, 0.6) 0%, rgba(219, 234, 254, 0.6) 16.67%, rgba(220, 252, 231, 0.6) 33.33%, rgba(254, 252, 232, 0.6) 50%, rgba(255, 237, 213, 0.6) 66.67%, rgba(254, 226, 226, 0.6) 83.33%, rgba(254, 226, 226, 0.5) 100%)'
+          }}
+        />
+
+        {/* Background Texture Pattern on Top */}
+        <div className="fixed inset-0 z-[2] opacity-20 mix-blend-multiply" style={{ backgroundImage: 'url(/page7.png)', backgroundRepeat: 'repeat', filter: 'grayscale(100%) brightness(0)' }} />
+        
         {/* Simple Header */}
-        <div className="bg-white border-b border-gray-200 px-3 py-2 md:px-6 md:py-3 flex-shrink-0 flex items-center justify-between sticky top-0 z-30">
+        <div className="bg-white/80 backdrop-blur-sm border-b border-gray-200 px-3 py-2 md:px-6 md:py-3 flex-shrink-0 flex items-center justify-between sticky top-0 z-30">
           <button
             onClick={() => navigate('/learnings?tab=guide')}
             className="flex items-center gap-1 text-gray-600 hover:text-black font-medium text-xs md:text-sm transition-all"
@@ -341,7 +417,7 @@ export default function GuideNoteEditorPage() {
         </div>
 
         {/* Main Content */}
-        <div className="flex-1 flex overflow-hidden relative">
+        <div className="flex-1 flex overflow-hidden relative z-[3]">
           {/* Mobile Sidebar Overlay */}
           {showMobileSidebar && (
             <div 

@@ -21,14 +21,14 @@ def quick_delete():
         # Count after
         count_after = projects_collection.count_documents({})
         
-        print(f"✅ Deleted {result.deleted_count} documents")
+        print(f" Deleted {result.deleted_count} documents")
         print(f"📊 Remaining: {count_after} documents")
         
         if count_after == 0:
             print("🎉 Collection is now empty!")
             
     except Exception as e:
-        print(f"❌ Error: {e}")
+        print(f"Error: {e}")
     finally:
         client.close()
 
