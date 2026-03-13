@@ -101,7 +101,7 @@ export default function GuideView() {
   };
 
   const handleDeleteTitle = async (titleId: string) => {
-    if (!confirm('Are you sure you want to delete this title and all its documents?')) return;
+    if (!window.confirm('Are you sure you want to delete this title and all its documents?')) return;
     
     try {
       await deleteTitle(guideId!, titleId);

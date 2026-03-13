@@ -150,7 +150,7 @@ export default function NotesTabContent({ notes, activeSubTab: propActiveSubTab 
   };
 
   const handleDeleteGuide = async (guideId: string) => {
-    if (!confirm('Are you sure you want to delete this guide and all its contents?')) return;
+    if (!window.confirm('Are you sure you want to delete this guide and all its contents?')) return;
     
     try {
       await deleteGuide(guideId);
@@ -237,7 +237,7 @@ export default function NotesTabContent({ notes, activeSubTab: propActiveSubTab 
   };
 
   const handleDeleteTodo = async (todoId: string) => {
-    if (!confirm('Are you sure you want to delete this todo?')) return;
+    if (!window.confirm('Are you sure you want to delete this task?')) return;
     
     try {
       await deleteTodo(todoId);

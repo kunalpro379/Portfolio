@@ -231,7 +231,7 @@ export default function GuideNoteEditorPage() {
   };
 
   const handleDeleteDocument = async (documentId: string) => {
-    if (!confirm('Delete this document?') || !guide || !title) return;
+    if (!window.confirm('Delete this document?') || !guide || !title) return;
 
     try {
       await deleteDocument(guide.guideId, title.titleId, documentId);

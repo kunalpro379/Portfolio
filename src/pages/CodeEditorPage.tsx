@@ -421,7 +421,7 @@ export default function CodeEditorPage() {
   const handleDeleteFile = async (file: CodeFile, e: React.MouseEvent) => {
     e.stopPropagation();
     
-    if (!confirm(`Delete ${file.filename}?`)) return;
+    if (!window.confirm(`Delete ${file.filename}?`)) return;
 
     try {
       const response = await fetch(`${API_BASE_URL}${API_ENDPOINTS.code}/files/${file.fileId}`, {

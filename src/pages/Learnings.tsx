@@ -1490,7 +1490,7 @@ export default function LearningsPage() {
                         <button
                           onClick={async (e) => {
                             e.stopPropagation();
-                            if (!confirm(`Delete codebook "${folder.name}"? This will delete all files inside.`)) return;
+                            if (!window.confirm(`Delete codebook "${folder.name}"? This will delete all files inside.`)) return;
                             
                             try {
                               const response = await fetch(`${API_BASE_URL}${API_ENDPOINTS.code}/folders/${folder.folderId}`, {
