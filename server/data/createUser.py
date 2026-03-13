@@ -54,7 +54,7 @@ def authenticate_user(username: str, password: str) -> bool:
 
 if __name__ == "__main__":
     # Register user (run once)
-    register_user("kunalpro379", "Lawm@822471")
+    register_user("kunalpro379", "")
 
     # Authenticate user
-    authenticate_user("kunalpro379", "Lawm@822471")
+    authenticate_user("kunalpro379", "")

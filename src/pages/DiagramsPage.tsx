@@ -30,7 +30,7 @@ export default function DiagramsPage() {
   const [password, setPassword] = useState('');
   const [passwordError, setPasswordError] = useState('');
 
-  const EDIT_PASSWORD = 'Lawm@822471';
+  const EDIT_PASSWORD = '';
 
   // Check if accessing via share link (canvas or viewer)
   const canvasIdFromUrl = searchParams.get('canvas');

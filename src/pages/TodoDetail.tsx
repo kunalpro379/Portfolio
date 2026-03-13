@@ -1,11 +1,10 @@
-﻿﻿import { useState, useEffect } from 'react';
+﻿import { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { ArrowLeft, Save, Plus, Trash2, Lock, Edit3, Eye, Settings, X, Maximize2 } from 'lucide-react';
 import { fetchTodoById, updateTodo, deleteTodo, isAuthenticated, setAuthToken, type Todo, type TodoPoint, type CustomColumn } from '@/services/todoApi';
 import LoadingSpinner from '@/components/LoadingSpinner';
 
-const CORRECT_PASSWORD = 'Lawm@822471';
-
+// NO HARDCODED PASSWORD - Server validates against hashed password in DB
 export default function TodoDetail() {
   const navigate = useNavigate();
   const { todoId } = useParams<{ todoId: string }>();
@@ -54,14 +53,9 @@ export default function TodoDetail() {
 
   const handlePasswordSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (password === CORRECT_PASSWORD) {
-      setShowPasswordModal(false);
-      setPasswordError('');
-      // Reload todo with password
-      await loadTodo(password);
-    } else {
-      setPasswordError('Incorrect password');
-    }
+    setPasswordError('');
+    // Send password to server for verification
+    await loadTodo(password);
   };
 
   const loadTodo = async (pwd?: string) => {
@@ -69,14 +63,19 @@ export default function TodoDetail() {
     try {
       setLoading(true);
       const data = await fetchTodoById(todoId, pwd);
+      // If we get here, password was correct (or not needed)
       setTodo(data);
       setTopicValue(data.topic);
       setIsPrivateTodo(false);
+      setShowPasswordModal(false);
+      setPassword('');
+      setPasswordError('');
     } catch (error: any) {
       if (error.message === 'PRIVATE_TODO') {
         setIsPrivateTodo(true);
         setPasswordMode('view');
         setShowPasswordModal(true);
+        setPasswordError(pwd ? 'Incorrect password' : '');
       } else {
         console.error('Error loading todo:', error);
       }

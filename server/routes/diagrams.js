@@ -1,6 +1,7 @@
 import express from 'express';
 import { BlobServiceClient } from '@azure/storage-blob';
 import Diagram from '../models/Diagram.js';
+import Password from '../models/Password.js';
 import crypto from 'crypto';
 import databaseUtils from '../utils/database.js';
 
@@ -279,11 +280,27 @@ router.post('/', async (req, res) => {
   }
 });
 
-// PUT update canvas
+// PUT update canvas with password protection
 router.put('/:canvasId', async (req, res) => {
   try {
     const { canvasId } = req.params;
-    const { data, name, isPublic } = req.body;
+    const { data, name, isPublic, password } = req.body;
+
+    if (!password) {
+      return res.status(401).json({
+        success: false,
+        message: 'Password required'
+      });
+    }
+
+    // Check password using bcrypt
+    const isValid = await Password.verifyPassword('TODO_PASSWORD', password);
+    if (!isValid) {
+      return res.status(401).json({
+        success: false,
+        message: 'Incorrect password'
+      });
+    }
 
     const canvas = await Diagram.findOne({ canvasId });
 
@@ -347,10 +364,27 @@ router.put('/:canvasId', async (req, res) => {
   }
 });
 
-// DELETE canvas
+// DELETE canvas with password protection
 router.delete('/:canvasId', async (req, res) => {
   try {
     const { canvasId } = req.params;
+    const { password } = req.body;
+
+    if (!password) {
+      return res.status(401).json({
+        success: false,
+        message: 'Password required'
+      });
+    }
+
+    // Check password using bcrypt
+    const isValid = await Password.verifyPassword('TODO_PASSWORD', password);
+    if (!isValid) {
+      return res.status(401).json({
+        success: false,
+        message: 'Incorrect password'
+      });
+    }
 
     const canvas = await Diagram.findOne({ canvasId });
 

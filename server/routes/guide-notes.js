@@ -2,6 +2,7 @@ import express from 'express';
 import multer from 'multer';
 import { BlobServiceClient } from '@azure/storage-blob';
 import GuideNote from '../models/GuideNote.js';
+import Password from '../models/Password.js';
 import CONFIG from '../../config.shared.js';
 
 const router = express.Router();
@@ -254,9 +255,13 @@ router.delete('/guides/:guideId', async (req, res) => {
     const { guideId } = req.params;
     const { password } = req.body;
     
-    // Check password
-    const CORRECT_PASSWORD = 'Lawm@822471'; // Same as todo password
-    if (password !== CORRECT_PASSWORD) {
+    if (!password) {
+      return res.status(401).json({ message: 'Password required' });
+    }
+    
+    // Check password using bcrypt
+    const isValid = await Password.verifyPassword('TODO_PASSWORD', password);
+    if (!isValid) {
       return res.status(401).json({ message: 'Incorrect password' });
     }
     
@@ -371,9 +376,13 @@ router.delete('/guides/:guideId/titles/:titleId', async (req, res) => {
     const { guideId, titleId } = req.params;
     const { password } = req.body;
     
-    // Check password
-    const CORRECT_PASSWORD = 'Lawm@822471';
-    if (password !== CORRECT_PASSWORD) {
+    if (!password) {
+      return res.status(401).json({ message: 'Password required' });
+    }
+    
+    // Check password using bcrypt
+    const isValid = await Password.verifyPassword('TODO_PASSWORD', password);
+    if (!isValid) {
       return res.status(401).json({ message: 'Incorrect password' });
     }
     

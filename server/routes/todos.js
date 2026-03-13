@@ -1,5 +1,6 @@
 import express from 'express';
 import Todo from '../models/Todo.js';
+import Password from '../models/Password.js';
 
 const router = express.Router();
 
@@ -100,8 +101,15 @@ router.get('/:todoId', async (req, res) => {
 
     // Check if todo is private and password is required
     if (todo.isPublic === false) {
-      const CORRECT_PASSWORD = 'Lawm@822471';
-      if (password !== CORRECT_PASSWORD) {
+      if (!password) {
+        return res.status(401).json({ 
+          message: 'Password required for private task',
+          isPrivate: true
+        });
+      }
+      
+      const isValid = await Password.verifyPassword('TODO_PASSWORD', password);
+      if (!isValid) {
         return res.status(401).json({ 
           message: 'Password required for private task',
           isPrivate: true
@@ -226,8 +234,12 @@ router.delete('/:todoId', async (req, res) => {
     const { todoId } = req.params;
     const { password } = req.body;
 
-    const CORRECT_PASSWORD = 'Lawm@822471';
-    if (password !== CORRECT_PASSWORD) {
+    if (!password) {
+      return res.status(401).json({ message: 'Password required' });
+    }
+
+    const isValid = await Password.verifyPassword('TODO_PASSWORD', password);
+    if (!isValid) {
       return res.status(401).json({ message: 'Incorrect password' });
     }
 
