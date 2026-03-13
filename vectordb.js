@@ -19,8 +19,8 @@ let client;
     
     console.log(' Qdrant client initialized successfully');
   } catch (error) {
-    console.warn('⚠️ Qdrant client not available:', error.message);
-    console.warn('⚠️ Vector database features will be disabled');
+    console.warn(' Qdrant client not available:', error.message);
+    console.warn(' Vector database features will be disabled');
   }
 })();
 
@@ -142,7 +142,7 @@ async function uploadDocumentToQdrant(content = null, metadata = {}) {
             try {
                 documentContent = fs.readFileSync(documentPath, 'utf-8');
             } catch (error) {
-                console.warn('⚠️ Could not read AI/md.md file:', error.message);
+                console.warn(' Could not read AI/md.md file:', error.message);
                 documentContent = 'Default content for testing purposes.';
             }
         }

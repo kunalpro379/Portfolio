@@ -41,7 +41,7 @@ if (fs.existsSync(publicDir)) {
   images.forEach(img => {
     const stats = fs.statSync(path.join(publicDir, img));
     const sizeKB = (stats.size / 1024).toFixed(2);
-    const status = stats.size > 200000 ? '⚠️' : '';
+    const status = stats.size > 200000 ? '' : '';
     console.log(`   ${status} ${img} (${sizeKB} KB)`);
   });
 }

@@ -181,14 +181,20 @@ export default function HeroSection() {
 
               <div className="mt-3 md:mt-8 flex flex-col gap-3 md:gap-6 w-full sm:w-auto mb-6 md:mb-20">
                 <div className="flex gap-3 md:gap-6">
-                  <a href="#projects" className="flex-1 inline-flex items-center justify-center gap-4 px-6 md:px-8 py-3 md:py-4 bg-black text-white rounded-full font-black uppercase tracking-widest md:hover:bg-sky-500 md:hover:text-white transition-all cursor-pointer group text-xs md:text-base shadow-lg active:scale-95">
-                    See my work <ChevronRight size={18} className="md:group-hover:translate-x-1 transition-transform" />
+                  <a 
+                    href="/learnings?tab=projects" 
+                    className="flex-1 inline-flex items-center justify-center gap-2 md:gap-4 px-4 md:px-8 py-3 md:py-4 bg-black text-white rounded-full font-black uppercase tracking-wider md:tracking-widest hover:bg-sky-500 hover:text-white transition-all cursor-pointer group text-[10px] md:text-base shadow-lg active:scale-95 whitespace-nowrap"
+                  >
+                    See My Work <ChevronRight size={16} className="md:w-[18px] md:h-[18px] group-hover:translate-x-1 transition-transform" />
                   </a>
-                  <a href="/learnings" className="flex-1 px-6 md:px-8 py-3 md:py-4 border-2 border-black bg-gradient-to-r from-amber-100 to-pink-100 text-black rounded-full font-black uppercase tracking-widest md:hover:from-amber-200 md:hover:to-pink-200 transition-all cursor-pointer text-center text-xs md:text-base shadow-lg active:scale-95">
-                    Learn with Me
+                  <a 
+                    href="/learnings?tab=blogs" 
+                    className="flex-1 px-4 md:px-8 py-3 md:py-4 border-2 border-black bg-gradient-to-r from-amber-100 to-pink-100 text-black rounded-full font-black uppercase tracking-wider md:tracking-widest hover:from-amber-200 hover:to-pink-200 transition-all cursor-pointer text-center text-[10px] md:text-base shadow-lg active:scale-95 whitespace-nowrap"
+                  >
+                    Learn With Me
                   </a>
                 </div>
-                <a href="#contact" className="w-full px-8 md:px-10 py-4 md:py-5 border border-black/20 bg-white/50 backdrop-blur-md text-black rounded-xl md:rounded-2xl font-black uppercase tracking-widest md:hover:bg-white/80 transition-all cursor-pointer text-center text-xs md:text-base shadow-lg active:scale-95">
+                <a href="#contact" className="w-full px-8 md:px-10 py-4 md:py-5 border border-black/20 bg-white/50 backdrop-blur-md text-black rounded-xl md:rounded-2xl font-black uppercase tracking-widest hover:bg-white/80 transition-all cursor-pointer text-center text-xs md:text-base shadow-lg active:scale-95">
                   Contact Me
                 </a>
               </div>

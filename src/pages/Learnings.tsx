@@ -1916,7 +1916,7 @@ export default function LearningsPage() {
             </div>
 
             <div className="bg-red-50 border-2 border-red-400 rounded-lg p-3 mb-4">
-              <p className="text-xs text-red-800 font-medium">⚠️ This action cannot be undone. The diagram will be permanently deleted.</p>
+              <p className="text-xs text-red-800 font-medium"> This action cannot be undone. The diagram will be permanently deleted.</p>
             </div>
 
             <div className="flex gap-3">

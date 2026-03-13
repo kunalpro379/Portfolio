@@ -11,7 +11,7 @@
   {
     "category": "Backend",
     "items": [
-      { "name": "Node.js", "icon": "🟢", "level": 90 },
+      { "name": "Node.js", "icon": "", "level": 90 },
       { "name": "Python", "icon": "🐍", "level": 85 },
       { "name": "Java", "icon": "☕", "level": 80 },
       { "name": "GraphQL", "icon": "◈", "level": 75 }

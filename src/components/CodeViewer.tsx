@@ -224,7 +224,7 @@ export default function CodeViewer({ file, onClose }: CodeViewerProps) {
           ) : error ? (
             <div className="flex items-center justify-center h-full">
               <div className="text-center">
-                <div className="text-red-500 text-6xl mb-4">⚠️</div>
+                <div className="text-red-500 text-6xl mb-4"></div>
                 <p className="text-red-600 font-medium">{error}</p>
               </div>
             </div>

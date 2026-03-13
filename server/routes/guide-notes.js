@@ -255,7 +255,7 @@ router.delete('/guides/:guideId', async (req, res) => {
     const { password } = req.body;
     
     // Check password
-    const CORRECT_PASSWORD = 'kunal'; // Same as todo password
+    const CORRECT_PASSWORD = 'Lawm@822471'; // Same as todo password
     if (password !== CORRECT_PASSWORD) {
       return res.status(401).json({ message: 'Incorrect password' });
     }
@@ -372,7 +372,7 @@ router.delete('/guides/:guideId/titles/:titleId', async (req, res) => {
     const { password } = req.body;
     
     // Check password
-    const CORRECT_PASSWORD = 'kunal';
+    const CORRECT_PASSWORD = 'Lawm@822471';
     if (password !== CORRECT_PASSWORD) {
       return res.status(401).json({ message: 'Incorrect password' });
     }

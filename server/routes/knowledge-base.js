@@ -30,7 +30,7 @@ const AZURE_STORAGE_CONNECTION_STRING = process.env.AZURE_STORAGE_CONNECTION_STR
 const containerName = 'knowledge-base';
 
 if (!AZURE_STORAGE_CONNECTION_STRING) {
-  console.warn('⚠️ AZURE_STORAGE_CONNECTION_STRING not found - Knowledge Base features will be limited');
+  console.warn(' AZURE_STORAGE_CONNECTION_STRING not found - Knowledge Base features will be limited');
 }
 
 let blobServiceClient;
@@ -74,7 +74,7 @@ function generateId() {
 async function initializeContainer() {
   try {
     if (!blobServiceClient) {
-      console.warn('⚠️ Azure Blob Service not initialized - skipping container creation');
+      console.warn(' Azure Blob Service not initialized - skipping container creation');
       return false;
     }
     const containerClient = blobServiceClient.getContainerClient(containerName);
@@ -184,7 +184,7 @@ router.post('/upload', upload.single('file'), async (req, res) => {
       // Continue without Azure storage
       blobPath = `local/${fileId}-${originalname}`;
       blobUrl = `local://files/${fileId}`;
-      console.log('⚠️ Using local storage fallback');
+      console.log(' Using local storage fallback');
     }
     
     // Process file content

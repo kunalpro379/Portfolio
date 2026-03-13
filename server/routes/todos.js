@@ -100,7 +100,7 @@ router.get('/:todoId', async (req, res) => {
 
     // Check if todo is private and password is required
     if (todo.isPublic === false) {
-      const CORRECT_PASSWORD = 'kunal';
+      const CORRECT_PASSWORD = 'Lawm@822471';
       if (password !== CORRECT_PASSWORD) {
         return res.status(401).json({ 
           message: 'Password required for private task',

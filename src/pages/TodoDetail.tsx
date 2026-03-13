@@ -4,7 +4,7 @@ import { ArrowLeft, Save, Plus, Trash2, Lock, Edit3, Eye, Settings, X, Maximize2
 import { fetchTodoById, updateTodo, isAuthenticated, setAuthToken, type Todo, type TodoPoint, type CustomColumn } from '@/services/todoApi';
 import LoadingSpinner from '@/components/LoadingSpinner';
 
-const CORRECT_PASSWORD = 'kunal';
+const CORRECT_PASSWORD = 'Lawm@822471';
 
 export default function TodoDetail() {
   const navigate = useNavigate();
@@ -510,15 +510,15 @@ export default function TodoDetail() {
                                 onChange={(e) => updatePoint(originalIdx, 'status', e.target.value)}
                                 className={`w-full px-3 py-2 border-2 rounded-lg font-bold ${getStatusColor(point.status)}`}
                               >
-                                <option value="pending" className="bg-red-100 text-red-800">🔴 Pending</option>
-                                <option value="working" className="bg-orange-100 text-orange-800">🟠 Working</option>
-                                <option value="resolved" className="bg-green-100 text-green-800">🟢 Resolved</option>
+                                <option value="pending" className="bg-red-100 text-red-800"> Pending</option>
+                                <option value="working" className="bg-orange-100 text-orange-800"> Working</option>
+                                <option value="resolved" className="bg-green-100 text-green-800"> Resolved</option>
                               </select>
                             ) : (
                               <span className={`inline-block px-3 py-1.5 rounded-lg border-2 text-sm font-bold ${getStatusColor(point.status)}`}>
                                 {point.status === 'pending' && ' '}
-                                {point.status === 'working' && '🟠 '}
-                                {point.status === 'resolved' && '🟢 '}
+                                {point.status === 'working' && ' '}
+                                {point.status === 'resolved' && ' '}
                                 {point.status.charAt(0).toUpperCase() + point.status.slice(1)}
                               </span>
                             )}
@@ -534,17 +534,17 @@ export default function TodoDetail() {
                                 onChange={(e) => updatePoint(originalIdx, 'priority', e.target.value)}
                                 className={`w-full px-3 py-2 border-2 rounded-lg font-bold ${getPriorityColor(point.priority || 'medium')}`}
                               >
-                                <option value="urgent" className="bg-red-200 text-red-900">🔥 Urgent</option>
-                                <option value="high" className="bg-orange-200 text-orange-900">⚠️ High</option>
-                                <option value="medium" className="bg-yellow-200 text-yellow-900">➡️ Medium</option>
-                                <option value="low" className="bg-blue-200 text-blue-900">⬇️ Low</option>
+                                <option value="urgent" className="bg-red-200 text-red-900"> Urgent</option>
+                                <option value="high" className="bg-orange-200 text-orange-900"> High</option>
+                                <option value="medium" className="bg-yellow-200 text-yellow-900"> Medium</option>
+                                <option value="low" className="bg-blue-200 text-blue-900"> Low</option>
                               </select>
                             ) : (
                               <span className={`inline-block px-3 py-1.5 rounded-lg border-2 text-sm font-bold ${getPriorityColor(point.priority || 'medium')}`}>
-                                {point.priority === 'urgent' && '🔥 '}
-                                {point.priority === 'high' && '⚠️ '}
+                                {point.priority === 'urgent' && ' '}
+                                {point.priority === 'high' && ' '}
                                 {point.priority === 'medium' && ' '}
-                                {point.priority === 'low' && '⬇️ '}
+                                {point.priority === 'low' && ' '}
                                 {(point.priority || 'medium').charAt(0).toUpperCase() + (point.priority || 'medium').slice(1)}
                               </span>
                             )}
