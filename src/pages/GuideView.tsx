@@ -100,18 +100,6 @@ export default function GuideView() {
     setTimeout(() => setCopied(false), 2000);
   };
 
-  const handleDeleteTitle = async (titleId: string) => {
-    if (!window.confirm('Are you sure you want to delete this title and all its documents?')) return;
-    
-    try {
-      await deleteTitle(guideId!, titleId);
-      await loadGuide();
-    } catch (err) {
-      console.error('Error deleting title:', err);
-      alert('Failed to delete title');
-    }
-  };
-
   if (loading) {
     return (
       <div className="min-h-screen bg-gray-100 flex items-center justify-center">

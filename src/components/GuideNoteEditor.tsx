@@ -92,7 +92,7 @@ export default function GuideNoteEditor({ isOpen, onClose, onSave, initialData, 
   };
 
   const handleDeleteAsset = async (assetId: string) => {
-    if (!noteId || !confirm('Delete this asset?')) return;
+    if (!noteId || !window.confirm('Delete this asset?')) return;
 
     try {
       const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/guide-notes/${noteId}/assets/${assetId}`, {
