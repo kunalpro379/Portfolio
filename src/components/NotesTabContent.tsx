@@ -23,6 +23,8 @@ import {
   setAuthToken,
   clearAuthToken,
   type Todo,
+  type TodoPoint,
+  type TodoLink,
   type CreateTodoData,
   type PerformanceStats
 } from '@/services/todoApi';
@@ -208,7 +210,14 @@ export default function NotesTabContent({ notes, activeSubTab: propActiveSubTab 
     }
   };
 
-  const handleTodoSubmit = async (data: CreateTodoData & { persistFor: 'day' | 'always'; links: any[] }) => {
+  const handleTodoSubmit = async (data: { 
+    topic: string; 
+    content: string; 
+    points: TodoPoint[]; 
+    links: TodoLink[]; 
+    isPublic: boolean; 
+    persistFor: 'day' | 'always'; 
+  }) => {
     try {
       if (todoFormMode === 'create') {
         await createTodo({
