@@ -215,7 +215,8 @@ export default function NotesTabContent({ notes, activeSubTab: propActiveSubTab 
           topic: data.topic,
           content: data.content,
           points: data.points,
-          links: data.links
+          links: data.links,
+          isPublic: data.isPublic
         });
       } else if (editingTodo) {
         await updateTodo(editingTodo.todoId, {
@@ -230,8 +231,8 @@ export default function NotesTabContent({ notes, activeSubTab: propActiveSubTab 
       setEditingTodo(null);
       await loadTodos();
     } catch (err) {
-      console.error('Error saving todo:', err);
-      alert('Failed to save todo');
+      console.error('Error saving task:', err);
+      alert('Failed to save task');
     }
   };
 
@@ -449,7 +450,7 @@ export default function NotesTabContent({ notes, activeSubTab: propActiveSubTab 
                 <ListTodo size={28} strokeWidth={2.5} className="text-white" />
               </div>
               <div>
-                <h2 className="text-2xl font-black text-black">My Todos</h2>
+                <h2 className="text-2xl font-black text-black">My Tasks</h2>
                 <p className="text-sm font-medium text-gray-600">
                   {todosAuthenticated ? 'Manage your tasks' : 'Password protected'}
                 </p>
@@ -463,7 +464,7 @@ export default function NotesTabContent({ notes, activeSubTab: propActiveSubTab 
                     className="flex items-center gap-2 px-4 py-3 bg-black text-white border-3 border-black rounded-xl font-bold hover:bg-gray-800 transition-all shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]"
                   >
                     <Plus size={20} strokeWidth={2.5} />
-                    <span className="hidden sm:inline">New Todo</span>
+                    <span className="hidden sm:inline">New Task</span>
                   </button>
                   <button
                     onClick={handleLogoutTodos}
@@ -483,7 +484,7 @@ export default function NotesTabContent({ notes, activeSubTab: propActiveSubTab 
                   className="flex items-center gap-2 px-4 py-3 bg-black text-white border-3 border-black rounded-xl font-bold hover:bg-gray-800 transition-all shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]"
                 >
                   <Lock size={20} strokeWidth={2.5} />
-                  <span>Unlock Todos</span>
+                  <span>Unlock Tasks</span>
                 </button>
               )}
             </div>
@@ -496,7 +497,7 @@ export default function NotesTabContent({ notes, activeSubTab: propActiveSubTab 
                   <Lock size={40} strokeWidth={2.5} className="text-white" />
                 </div>
                 <p className="text-black text-lg font-black mb-2">Protected Content</p>
-                <p className="text-gray-700 text-sm font-medium mb-4">Enter password to view your todos</p>
+                <p className="text-gray-700 text-sm font-medium mb-4">Enter password to view your tasks</p>
                 <button
                   onClick={() => {
                     setTodoPasswordMode('view');
@@ -517,14 +518,14 @@ export default function NotesTabContent({ notes, activeSubTab: propActiveSubTab 
             <div className="text-center py-16">
               <div className="bg-gradient-to-br from-[#FFF8E7] to-[#F5E6D3] border-3 border-black rounded-2xl p-10 inline-block shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]">
                 <ListTodo size={48} strokeWidth={2.5} className="mx-auto mb-3 text-black" />
-                <p className="text-black text-lg font-black mb-2">No todos yet</p>
-                <p className="text-gray-700 text-sm font-medium mb-4">Create your first todo to get started</p>
+                <p className="text-black text-lg font-black mb-2">No tasks yet</p>
+                <p className="text-gray-700 text-sm font-medium mb-4">Create your first task to get started</p>
                 <button
                   onClick={handleCreateTodo}
                   className="px-6 py-3 bg-black text-white border-3 border-black rounded-xl font-bold hover:bg-gray-800 transition-all shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] inline-flex items-center gap-2"
                 >
                   <Plus size={20} strokeWidth={2.5} />
-                  Create Todo
+                  Create Task
                 </button>
               </div>
             </div>

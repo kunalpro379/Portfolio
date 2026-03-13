@@ -17,6 +17,7 @@ interface TodoCardProps {
     todoId: string;
     topic: string;
     content?: string;
+    isPublic?: boolean;
     points?: TodoPoint[];
     links?: TodoLink[];
     pointsCount?: number;
@@ -74,9 +75,16 @@ export default function TodoCard({ todo, onEdit, onDelete }: TodoCardProps) {
       {/* Header */}
       <div className="flex items-start justify-between mb-3">
         <div className="flex-1 min-w-0">
-          <h3 className="text-base md:text-lg font-black text-black mb-1.5 leading-tight group-hover:underline transition-all truncate">
-            {todo.topic}
-          </h3>
+          <div className="flex items-center gap-2 mb-1.5">
+            <h3 className="text-base md:text-lg font-black text-black leading-tight group-hover:underline transition-all truncate">
+              {todo.topic}
+            </h3>
+            {todo.isPublic === false && (
+              <span className="flex-shrink-0 px-2 py-0.5 bg-red-400 text-white border-2 border-black rounded text-[10px] font-black">
+                🔒 PRIVATE
+              </span>
+            )}
+          </div>
           <div className="flex items-center gap-3 text-xs text-gray-700 font-bold">
             <div className="flex items-center gap-1">
               <Calendar size={11} strokeWidth={2.5} className="text-black" />

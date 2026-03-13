@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { ArrowLeft, Plus, Edit, Trash2, BookOpen, FileText, Eye, Lock } from 'lucide-react';
+import { ArrowLeft, Plus, Edit, Trash2, BookOpen, FileText, Eye, Lock, Share2, Copy, Check } from 'lucide-react';
 import LoadingSpinner from '@/components/LoadingSpinner';
-import { fetchGuideById, deleteTitle, type Guide } from '@/services/guideNotesApi';
+import { fetchGuideById, getTitleShareLink, deleteTitleWithPassword, type Guide } from '@/services/guideNotesApi';
 
 export default function GuideView() {
   const navigate = useNavigate();
@@ -13,7 +13,10 @@ export default function GuideView() {
   const [selectedTitleId, setSelectedTitleId] = useState<string | null>(null);
   const [password, setPassword] = useState('');
   const [passwordError, setPasswordError] = useState('');
-  const [mode, setMode] = useState<'view' | 'edit'>('view');
+  const [mode, setMode] = useState<'view' | 'edit' | 'delete'>('view');
+  const [showShareModal, setShowShareModal] = useState(false);
+  const [shareUrl, setShareUrl] = useState('');
+  const [copied, setCopied] = useState(false);
 
   useEffect(() => {
     if (guideId) {
@@ -48,12 +51,24 @@ export default function GuideView() {
     }
   };
 
-  const handlePasswordSubmit = () => {
+  const handlePasswordSubmit = async () => {
     if (password === 'kunal') {
-      setShowPasswordModal(false);
-      setPassword('');
-      setPasswordError('');
-      navigate(`/learnings/guide/${guideId}/title/${selectedTitleId}/edit`);
+      if (mode === 'edit') {
+        setShowPasswordModal(false);
+        setPassword('');
+        setPasswordError('');
+        navigate(`/learnings/guide/${guideId}/title/${selectedTitleId}/edit`);
+      } else if (mode === 'delete' && selectedTitleId) {
+        try {
+          await deleteTitleWithPassword(guideId!, selectedTitleId, password);
+          setShowPasswordModal(false);
+          setPassword('');
+          setPasswordError('');
+          await loadGuide();
+        } catch (err: any) {
+          setPasswordError(err.message || 'Failed to delete title');
+        }
+      }
     } else {
       setPasswordError('Incorrect password');
     }
@@ -61,6 +76,28 @@ export default function GuideView() {
 
   const handleCreateTitle = () => {
     navigate(`/learnings/guide/${guideId}/title/new`);
+  };
+
+  const handleDeleteTitle = (titleId: string) => {
+    setSelectedTitleId(titleId);
+    setMode('delete');
+    setShowPasswordModal(true);
+  };
+
+  const handleShareTitle = async (titleId: string) => {
+    try {
+      const url = await getTitleShareLink(guideId!, titleId);
+      setShareUrl(url);
+      setShowShareModal(true);
+    } catch (err) {
+      alert('Failed to get share link');
+    }
+  };
+
+  const handleCopyShareLink = () => {
+    navigator.clipboard.writeText(shareUrl);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
   };
 
   const handleDeleteTitle = async (titleId: string) => {
@@ -230,12 +267,22 @@ export default function GuideView() {
                   key={title.titleId}
                   className="group bg-black border-3 border-black rounded-xl p-5 transition-all duration-300 hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:-translate-y-1 relative"
                 >
-                  <button
-                    onClick={() => handleDeleteTitle(title.titleId)}
-                    className="absolute top-3 right-3 p-1.5 bg-white text-black border-2 border-black rounded-lg hover:bg-red-500 hover:text-white hover:border-red-500 transition-all opacity-0 group-hover:opacity-100 z-10"
-                  >
-                    <Trash2 size={12} strokeWidth={2.5} />
-                  </button>
+                  <div className="absolute top-3 right-3 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity z-10">
+                    <button
+                      onClick={() => handleShareTitle(title.titleId)}
+                      className="p-1.5 bg-white text-black border-2 border-black rounded-lg hover:bg-blue-500 hover:text-white hover:border-blue-500 transition-all"
+                      title="Share"
+                    >
+                      <Share2 size={12} strokeWidth={2.5} />
+                    </button>
+                    <button
+                      onClick={() => handleDeleteTitle(title.titleId)}
+                      className="p-1.5 bg-white text-black border-2 border-black rounded-lg hover:bg-red-500 hover:text-white hover:border-red-500 transition-all"
+                      title="Delete"
+                    >
+                      <Trash2 size={12} strokeWidth={2.5} />
+                    </button>
+                  </div>
 
                   <div className="flex items-start gap-3 mb-4">
                     <div className="w-11 h-11 bg-white border-2 border-black rounded-lg flex items-center justify-center flex-shrink-0 group-hover:scale-105 transition-transform">
@@ -310,7 +357,7 @@ export default function GuideView() {
               <div>
                 <h3 className="text-xl font-semibold text-white">Enter Password</h3>
                 <p className="text-sm text-stone-400 font-normal">
-                  Password required to edit
+                  Password required to {mode === 'delete' ? 'delete' : 'edit'}
                 </p>
               </div>
             </div>
@@ -348,6 +395,57 @@ export default function GuideView() {
                 className="flex-1 px-5 py-3 bg-amber-500 hover:bg-amber-600 text-white rounded-xl font-medium transition-all shadow-sm hover:shadow-md"
               >
                 Submit
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Share Modal */}
+      {showShareModal && (
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+          <div className="bg-gradient-to-br from-blue-900 to-blue-800 border-2 border-white/20 rounded-2xl p-8 max-w-md w-full shadow-2xl">
+            <div className="flex items-center gap-4 mb-6">
+              <div className="w-12 h-12 bg-gradient-to-br from-blue-400/20 to-blue-400/20 border border-blue-400/30 rounded-xl flex items-center justify-center">
+                <Share2 size={20} strokeWidth={2} className="text-blue-400" />
+              </div>
+              <div>
+                <h3 className="text-xl font-semibold text-white">Share Link</h3>
+                <p className="text-sm text-blue-200 font-normal">
+                  Copy this link to share
+                </p>
+              </div>
+            </div>
+
+            <div className="bg-white/10 border border-white/20 rounded-xl p-3 mb-4">
+              <p className="text-white text-sm font-mono break-all">{shareUrl}</p>
+            </div>
+
+            <div className="flex gap-3">
+              <button
+                onClick={() => {
+                  setShowShareModal(false);
+                  setCopied(false);
+                }}
+                className="flex-1 px-5 py-3 bg-white/10 border border-white/20 text-white rounded-xl font-medium hover:bg-white/20 transition-all"
+              >
+                Close
+              </button>
+              <button
+                onClick={handleCopyShareLink}
+                className="flex-1 px-5 py-3 bg-blue-500 hover:bg-blue-600 text-white rounded-xl font-medium transition-all shadow-sm hover:shadow-md flex items-center justify-center gap-2"
+              >
+                {copied ? (
+                  <>
+                    <Check size={16} strokeWidth={2.5} />
+                    Copied!
+                  </>
+                ) : (
+                  <>
+                    <Copy size={16} strokeWidth={2.5} />
+                    Copy Link
+                  </>
+                )}
               </button>
             </div>
           </div>

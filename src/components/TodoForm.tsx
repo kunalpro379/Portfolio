@@ -19,6 +19,7 @@ interface TodoFormProps {
     content: string;
     points: TodoPoint[];
     links: TodoLink[];
+    isPublic: boolean;
     persistFor: 'day' | 'always';
   }) => Promise<void>;
   initialData?: {
@@ -27,6 +28,7 @@ interface TodoFormProps {
     content: string;
     points: TodoPoint[];
     links: TodoLink[];
+    isPublic?: boolean;
   };
   mode: 'create' | 'edit';
 }
@@ -39,6 +41,7 @@ export default function TodoForm({ isOpen, onClose, onSubmit, initialData, mode 
   const [links, setLinks] = useState<TodoLink[]>(initialData?.links || []);
   const [newLinkTitle, setNewLinkTitle] = useState('');
   const [newLinkUrl, setNewLinkUrl] = useState('');
+  const [isPublic, setIsPublic] = useState(initialData?.isPublic !== undefined ? initialData.isPublic : true);
   const [persistFor, setPersistFor] = useState<'day' | 'always'>('day');
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -49,12 +52,14 @@ export default function TodoForm({ isOpen, onClose, onSubmit, initialData, mode 
       setContent(initialData.content || '');
       setPoints(initialData.points || []);
       setLinks(initialData.links || []);
+      setIsPublic(initialData.isPublic !== undefined ? initialData.isPublic : true);
     } else {
       // Reset form for create mode
       setTopic('');
       setContent('');
       setPoints([]);
       setLinks([]);
+      setIsPublic(true);
     }
   }, [initialData, mode]);
 
@@ -106,7 +111,7 @@ export default function TodoForm({ isOpen, onClose, onSubmit, initialData, mode 
     setIsSubmitting(true);
     
     try {
-      await onSubmit({ topic, content, points, links, persistFor });
+      await onSubmit({ topic, content, points, links, isPublic, persistFor });
       
       // Reset form state after successful submission
       setTopic('');
@@ -116,12 +121,13 @@ export default function TodoForm({ isOpen, onClose, onSubmit, initialData, mode 
       setNewPoint('');
       setNewLinkTitle('');
       setNewLinkUrl('');
+      setIsPublic(true);
       setPersistFor('day');
       
       onClose();
     } catch (error) {
       console.error('Error submitting todo:', error);
-      alert('Failed to save todo. Please try again.');
+      alert('Failed to save task. Please try again.');
     } finally {
       setIsSubmitting(false);
     }
@@ -147,7 +153,7 @@ export default function TodoForm({ isOpen, onClose, onSubmit, initialData, mode 
             style={{ borderRadius: '22px 25px 0 0' }}
           >
             <h2 className="text-lg sm:text-xl font-black text-white">
-              {mode === 'create' ? 'Create New Todo' : 'Edit Todo'}
+              {mode === 'create' ? 'Create New Task' : 'Edit Task'}
             </h2>
             <div className="flex items-center gap-2">
               {/* Save button - visible only on mobile */}
@@ -184,7 +190,7 @@ export default function TodoForm({ isOpen, onClose, onSubmit, initialData, mode 
                 type="text"
                 value={topic}
                 onChange={(e) => setTopic(e.target.value)}
-                placeholder="Enter todo topic..."
+                placeholder="Enter task topic..."
                 className="w-full px-3 sm:px-4 py-2 sm:py-2.5 text-sm sm:text-base border-[3px] border-black bg-white focus:outline-none focus:shadow-[4px_4px_0px_0px_rgba(0,0,0,0.3)] transition-all font-medium"
                 style={{ borderRadius: '8px 10px 9px 11px' }}
                 required
@@ -358,43 +364,43 @@ export default function TodoForm({ isOpen, onClose, onSubmit, initialData, mode 
               </div>
             </div>
 
-            {/* Persistence Option - Only show on create mode */}
-            {mode === 'create' && (
-              <div>
-                <label className="block text-xs sm:text-sm font-semibold text-gray-700 mb-3">
-                  Session Persistence
-                </label>
-                <div className="flex gap-2 sm:gap-3">
-                  <button
-                    type="button"
-                    onClick={() => setPersistFor('day')}
-                    className={`flex-1 px-3 sm:px-4 py-2 sm:py-2.5 text-xs sm:text-base border rounded-md font-medium transition-all ${
-                      persistFor === 'day'
-                        ? 'bg-orange-600 text-white border-orange-700'
-                        : 'bg-white border-gray-300 hover:bg-gray-50'
-                    }`}
-                  >
-                    For 1 Day
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setPersistFor('always')}
-                    className={`flex-1 px-3 sm:px-4 py-2 sm:py-2.5 text-xs sm:text-base border rounded-md font-medium transition-all ${
-                      persistFor === 'always'
-                        ? 'bg-orange-600 text-white border-orange-700'
-                        : 'bg-white border-gray-300 hover:bg-gray-50'
-                    }`}
-                  >
-                    Always
-                  </button>
-                </div>
-                <p className="text-[10px] sm:text-xs text-gray-600 font-medium mt-2">
-                  {persistFor === 'day'
-                    ? 'You will need to enter password again after 24 hours'
-                    : 'You will stay authenticated until you manually logout'}
-                </p>
+            {/* Visibility Option */}
+            <div>
+              <label className="block text-xs sm:text-sm font-black text-black mb-3">
+                Task Visibility
+              </label>
+              <div className="flex gap-2 sm:gap-3">
+                <button
+                  type="button"
+                  onClick={() => setIsPublic(true)}
+                  className={`flex-1 px-3 sm:px-4 py-2 sm:py-2.5 text-xs sm:text-base border-[3px] border-black font-black transition-all shadow-[3px_3px_0px_0px_rgba(0,0,0,0.3)] hover:shadow-[5px_5px_0px_0px_rgba(0,0,0,0.3)] ${
+                    isPublic
+                      ? 'bg-green-400 text-white'
+                      : 'bg-white text-black hover:bg-green-50'
+                  }`}
+                  style={{ borderRadius: '8px 10px 9px 11px' }}
+                >
+                  🌍 Public
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setIsPublic(false)}
+                  className={`flex-1 px-3 sm:px-4 py-2 sm:py-2.5 text-xs sm:text-base border-[3px] border-black font-black transition-all shadow-[3px_3px_0px_0px_rgba(0,0,0,0.3)] hover:shadow-[5px_5px_0px_0px_rgba(0,0,0,0.3)] ${
+                    !isPublic
+                      ? 'bg-red-400 text-white'
+                      : 'bg-white text-black hover:bg-red-50'
+                  }`}
+                  style={{ borderRadius: '8px 10px 9px 11px' }}
+                >
+                  🔒 Private
+                </button>
               </div>
-            )}
+              <p className="text-[10px] sm:text-xs text-black/70 font-bold mt-2">
+                {isPublic
+                  ? 'Anyone can view this task'
+                  : 'Password required to view this task'}
+              </p>
+            </div>
 
             {/* Persistence Option - Only show on create mode */}
             {mode === 'create' && (
@@ -473,7 +479,7 @@ export default function TodoForm({ isOpen, onClose, onSubmit, initialData, mode 
                   {mode === 'create' ? 'Creating...' : 'Saving...'}
                 </div>
               ) : (
-                mode === 'create' ? 'Create Todo' : 'Save Changes'
+                mode === 'create' ? 'Create Task' : 'Save Changes'
               )}
             </button>
           </div>

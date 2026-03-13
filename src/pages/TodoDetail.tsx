@@ -10,15 +10,17 @@ export default function TodoDetail() {
   const navigate = useNavigate();
   const { todoId } = useParams<{ todoId: string }>();
   
-  const [showPasswordModal, setShowPasswordModal] = useState(!isAuthenticated());
+  const [showPasswordModal, setShowPasswordModal] = useState(false);
   const [password, setPassword] = useState('');
   const [rememberMe, setRememberMe] = useState(false);
   const [passwordError, setPasswordError] = useState('');
+  const [passwordMode, setPasswordMode] = useState<'view' | 'delete'>('view');
   
   const [todo, setTodo] = useState<Todo | null>(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [isEditMode, setIsEditMode] = useState(false);
+  const [isPrivateTodo, setIsPrivateTodo] = useState(false);
   
   const [editingTopic, setEditingTopic] = useState(false);
   const [topicValue, setTopicValue] = useState('');
@@ -33,44 +35,66 @@ export default function TodoDetail() {
   
   const [showMoreModal, setShowMoreModal] = useState(false);
   const [moreContent, setMoreContent] = useState('');
+  
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [deletePassword, setDeletePassword] = useState('');
+  const [deletePasswordError, setDeletePasswordError] = useState('');
 
   const defaultColumns: CustomColumn[] = [
     { id: 'task', name: 'Task', type: 'text', visible: true, width: 300 },
     { id: 'status', name: 'Status', type: 'select', options: ['pending', 'working', 'resolved'], visible: true, width: 150 },
     { id: 'priority', name: 'Priority', type: 'select', options: ['low', 'medium', 'high', 'urgent'], visible: true, width: 120 },
-    { id: 'dueDate', name: 'Due Date', type: 'date', visible: true, width: 150 },
+    { id: 'dueDate', name: 'Due Date', type: 'date', visible: false, width: 150 },
     { id: 'notes', name: 'Notes', type: 'text', visible: true, width: 200 },
   ];
 
   useEffect(() => {
-    if (isAuthenticated()) {
-      loadTodo();
-    }
+    loadTodo();
   }, [todoId]);
 
-  const handlePasswordSubmit = (e: React.FormEvent) => {
+  const handlePasswordSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (password === CORRECT_PASSWORD) {
-      setAuthToken(rememberMe ? 'always' : 'day');
       setShowPasswordModal(false);
       setPasswordError('');
-      loadTodo();
+      // Reload todo with password
+      await loadTodo(password);
     } else {
       setPasswordError('Incorrect password');
     }
   };
 
-  const loadTodo = async () => {
+  const loadTodo = async (pwd?: string) => {
     if (!todoId) return;
     try {
       setLoading(true);
-      const data = await fetchTodoById(todoId);
+      const data = await fetchTodoById(todoId, pwd);
       setTodo(data);
       setTopicValue(data.topic);
-    } catch (error) {
-      console.error('Error loading todo:', error);
+      setIsPrivateTodo(false);
+    } catch (error: any) {
+      if (error.message === 'PRIVATE_TODO') {
+        setIsPrivateTodo(true);
+        setPasswordMode('view');
+        setShowPasswordModal(true);
+      } else {
+        console.error('Error loading todo:', error);
+      }
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleDelete = () => {
+    setShowDeleteConfirm(true);
+  };
+
+  const confirmDelete = async () => {
+    try {
+      await deleteTodo(todoId!, deletePassword);
+      navigate('/learnings?tab=tasks');
+    } catch (error: any) {
+      setDeletePasswordError(error.message || 'Failed to delete');
     }
   };
 
@@ -146,20 +170,20 @@ export default function TodoDetail() {
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'resolved': return 'bg-cream-100 border-black text-black';
-      case 'working': return 'bg-white border-black text-black';
-      case 'pending': return 'bg-gray-50 border-black text-black';
-      default: return 'bg-gray-100 border-black text-black';
+      case 'resolved': return 'bg-green-100 border-green-400 text-green-800';
+      case 'working': return 'bg-orange-100 border-orange-400 text-orange-800';
+      case 'pending': return 'bg-red-100 border-red-400 text-red-800';
+      default: return 'bg-gray-100 border-gray-400 text-gray-800';
     }
   };
 
   const getPriorityColor = (priority: string) => {
     switch (priority) {
-      case 'urgent': return 'bg-black text-white border-black';
-      case 'high': return 'bg-gray-800 text-white border-black';
-      case 'medium': return 'bg-gray-400 text-black border-black';
-      case 'low': return 'bg-gray-200 text-black border-black';
-      default: return 'bg-gray-100 border-black text-black';
+      case 'urgent': return 'bg-red-200 text-red-900 border-red-500';
+      case 'high': return 'bg-orange-200 text-orange-900 border-orange-500';
+      case 'medium': return 'bg-yellow-200 text-yellow-900 border-yellow-500';
+      case 'low': return 'bg-blue-200 text-blue-900 border-blue-500';
+      default: return 'bg-gray-200 border-gray-400 text-gray-800';
     }
   };
   
@@ -196,6 +220,25 @@ export default function TodoDetail() {
   const allColumns = [...defaultColumns, ...(todo?.customColumns || [])];
   const visibleColumns = allColumns.filter(col => col.visible);
 
+  // Sort tasks by status and priority in view mode
+  const getSortedPoints = () => {
+    if (!todo || isEditMode) return todo?.points || [];
+    
+    const statusOrder = { 'pending': 1, 'working': 2, 'resolved': 3 };
+    const priorityOrder = { 'urgent': 1, 'high': 2, 'medium': 3, 'low': 4 };
+    
+    return [...todo.points].sort((a, b) => {
+      // First sort by status
+      const statusDiff = (statusOrder[a.status as keyof typeof statusOrder] || 999) - 
+                        (statusOrder[b.status as keyof typeof statusOrder] || 999);
+      if (statusDiff !== 0) return statusDiff;
+      
+      // Then sort by priority
+      return (priorityOrder[a.priority as keyof typeof priorityOrder] || 999) - 
+             (priorityOrder[b.priority as keyof typeof priorityOrder] || 999);
+    });
+  };
+
   if (showPasswordModal) {
     return (
       <div className="min-h-screen bg-[#F5F5DC] flex items-center justify-center p-4">
@@ -206,9 +249,9 @@ export default function TodoDetail() {
             </div>
           </div>
           <h2 className="text-3xl font-bold text-black mb-2 text-center">
-            Protected Todo
+            Private Task
           </h2>
-          <p className="text-black text-center mb-6">Enter password to access</p>
+          <p className="text-black text-center mb-6">Enter password to view this task</p>
           
           <form onSubmit={handlePasswordSubmit} className="space-y-4">
             <div>
@@ -225,21 +268,19 @@ export default function TodoDetail() {
               )}
             </div>
             
-            <label className="flex items-center gap-2 cursor-pointer">
-              <input
-                type="checkbox"
-                checked={rememberMe}
-                onChange={(e) => setRememberMe(e.target.checked)}
-                className="w-5 h-5 border-2 border-black rounded"
-              />
-              <span className="text-gray-700">Remember me</span>
-            </label>
-            
             <button
               type="submit"
               className="w-full px-6 py-4 bg-black text-white border-2 border-black rounded-lg font-bold text-lg hover:bg-gray-900 transition-all shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]"
             >
               Unlock
+            </button>
+            
+            <button
+              type="button"
+              onClick={() => navigate('/learnings?tab=tasks')}
+              className="w-full px-6 py-3 bg-white text-black border-2 border-black rounded-lg font-bold hover:bg-gray-50 transition-all"
+            >
+              Back to Tasks
             </button>
           </form>
         </div>
@@ -259,12 +300,12 @@ export default function TodoDetail() {
     return (
       <div className="min-h-screen bg-[#F5F5DC] flex items-center justify-center">
         <div className="text-center">
-          <p className="text-2xl font-bold text-black mb-4">Todo not found</p>
+          <p className="text-2xl font-bold text-black mb-4">Task not found</p>
           <button
             onClick={() => navigate('/learnings?tab=todo')}
             className="px-6 py-3 bg-white text-black border-2 border-black rounded-lg font-bold hover:bg-gray-50 transition-all shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]"
           >
-            Back to Todos
+            Back to Tasks
           </button>
         </div>
       </div>
@@ -329,6 +370,13 @@ export default function TodoDetail() {
                 >
                   <Save size={20} />
                   {saving ? 'Saving...' : 'Save'}
+                </button>
+                <button
+                  onClick={handleDelete}
+                  className="flex items-center gap-2 px-4 py-2 bg-red-600 text-white border-2 border-black rounded-lg font-bold hover:bg-red-700 transition-all shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]"
+                >
+                  <Trash2 size={20} />
+                  Delete
                 </button>
               </>
             )}
@@ -414,8 +462,12 @@ export default function TodoDetail() {
                 </tr>
               </thead>
               <tbody>
-                {todo.points.map((point, idx) => (
-                  <tr key={idx} className="border-b-2 border-gray-200 hover:bg-[#F5F5DC] transition-colors">
+                {getSortedPoints().map((point, idx) => {
+                  // Find the original index for editing
+                  const originalIdx = todo.points.indexOf(point);
+                  
+                  return (
+                  <tr key={originalIdx} className="border-b-2 border-gray-200 hover:bg-[#F5F5DC] transition-colors">
                     {visibleColumns.map(col => {
                       if (col.id === 'task') {
                         return (
@@ -424,7 +476,7 @@ export default function TodoDetail() {
                               <input
                                 type="text"
                                 value={point.text}
-                                onChange={(e) => updatePoint(idx, 'text', e.target.value)}
+                                onChange={(e) => updatePoint(originalIdx, 'text', e.target.value)}
                                 className="w-full px-2 py-1 border-2 border-black rounded"
                               />
                             ) : (
@@ -449,16 +501,19 @@ export default function TodoDetail() {
                             {isEditMode ? (
                               <select
                                 value={point.status}
-                                onChange={(e) => updatePoint(idx, 'status', e.target.value)}
-                                className={`w-full px-2 py-1 border-2 rounded ${getStatusColor(point.status)}`}
+                                onChange={(e) => updatePoint(originalIdx, 'status', e.target.value)}
+                                className={`w-full px-3 py-2 border-2 rounded-lg font-medium ${getStatusColor(point.status)}`}
                               >
-                                <option value="pending">Pending</option>
-                                <option value="working">Working</option>
-                                <option value="resolved">Resolved</option>
+                                <option value="pending" className="bg-red-100 text-red-800">🔴 Pending</option>
+                                <option value="working" className="bg-orange-100 text-orange-800">🟠 Working</option>
+                                <option value="resolved" className="bg-green-100 text-green-800">🟢 Resolved</option>
                               </select>
                             ) : (
-                              <span className={`inline-block px-3 py-1 rounded-lg border-2 text-sm font-medium ${getStatusColor(point.status)}`}>
-                                {point.status}
+                              <span className={`inline-block px-3 py-1.5 rounded-lg border-2 text-sm font-bold ${getStatusColor(point.status)}`}>
+                                {point.status === 'pending' && '🔴 '}
+                                {point.status === 'working' && '🟠 '}
+                                {point.status === 'resolved' && '🟢 '}
+                                {point.status.charAt(0).toUpperCase() + point.status.slice(1)}
                               </span>
                             )}
                           </td>
@@ -470,17 +525,21 @@ export default function TodoDetail() {
                             {isEditMode ? (
                               <select
                                 value={point.priority || 'medium'}
-                                onChange={(e) => updatePoint(idx, 'priority', e.target.value)}
-                                className={`w-full px-2 py-1 border-2 rounded ${getPriorityColor(point.priority || 'medium')}`}
+                                onChange={(e) => updatePoint(originalIdx, 'priority', e.target.value)}
+                                className={`w-full px-3 py-2 border-2 rounded-lg font-medium ${getPriorityColor(point.priority || 'medium')}`}
                               >
-                                <option value="low">Low</option>
-                                <option value="medium">Medium</option>
-                                <option value="high">High</option>
-                                <option value="urgent">Urgent</option>
+                                <option value="urgent" className="bg-red-200 text-red-900">🔥 Urgent</option>
+                                <option value="high" className="bg-orange-200 text-orange-900">⚠️ High</option>
+                                <option value="medium" className="bg-yellow-200 text-yellow-900">➡️ Medium</option>
+                                <option value="low" className="bg-blue-200 text-blue-900">⬇️ Low</option>
                               </select>
                             ) : (
-                              <span className={`inline-block px-3 py-1 rounded-lg border-2 text-sm font-medium ${getPriorityColor(point.priority || 'medium')}`}>
-                                {point.priority || 'medium'}
+                              <span className={`inline-block px-3 py-1.5 rounded-lg border-2 text-sm font-bold ${getPriorityColor(point.priority || 'medium')}`}>
+                                {point.priority === 'urgent' && '🔥 '}
+                                {point.priority === 'high' && '⚠️ '}
+                                {point.priority === 'medium' && '➡️ '}
+                                {point.priority === 'low' && '⬇️ '}
+                                {(point.priority || 'medium').charAt(0).toUpperCase() + (point.priority || 'medium').slice(1)}
                               </span>
                             )}
                           </td>
@@ -493,7 +552,7 @@ export default function TodoDetail() {
                               <input
                                 type="date"
                                 value={point.dueDate ? new Date(point.dueDate).toISOString().split('T')[0] : ''}
-                                onChange={(e) => updatePoint(idx, 'dueDate', e.target.value)}
+                                onChange={(e) => updatePoint(originalIdx, 'dueDate', e.target.value)}
                                 className="w-full px-2 py-1 border-2 border-black rounded"
                               />
                             ) : (
@@ -508,7 +567,7 @@ export default function TodoDetail() {
                         return (
                           <td key={col.id} className="px-4 py-3 border-r-2 border-gray-200">
                             <button
-                              onClick={() => openNotesModal(idx, point.notes || '')}
+                              onClick={() => openNotesModal(originalIdx, point.notes || '')}
                               className="w-full text-left px-2 py-1 border-2 border-black rounded hover:bg-gray-50 transition-colors"
                             >
                               <span className="text-sm text-gray-600 truncate block">
@@ -523,7 +582,7 @@ export default function TodoDetail() {
                     {isEditMode && (
                       <td className="px-4 py-3 text-center">
                         <button
-                          onClick={() => deletePoint(idx)}
+                          onClick={() => deletePoint(originalIdx)}
                           className="p-2 bg-white border-2 border-black rounded-lg hover:bg-red-50 hover:border-red-500 transition-colors"
                         >
                           <Trash2 size={16} className="text-black hover:text-red-500" />
@@ -531,7 +590,7 @@ export default function TodoDetail() {
                       </td>
                     )}
                   </tr>
-                ))}
+                )})}
               </tbody>
             </table>
           </div>
@@ -626,6 +685,67 @@ export default function TodoDetail() {
                 className="px-6 py-2 bg-black text-white border-2 border-black rounded-lg font-bold hover:bg-gray-900 transition-all shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]"
               >
                 Close
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+      
+      {/* Delete Confirmation Modal */}
+      {showDeleteConfirm && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+          <div className="bg-white rounded-lg border-2 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] max-w-md w-full">
+            <div className="flex items-center justify-between p-4 border-b-2 border-black">
+              <h3 className="text-xl font-bold">Delete Task</h3>
+              <button
+                onClick={() => {
+                  setShowDeleteConfirm(false);
+                  setDeletePassword('');
+                  setDeletePasswordError('');
+                }}
+                className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+              >
+                <X size={20} />
+              </button>
+            </div>
+            <div className="p-6">
+              <p className="text-gray-700 mb-4">
+                Are you sure you want to delete this task? This action cannot be undone.
+              </p>
+              <p className="text-gray-700 font-bold mb-4">
+                Enter password to confirm:
+              </p>
+              <input
+                type="password"
+                value={deletePassword}
+                onChange={(e) => {
+                  setDeletePassword(e.target.value);
+                  setDeletePasswordError('');
+                }}
+                placeholder="Enter password"
+                className="w-full px-4 py-3 border-2 border-black rounded-lg focus:outline-none focus:ring-2 focus:ring-black mb-2"
+                autoFocus
+              />
+              {deletePasswordError && (
+                <p className="text-red-600 text-sm mb-4">{deletePasswordError}</p>
+              )}
+            </div>
+            <div className="flex items-center justify-end gap-3 p-4 border-t-2 border-black">
+              <button
+                onClick={() => {
+                  setShowDeleteConfirm(false);
+                  setDeletePassword('');
+                  setDeletePasswordError('');
+                }}
+                className="px-4 py-2 bg-white border-2 border-black rounded-lg font-bold hover:bg-gray-50 transition-all"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={confirmDelete}
+                className="px-6 py-2 bg-red-600 text-white border-2 border-black rounded-lg font-bold hover:bg-red-700 transition-all shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]"
+              >
+                Delete Task
               </button>
             </div>
           </div>

@@ -29,6 +29,7 @@ export interface Todo {
   todoId: string;
   topic: string;
   content: string;
+  isPublic?: boolean;
   points: TodoPoint[];
   links: TodoLink[];
   customColumns?: CustomColumn[];
@@ -57,6 +58,7 @@ export interface PerformanceStats {
 export interface CreateTodoData {
   topic: string;
   content: string;
+  isPublic?: boolean;
   points: TodoPoint[];
   links?: TodoLink[];
   customColumns?: CustomColumn[];
@@ -126,10 +128,19 @@ export const fetchTodos = async (): Promise<Todo[]> => {
   }
 };
 
-// Fetch single todo by ID
-export const fetchTodoById = async (todoId: string): Promise<Todo> => {
+// Fetch single todo by ID (with optional password for private todos)
+export const fetchTodoById = async (todoId: string, password?: string): Promise<Todo> => {
   try {
-    const response = await fetch(`${API_BASE_URL}${API_ENDPOINTS.todos}/${todoId}`);
+    const url = password 
+      ? `${API_BASE_URL}${API_ENDPOINTS.todos}/${todoId}?password=${encodeURIComponent(password)}`
+      : `${API_BASE_URL}${API_ENDPOINTS.todos}/${todoId}`;
+    
+    const response = await fetch(url);
+    
+    if (response.status === 401) {
+      const data = await response.json();
+      throw new Error(data.isPrivate ? 'PRIVATE_TODO' : 'Unauthorized');
+    }
     
     if (!response.ok) {
       throw new Error('Failed to fetch todo');
@@ -261,12 +272,20 @@ export const updatePointStatus = async (
   }
 };
 
-// Delete a todo
-export const deleteTodo = async (todoId: string): Promise<void> => {
+// Delete a todo (with password confirmation)
+export const deleteTodo = async (todoId: string, password: string): Promise<void> => {
   try {
     const response = await fetch(`${API_BASE_URL}${API_ENDPOINTS.todos}/${todoId}`, {
       method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ password }),
     });
+    
+    if (response.status === 401) {
+      throw new Error('Incorrect password');
+    }
     
     if (!response.ok) {
       throw new Error('Failed to delete todo');

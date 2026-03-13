@@ -190,3 +190,47 @@ export async function deleteDocument(guideId: string, titleId: string, documentI
   
   if (!response.ok) throw new Error('Failed to delete document');
 }
+
+// ============ SHARE API ============
+
+export async function getGuideShareLink(guideId: string): Promise<string> {
+  const response = await fetch(`${API_BASE_URL}/api/guide-notes/guides/${guideId}/share`);
+  if (!response.ok) throw new Error('Failed to get share link');
+  const data = await response.json();
+  return data.shareUrl;
+}
+
+export async function getTitleShareLink(guideId: string, titleId: string): Promise<string> {
+  const response = await fetch(`${API_BASE_URL}/api/guide-notes/guides/${guideId}/titles/${titleId}/share`);
+  if (!response.ok) throw new Error('Failed to get share link');
+  const data = await response.json();
+  return data.shareUrl;
+}
+
+// ============ PASSWORD-PROTECTED DELETE API ============
+
+export async function deleteGuideWithPassword(guideId: string, password: string): Promise<void> {
+  const response = await fetch(`${API_BASE_URL}/api/guide-notes/guides/${guideId}`, {
+    method: 'DELETE',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ password })
+  });
+  
+  if (!response.ok) {
+    const error = await response.json();
+    throw new Error(error.message || 'Failed to delete guide');
+  }
+}
+
+export async function deleteTitleWithPassword(guideId: string, titleId: string, password: string): Promise<void> {
+  const response = await fetch(`${API_BASE_URL}/api/guide-notes/guides/${guideId}/titles/${titleId}`, {
+    method: 'DELETE',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ password })
+  });
+  
+  if (!response.ok) {
+    const error = await response.json();
+    throw new Error(error.message || 'Failed to delete title');
+  }
+}

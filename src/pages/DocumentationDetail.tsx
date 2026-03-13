@@ -30,6 +30,7 @@ export default function DocumentationDetail() {
     const [files, setFiles] = useState<DocFile[]>([]);
     const [currentFile, setCurrentFile] = useState<DocFile | null>(null);
     const [currentContent, setCurrentContent] = useState('');
+    const [loadingFile, setLoadingFile] = useState(false);
     const [formData, setFormData] = useState({
         title: '',
         subject: '',
@@ -88,6 +89,9 @@ export default function DocumentationDetail() {
         try {
             console.log('Loading file:', file.name, file.fileId);
             
+            // Show loading state
+            setLoadingFile(true);
+            
             // Close sidebar on mobile when file is selected
             if (window.innerWidth < 1024) {
                 setShowMobileSidebar(false);
@@ -120,6 +124,8 @@ export default function DocumentationDetail() {
         } catch (error) {
             console.error('Error loading file:', error);
             alert(`Error loading file: ${error instanceof Error ? error.message : 'Unknown error'}`);
+        } finally {
+            setLoadingFile(false);
         }
     };
 
@@ -458,54 +464,65 @@ export default function DocumentationDetail() {
                                     </div>
 
                                     <div className="flex-1 overflow-hidden relative min-h-0">
-                                        {activeTab === 'markdown' && (
-                                            <div className="w-full h-full overflow-auto p-6 bg-white" data-color-mode="light">
-                                                <MDEditor.Markdown
-                                                    source={previewContent}
-                                                    style={{ padding: '20px', background: 'white' }}
-                                                />
-                                            </div>
-                                        )}
-
-                                        {activeTab === 'diagram' && (
-                                            <div className="absolute inset-0 w-full h-full touch-none">
-                                                <div className="w-full h-full" style={{ touchAction: 'none' }}>
-                                                    <Excalidraw
-                                                        key={currentFile?.fileId}
-                                                        excalidrawAPI={(api) => {
-                                                            excalidrawRef.current = api;
-                                                            if (currentFile?.content && currentFile.content.elements) {
-                                                                setTimeout(() => {
-                                                                    api.updateScene({
-                                                                        elements: currentFile.content.elements,
-                                                                        appState: {
-                                                                            ...currentFile.content.appState,
-                                                                            collaborators: new Map(),
-                                                                            viewModeEnabled: true
-                                                                        }
-                                                                    });
-                                                                }, 100);
-                                                            }
-                                                        }}
-                                                        theme="light"
-                                                        initialData={{
-                                                            elements: [],
-                                                            appState: {
-                                                                collaborators: new Map(),
-                                                                viewModeEnabled: true
-                                                            }
-                                                        }}
-                                                        viewModeEnabled={true}
-                                                        UIOptions={{
-                                                            canvasActions: {
-                                                                saveToActiveFile: false,
-                                                                loadScene: false,
-                                                                export: false,
-                                                            }
-                                                        }}
-                                                    />
+                                        {loadingFile ? (
+                                            <div className="w-full h-full flex items-center justify-center bg-white">
+                                                <div className="text-center">
+                                                    <div className="w-16 h-16 border-4 border-black border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+                                                    <p className="text-lg font-bold text-black">Loading content...</p>
                                                 </div>
                                             </div>
+                                        ) : (
+                                            <>
+                                                {activeTab === 'markdown' && (
+                                                    <div className="w-full h-full overflow-auto p-6 bg-white" data-color-mode="light">
+                                                        <MDEditor.Markdown
+                                                            source={previewContent}
+                                                            style={{ padding: '20px', background: 'white' }}
+                                                        />
+                                                    </div>
+                                                )}
+
+                                                {activeTab === 'diagram' && (
+                                                    <div className="absolute inset-0 w-full h-full touch-none">
+                                                        <div className="w-full h-full" style={{ touchAction: 'none' }}>
+                                                            <Excalidraw
+                                                                key={currentFile?.fileId}
+                                                                excalidrawAPI={(api) => {
+                                                                    excalidrawRef.current = api;
+                                                                    if (currentFile?.content && currentFile.content.elements) {
+                                                                        setTimeout(() => {
+                                                                            api.updateScene({
+                                                                                elements: currentFile.content.elements,
+                                                                                appState: {
+                                                                                    ...currentFile.content.appState,
+                                                                                    collaborators: new Map(),
+                                                                                    viewModeEnabled: true
+                                                                                }
+                                                                            });
+                                                                        }, 100);
+                                                                    }
+                                                                }}
+                                                                theme="light"
+                                                                initialData={{
+                                                                    elements: [],
+                                                                    appState: {
+                                                                        collaborators: new Map(),
+                                                                        viewModeEnabled: true
+                                                                    }
+                                                                }}
+                                                                viewModeEnabled={true}
+                                                                UIOptions={{
+                                                                    canvasActions: {
+                                                                        saveToActiveFile: false,
+                                                                        loadScene: false,
+                                                                        export: false,
+                                                                    }
+                                                                }}
+                                                            />
+                                                        </div>
+                                                    </div>
+                                                )}
+                                            </>
                                         )}
                                     </div>
                                 </>

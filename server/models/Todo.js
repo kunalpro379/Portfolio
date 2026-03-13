@@ -88,6 +88,10 @@ const todoSchema = new mongoose.Schema({
     type: String,
     default: ''
   },
+  isPublic: {
+    type: Boolean,
+    default: true
+  },
   points: [todoPointSchema],
   links: [todoLinkSchema],
   customColumns: [columnSchema],

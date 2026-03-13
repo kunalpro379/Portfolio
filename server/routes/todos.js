@@ -23,6 +23,7 @@ router.get('/', async (req, res) => {
       return {
         todoId: todo.todoId,
         topic: todo.topic,
+        isPublic: todo.isPublic !== undefined ? todo.isPublic : true,
         pointsCount: points.length,
         resolvedCount,
         workingCount,
@@ -35,7 +36,7 @@ router.get('/', async (req, res) => {
     
     res.json({ todos: todosSummary });
   } catch (error) {
-    console.error('Get todos error:', error);
+    console.error('Get tasks error:', error);
     res.status(500).json({ message: 'Server error' });
   }
 });
@@ -54,7 +55,7 @@ router.get('/stats/performance', async (req, res) => {
 // Create new todo
 router.post('/', async (req, res) => {
   try {
-    const { topic, content, points, links } = req.body;
+    const { topic, content, points, links, isPublic } = req.body;
 
     if (!topic || !topic.trim()) {
       return res.status(400).json({ message: 'Topic is required' });
@@ -66,6 +67,7 @@ router.post('/', async (req, res) => {
       todoId,
       topic: topic.trim(),
       content: content || '',
+      isPublic: isPublic !== undefined ? isPublic : true,
       points: points || [],
       links: links || [],
       createdAt: new Date(),
@@ -75,28 +77,41 @@ router.post('/', async (req, res) => {
     await newTodo.save();
 
     res.status(201).json({ 
-      message: 'Todo created successfully', 
+      message: 'Task created successfully', 
       todo: newTodo 
     });
   } catch (error) {
-    console.error('Create todo error:', error);
+    console.error('Create task error:', error);
     res.status(500).json({ message: 'Server error', error: error.message });
   }
 });
 
-// Get single todo
+// Get single todo (with password check for private todos)
 router.get('/:todoId', async (req, res) => {
   try {
     const { todoId } = req.params;
+    const { password } = req.query;
+    
     const todo = await Todo.findOne({ todoId });
 
     if (!todo) {
-      return res.status(404).json({ message: 'Todo not found' });
+      return res.status(404).json({ message: 'Task not found' });
+    }
+
+    // Check if todo is private and password is required
+    if (todo.isPublic === false) {
+      const CORRECT_PASSWORD = 'kunal';
+      if (password !== CORRECT_PASSWORD) {
+        return res.status(401).json({ 
+          message: 'Password required for private task',
+          isPrivate: true
+        });
+      }
     }
 
     res.json({ todo });
   } catch (error) {
-    console.error('Get todo error:', error);
+    console.error('Get task error:', error);
     res.status(500).json({ message: 'Server error' });
   }
 });
@@ -105,11 +120,11 @@ router.get('/:todoId', async (req, res) => {
 router.put('/:todoId', async (req, res) => {
   try {
     const { todoId } = req.params;
-    const { topic, content, points, links } = req.body;
+    const { topic, content, points, links, isPublic } = req.body;
 
     const todo = await Todo.findOne({ todoId });
     if (!todo) {
-      return res.status(404).json({ message: 'Todo not found' });
+      return res.status(404).json({ message: 'Task not found' });
     }
 
     // Update fields
@@ -117,13 +132,14 @@ router.put('/:todoId', async (req, res) => {
     if (content !== undefined) todo.content = content;
     if (points !== undefined) todo.points = points;
     if (links !== undefined) todo.links = links;
+    if (isPublic !== undefined) todo.isPublic = isPublic;
     todo.updatedAt = new Date();
 
     await todo.save();
 
-    res.json({ message: 'Todo updated successfully', todo });
+    res.json({ message: 'Task updated successfully', todo });
   } catch (error) {
-    console.error('Update todo error:', error);
+    console.error('Update task error:', error);
     res.status(500).json({ message: 'Server error', error: error.message });
   }
 });
@@ -203,21 +219,27 @@ router.put('/:todoId/points/:index/status', async (req, res) => {
   }
 });
 
-// Delete todo
+// Delete todo (with password confirmation)
 router.delete('/:todoId', async (req, res) => {
   try {
     const { todoId } = req.params;
+    const { password } = req.body;
+
+    const CORRECT_PASSWORD = 'kunal';
+    if (password !== CORRECT_PASSWORD) {
+      return res.status(401).json({ message: 'Incorrect password' });
+    }
 
     const todo = await Todo.findOne({ todoId });
     if (!todo) {
-      return res.status(404).json({ message: 'Todo not found' });
+      return res.status(404).json({ message: 'Task not found' });
     }
 
     await Todo.deleteOne({ todoId });
 
-    res.json({ message: 'Todo deleted successfully' });
+    res.json({ message: 'Task deleted successfully' });
   } catch (error) {
-    console.error('Delete todo error:', error);
+    console.error('Delete task error:', error);
     res.status(500).json({ message: 'Server error' });
   }
 });

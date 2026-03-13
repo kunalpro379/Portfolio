@@ -127,14 +127,18 @@ const uploadToAzure = async (buffer, guideId, titleId, filename, fileType) => {
 // Create new guide
 router.post('/guides', async (req, res) => {
   try {
+    console.log('Creating guide with data:', req.body);
     const { name, topic, description } = req.body;
     
     if (!name || !topic) {
+      console.log('Validation failed: missing name or topic');
       return res.status(400).json({ message: 'Name and topic are required' });
     }
     
     const guideId = generateId();
     const guideSlug = generateSlug(name);
+    
+    console.log('Generated IDs:', { guideId, guideSlug });
     
     const guide = new GuideNote({
       guideId,
@@ -147,7 +151,9 @@ router.post('/guides', async (req, res) => {
       updatedAt: new Date()
     });
     
+    console.log('Saving guide to database...');
     await guide.save();
+    console.log('Guide saved successfully:', guideId);
     
     res.status(201).json({
       message: 'Guide created successfully',
@@ -155,7 +161,12 @@ router.post('/guides', async (req, res) => {
     });
   } catch (error) {
     console.error('Create guide error:', error);
-    res.status(500).json({ message: 'Server error', error: error.message });
+    console.error('Error stack:', error.stack);
+    res.status(500).json({ 
+      message: 'Server error', 
+      error: error.message,
+      details: error.toString()
+    });
   }
 });
 
@@ -237,9 +248,17 @@ router.put('/guides/:guideId', async (req, res) => {
 });
 
 // Delete guide
+// Delete guide with password protection
 router.delete('/guides/:guideId', async (req, res) => {
   try {
     const { guideId } = req.params;
+    const { password } = req.body;
+    
+    // Check password
+    const CORRECT_PASSWORD = 'kunal'; // Same as todo password
+    if (password !== CORRECT_PASSWORD) {
+      return res.status(401).json({ message: 'Incorrect password' });
+    }
     
     const guide = await GuideNote.findOne({ guideId });
     if (!guide) {
@@ -346,10 +365,17 @@ router.put('/guides/:guideId/titles/:titleId', async (req, res) => {
   }
 });
 
-// Delete title
+// Delete title with password protection
 router.delete('/guides/:guideId/titles/:titleId', async (req, res) => {
   try {
     const { guideId, titleId } = req.params;
+    const { password } = req.body;
+    
+    // Check password
+    const CORRECT_PASSWORD = 'kunal';
+    if (password !== CORRECT_PASSWORD) {
+      return res.status(401).json({ message: 'Incorrect password' });
+    }
     
     const guide = await GuideNote.findOne({ guideId });
     if (!guide) {
@@ -607,6 +633,69 @@ router.delete('/guides/:guideId/titles/:titleId/documents/:documentId', async (r
     res.json({ message: 'Document deleted successfully' });
   } catch (error) {
     console.error('Delete document error:', error);
+    res.status(500).json({ message: 'Server error' });
+  }
+});
+
+// Get shareable link for guide
+router.get('/guides/:guideId/share', async (req, res) => {
+  try {
+    const { guideId } = req.params;
+    
+    const guide = await GuideNote.findOne({ guideId });
+    if (!guide) {
+      return res.status(404).json({ message: 'Guide not found' });
+    }
+    
+    const shareUrl = `${req.protocol}://${req.get('host')}/learnings/guide/${guideId}`;
+    
+    res.json({
+      shareUrl,
+      guide: {
+        guideId: guide.guideId,
+        name: guide.name,
+        topic: guide.topic
+      }
+    });
+  } catch (error) {
+    console.error('Get share link error:', error);
+    res.status(500).json({ message: 'Server error' });
+  }
+});
+
+// Get shareable link for title
+router.get('/guides/:guideId/titles/:titleId/share', async (req, res) => {
+  try {
+    const { guideId, titleId } = req.params;
+    
+    const guide = await GuideNote.findOne({ guideId });
+    if (!guide) {
+      return res.status(404).json({ message: 'Guide not found' });
+    }
+    
+    const title = guide.titles.find(t => t.titleId === titleId);
+    if (!title) {
+      return res.status(404).json({ message: 'Title not found' });
+    }
+    
+    // Use slug-based URL for sharing (view mode)
+    const guideSlug = guide.guideSlug || guide.guideId;
+    const titleSlug = title.titleSlug || title.titleId;
+    const shareUrl = `${req.protocol}://${req.get('host')}/learn/${guideSlug}/${titleSlug}`;
+    
+    res.json({
+      shareUrl,
+      guide: {
+        guideId: guide.guideId,
+        name: guide.name
+      },
+      title: {
+        titleId: title.titleId,
+        name: title.name
+      }
+    });
+  } catch (error) {
+    console.error('Get title share link error:', error);
     res.status(500).json({ message: 'Server error' });
   }
 });

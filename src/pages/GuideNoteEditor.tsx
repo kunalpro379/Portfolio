@@ -37,6 +37,7 @@ export default function GuideNoteEditorPage() {
   const [content, setContent] = useState('');
   const [canvasData, setCanvasData] = useState<any>(null);
   const [loading, setLoading] = useState(false);
+  const [loadingDoc, setLoadingDoc] = useState(false);
   const [saving, setSaving] = useState(false);
   const [activeView, setActiveView] = useState<'markdown' | 'diagram'>('markdown');
   const [uploading, setUploading] = useState(false);
@@ -88,6 +89,18 @@ export default function GuideNoteEditorPage() {
 
   const insertCodeBlock = () => {
     insertMarkdown('```\n', '\n```');
+  };
+
+  // Handle document selection with loading animation
+  const handleDocumentSelect = async (doc: Document) => {
+    setLoadingDoc(true);
+    setShowMobileSidebar(false); // Close mobile sidebar
+    // Small delay to show loading animation
+    await new Promise(resolve => setTimeout(resolve, 300));
+    setSelectedDoc(doc);
+    setContent(doc.content);
+    setActiveView('markdown');
+    setLoadingDoc(false);
   };
 
   useEffect(() => {
@@ -466,12 +479,7 @@ export default function GuideNoteEditorPage() {
                   markdownDocs.map((doc) => (
                     <div
                       key={doc.documentId}
-                      onClick={() => {
-                        setSelectedDoc(doc);
-                        setContent(doc.content);
-                        setActiveView('markdown');
-                        setShowMobileSidebar(false);
-                      }}
+                      onClick={() => handleDocumentSelect(doc)}
                       className={`px-2 md:px-3 py-1.5 md:py-2 mb-1 rounded-lg cursor-pointer transition-all text-xs md:text-sm ${
                         selectedDoc?.documentId === doc.documentId
                           ? 'bg-blue-100 border-2 border-blue-400 font-bold text-blue-900'
@@ -549,7 +557,14 @@ export default function GuideNoteEditorPage() {
 
           {/* Right Content Area */}
           <div className="flex-1 overflow-y-auto bg-white">
-            {selectedDoc ? (
+            {loadingDoc ? (
+              <div className="flex items-center justify-center h-full">
+                <div className="text-center">
+                  <LoadingSpinner size="lg" />
+                  <p className="text-gray-600 font-medium text-sm mt-4">Loading content...</p>
+                </div>
+              </div>
+            ) : selectedDoc ? (
               <div className="w-full mx-auto px-3 py-4 md:px-8 md:py-8">
                 {/* Document Header - Mobile Optimized */}
                 <div className="mb-4 md:mb-8 pb-3 md:pb-4 border-b border-gray-200">
@@ -1085,31 +1100,40 @@ export default function GuideNoteEditorPage() {
 
               {/* Preview - Hidden on mobile, shown on desktop */}
               <div className="hidden md:block md:w-1/2 overflow-y-auto bg-gray-800 p-6">
-                <div className="prose prose-invert prose-sm max-w-none text-white">
-                  <ReactMarkdown
-                    components={{
-                      code({ node, inline, className, children, ...props }: any) {
-                        const match = /language-(\w+)/.exec(className || '');
-                        return !inline && match ? (
-                          <SyntaxHighlighter
-                            style={vscDarkPlus}
-                            language={match[1]}
-                            PreTag="div"
-                            {...props}
-                          >
-                            {String(children).replace(/\n$/, '')}
-                          </SyntaxHighlighter>
-                        ) : (
-                          <code className={className} {...props}>
-                            {children}
-                          </code>
-                        );
-                      }
-                    }}
-                  >
-                    {content || '*Start writing to see preview...*'}
-                  </ReactMarkdown>
-                </div>
+                {loadingDoc ? (
+                  <div className="flex items-center justify-center h-full">
+                    <div className="text-center">
+                      <LoadingSpinner size="lg" />
+                      <p className="text-gray-300 font-medium text-sm mt-4">Loading content...</p>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="prose prose-invert prose-sm max-w-none text-white">
+                    <ReactMarkdown
+                      components={{
+                        code({ node, inline, className, children, ...props }: any) {
+                          const match = /language-(\w+)/.exec(className || '');
+                          return !inline && match ? (
+                            <SyntaxHighlighter
+                              style={vscDarkPlus}
+                              language={match[1]}
+                              PreTag="div"
+                              {...props}
+                            >
+                              {String(children).replace(/\n$/, '')}
+                            </SyntaxHighlighter>
+                          ) : (
+                            <code className={className} {...props}>
+                              {children}
+                            </code>
+                          );
+                        }
+                      }}
+                    >
+                      {content || '*Start writing to see preview...*'}
+                    </ReactMarkdown>
+                  </div>
+                )}
               </div>
             </>
           ) : (

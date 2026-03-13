@@ -800,7 +800,7 @@ export default function LearningsPage() {
                       : 'text-gray-700 hover:bg-gray-100'
                   }`}
                 >
-                  Todo
+                  Tasks
                 </button>
                 <button
                   onClick={() => changeTab('code')}
@@ -1023,7 +1023,7 @@ export default function LearningsPage() {
                 }`}
               >
                 <ListTodo className="w-5 h-5" strokeWidth={2.5} />
-                <span>Todo</span>
+                <span>Tasks</span>
               </button>
 
               <button
