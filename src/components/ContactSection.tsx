@@ -189,8 +189,8 @@ export default function ContactSection() {
                   </div>
                 </div>
 
-                {/* Location */}
-                <div className="flex items-start gap-4 group">
+                {/* Location - Hidden on mobile, visible on desktop */}
+                <div className="hidden md:flex items-start gap-4 group">
                   <div className="mt-1">
                     <MapPin size={28} className="text-white/80 group-hover:text-sky-400 transition-colors" />
                   </div>

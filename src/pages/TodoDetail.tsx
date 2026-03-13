@@ -170,20 +170,20 @@ export default function TodoDetail() {
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'resolved': return 'bg-green-100 border-green-400 text-green-800';
-      case 'working': return 'bg-orange-100 border-orange-400 text-orange-800';
-      case 'pending': return 'bg-red-100 border-red-400 text-red-800';
-      default: return 'bg-gray-100 border-gray-400 text-gray-800';
+      case 'resolved': return 'bg-green-50 border-green-300 text-green-700';
+      case 'working': return 'bg-orange-50 border-orange-300 text-orange-700';
+      case 'pending': return 'bg-red-50 border-red-300 text-red-700';
+      default: return 'bg-gray-50 border-gray-300 text-gray-700';
     }
   };
 
   const getPriorityColor = (priority: string) => {
     switch (priority) {
-      case 'urgent': return 'bg-red-200 text-red-900 border-red-500';
-      case 'high': return 'bg-orange-200 text-orange-900 border-orange-500';
-      case 'medium': return 'bg-yellow-200 text-yellow-900 border-yellow-500';
-      case 'low': return 'bg-blue-200 text-blue-900 border-blue-500';
-      default: return 'bg-gray-200 border-gray-400 text-gray-800';
+      case 'urgent': return 'bg-red-100 text-red-800 border-red-300';
+      case 'high': return 'bg-orange-100 text-orange-800 border-orange-300';
+      case 'medium': return 'bg-yellow-100 text-yellow-800 border-yellow-300';
+      case 'low': return 'bg-blue-100 text-blue-800 border-blue-300';
+      default: return 'bg-gray-100 border-gray-300 text-gray-700';
     }
   };
   
@@ -220,9 +220,9 @@ export default function TodoDetail() {
   const allColumns = [...defaultColumns, ...(todo?.customColumns || [])];
   const visibleColumns = allColumns.filter(col => col.visible);
 
-  // Sort tasks by status and priority in view mode
+  // Sort tasks by status and priority - always sorted
   const getSortedPoints = () => {
-    if (!todo || isEditMode) return todo?.points || [];
+    if (!todo) return [];
     
     const statusOrder = { 'pending': 1, 'working': 2, 'resolved': 3 };
     const priorityOrder = { 'urgent': 1, 'high': 2, 'medium': 3, 'low': 4 };
@@ -471,9 +471,9 @@ export default function TodoDetail() {
                   
                   // Get row background color based on status
                   const getRowBgColor = () => {
-                    if (point.status === 'resolved') return 'bg-green-50 hover:bg-green-100';
-                    if (point.status === 'working') return 'bg-orange-50 hover:bg-orange-100';
-                    if (point.status === 'pending') return 'bg-red-50 hover:bg-red-100';
+                    if (point.status === 'resolved') return 'bg-green-50/30 hover:bg-green-50/50';
+                    if (point.status === 'working') return 'bg-orange-50/30 hover:bg-orange-50/50';
+                    if (point.status === 'pending') return 'bg-red-50/30 hover:bg-red-50/50';
                     return 'bg-white hover:bg-gray-50';
                   };
                   
@@ -510,15 +510,12 @@ export default function TodoDetail() {
                                 onChange={(e) => updatePoint(originalIdx, 'status', e.target.value)}
                                 className={`w-full px-3 py-2 border-2 rounded-lg font-bold ${getStatusColor(point.status)}`}
                               >
-                                <option value="pending" className="bg-red-100 text-red-800"> Pending</option>
-                                <option value="working" className="bg-orange-100 text-orange-800"> Working</option>
-                                <option value="resolved" className="bg-green-100 text-green-800"> Resolved</option>
+                                <option value="pending" className="bg-red-50 text-red-700">Pending</option>
+                                <option value="working" className="bg-orange-50 text-orange-700">Working</option>
+                                <option value="resolved" className="bg-green-50 text-green-700">Resolved</option>
                               </select>
                             ) : (
                               <span className={`inline-block px-3 py-1.5 rounded-lg border-2 text-sm font-bold ${getStatusColor(point.status)}`}>
-                                {point.status === 'pending' && ' '}
-                                {point.status === 'working' && ' '}
-                                {point.status === 'resolved' && ' '}
                                 {point.status.charAt(0).toUpperCase() + point.status.slice(1)}
                               </span>
                             )}
@@ -534,17 +531,13 @@ export default function TodoDetail() {
                                 onChange={(e) => updatePoint(originalIdx, 'priority', e.target.value)}
                                 className={`w-full px-3 py-2 border-2 rounded-lg font-bold ${getPriorityColor(point.priority || 'medium')}`}
                               >
-                                <option value="urgent" className="bg-red-200 text-red-900"> Urgent</option>
-                                <option value="high" className="bg-orange-200 text-orange-900"> High</option>
-                                <option value="medium" className="bg-yellow-200 text-yellow-900"> Medium</option>
-                                <option value="low" className="bg-blue-200 text-blue-900"> Low</option>
+                                <option value="urgent" className="bg-red-100 text-red-800">Urgent</option>
+                                <option value="high" className="bg-orange-100 text-orange-800">High</option>
+                                <option value="medium" className="bg-yellow-100 text-yellow-800">Medium</option>
+                                <option value="low" className="bg-blue-100 text-blue-800">Low</option>
                               </select>
                             ) : (
                               <span className={`inline-block px-3 py-1.5 rounded-lg border-2 text-sm font-bold ${getPriorityColor(point.priority || 'medium')}`}>
-                                {point.priority === 'urgent' && ' '}
-                                {point.priority === 'high' && ' '}
-                                {point.priority === 'medium' && ' '}
-                                {point.priority === 'low' && ' '}
                                 {(point.priority || 'medium').charAt(0).toUpperCase() + (point.priority || 'medium').slice(1)}
                               </span>
                             )}
