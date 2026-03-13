@@ -1,15 +1,6 @@
 import { useState, useEffect } from 'react';
 import { X, Plus, Trash2, Link as LinkIcon, CheckCircle2, Loader, Circle, Save } from 'lucide-react';
-
-interface TodoPoint {
-  text: string;
-  status: 'pending' | 'working' | 'done';
-}
-
-interface TodoLink {
-  title: string;
-  url: string;
-}
+import type { TodoPoint, TodoLink } from '@/services/todoApi';
 
 interface TodoFormProps {
   isOpen: boolean;
@@ -82,7 +73,7 @@ export default function TodoForm({ isOpen, onClose, onSubmit, initialData, mode 
     if (currentStatus === 'pending') {
       updatedPoints[index].status = 'working';
     } else if (currentStatus === 'working') {
-      updatedPoints[index].status = 'done';
+      updatedPoints[index].status = 'resolved';
     } else {
       updatedPoints[index].status = 'pending';
     }
@@ -225,7 +216,7 @@ export default function TodoForm({ isOpen, onClose, onSubmit, initialData, mode 
                     const statusStyles = {
                       pending: { bg: 'bg-white', icon: 'text-black' },
                       working: { bg: 'bg-[#F5E6D3]', icon: 'text-black' },
-                      done: { bg: 'bg-black', icon: 'text-white', textColor: 'text-white' }
+                      resolved: { bg: 'bg-black', icon: 'text-white', textColor: 'text-white' }
                     };
                     const styles = statusStyles[point.status];
                     
@@ -237,7 +228,7 @@ export default function TodoForm({ isOpen, onClose, onSubmit, initialData, mode 
                         onClick={() => handleTogglePointStatus(index)}
                       >
                         <div className="flex items-center gap-2 flex-1 min-w-0">
-                          {point.status === 'done' && <CheckCircle2 size={14} strokeWidth={3} className={`${styles.icon} flex-shrink-0 sm:w-4 sm:h-4`} />}
+                          {point.status === 'resolved' && <CheckCircle2 size={14} strokeWidth={3} className={`${styles.icon} flex-shrink-0 sm:w-4 sm:h-4`} />}
                           {point.status === 'working' && <Loader size={14} strokeWidth={3} className={`${styles.icon} flex-shrink-0 sm:w-4 sm:h-4`} />}
                           {point.status === 'pending' && <Circle size={14} strokeWidth={3} className={`${styles.icon} flex-shrink-0 sm:w-4 sm:h-4`} />}
                           <span className={`flex-1 text-xs sm:text-sm font-bold ${styles.textColor || 'text-black'} break-words`}>

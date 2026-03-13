@@ -237,15 +237,8 @@ export default function NotesTabContent({ notes, activeSubTab: propActiveSubTab 
   };
 
   const handleDeleteTodo = async (todoId: string) => {
-    if (!window.confirm('Are you sure you want to delete this task?')) return;
-    
-    try {
-      await deleteTodo(todoId);
-      await loadTodos();
-    } catch (err) {
-      console.error('Error deleting todo:', err);
-      alert('Failed to delete todo');
-    }
+    // Navigate to the task detail page where delete with password is handled
+    navigate(`/todo/${todoId}`);
   };
 
   const handleToggleTodoPoint = async (todoId: string, pointIndex: number) => {
@@ -564,7 +557,8 @@ export default function NotesTabContent({ notes, activeSubTab: propActiveSubTab 
           topic: editingTodo.topic,
           content: editingTodo.content,
           points: editingTodo.points,
-          links: editingTodo.links
+          links: editingTodo.links,
+          isPublic: editingTodo.isPublic
         } : undefined}
         mode={todoFormMode}
       />

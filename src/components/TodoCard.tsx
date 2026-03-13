@@ -29,7 +29,7 @@ interface TodoCardProps {
     updatedAt: string;
   };
   onEdit?: (todo: any) => void;
-  onDelete: (todoId: string) => void;
+  onDelete?: (todoId: string) => void;
   onTogglePoint?: (todoId: string, pointIndex: number) => void;
 }
 
@@ -96,19 +96,21 @@ export default function TodoCard({ todo, onEdit, onDelete }: TodoCardProps) {
             </div>
           </div>
         </div>
-        <div className="flex items-center gap-1.5 ml-2">
-          <button
-            onClick={(e) => {
-              e.stopPropagation();
-              onDelete(todo.todoId);
-            }}
-            className="p-1.5 text-black hover:bg-white border-2 border-black rounded-lg transition-all opacity-0 group-hover:opacity-100"
-            style={{ borderRadius: '8px 6px 9px 7px' }}
-            title="Delete"
-          >
-            <Trash2 size={13} strokeWidth={2.5} />
-          </button>
-        </div>
+        {onDelete && (
+          <div className="flex items-center gap-1.5 ml-2">
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                onDelete(todo.todoId);
+              }}
+              className="p-1.5 text-black hover:bg-white border-2 border-black rounded-lg transition-all opacity-0 group-hover:opacity-100"
+              style={{ borderRadius: '8px 6px 9px 7px' }}
+              title="Delete"
+            >
+              <Trash2 size={13} strokeWidth={2.5} />
+            </button>
+          </div>
+        )}
       </div>
 
       {/* Stats Summary */}
