@@ -1899,7 +1899,7 @@ export default function LearningsPage() {
       {showDeletePasswordModal && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-[100] p-4">
           <div className="bg-white border-4 border-black rounded-2xl p-6 max-w-md w-full shadow-2xl" style={{ borderRadius: '20px 25px 22px 24px' }}>
-            <h3 className="text-2xl font-black mb-4">🔒 Delete Architecture</h3>
+            <h3 className="text-2xl font-black mb-4"> Delete Architecture</h3>
             <p className="text-gray-600 mb-6 font-medium">Enter password to delete this architecture diagram</p>
             
             <div className="mb-6">

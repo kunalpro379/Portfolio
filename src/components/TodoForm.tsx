@@ -371,7 +371,7 @@ export default function TodoForm({ isOpen, onClose, onSubmit, initialData, mode 
                   }`}
                   style={{ borderRadius: '8px 10px 9px 11px' }}
                 >
-                  🌍 Public
+                   Public
                 </button>
                 <button
                   type="button"
@@ -383,7 +383,7 @@ export default function TodoForm({ isOpen, onClose, onSubmit, initialData, mode 
                   }`}
                   style={{ borderRadius: '8px 10px 9px 11px' }}
                 >
-                  🔒 Private
+                   Private
                 </button>
               </div>
               <p className="text-[10px] sm:text-xs text-black/70 font-bold mt-2">

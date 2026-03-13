@@ -22,7 +22,7 @@
     "items": [
       { "name": "PostgreSQL", "icon": "🐘", "level": 85 },
       { "name": "MongoDB", "icon": "🍃", "level": 88 },
-      { "name": "Redis", "icon": "🔴", "level": 80 },
+      { "name": "Redis", "icon": "", "level": 80 },
       { "name": "MySQL", "icon": "🐬", "level": 82 }
     ]
   },

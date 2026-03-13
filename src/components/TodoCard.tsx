@@ -81,7 +81,7 @@ export default function TodoCard({ todo, onEdit, onDelete }: TodoCardProps) {
             </h3>
             {todo.isPublic === false && (
               <span className="flex-shrink-0 px-2 py-0.5 bg-red-400 text-white border-2 border-black rounded text-[10px] font-black">
-                🔒 PRIVATE
+                 PRIVATE
               </span>
             )}
           </div>

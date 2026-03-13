@@ -1,4 +1,4 @@
-﻿import { useState, useEffect } from 'react';
+﻿﻿import { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { ArrowLeft, Save, Plus, Trash2, Lock, Edit3, Eye, Settings, X, Maximize2 } from 'lucide-react';
 import { fetchTodoById, updateTodo, isAuthenticated, setAuthToken, type Todo, type TodoPoint, type CustomColumn } from '@/services/todoApi';
@@ -445,6 +445,9 @@ export default function TodoDetail() {
             <table className="w-full">
               <thead>
                 <tr className="bg-black border-b-2 border-black">
+                  <th className="px-4 py-4 text-left font-bold text-white border-r-2 border-gray-700 w-16">
+                    #
+                  </th>
                   {visibleColumns.map(col => (
                     <th
                       key={col.id}
@@ -466,8 +469,21 @@ export default function TodoDetail() {
                   // Find the original index for editing
                   const originalIdx = todo.points.indexOf(point);
                   
+                  // Get row background color based on status
+                  const getRowBgColor = () => {
+                    if (point.status === 'resolved') return 'bg-green-50 hover:bg-green-100';
+                    if (point.status === 'working') return 'bg-orange-50 hover:bg-orange-100';
+                    if (point.status === 'pending') return 'bg-red-50 hover:bg-red-100';
+                    return 'bg-white hover:bg-gray-50';
+                  };
+                  
                   return (
-                  <tr key={originalIdx} className="border-b-2 border-gray-200 hover:bg-[#F5F5DC] transition-colors">
+                  <tr key={originalIdx} className={`border-b-2 border-gray-200 transition-colors ${getRowBgColor()}`}>
+                    {/* Serial Number */}
+                    <td className="px-4 py-3 border-r-2 border-gray-200 font-bold text-gray-700">
+                      {idx + 1}
+                    </td>
+                    
                     {visibleColumns.map(col => {
                       if (col.id === 'task') {
                         return (
@@ -477,20 +493,10 @@ export default function TodoDetail() {
                                 type="text"
                                 value={point.text}
                                 onChange={(e) => updatePoint(originalIdx, 'text', e.target.value)}
-                                className="w-full px-2 py-1 border-2 border-black rounded"
+                                className="w-full px-3 py-2 border-2 border-black rounded-lg font-medium focus:outline-none focus:ring-2 focus:ring-black"
                               />
                             ) : (
-                              <div className="flex items-center justify-between">
-                                <span className="font-medium">{point.text}</span>
-                                {point.text && point.text.length > 50 && (
-                                  <button
-                                    onClick={() => openMoreModal(point.text)}
-                                    className="ml-2 text-xs px-2 py-1 bg-white border border-black rounded hover:bg-gray-50"
-                                  >
-                                    <Maximize2 size={12} />
-                                  </button>
-                                )}
-                              </div>
+                              <span className="font-medium text-gray-900">{point.text}</span>
                             )}
                           </td>
                         );
@@ -502,7 +508,7 @@ export default function TodoDetail() {
                               <select
                                 value={point.status}
                                 onChange={(e) => updatePoint(originalIdx, 'status', e.target.value)}
-                                className={`w-full px-3 py-2 border-2 rounded-lg font-medium ${getStatusColor(point.status)}`}
+                                className={`w-full px-3 py-2 border-2 rounded-lg font-bold ${getStatusColor(point.status)}`}
                               >
                                 <option value="pending" className="bg-red-100 text-red-800">🔴 Pending</option>
                                 <option value="working" className="bg-orange-100 text-orange-800">🟠 Working</option>
@@ -510,7 +516,7 @@ export default function TodoDetail() {
                               </select>
                             ) : (
                               <span className={`inline-block px-3 py-1.5 rounded-lg border-2 text-sm font-bold ${getStatusColor(point.status)}`}>
-                                {point.status === 'pending' && '🔴 '}
+                                {point.status === 'pending' && ' '}
                                 {point.status === 'working' && '🟠 '}
                                 {point.status === 'resolved' && '🟢 '}
                                 {point.status.charAt(0).toUpperCase() + point.status.slice(1)}
@@ -526,7 +532,7 @@ export default function TodoDetail() {
                               <select
                                 value={point.priority || 'medium'}
                                 onChange={(e) => updatePoint(originalIdx, 'priority', e.target.value)}
-                                className={`w-full px-3 py-2 border-2 rounded-lg font-medium ${getPriorityColor(point.priority || 'medium')}`}
+                                className={`w-full px-3 py-2 border-2 rounded-lg font-bold ${getPriorityColor(point.priority || 'medium')}`}
                               >
                                 <option value="urgent" className="bg-red-200 text-red-900">🔥 Urgent</option>
                                 <option value="high" className="bg-orange-200 text-orange-900">⚠️ High</option>
@@ -537,7 +543,7 @@ export default function TodoDetail() {
                               <span className={`inline-block px-3 py-1.5 rounded-lg border-2 text-sm font-bold ${getPriorityColor(point.priority || 'medium')}`}>
                                 {point.priority === 'urgent' && '🔥 '}
                                 {point.priority === 'high' && '⚠️ '}
-                                {point.priority === 'medium' && '➡️ '}
+                                {point.priority === 'medium' && ' '}
                                 {point.priority === 'low' && '⬇️ '}
                                 {(point.priority || 'medium').charAt(0).toUpperCase() + (point.priority || 'medium').slice(1)}
                               </span>
@@ -553,10 +559,10 @@ export default function TodoDetail() {
                                 type="date"
                                 value={point.dueDate ? new Date(point.dueDate).toISOString().split('T')[0] : ''}
                                 onChange={(e) => updatePoint(originalIdx, 'dueDate', e.target.value)}
-                                className="w-full px-2 py-1 border-2 border-black rounded"
+                                className="w-full px-3 py-2 border-2 border-black rounded-lg font-medium focus:outline-none focus:ring-2 focus:ring-black"
                               />
                             ) : (
-                              <span className="font-medium">
+                              <span className="font-medium text-gray-700">
                                 {point.dueDate ? new Date(point.dueDate).toLocaleDateString() : '-'}
                               </span>
                             )}
@@ -568,11 +574,10 @@ export default function TodoDetail() {
                           <td key={col.id} className="px-4 py-3 border-r-2 border-gray-200">
                             <button
                               onClick={() => openNotesModal(originalIdx, point.notes || '')}
-                              className="w-full text-left px-2 py-1 border-2 border-black rounded hover:bg-gray-50 transition-colors"
+                              className="inline-flex items-center gap-2 px-3 py-1.5 bg-blue-50 border-2 border-blue-400 rounded-lg hover:bg-blue-100 transition-colors font-medium text-blue-700"
                             >
-                              <span className="text-sm text-gray-600 truncate block">
-                                {point.notes || 'Click to add notes...'}
-                              </span>
+                              <Maximize2 size={14} />
+                              {point.notes ? 'View Notes' : 'Add Notes'}
                             </button>
                           </td>
                         );

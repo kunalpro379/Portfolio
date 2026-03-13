@@ -78,12 +78,12 @@ export default function NotesTabContent({ notes, activeSubTab: propActiveSubTab 
     }
   }, [activeSubTab]);
 
-  // Load todos
+  // Load todos - always load, no authentication required for public tasks
   useEffect(() => {
-    if (activeSubTab === 'todo' && todosAuthenticated) {
+    if (activeSubTab === 'todo') {
       loadTodos();
     }
-  }, [activeSubTab, todosAuthenticated]);
+  }, [activeSubTab]);
 
   const loadGuides = async () => {
     try {
@@ -454,12 +454,12 @@ export default function NotesTabContent({ notes, activeSubTab: propActiveSubTab 
               <div>
                 <h2 className="text-2xl font-black text-black">My Tasks</h2>
                 <p className="text-sm font-medium text-gray-600">
-                  {todosAuthenticated ? 'Manage your tasks' : 'Password protected'}
+                  Manage your tasks
                 </p>
               </div>
             </div>
             <div className="flex items-center gap-2">
-              {todosAuthenticated && (
+              {todosAuthenticated ? (
                 <>
                   <button
                     onClick={handleCreateTodo}
@@ -476,43 +476,19 @@ export default function NotesTabContent({ notes, activeSubTab: propActiveSubTab 
                     <Lock size={20} strokeWidth={2.5} />
                   </button>
                 </>
-              )}
-              {!todosAuthenticated && (
+              ) : (
                 <button
-                  onClick={() => {
-                    setTodoPasswordMode('view');
-                    setShowTodoPasswordModal(true);
-                  }}
+                  onClick={handleCreateTodo}
                   className="flex items-center gap-2 px-4 py-3 bg-black text-white border-3 border-black rounded-xl font-bold hover:bg-gray-800 transition-all shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]"
                 >
-                  <Lock size={20} strokeWidth={2.5} />
-                  <span>Unlock Tasks</span>
+                  <Plus size={20} strokeWidth={2.5} />
+                  <span className="hidden sm:inline">New Task</span>
                 </button>
               )}
             </div>
           </div>
 
-          {!todosAuthenticated ? (
-            <div className="text-center py-16">
-              <div className="bg-gradient-to-br from-[#FFF8E7] to-[#F5E6D3] border-3 border-black rounded-2xl p-10 inline-block shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]">
-                <div className="w-20 h-20 bg-black border-3 border-black rounded-full flex items-center justify-center mx-auto mb-4">
-                  <Lock size={40} strokeWidth={2.5} className="text-white" />
-                </div>
-                <p className="text-black text-lg font-black mb-2">Protected Content</p>
-                <p className="text-gray-700 text-sm font-medium mb-4">Enter password to view your tasks</p>
-                <button
-                  onClick={() => {
-                    setTodoPasswordMode('view');
-                    setShowTodoPasswordModal(true);
-                  }}
-                  className="inline-flex items-center gap-2 px-6 py-3 bg-black text-white border-3 border-black rounded-xl font-bold hover:bg-gray-800 transition-all shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]"
-                >
-                  <Unlock size={20} strokeWidth={2.5} />
-                  Unlock
-                </button>
-              </div>
-            </div>
-          ) : todosLoading ? (
+          {todosLoading ? (
             <div className="flex items-center justify-center py-16">
               <LoadingSpinner size="md" />
             </div>
@@ -520,15 +496,31 @@ export default function NotesTabContent({ notes, activeSubTab: propActiveSubTab 
             <div className="text-center py-16">
               <div className="bg-gradient-to-br from-[#FFF8E7] to-[#F5E6D3] border-3 border-black rounded-2xl p-10 inline-block shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]">
                 <ListTodo size={48} strokeWidth={2.5} className="mx-auto mb-3 text-black" />
-                <p className="text-black text-lg font-black mb-2">No tasks yet</p>
-                <p className="text-gray-700 text-sm font-medium mb-4">Create your first task to get started</p>
-                <button
-                  onClick={handleCreateTodo}
-                  className="px-6 py-3 bg-black text-white border-3 border-black rounded-xl font-bold hover:bg-gray-800 transition-all shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] inline-flex items-center gap-2"
-                >
-                  <Plus size={20} strokeWidth={2.5} />
-                  Create Task
-                </button>
+                <p className="text-black text-lg font-black mb-2">No Public Tasks</p>
+                <p className="text-gray-700 text-sm font-medium mb-4">
+                  {todosAuthenticated ? 'Create your first task to get started' : 'No public tasks available'}
+                </p>
+                {todosAuthenticated && (
+                  <button
+                    onClick={handleCreateTodo}
+                    className="px-6 py-3 bg-black text-white border-3 border-black rounded-xl font-bold hover:bg-gray-800 transition-all shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] inline-flex items-center gap-2"
+                  >
+                    <Plus size={20} strokeWidth={2.5} />
+                    Create Task
+                  </button>
+                )}
+                {!todosAuthenticated && (
+                  <button
+                    onClick={() => {
+                      setTodoPasswordMode('view');
+                      setShowTodoPasswordModal(true);
+                    }}
+                    className="inline-flex items-center gap-2 px-6 py-3 text-black underline font-bold hover:text-gray-700 transition-all"
+                  >
+                    <Lock size={16} strokeWidth={2.5} />
+                    View Private Tasks
+                  </button>
+                )}
               </div>
             </div>
           ) : (
@@ -544,6 +536,22 @@ export default function NotesTabContent({ notes, activeSubTab: propActiveSubTab 
                   />
                 ))}
               </div>
+              
+              {/* View Private Tasks Link */}
+              {!todosAuthenticated && (
+                <div className="mt-6 text-center">
+                  <button
+                    onClick={() => {
+                      setTodoPasswordMode('view');
+                      setShowTodoPasswordModal(true);
+                    }}
+                    className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-br from-[#FFF8E7] to-[#F5E6D3] border-3 border-black rounded-xl font-bold hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]"
+                  >
+                    <Lock size={20} strokeWidth={2.5} />
+                    View Private Tasks
+                  </button>
+                </div>
+              )}
             </>
           )}
         </div>
