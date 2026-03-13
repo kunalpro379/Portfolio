@@ -120,7 +120,7 @@ router.get('/:todoId', async (req, res) => {
 router.put('/:todoId', async (req, res) => {
   try {
     const { todoId } = req.params;
-    const { topic, content, points, links, isPublic } = req.body;
+    const { topic, content, points, links, isPublic, customColumns } = req.body;
 
     const todo = await Todo.findOne({ todoId });
     if (!todo) {
@@ -133,6 +133,7 @@ router.put('/:todoId', async (req, res) => {
     if (points !== undefined) todo.points = points;
     if (links !== undefined) todo.links = links;
     if (isPublic !== undefined) todo.isPublic = isPublic;
+    if (customColumns !== undefined) todo.customColumns = customColumns;
     todo.updatedAt = new Date();
 
     await todo.save();
@@ -225,7 +226,7 @@ router.delete('/:todoId', async (req, res) => {
     const { todoId } = req.params;
     const { password } = req.body;
 
-    const CORRECT_PASSWORD = 'kunal';
+    const CORRECT_PASSWORD = 'Lawm@822471';
     if (password !== CORRECT_PASSWORD) {
       return res.status(401).json({ message: 'Incorrect password' });
     }

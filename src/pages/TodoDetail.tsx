@@ -1,7 +1,7 @@
 ﻿﻿import { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { ArrowLeft, Save, Plus, Trash2, Lock, Edit3, Eye, Settings, X, Maximize2 } from 'lucide-react';
-import { fetchTodoById, updateTodo, isAuthenticated, setAuthToken, type Todo, type TodoPoint, type CustomColumn } from '@/services/todoApi';
+import { fetchTodoById, updateTodo, deleteTodo, isAuthenticated, setAuthToken, type Todo, type TodoPoint, type CustomColumn } from '@/services/todoApi';
 import LoadingSpinner from '@/components/LoadingSpinner';
 
 const CORRECT_PASSWORD = 'Lawm@822471';
@@ -170,20 +170,20 @@ export default function TodoDetail() {
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'resolved': return 'bg-green-50 border-green-300 text-green-700';
-      case 'working': return 'bg-orange-50 border-orange-300 text-orange-700';
-      case 'pending': return 'bg-red-50 border-red-300 text-red-700';
-      default: return 'bg-gray-50 border-gray-300 text-gray-700';
+      case 'resolved': return 'border-green-400 text-green-800';
+      case 'working': return 'border-orange-400 text-orange-800';
+      case 'pending': return 'border-red-400 text-red-800';
+      default: return 'border-gray-400 text-gray-800';
     }
   };
 
   const getPriorityColor = (priority: string) => {
     switch (priority) {
-      case 'urgent': return 'bg-red-100 text-red-800 border-red-300';
-      case 'high': return 'bg-orange-100 text-orange-800 border-orange-300';
-      case 'medium': return 'bg-yellow-100 text-yellow-800 border-yellow-300';
-      case 'low': return 'bg-blue-100 text-blue-800 border-blue-300';
-      default: return 'bg-gray-100 border-gray-300 text-gray-700';
+      case 'urgent': return 'text-red-900 border-red-400';
+      case 'high': return 'text-orange-900 border-orange-400';
+      case 'medium': return 'text-yellow-900 border-yellow-400';
+      case 'low': return 'text-blue-900 border-blue-400';
+      default: return 'border-gray-400 text-gray-800';
     }
   };
   
@@ -471,9 +471,9 @@ export default function TodoDetail() {
                   
                   // Get row background color based on status
                   const getRowBgColor = () => {
-                    if (point.status === 'resolved') return 'bg-green-50/30 hover:bg-green-50/50';
-                    if (point.status === 'working') return 'bg-orange-50/30 hover:bg-orange-50/50';
-                    if (point.status === 'pending') return 'bg-red-50/30 hover:bg-red-50/50';
+                    if (point.status === 'resolved') return 'bg-green-50 hover:bg-green-100';
+                    if (point.status === 'working') return 'bg-orange-50 hover:bg-orange-100';
+                    if (point.status === 'pending') return 'bg-red-50 hover:bg-red-100';
                     return 'bg-white hover:bg-gray-50';
                   };
                   
@@ -508,14 +508,14 @@ export default function TodoDetail() {
                               <select
                                 value={point.status}
                                 onChange={(e) => updatePoint(originalIdx, 'status', e.target.value)}
-                                className={`w-full px-3 py-2 border-2 rounded-lg font-bold ${getStatusColor(point.status)}`}
+                                className={`w-full px-3 py-2 border-2 rounded-lg font-bold bg-white ${getStatusColor(point.status)}`}
                               >
-                                <option value="pending" className="bg-red-50 text-red-700">Pending</option>
-                                <option value="working" className="bg-orange-50 text-orange-700">Working</option>
-                                <option value="resolved" className="bg-green-50 text-green-700">Resolved</option>
+                                <option value="pending">Pending</option>
+                                <option value="working">Working</option>
+                                <option value="resolved">Resolved</option>
                               </select>
                             ) : (
-                              <span className={`inline-block px-3 py-1.5 rounded-lg border-2 text-sm font-bold ${getStatusColor(point.status)}`}>
+                              <span className={`inline-block px-3 py-1.5 rounded-lg border-2 text-sm font-bold bg-white ${getStatusColor(point.status)}`}>
                                 {point.status.charAt(0).toUpperCase() + point.status.slice(1)}
                               </span>
                             )}
@@ -529,15 +529,15 @@ export default function TodoDetail() {
                               <select
                                 value={point.priority || 'medium'}
                                 onChange={(e) => updatePoint(originalIdx, 'priority', e.target.value)}
-                                className={`w-full px-3 py-2 border-2 rounded-lg font-bold ${getPriorityColor(point.priority || 'medium')}`}
+                                className={`w-full px-3 py-2 border-2 rounded-lg font-bold bg-white ${getPriorityColor(point.priority || 'medium')}`}
                               >
-                                <option value="urgent" className="bg-red-100 text-red-800">Urgent</option>
-                                <option value="high" className="bg-orange-100 text-orange-800">High</option>
-                                <option value="medium" className="bg-yellow-100 text-yellow-800">Medium</option>
-                                <option value="low" className="bg-blue-100 text-blue-800">Low</option>
+                                <option value="urgent">Urgent</option>
+                                <option value="high">High</option>
+                                <option value="medium">Medium</option>
+                                <option value="low">Low</option>
                               </select>
                             ) : (
-                              <span className={`inline-block px-3 py-1.5 rounded-lg border-2 text-sm font-bold ${getPriorityColor(point.priority || 'medium')}`}>
+                              <span className={`inline-block px-3 py-1.5 rounded-lg border-2 text-sm font-bold bg-white ${getPriorityColor(point.priority || 'medium')}`}>
                                 {(point.priority || 'medium').charAt(0).toUpperCase() + (point.priority || 'medium').slice(1)}
                               </span>
                             )}
