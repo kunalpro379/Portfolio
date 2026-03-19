@@ -575,7 +575,7 @@ export default function GuideNoteEditorPage() {
         </div>
 
         {/* Main Content */}
-        <div className="flex-1 flex overflow-hidden relative z-[3]">
+        <div className="flex-1 flex h-full overflow-hidden relative z-[3]">
           {/* Mobile Sidebar Overlay */}
           {showMobileSidebar && (
             <div 
@@ -587,10 +587,10 @@ export default function GuideNoteEditorPage() {
           {/* Left Sidebar - Hidden on mobile by default */}
           <div className={`${
             showMobileSidebar ? 'translate-x-0' : '-translate-x-full'
-          } md:translate-x-0 fixed md:relative z-50 md:z-0 w-72 md:w-72 h-full bg-white/95 border-r-2 border-dotted border-black/30 flex flex-col overflow-y-auto flex-shrink-0 transition-transform duration-300`}>
+          } md:translate-x-0 fixed md:relative z-50 md:z-0 w-72 md:w-72 h-full bg-transparent border-r-0 flex flex-col overflow-y-auto overscroll-contain flex-shrink-0 transition-transform duration-300`}>
             {/* Guide Info Card */}
-            <div className="p-3 md:p-4 border-b border-gray-200 flex-shrink-0">
-              <div className="bg-gradient-to-br from-blue-50 to-white border-2 border-black rounded-xl p-3 md:p-4 shadow-sm">
+            <div className="p-3 md:p-4 border-b border-gray-200/70 flex-shrink-0">
+              <div className="p-1">
                 <h2 className="text-base md:text-lg font-black text-black mb-2 line-clamp-2">
                   {title?.name || 'Guide'}
                 </h2>
@@ -598,7 +598,7 @@ export default function GuideNoteEditorPage() {
                   <>
                     <div className="flex flex-wrap gap-1 mb-2">
                       {guide.topic && (
-                        <span className="px-2 py-0.5 bg-blue-500 text-white border border-black rounded text-[10px] md:text-xs font-bold uppercase">
+                        <span className="px-2 py-0.5 bg-blue-500/90 text-white border border-black/40 rounded text-[10px] md:text-xs font-bold uppercase">
                           {guide.topic}
                         </span>
                       )}
@@ -612,8 +612,8 @@ export default function GuideNoteEditorPage() {
             </div>
 
             {/* Markdown Files */}
-            <div className="border-b border-gray-200 flex-shrink-0">
-              <div className="px-3 py-2 bg-gray-50 border-b border-gray-200 flex items-center gap-2">
+            <div className="border-b border-gray-200/70 flex-shrink-0">
+              <div className="px-3 py-2 border-b border-gray-200/70 flex items-center gap-2">
                 <FileText size={14} strokeWidth={2.5} className="text-gray-700" />
                 <span className="font-black text-[10px] md:text-xs uppercase tracking-wider text-gray-700">Markdown</span>
               </div>
@@ -627,8 +627,8 @@ export default function GuideNoteEditorPage() {
                       onClick={() => handleDocumentSelect(doc)}
                       className={`px-2 md:px-3 py-1.5 md:py-2 mb-1 rounded-lg cursor-pointer transition-all text-xs md:text-sm ${
                         selectedDoc?.documentId === doc.documentId
-                          ? 'bg-blue-100 border-2 border-blue-400 font-bold text-blue-900'
-                          : 'bg-white hover:bg-gray-50 border border-gray-300'
+                          ? 'bg-blue-100/55 border-2 border-blue-400 font-bold text-blue-900 backdrop-blur-[1px]'
+                          : 'bg-white/18 hover:bg-white/35 border border-gray-300 backdrop-blur-[1px]'
                       }`}
                     >
                       <span className="line-clamp-1">{doc.name}</span>
@@ -639,8 +639,8 @@ export default function GuideNoteEditorPage() {
             </div>
 
             {/* Diagrams */}
-            <div className="border-b border-gray-200 flex-shrink-0">
-              <div className="px-3 py-2 bg-gray-50 border-b border-gray-200 flex items-center gap-2">
+            <div className="border-b border-gray-200/70 flex-shrink-0">
+              <div className="px-3 py-2 border-b border-gray-200/70 flex items-center gap-2">
                 <ImageIcon size={14} strokeWidth={2.5} className="text-purple-600" />
                 <span className="font-black text-[10px] md:text-xs uppercase tracking-wider text-gray-700">Diagrams</span>
               </div>
@@ -662,7 +662,7 @@ export default function GuideNoteEditorPage() {
                         setShowDiagramCanvas(true);
                         setShowMobileSidebar(false);
                       }}
-                      className="px-2 md:px-3 py-1.5 md:py-2 mb-1 bg-purple-50 rounded-lg cursor-pointer hover:bg-purple-100 transition-all border border-purple-300 text-xs md:text-sm"
+                      className="px-2 md:px-3 py-1.5 md:py-2 mb-1 bg-transparent rounded-lg cursor-pointer hover:bg-purple-50/70 transition-all border border-purple-300 text-xs md:text-sm"
                     >
                       <span className="font-medium line-clamp-1">{doc.name}</span>
                     </div>
@@ -672,8 +672,8 @@ export default function GuideNoteEditorPage() {
             </div>
 
             {/* Headings Navigation */}
-            <div className="border-b border-gray-200 flex-shrink-0">
-              <div className="px-3 py-2 bg-gray-50 border-b border-gray-200 flex items-center gap-2">
+            <div className="border-b border-gray-200/70 flex-shrink-0">
+              <div className="px-3 py-2 border-b border-gray-200/70 flex items-center gap-2">
                 <span className="font-black text-[10px] md:text-xs uppercase tracking-wider text-gray-700">Navigation</span>
               </div>
               <div className="p-2 max-h-56 md:max-h-72 overflow-y-auto">
@@ -684,7 +684,7 @@ export default function GuideNoteEditorPage() {
                     <button
                       key={heading.id}
                       onClick={() => scrollToHeading(heading.id)}
-                      className={`w-full text-left px-2 py-1.5 mb-1 rounded border border-gray-200 bg-white hover:bg-gray-50 transition-all text-xs ${
+                      className={`w-full text-left px-2 py-1.5 mb-1 rounded border border-gray-200 bg-transparent hover:bg-white/40 transition-all text-xs ${
                         heading.level === 1 ? 'font-bold' : heading.level === 2 ? 'pl-4 font-semibold' : 'pl-6'
                       }`}
                     >
@@ -697,7 +697,7 @@ export default function GuideNoteEditorPage() {
 
             {/* Attachments */}
             <div className="flex-1 overflow-y-auto">
-              <div className="px-3 py-2 bg-gray-50 border-b border-gray-200 flex items-center gap-2">
+              <div className="px-3 py-2 border-b border-gray-200/70 flex items-center gap-2">
                 <Upload size={14} strokeWidth={2.5} className="text-green-600" />
                 <span className="font-black text-[10px] md:text-xs uppercase tracking-wider text-gray-700">Attachments</span>
               </div>
@@ -712,7 +712,7 @@ export default function GuideNoteEditorPage() {
                         href={doc.azureUrl}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="block px-2 py-1.5 bg-white rounded-lg text-[10px] md:text-xs font-medium hover:bg-gray-50 transition-all border border-gray-300 line-clamp-1"
+                        className="block px-2 py-1.5 bg-transparent rounded-lg text-[10px] md:text-xs font-medium hover:bg-white/40 transition-all border border-gray-300 line-clamp-1"
                         onClick={() => setShowMobileSidebar(false)}
                       >
                         {doc.name}
@@ -725,7 +725,7 @@ export default function GuideNoteEditorPage() {
           </div>
 
           {/* Right Content Area */}
-          <div ref={rightContentRef} className="flex-1 overflow-y-auto">
+          <div ref={rightContentRef} className="flex-1 h-full overflow-y-auto overscroll-contain">
             {loadingDoc ? (
               <div className="flex items-center justify-center h-full">
                 <LoadingSpinner size="xl" />
