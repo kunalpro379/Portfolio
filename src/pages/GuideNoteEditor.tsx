@@ -58,6 +58,13 @@ export default function GuideNoteEditorPage() {
       .replace(/\s+/g, '-');
   };
 
+  const normalizeHeadingText = (text: string) =>
+    text
+      .replace(/[`*_~]/g, '')
+      .replace(/\s+/g, ' ')
+      .trim()
+      .toLowerCase();
+
   const extractHeadingText = (node: any): string => {
     if (typeof node === 'string' || typeof node === 'number') {
       return String(node);
@@ -125,15 +132,33 @@ export default function GuideNoteEditorPage() {
     return id;
   };
 
-  const scrollToHeading = (headingId: string) => {
+  const scrollToHeading = (headingId: string, headingText: string) => {
     const container = rightContentRef.current;
     if (!container) return;
 
-    const target = container.querySelector(`[data-heading-id="${headingId}"]`) as HTMLElement | null;
+    let target = container.querySelector(`[data-heading-id="${headingId}"]`) as HTMLElement | null;
+
+    // Fallback to text-based matching if rendered IDs are different.
+    if (!target) {
+      const candidates = container.querySelectorAll('h1, h2, h3');
+      const expected = normalizeHeadingText(headingText);
+      for (const node of Array.from(candidates)) {
+        const text = normalizeHeadingText((node.textContent || '').trim());
+        if (text === expected) {
+          target = node as HTMLElement;
+          break;
+        }
+      }
+    }
+
     if (!target) return;
 
+    const containerRect = container.getBoundingClientRect();
+    const targetRect = target.getBoundingClientRect();
+    const top = targetRect.top - containerRect.top + container.scrollTop - 16;
+
     container.scrollTo({
-      top: target.offsetTop - 16,
+      top,
       behavior: 'smooth'
     });
     setShowMobileSidebar(false);
@@ -476,7 +501,7 @@ export default function GuideNoteEditorPage() {
 // VIEW MODE - Clean read-only interface with mobile sidebar
   if (isViewMode) {
     return (
-      <div className="min-h-screen flex flex-col relative">
+      <div className="h-[100dvh] overflow-hidden flex flex-col relative">
         {/* Animated Background - Same as Learnings Page */}
         {/* Static Background Image for Mobile */}
         <div className="fixed inset-0 z-0 md:hidden">
@@ -575,7 +600,7 @@ export default function GuideNoteEditorPage() {
         </div>
 
         {/* Main Content */}
-        <div className="flex-1 flex h-full overflow-hidden relative z-[3]">
+        <div className="flex-1 min-h-0 flex h-full overflow-hidden relative z-[3]">
           {/* Mobile Sidebar Overlay */}
           {showMobileSidebar && (
             <div 
@@ -587,7 +612,7 @@ export default function GuideNoteEditorPage() {
           {/* Left Sidebar - Hidden on mobile by default */}
           <div className={`${
             showMobileSidebar ? 'translate-x-0' : '-translate-x-full'
-          } md:translate-x-0 fixed md:relative z-50 md:z-0 w-72 md:w-72 h-full bg-transparent border-r-0 flex flex-col overflow-y-auto overscroll-contain flex-shrink-0 transition-transform duration-300`}>
+          } md:translate-x-0 fixed md:relative z-50 md:z-0 w-72 md:w-72 h-full min-h-0 bg-transparent border-r-0 flex flex-col overflow-y-auto overscroll-contain flex-shrink-0 transition-transform duration-300`}>
             {/* Guide Info Card */}
             <div className="p-3 md:p-4 border-b border-gray-200/70 flex-shrink-0">
               <div className="p-1">
@@ -683,7 +708,7 @@ export default function GuideNoteEditorPage() {
                   markdownHeadings.map((heading) => (
                     <button
                       key={heading.id}
-                      onClick={() => scrollToHeading(heading.id)}
+                      onClick={() => scrollToHeading(heading.id, heading.text)}
                       className={`w-full text-left px-2 py-1.5 mb-1 rounded border border-gray-200 bg-transparent hover:bg-white/40 transition-all text-xs ${
                         heading.level === 1 ? 'font-bold' : heading.level === 2 ? 'pl-4 font-semibold' : 'pl-6'
                       }`}
@@ -725,9 +750,9 @@ export default function GuideNoteEditorPage() {
           </div>
 
           {/* Right Content Area */}
-          <div ref={rightContentRef} className="flex-1 h-full overflow-y-auto overscroll-contain">
+          <div ref={rightContentRef} className="flex-1 min-h-0 h-full overflow-y-auto overscroll-contain">
             {loadingDoc ? (
-              <div className="flex items-center justify-center h-full">
+              <div className="min-h-full w-full flex items-center justify-center">
                 <LoadingSpinner size="xl" />
               </div>
             ) : selectedDoc ? (
