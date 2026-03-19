@@ -197,9 +197,9 @@ export default function CreateBlog() {
   };
 
   return (
-    <div className="relative z-10 min-h-screen px-4 py-6 md:px-8">
-      <div className="mx-auto max-w-7xl space-y-6">
-        <div className={`${sectionClass} p-5 md:p-6`}>
+    <div className="relative z-10 h-[calc(100vh-1rem)] px-4 py-4 md:px-8 md:py-6">
+      <div className="mx-auto flex h-full max-w-7xl flex-col gap-6">
+        <div className={`${sectionClass} p-5 md:p-6 shrink-0`}>
           <div className="flex flex-col items-start justify-between gap-4 md:flex-row md:items-center">
             <div>
               <h1 className="text-2xl font-semibold tracking-tight text-black md:text-3xl">Create New Blog</h1>
@@ -227,8 +227,8 @@ export default function CreateBlog() {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 gap-6 lg:grid-cols-12">
-          <div className="space-y-6 lg:col-span-8">
+        <div className="grid min-h-0 flex-1 grid-cols-1 gap-6 lg:grid-cols-12">
+          <div className="min-h-0 space-y-6 overflow-y-auto pr-1 lg:col-span-8">
             <div className={`${sectionClass} p-2`}>
               <div className="grid grid-cols-2 gap-2">
                 <button
@@ -344,20 +344,24 @@ export default function CreateBlog() {
             {activeTab === 'markdown' && (
               <div className={`${sectionClass} p-5 md:p-6`}>
                 <h2 className="text-lg font-semibold text-black md:text-xl">Content Editor</h2>
-                <div className="mt-4 overflow-hidden rounded-xl border border-black/20">
-                  <MDEditor
-                    value={mdContent}
-                    onChange={(val) => setMdContent(val || '')}
-                    height={560}
-                    preview="live"
-                  />
+                <p className="mt-1 text-sm text-black/60">Write clean markdown with live preview.</p>
+                <div className="mt-4 overflow-hidden rounded-xl border border-black/20 bg-white shadow-[inset_0_1px_4px_rgba(0,0,0,0.08)]">
+                  <div data-color-mode="light" className="bg-white">
+                    <MDEditor
+                      value={mdContent}
+                      onChange={(val) => setMdContent(val || '')}
+                      height={620}
+                      preview="live"
+                      textareaProps={{ placeholder: 'Start writing your blog content here...' }}
+                    />
+                  </div>
                 </div>
                 <p className="mt-3 text-xs text-black/60">Tip: Reference assets using their asset name in markdown.</p>
               </div>
             )}
           </div>
 
-          <div className="space-y-6 lg:col-span-4">
+          <div className="min-h-0 space-y-6 overflow-y-auto pr-1 lg:col-span-4">
             <div className={`${sectionClass} p-5 md:p-6`}>
               <h2 className="text-lg font-semibold text-black md:text-xl">Cover Image</h2>
               <label className="mt-4 block">
@@ -400,7 +404,7 @@ export default function CreateBlog() {
                 </button>
               </div>
 
-              <div className="max-h-[56vh] space-y-3 overflow-y-auto pr-1">
+              <div className="max-h-[58vh] space-y-3 overflow-y-auto pr-1">
                 {assets.length === 0 ? (
                   <p className="rounded-xl border border-dashed border-black/20 bg-white/70 py-8 text-center text-sm text-black/55">No assets yet</p>
                 ) : (

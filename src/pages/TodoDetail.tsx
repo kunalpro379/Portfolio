@@ -26,7 +26,7 @@ export default function TodoDetail() {
   
   const [showColumnSettings, setShowColumnSettings] = useState(false);
   const [newColumnName, setNewColumnName] = useState('');
-  const [newColumnType, setNewColumnType] = useState<'text' | 'textbox' | 'select' | 'date' | 'number'>('text');
+  const [newColumnType, setNewColumnType] = useState<'text' | 'textbox' | 'list' | 'select' | 'date' | 'number'>('text');
   const [newColumnOptions, setNewColumnOptions] = useState('');
   
   const [showNotesModal, setShowNotesModal] = useState(false);
@@ -35,6 +35,17 @@ export default function TodoDetail() {
   
   const [showMoreModal, setShowMoreModal] = useState(false);
   const [moreContent, setMoreContent] = useState('');
+
+  const [showCustomFieldModal, setShowCustomFieldModal] = useState(false);
+  const [customFieldText, setCustomFieldText] = useState('');
+  const [customFieldColumnName, setCustomFieldColumnName] = useState('');
+  const [customFieldContext, setCustomFieldContext] = useState<{ index: number; columnId: string } | null>(null);
+
+  const [showListModal, setShowListModal] = useState(false);
+  const [listItems, setListItems] = useState<string[]>([]);
+  const [listInput, setListInput] = useState('');
+  const [listColumnName, setListColumnName] = useState('');
+  const [listContext, setListContext] = useState<{ index: number; columnId: string } | null>(null);
   
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [deletePassword, setDeletePassword] = useState('');
@@ -154,7 +165,7 @@ export default function TodoDetail() {
       name: newColumnName,
       type: newColumnType,
       visible: true,
-      width: newColumnType === 'textbox' ? 240 : 150,
+      width: newColumnType === 'textbox' || newColumnType === 'list' ? 220 : 150,
       options: parsedOptions
     };
     setTodo({
@@ -226,6 +237,63 @@ export default function TodoDetail() {
   const openMoreModal = (content: string) => {
     setMoreContent(content);
     setShowMoreModal(true);
+  };
+
+  const openCustomFieldModal = (index: number, columnId: string, columnName: string, currentValue: string) => {
+    setCustomFieldContext({ index, columnId });
+    setCustomFieldColumnName(columnName);
+    setCustomFieldText(currentValue || '');
+    setShowCustomFieldModal(true);
+  };
+
+  const saveCustomFieldModal = () => {
+    if (customFieldContext) {
+      updateCustomField(customFieldContext.index, customFieldContext.columnId, customFieldText);
+    }
+    setShowCustomFieldModal(false);
+    setCustomFieldContext(null);
+    setCustomFieldColumnName('');
+    setCustomFieldText('');
+  };
+
+  const parseListValue = (value: string) => {
+    if (!value) return [] as string[];
+    try {
+      const parsed = JSON.parse(value);
+      return Array.isArray(parsed) ? parsed.filter((item) => typeof item === 'string') : [];
+    } catch {
+      return [];
+    }
+  };
+
+  const openListModal = (index: number, columnId: string, columnName: string, currentValue: string) => {
+    setListContext({ index, columnId });
+    setListColumnName(columnName);
+    setListItems(parseListValue(currentValue));
+    setListInput('');
+    setShowListModal(true);
+  };
+
+  const addListItem = () => {
+    const value = listInput.trim();
+    if (!value) return;
+    setListItems((prev) => [...prev, value]);
+    setListInput('');
+  };
+
+  const removeListItem = (index: number) => {
+    setListItems((prev) => prev.filter((_, i) => i !== index));
+  };
+
+  const saveListModal = () => {
+    if (listContext) {
+      updateCustomField(listContext.index, listContext.columnId, JSON.stringify(listItems));
+    }
+    setShowListModal(false);
+    setListContext(null);
+    setListColumnName('');
+    setListItems([]);
+    setListInput('');
   };
 
   const getStats = () => {
@@ -445,6 +513,7 @@ export default function TodoDetail() {
                   >
                     <option value="text">Text</option>
                     <option value="textbox">Textbox</option>
+                    <option value="list">List</option>
                     <option value="select">Select</option>
                     <option value="date">Date</option>
                     <option value="number">Number</option>
@@ -610,16 +679,26 @@ export default function TodoDetail() {
                       const customValue = getCustomFieldValue(point, col.id);
                       return (
                         <td key={col.id} className="px-4 py-3 border-r-2 border-gray-200">
-                          {isEditMode ? (
+                          {col.type === 'textbox' ? (
+                            <button
+                              onClick={() => openCustomFieldModal(originalIdx, col.id, col.name, customValue)}
+                              className="inline-flex items-center gap-2 px-3 py-1.5 bg-blue-50 border-2 border-blue-400 rounded-lg hover:bg-blue-100 transition-colors font-medium text-blue-700"
+                            >
+                              <Maximize2 size={14} />
+                              {customValue ? 'View Notes' : 'Add Notes'}
+                            </button>
+                          ) : col.type === 'list' ? (
+                            <button
+                              onClick={() => openListModal(originalIdx, col.id, col.name, customValue)}
+                              className="inline-flex items-center gap-2 px-3 py-1.5 bg-purple-50 border-2 border-purple-400 rounded-lg hover:bg-purple-100 transition-colors font-medium text-purple-700"
+                            >
+                              <Maximize2 size={14} />
+                              {parseListValue(customValue).length > 0
+                                ? `View List (${parseListValue(customValue).length})`
+                                : 'Add List'}
+                            </button>
+                          ) : isEditMode ? (
                             <>
-                              {col.type === 'textbox' && (
-                                <textarea
-                                  value={customValue}
-                                  onChange={(e) => updateCustomField(originalIdx, col.id, e.target.value)}
-                                  rows={2}
-                                  className="w-full px-3 py-2 border-2 border-black rounded-lg font-medium focus:outline-none focus:ring-2 focus:ring-black resize-y"
-                                />
-                              )}
                               {col.type === 'date' && (
                                 <input
                                   type="date"
@@ -746,6 +825,142 @@ export default function TodoDetail() {
                 className="px-6 py-2 bg-black text-white border-2 border-black rounded-lg font-bold hover:bg-gray-900 transition-all shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]"
               >
                 Save Notes
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Custom Textbox Modal */}
+      {showCustomFieldModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+          <div className="bg-white rounded-lg border-2 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] max-w-2xl w-full max-h-[80vh] flex flex-col">
+            <div className="flex items-center justify-between p-4 border-b-2 border-black">
+              <h3 className="text-xl font-bold">{customFieldColumnName || 'Textbox'}</h3>
+              <button
+                onClick={() => {
+                  setShowCustomFieldModal(false);
+                  setCustomFieldContext(null);
+                  setCustomFieldColumnName('');
+                  setCustomFieldText('');
+                }}
+                className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+              >
+                <X size={20} />
+              </button>
+            </div>
+            <div className="flex-1 p-4 overflow-y-auto">
+              <textarea
+                value={customFieldText}
+                onChange={(e) => setCustomFieldText(e.target.value)}
+                className="w-full h-full min-h-[300px] px-4 py-3 border-2 border-black rounded-lg focus:outline-none focus:ring-2 focus:ring-black resize-none"
+                placeholder="Enter details..."
+                autoFocus
+              />
+            </div>
+            <div className="flex items-center justify-end gap-3 p-4 border-t-2 border-black">
+              <button
+                onClick={() => {
+                  setShowCustomFieldModal(false);
+                  setCustomFieldContext(null);
+                  setCustomFieldColumnName('');
+                  setCustomFieldText('');
+                }}
+                className="px-4 py-2 bg-white border-2 border-black rounded-lg font-bold hover:bg-gray-50 transition-all"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={saveCustomFieldModal}
+                className="px-6 py-2 bg-black text-white border-2 border-black rounded-lg font-bold hover:bg-gray-900 transition-all shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]"
+              >
+                Save
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Custom List Modal */}
+      {showListModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+          <div className="bg-white rounded-lg border-2 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] max-w-2xl w-full max-h-[80vh] flex flex-col">
+            <div className="flex items-center justify-between p-4 border-b-2 border-black">
+              <h3 className="text-xl font-bold">{listColumnName || 'List'}</h3>
+              <button
+                onClick={() => {
+                  setShowListModal(false);
+                  setListContext(null);
+                  setListColumnName('');
+                  setListItems([]);
+                  setListInput('');
+                }}
+                className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+              >
+                <X size={20} />
+              </button>
+            </div>
+            <div className="flex-1 p-4 overflow-y-auto space-y-4">
+              <div className="flex gap-2">
+                <input
+                  type="text"
+                  value={listInput}
+                  onChange={(e) => setListInput(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') {
+                      e.preventDefault();
+                      addListItem();
+                    }
+                  }}
+                  placeholder="Add list item"
+                  className="flex-1 px-3 py-2 border-2 border-black rounded-lg focus:outline-none focus:ring-2 focus:ring-black"
+                />
+                <button
+                  onClick={addListItem}
+                  className="px-4 py-2 bg-black text-white border-2 border-black rounded-lg font-bold hover:bg-gray-900"
+                >
+                  Add
+                </button>
+              </div>
+
+              {listItems.length === 0 ? (
+                <p className="text-gray-600">No list items yet.</p>
+              ) : (
+                <div className="space-y-2">
+                  {listItems.map((item, index) => (
+                    <div key={`${item}-${index}`} className="flex items-center gap-2">
+                      <div className="flex-1 px-3 py-2 border-2 border-black rounded-lg bg-gray-50">
+                        {item}
+                      </div>
+                      <button
+                        onClick={() => removeListItem(index)}
+                        className="p-2 bg-white border-2 border-black rounded-lg hover:bg-red-50 hover:border-red-500 transition-colors"
+                      >
+                        <Trash2 size={14} />
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+            <div className="flex items-center justify-end gap-3 p-4 border-t-2 border-black">
+              <button
+                onClick={() => {
+                  setShowListModal(false);
+                  setListContext(null);
+                  setListColumnName('');
+                  setListItems([]);
+                  setListInput('');
+                }}
+                className="px-4 py-2 bg-white border-2 border-black rounded-lg font-bold hover:bg-gray-50 transition-all"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={saveListModal}
+                className="px-6 py-2 bg-black text-white border-2 border-black rounded-lg font-bold hover:bg-gray-900 transition-all shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]"
+              >
+                Save List
               </button>
             </div>
           </div>

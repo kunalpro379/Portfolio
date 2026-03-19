@@ -58,7 +58,7 @@ const columnSchema = new mongoose.Schema({
   },
   type: {
     type: String,
-    enum: ['text', 'textbox', 'select', 'date', 'number'],
+    enum: ['text', 'textbox', 'list', 'select', 'date', 'number'],
     default: 'text'
   },
   options: [String], // For select type

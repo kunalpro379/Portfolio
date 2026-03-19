@@ -19,7 +19,7 @@ export interface TodoLink {
 export interface CustomColumn {
   id: string;
   name: string;
-  type: 'text' | 'textbox' | 'select' | 'date' | 'number';
+  type: 'text' | 'textbox' | 'list' | 'select' | 'date' | 'number';
   options?: string[];
   visible: boolean;
   width: number;
