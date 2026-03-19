@@ -2,6 +2,7 @@
 import { useNavigate, useParams } from 'react-router-dom';
 import { ArrowLeft, Save, Upload, Image as ImageIcon, Trash2, FileText, Plus, Youtube } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { vscDarkPlus } from 'react-syntax-highlighter/dist/esm/styles/prism';
 import ExcalidrawCanvas from '@/components/ExcalidrawCanvas';
@@ -44,6 +45,35 @@ export default function GuideNoteEditorPage() {
   const [showDiagramCanvas, setShowDiagramCanvas] = useState(false);
   const [showMobileSidebar, setShowMobileSidebar] = useState(false);
   const [showYouTubeModal, setShowYouTubeModal] = useState(false);
+
+  const markdownComponents = {
+    h1: ({ children, ...props }: any) => <h1 className="text-3xl font-black text-black mt-8 mb-4" {...props}>{children}</h1>,
+    h2: ({ children, ...props }: any) => <h2 className="text-2xl font-black text-black mt-7 mb-3" {...props}>{children}</h2>,
+    h3: ({ children, ...props }: any) => <h3 className="text-xl font-bold text-black mt-6 mb-3" {...props}>{children}</h3>,
+    p: ({ children, ...props }: any) => <p className="text-gray-800 leading-8 mb-4" {...props}>{children}</p>,
+    ul: ({ children, ...props }: any) => <ul className="list-disc list-outside pl-6 space-y-2 mb-4 text-gray-800" {...props}>{children}</ul>,
+    ol: ({ children, ...props }: any) => <ol className="list-decimal list-outside pl-6 space-y-2 mb-4 text-gray-800" {...props}>{children}</ol>,
+    li: ({ children, ...props }: any) => <li className="leading-7" {...props}>{children}</li>,
+    blockquote: ({ children, ...props }: any) => <blockquote className="border-l-4 border-gray-300 pl-4 italic text-gray-700 my-4" {...props}>{children}</blockquote>,
+    code({ inline, className, children, ...props }: any) {
+      const match = /language-(\w+)/.exec(className || '');
+      return !inline ? (
+        <SyntaxHighlighter
+          style={vscDarkPlus}
+          language={match?.[1] || 'text'}
+          PreTag="div"
+          customStyle={{ borderRadius: '0.75rem', margin: '1rem 0', padding: '1rem' }}
+          {...props}
+        >
+          {String(children).replace(/\n$/, '')}
+        </SyntaxHighlighter>
+      ) : (
+        <code className="rounded bg-gray-100 px-1.5 py-0.5 text-sm text-gray-900" {...props}>
+          {children}
+        </code>
+      );
+    }
+  };
 
   // Markdown formatting helpers
   const insertMarkdown = (before: string, after: string = '') => {
@@ -305,7 +335,7 @@ export default function GuideNoteEditorPage() {
   if (loading) {
     return (
       <div className="min-h-screen bg-gray-100 flex items-center justify-center">
-        <LoadingSpinner size="lg" />
+        <LoadingSpinner size="xl" />
       </div>
     );
   }
@@ -556,54 +586,27 @@ export default function GuideNoteEditorPage() {
           </div>
 
           {/* Right Content Area */}
-          <div className="flex-1 overflow-y-auto bg-white">
+          <div className="flex-1 overflow-y-auto bg-white/80">
             {loadingDoc ? (
               <div className="flex items-center justify-center h-full">
-                <div className="text-center">
-                  <LoadingSpinner size="lg" />
-                  <p className="text-gray-600 font-medium text-sm mt-4">Loading content</p>
-                </div>
+                <LoadingSpinner size="xl" />
               </div>
             ) : selectedDoc ? (
-              <div className="w-full mx-auto px-3 py-4 md:px-8 md:py-8">
-                {/* Document Header - Mobile Optimized */}
-                <div className="mb-4 md:mb-8 pb-3 md:pb-4 border-b border-gray-200">
-                  <h1 className="text-xl md:text-3xl font-black text-black mb-1 md:mb-2 break-words">
-                    {selectedDoc.name.replace('.md', '')}
-                  </h1>
-                </div>
+              <div className="w-full mx-auto max-w-6xl px-3 py-4 md:px-8 md:py-8">
+                <div className="rounded-2xl border-2 border-black/15 bg-white p-4 shadow-sm md:p-8">
+                  {/* Document Header - Mobile Optimized */}
+                  <div className="mb-4 md:mb-8 pb-3 md:pb-4 border-b border-gray-200">
+                    <h1 className="text-xl md:text-3xl font-black text-black mb-1 md:mb-2 break-words">
+                      {selectedDoc.name.replace('.md', '')}
+                    </h1>
+                  </div>
 
-                {/* Rendered Markdown - Mobile Optimized */}
-                <div className="prose prose-sm md:prose-lg max-w-none prose-headings:font-black prose-headings:text-black prose-p:text-gray-700 prose-p:leading-relaxed prose-a:text-blue-600 prose-a:no-underline hover:prose-a:underline prose-strong:text-black prose-strong:font-bold prose-code:text-sm prose-code:bg-gray-100 prose-code:px-1 prose-code:py-0.5 prose-code:rounded prose-code:before:content-none prose-code:after:content-none prose-pre:bg-gray-900 prose-pre:text-gray-100 prose-img:rounded-lg prose-img:shadow-md">
-                  <ReactMarkdown
-                    components={{
-                      code({ node, inline, className, children, ...props }: any) {
-                        const match = /language-(\w+)/.exec(className || '');
-                        return !inline && match ? (
-                          <SyntaxHighlighter
-                            style={vscDarkPlus}
-                            language={match[1]}
-                            PreTag="div"
-                            customStyle={{
-                              margin: 0,
-                              borderRadius: '0.5rem',
-                              fontSize: '0.875rem',
-                              padding: '1rem'
-                            }}
-                            {...props}
-                          >
-                            {String(children).replace(/\n$/, '')}
-                          </SyntaxHighlighter>
-                        ) : (
-                          <code className={className} {...props}>
-                            {children}
-                          </code>
-                        );
-                      }
-                    }}
-                  >
-                    {content || '*No content*'}
-                  </ReactMarkdown>
+                  {/* Rendered Markdown - Mobile Optimized */}
+                  <div className="prose prose-sm md:prose-lg max-w-none prose-headings:tracking-tight prose-img:rounded-lg prose-img:shadow-md">
+                    <ReactMarkdown remarkPlugins={[remarkGfm]} components={markdownComponents}>
+                      {content || '*No content*'}
+                    </ReactMarkdown>
+                  </div>
                 </div>
               </div>
             ) : (
@@ -1099,37 +1102,14 @@ export default function GuideNoteEditorPage() {
               </div>
 
               {/* Preview - Hidden on mobile, shown on desktop */}
-              <div className="hidden md:block md:w-1/2 overflow-y-auto bg-gray-800 p-6">
+              <div className="hidden md:block md:w-1/2 overflow-y-auto bg-white p-6">
                 {loadingDoc ? (
                   <div className="flex items-center justify-center h-full">
-                    <div className="text-center">
-                      <LoadingSpinner size="lg" />
-                      <p className="text-gray-300 font-medium text-sm mt-4">Loading content</p>
-                    </div>
+                    <LoadingSpinner size="xl" />
                   </div>
                 ) : (
-                  <div className="prose prose-invert prose-sm max-w-none text-white">
-                    <ReactMarkdown
-                      components={{
-                        code({ node, inline, className, children, ...props }: any) {
-                          const match = /language-(\w+)/.exec(className || '');
-                          return !inline && match ? (
-                            <SyntaxHighlighter
-                              style={vscDarkPlus}
-                              language={match[1]}
-                              PreTag="div"
-                              {...props}
-                            >
-                              {String(children).replace(/\n$/, '')}
-                            </SyntaxHighlighter>
-                          ) : (
-                            <code className={className} {...props}>
-                              {children}
-                            </code>
-                          );
-                        }
-                      }}
-                    >
+                  <div className="prose prose-sm md:prose-base max-w-none">
+                    <ReactMarkdown remarkPlugins={[remarkGfm]} components={markdownComponents}>
                       {content || '*Start writing to see preview...*'}
                     </ReactMarkdown>
                   </div>

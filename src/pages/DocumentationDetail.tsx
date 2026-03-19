@@ -5,6 +5,7 @@ import MDEditor from '@uiw/react-md-editor';
 import { Excalidraw } from '@excalidraw/excalidraw';
 import { API_ENDPOINTS, API_BASE_URL } from '../config/api';
 import PageShimmer from '@/components/PageShimmer';
+import LoadingSpinner from '@/components/LoadingSpinner';
 
 type TabType = 'markdown' | 'diagram';
 type FileType = 'markdown' | 'diagram' | 'attachment';
@@ -466,10 +467,7 @@ export default function DocumentationDetail() {
                                     <div className="flex-1 overflow-hidden relative min-h-0">
                                         {loadingFile ? (
                                             <div className="w-full h-full flex items-center justify-center bg-white">
-                                                <div className="text-center">
-                                                    <img src="/loading.gif" alt="Loading" className="w-16 h-16 object-contain mx-auto mb-4" />
-                                                    <p className="text-lg font-bold text-black">Loading content</p>
-                                                </div>
+                                                <LoadingSpinner size="xl" />
                                             </div>
                                         ) : (
                                             <>

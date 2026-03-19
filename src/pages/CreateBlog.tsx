@@ -1,6 +1,6 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { Save, X, Upload, Trash2, Link as LinkIcon } from 'lucide-react';
+import { Save, X, Upload, Trash2, Link as LinkIcon, Maximize2, Minimize2 } from 'lucide-react';
 import MDEditor from '@uiw/react-md-editor';
 import { API_BASE_URL, API_ENDPOINTS } from '@/config/api';
 
@@ -49,6 +49,20 @@ export default function CreateBlog() {
   const [coverImage, setCoverImage] = useState<File | null>(null);
   const [coverPreview, setCoverPreview] = useState<string>('');
   const [createdBlogId, setCreatedBlogId] = useState<string | null>(routeBlogId || null);
+  const [isMarkdownFullscreen, setIsMarkdownFullscreen] = useState(false);
+
+  useEffect(() => {
+    if (!isMarkdownFullscreen) return;
+
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        setIsMarkdownFullscreen(false);
+      }
+    };
+
+    window.addEventListener('keydown', onKeyDown);
+    return () => window.removeEventListener('keydown', onKeyDown);
+  }, [isMarkdownFullscreen]);
 
   const addBlogLink = () => {
     setBlogLinks([...blogLinks, { platform: '', url: '' }]);
@@ -343,8 +357,20 @@ export default function CreateBlog() {
 
             {activeTab === 'markdown' && (
               <div className={`${sectionClass} p-5 md:p-6`}>
-                <h2 className="text-lg font-semibold text-black md:text-xl">Content Editor</h2>
-                <p className="mt-1 text-sm text-black/60">Write clean markdown with live preview.</p>
+                <div className="flex items-center justify-between gap-3">
+                  <div>
+                    <h2 className="text-lg font-semibold text-black md:text-xl">Content Editor</h2>
+                    <p className="mt-1 text-sm text-black/60">Write clean markdown with live preview.</p>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => setIsMarkdownFullscreen(true)}
+                    className="inline-flex items-center gap-2 rounded-lg border border-black/20 bg-white px-3 py-2 text-sm font-semibold text-black transition hover:bg-black/5"
+                  >
+                    <Maximize2 className="h-4 w-4" />
+                    Full Screen
+                  </button>
+                </div>
                 <div className="mt-4 overflow-hidden rounded-xl border border-black/20 bg-white shadow-[inset_0_1px_4px_rgba(0,0,0,0.08)]">
                   <div data-color-mode="light" className="bg-white">
                     <MDEditor
@@ -451,6 +477,34 @@ export default function CreateBlog() {
           </div>
         </div>
       </div>
+
+      {isMarkdownFullscreen && (
+        <div className="fixed inset-0 z-[500] bg-white">
+          <div className="flex h-full flex-col">
+            <div className="flex items-center justify-between border-b border-black/10 px-4 py-3 md:px-6">
+              <h2 className="text-base font-semibold text-black md:text-lg">Markdown Editor</h2>
+              <button
+                type="button"
+                onClick={() => setIsMarkdownFullscreen(false)}
+                className="inline-flex items-center gap-2 rounded-lg border border-black/20 bg-white px-3 py-2 text-sm font-semibold text-black transition hover:bg-black/5"
+              >
+                <Minimize2 className="h-4 w-4" />
+                Exit Full Screen
+              </button>
+            </div>
+
+            <div className="flex-1 overflow-hidden bg-white p-3 md:p-5" data-color-mode="light">
+              <MDEditor
+                value={mdContent}
+                onChange={(val) => setMdContent(val || '')}
+                height={window.innerHeight - 110}
+                preview="live"
+                textareaProps={{ placeholder: 'Start writing your blog content here...' }}
+              />
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

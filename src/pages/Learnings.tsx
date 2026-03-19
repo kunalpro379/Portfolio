@@ -1358,7 +1358,7 @@ export default function LearningsPage() {
                             </div>
                             <h3 className="text-sm md:text-base font-black text-black mb-2 line-clamp-2 leading-tight">{blog.title}</h3>
                             <p className="text-gray-700 mb-3 font-medium text-xs line-clamp-2 leading-relaxed">{blog.shortDescription}</p>
-                            <div className="flex items-center justify-between gap-2 text-[10px] text-gray-600 font-black">
+                            <div className="flex items-center gap-2 text-[10px] text-gray-600 font-black">
                               <div className="flex items-center gap-1">
                                 <Calendar size={10} strokeWidth={2.5} />
                                 <span>
@@ -1369,16 +1369,6 @@ export default function LearningsPage() {
                                   })}
                                 </span>
                               </div>
-                              <button
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  handleNavigate(`/learnings/blogs/edit/${blog.blogId}`);
-                                }}
-                                className="p-1.5 bg-white border-2 border-black rounded-lg hover:bg-pink-100 transition"
-                                title="Edit blog"
-                              >
-                                <Edit size={12} strokeWidth={2.5} className="text-black" />
-                              </button>
                             </div>
                           </div>
                         </div>

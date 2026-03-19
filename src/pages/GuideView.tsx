@@ -103,7 +103,7 @@ export default function GuideView() {
   if (loading) {
     return (
       <div className="min-h-screen bg-gray-100 flex items-center justify-center">
-        <LoadingSpinner size="lg" />
+        <LoadingSpinner size="xl" />
       </div>
     );
   }
