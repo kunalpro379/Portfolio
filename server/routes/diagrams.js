@@ -335,8 +335,8 @@ router.post('/', async (req, res) => {
   }
 });
 
-// PUT update canvas (requires authentication)
-router.put('/:canvasId', authenticateToken, async (req, res) => {
+// PUT update canvas (public)
+router.put('/:canvasId', async (req, res) => {
   try {
     let { canvasId } = req.params;
     
