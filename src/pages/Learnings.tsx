@@ -1481,8 +1481,8 @@ export default function LearningsPage() {
                     </button>
                   </div>
 
-                  {/* Compact Strip Design - 2 Columns */}
-                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-2">
+                  {/* Compact Strip Design - 3 Columns */}
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                     {/* Local Code Folders */}
                     {codeFiles.map((folder, idx) => {
                       return (
@@ -1491,22 +1491,22 @@ export default function LearningsPage() {
                         onClick={() => {
                           handleNavigate(`/learnings/code-editor?folder=${encodeURIComponent(folder.path)}`);
                         }}
-                        className="group relative bg-gradient-to-br from-stone-900 to-stone-800 hover:from-stone-800 hover:to-stone-700 border-2 border-white/20 hover:border-white/40 rounded-lg p-3 transition-all duration-300 cursor-pointer hover:shadow-lg flex items-center gap-3"
+                        className="group relative bg-black border-2 border-white/20 rounded-xl p-4 transition-all duration-300 cursor-pointer shadow-[0_8px_0_0_rgba(255,255,255,0.18)] hover:shadow-[0_12px_0_0_rgba(255,255,255,0.24)] hover:-translate-y-1 flex items-center gap-3"
                       >
                         {/* Icon */}
-                        <div className="flex-shrink-0 w-9 h-9 bg-gradient-to-br from-amber-400/20 to-stone-400/20 border border-amber-400/30 rounded-lg flex items-center justify-center group-hover:scale-105 transition-transform">
+                        <div className="flex-shrink-0 w-9 h-9 bg-white/10 border border-white/30 rounded-lg flex items-center justify-center group-hover:scale-105 transition-transform">
                           <FolderOpen size={16} strokeWidth={1.5} className="text-amber-400" />
                         </div>
 
                         {/* Content */}
                         <div className="flex-1 min-w-0">
-                          <h3 className="text-sm font-semibold text-white group-hover:text-amber-100 transition-colors line-clamp-1 mb-1">
+                            <h3 className="text-sm font-semibold text-white transition-colors line-clamp-1 mb-1">
                             {folder.name}
                           </h3>
                           <div className="flex items-center gap-2 text-[10px]">
-                            <span className="text-stone-400 font-medium">Local Folder</span>
+                              <span className="text-stone-300 font-medium">Local Folder</span>
                             {folder.language && (
-                              <span className="px-2 py-0.5 bg-stone-700/50 text-stone-300 border border-stone-600 rounded-full font-medium text-[9px]">
+                              <span className="px-2 py-0.5 bg-white/10 text-stone-200 border border-white/20 rounded-full font-medium text-[9px]">
                                 {folder.language}
                               </span>
                             )}
@@ -1539,14 +1539,14 @@ export default function LearningsPage() {
                               alert('Failed to delete codebook');
                             }
                           }}
-                          className="flex-shrink-0 p-1.5 bg-stone-800/80 border border-red-400/40 text-red-400 rounded-md hover:bg-red-500 hover:text-white hover:border-red-500 transition-all opacity-0 group-hover:opacity-100 z-10"
+                          className="flex-shrink-0 p-1.5 bg-black border border-red-400/50 text-red-400 rounded-md hover:bg-red-500 hover:text-white hover:border-red-500 transition-all opacity-0 group-hover:opacity-100 z-10"
                           title="Delete codebook"
                         >
                           <Trash2 size={12} strokeWidth={2} />
                         </button>
 
                         {/* Arrow - Always at Right End */}
-                        <div className="flex-shrink-0 opacity-60 group-hover:opacity-100 transition-all">
+                        <div className="flex-shrink-0 opacity-70 group-hover:opacity-100 transition-all">
                           <ChevronRight size={18} strokeWidth={2} className="text-amber-400" />
                         </div>
                       </div>
@@ -1561,34 +1561,34 @@ export default function LearningsPage() {
                         onClick={() => {
                           handleNavigate(`/learnings/code?repo=${repo._id}`);
                         }}
-                        className="group relative bg-gradient-to-br from-stone-900 to-stone-800 hover:from-stone-800 hover:to-stone-700 border-2 border-white/20 hover:border-white/40 rounded-lg p-3 transition-all duration-300 cursor-pointer hover:shadow-lg flex items-center gap-3"
+                        className="group relative bg-black border-2 border-white/20 rounded-xl p-4 transition-all duration-300 cursor-pointer shadow-[0_8px_0_0_rgba(255,255,255,0.18)] hover:shadow-[0_12px_0_0_rgba(255,255,255,0.24)] hover:-translate-y-1 flex items-center gap-3"
                       >
                         {/* Icon */}
-                        <div className="flex-shrink-0 w-9 h-9 bg-gradient-to-br from-slate-400/20 to-stone-400/20 border border-slate-400/30 rounded-lg flex items-center justify-center group-hover:scale-105 transition-transform">
+                        <div className="flex-shrink-0 w-9 h-9 bg-white/10 border border-white/30 rounded-lg flex items-center justify-center group-hover:scale-105 transition-transform">
                           <Github size={16} strokeWidth={1.5} className="text-slate-300" />
                         </div>
 
                         {/* Content */}
                         <div className="flex-1 min-w-0">
                           <div className="flex items-center gap-2 mb-1">
-                            <h3 className="text-sm font-semibold text-white group-hover:text-slate-200 transition-colors line-clamp-1">
+                            <h3 className="text-sm font-semibold text-white transition-colors line-clamp-1">
                               {repo.name}
                             </h3>
                             {repo.isPrivate && (
-                              <span className="px-2 py-0.5 bg-red-500/20 text-red-400 border border-red-500/30 rounded-full font-medium text-[9px]">
+                              <span className="px-2 py-0.5 bg-red-500/20 text-red-300 border border-red-500/40 rounded-full font-medium text-[9px]">
                                 Private
                               </span>
                             )}
                           </div>
                           {repo.description ? (
-                            <p className="text-[10px] text-stone-400 line-clamp-1 font-medium">{repo.description}</p>
+                            <p className="text-[10px] text-stone-300 line-clamp-1 font-medium">{repo.description}</p>
                           ) : (
-                            <p className="text-[10px] text-stone-500 font-medium">{repo.fullName}</p>
+                            <p className="text-[10px] text-stone-400 font-medium">{repo.fullName}</p>
                           )}
                         </div>
 
                         {/* Arrow - Always at Right End */}
-                        <div className="flex-shrink-0 opacity-60 group-hover:opacity-100 transition-all">
+                        <div className="flex-shrink-0 opacity-70 group-hover:opacity-100 transition-all">
                           <ChevronRight size={18} strokeWidth={2} className="text-slate-300" />
                         </div>
                       </div>
@@ -1632,8 +1632,8 @@ export default function LearningsPage() {
                     </button>
                   </div>
 
-                  {/* Compact Strip Design - 2 Columns */}
-                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-2">
+                  {/* Compact Strip Design - 3 Columns */}
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                     {diagrams.length === 0 ? (
                       <div className="col-span-full text-center py-20">
                         <div className="bg-gradient-to-br from-stone-900 to-stone-800 border-2 border-white/20 rounded-2xl p-12 inline-block shadow-lg">
@@ -1650,20 +1650,20 @@ export default function LearningsPage() {
                         <div
                           key={diagram.canvasId}
                           onClick={() => handleCanvasClick(diagram)}
-                          className="group relative bg-gradient-to-br from-stone-900 to-stone-800 hover:from-stone-800 hover:to-stone-700 border-2 border-white/20 hover:border-white/40 rounded-lg p-3 transition-all duration-300 cursor-pointer hover:shadow-lg flex items-center gap-3"
+                          className="group relative bg-black border-2 border-white/20 rounded-xl p-4 transition-all duration-300 cursor-pointer shadow-[0_8px_0_0_rgba(255,255,255,0.18)] hover:shadow-[0_12px_0_0_rgba(255,255,255,0.24)] hover:-translate-y-1 flex items-center gap-3"
                         >
                           {/* Icon */}
-                          <div className="flex-shrink-0 w-9 h-9 bg-gradient-to-br from-amber-400/20 to-stone-400/20 border border-amber-400/30 rounded-lg flex items-center justify-center group-hover:scale-105 transition-transform">
+                          <div className="flex-shrink-0 w-9 h-9 bg-white/10 border border-white/30 rounded-lg flex items-center justify-center group-hover:scale-105 transition-transform">
                             <FileImage size={16} strokeWidth={1.5} className="text-amber-400" />
                           </div>
 
                           {/* Content */}
                           <div className="flex-1 min-w-0">
-                            <h3 className="text-sm font-semibold text-white group-hover:text-amber-100 transition-colors line-clamp-1 mb-1">
+                            <h3 className="text-sm font-semibold text-white transition-colors line-clamp-1 mb-1">
                               {diagram.name}
                             </h3>
                             <div className="flex items-center gap-2 text-[10px]">
-                              <span className="flex items-center gap-1 text-stone-400">
+                              <span className="flex items-center gap-1 text-stone-300">
                                 <Calendar size={10} strokeWidth={2} />
                                 <span className="font-medium">
                                   {new Date(diagram.updatedAt).toLocaleDateString('en-US', {
@@ -1674,7 +1674,7 @@ export default function LearningsPage() {
                                 </span>
                               </span>
                               {diagram.isPublic && (
-                                <span className="px-2 py-0.5 bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 rounded-full font-medium text-[9px]">
+                                <span className="px-2 py-0.5 bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 rounded-full font-medium text-[9px]">
                                   Public
                                 </span>
                               )}
@@ -1684,14 +1684,14 @@ export default function LearningsPage() {
                           {/* Delete Button */}
                           <button
                             onClick={(e) => handleDeleteDiagram(diagram.canvasId, e)}
-                            className="flex-shrink-0 p-1.5 bg-stone-800/80 border border-red-400/40 text-red-400 rounded-md hover:bg-red-500 hover:text-white hover:border-red-500 transition-all opacity-0 group-hover:opacity-100 z-10"
+                            className="flex-shrink-0 p-1.5 bg-black border border-red-400/50 text-red-400 rounded-md hover:bg-red-500 hover:text-white hover:border-red-500 transition-all opacity-0 group-hover:opacity-100 z-10"
                             title="Delete architecture"
                           >
                             <Trash2 size={12} strokeWidth={2} />
                           </button>
 
                           {/* Arrow - Always at Right End */}
-                          <div className="flex-shrink-0 opacity-60 group-hover:opacity-100 transition-all">
+                          <div className="flex-shrink-0 opacity-70 group-hover:opacity-100 transition-all">
                             <ChevronRight size={18} strokeWidth={2} className="text-amber-400" />
                           </div>
                         </div>
