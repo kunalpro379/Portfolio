@@ -116,7 +116,19 @@ router.get('/', async (req, res) => {
 // GET single canvas by ID
 router.get('/:canvasId', async (req, res) => {
   try {
-    const { canvasId } = req.params;
+    let { canvasId } = req.params;
+    
+    // Sanitize canvasId - remove any :port or :version suffixes
+    if (canvasId.includes(':')) {
+      canvasId = canvasId.split(':')[0];
+    }
+    
+    if (!canvasId || canvasId.trim() === '') {
+      return res.status(400).json({
+        success: false,
+        message: 'Invalid canvas ID'
+      });
+    }
 
     const canvas = await databaseUtils.executeOperation(async () => {
       return await Diagram.findOne({ canvasId });
@@ -169,7 +181,19 @@ router.get('/:canvasId', async (req, res) => {
 // GET canvas by viewerId (read-only access)
 router.get('/viewer/:viewerId', async (req, res) => {
   try {
-    const { viewerId } = req.params;
+    let { viewerId } = req.params;
+    
+    // Sanitize viewerId - remove any :port or :version suffixes
+    if (viewerId.includes(':')) {
+      viewerId = viewerId.split(':')[0];
+    }
+    
+    if (!viewerId || viewerId.trim() === '') {
+      return res.status(400).json({
+        success: false,
+        message: 'Invalid viewer ID'
+      });
+    }
 
     const canvas = await databaseUtils.executeOperation(async () => {
       return await Diagram.findOne({ viewerId });
@@ -314,7 +338,20 @@ router.post('/', async (req, res) => {
 // PUT update canvas (requires authentication)
 router.put('/:canvasId', authenticateToken, async (req, res) => {
   try {
-    const { canvasId } = req.params;
+    let { canvasId } = req.params;
+    
+    // Sanitize canvasId - remove any :port or :version suffixes
+    if (canvasId.includes(':')) {
+      canvasId = canvasId.split(':')[0];
+    }
+    
+    if (!canvasId || canvasId.trim() === '') {
+      return res.status(400).json({
+        success: false,
+        message: 'Invalid canvas ID'
+      });
+    }
+    
     const { data, name, isPublic } = req.body;
 
     const canvas = await Diagram.findOne({ canvasId });
@@ -382,7 +419,19 @@ router.put('/:canvasId', authenticateToken, async (req, res) => {
 // DELETE canvas (requires authentication)
 router.delete('/:canvasId', authenticateToken, async (req, res) => {
   try {
-    const { canvasId } = req.params;
+    let { canvasId } = req.params;
+    
+    // Sanitize canvasId - remove any :port or :version suffixes
+    if (canvasId.includes(':')) {
+      canvasId = canvasId.split(':')[0];
+    }
+    
+    if (!canvasId || canvasId.trim() === '') {
+      return res.status(400).json({
+        success: false,
+        message: 'Invalid canvas ID'
+      });
+    }
 
     const canvas = await Diagram.findOne({ canvasId });
 
