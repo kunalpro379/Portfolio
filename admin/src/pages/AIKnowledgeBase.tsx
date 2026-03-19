@@ -534,11 +534,11 @@ export default function AIKnowledgeBase() {
           {/* Status Bar */}
           <div className="bg-white border-b-2 border-black px-4 py-2 flex items-center justify-between shadow-lg">
             <div className="flex items-center gap-2">
-              <Loader2 className="w-4 h-4 animate-spin text-blue-500" />
+              <img src="/loading.gif" alt="Loading" className="w-6 h-6 object-contain" />
               <span className="text-sm font-bold text-black">
                 {showUploadProgress ? `Uploading ${uploadProgress.length} file${uploadProgress.length !== 1 ? 's' : ''}...` : 
                  processingExisting ? `Processing ${existingContent.filter(c => c.selected).length} item${existingContent.filter(c => c.selected).length !== 1 ? 's' : ''}...` : 
-                 'Loading...'}
+                 'Loading'}
               </span>
             </div>
             
@@ -728,8 +728,8 @@ export default function AIKnowledgeBase() {
               {/* Loading State */}
               {loading && existingContent.length === 0 && (
                 <div className="text-center py-8">
-                  <Loader2 className="w-8 h-8 animate-spin text-blue-500 mx-auto mb-3" />
-                  <p className="text-sm text-gray-600 font-medium">Loading existing content...</p>
+                  <img src="/loading.gif" alt="Loading" className="w-12 h-12 object-contain mx-auto mb-3" />
+                  <p className="text-sm text-gray-600 font-medium">Loading existing content</p>
                 </div>
               )}
             </div>

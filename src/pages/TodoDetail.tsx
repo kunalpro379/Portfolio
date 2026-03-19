@@ -26,7 +26,8 @@ export default function TodoDetail() {
   
   const [showColumnSettings, setShowColumnSettings] = useState(false);
   const [newColumnName, setNewColumnName] = useState('');
-  const [newColumnType, setNewColumnType] = useState<'text' | 'select' | 'date' | 'number'>('text');
+  const [newColumnType, setNewColumnType] = useState<'text' | 'textbox' | 'select' | 'date' | 'number'>('text');
+  const [newColumnOptions, setNewColumnOptions] = useState('');
   
   const [showNotesModal, setShowNotesModal] = useState(false);
   const [currentNoteIndex, setCurrentNoteIndex] = useState<number | null>(null);
@@ -129,7 +130,8 @@ export default function TodoDetail() {
       status: 'pending',
       priority: 'medium',
       dueDate: new Date().toISOString().split('T')[0],
-      notes: ''
+      notes: '',
+      customFields: {}
     };
     setTodo({ ...todo, points: [...todo.points, newPoint] });
   };
@@ -142,13 +144,18 @@ export default function TodoDetail() {
 
   const addCustomColumn = () => {
     if (!todo || !newColumnName.trim()) return;
+
+    const parsedOptions = newColumnType === 'select'
+      ? newColumnOptions.split(',').map(opt => opt.trim()).filter(Boolean)
+      : undefined;
+
     const newColumn: CustomColumn = {
       id: `custom_${Date.now()}`,
       name: newColumnName,
       type: newColumnType,
       visible: true,
-      width: 150,
-      options: newColumnType === 'select' ? [] : undefined
+      width: newColumnType === 'textbox' ? 240 : 150,
+      options: parsedOptions
     };
     setTodo({
       ...todo,
@@ -156,6 +163,21 @@ export default function TodoDetail() {
     });
     setNewColumnName('');
     setNewColumnType('text');
+    setNewColumnOptions('');
+  };
+
+  const updateCustomField = (index: number, columnId: string, value: string) => {
+    if (!todo) return;
+
+    const newPoints = [...todo.points];
+    const currentFields = { ...(newPoints[index].customFields || {}) };
+    currentFields[columnId] = value;
+    newPoints[index] = { ...newPoints[index], customFields: currentFields };
+    setTodo({ ...todo, points: newPoints });
+  };
+
+  const getCustomFieldValue = (point: TodoPoint, columnId: string) => {
+    return point.customFields?.[columnId] || '';
   };
 
   const toggleColumnVisibility = (columnId: string) => {
@@ -422,10 +444,20 @@ export default function TodoDetail() {
                     className="px-3 py-2 border-2 border-black rounded-lg"
                   >
                     <option value="text">Text</option>
+                    <option value="textbox">Textbox</option>
                     <option value="select">Select</option>
                     <option value="date">Date</option>
                     <option value="number">Number</option>
                   </select>
+                  {newColumnType === 'select' && (
+                    <input
+                      type="text"
+                      value={newColumnOptions}
+                      onChange={(e) => setNewColumnOptions(e.target.value)}
+                      placeholder="Options (comma separated)"
+                      className="flex-1 px-3 py-2 border-2 border-black rounded-lg"
+                    />
+                  )}
                   <button
                     onClick={addCustomColumn}
                     className="px-4 py-2 bg-black text-white border-2 border-black rounded-lg font-bold hover:bg-gray-900"
@@ -574,7 +606,73 @@ export default function TodoDetail() {
                           </td>
                         );
                       }
-                      return <td key={col.id} className="px-4 py-3 border-r-2 border-gray-200">-</td>;
+
+                      const customValue = getCustomFieldValue(point, col.id);
+                      return (
+                        <td key={col.id} className="px-4 py-3 border-r-2 border-gray-200">
+                          {isEditMode ? (
+                            <>
+                              {col.type === 'textbox' && (
+                                <textarea
+                                  value={customValue}
+                                  onChange={(e) => updateCustomField(originalIdx, col.id, e.target.value)}
+                                  rows={2}
+                                  className="w-full px-3 py-2 border-2 border-black rounded-lg font-medium focus:outline-none focus:ring-2 focus:ring-black resize-y"
+                                />
+                              )}
+                              {col.type === 'date' && (
+                                <input
+                                  type="date"
+                                  value={customValue}
+                                  onChange={(e) => updateCustomField(originalIdx, col.id, e.target.value)}
+                                  className="w-full px-3 py-2 border-2 border-black rounded-lg font-medium focus:outline-none focus:ring-2 focus:ring-black"
+                                />
+                              )}
+                              {col.type === 'number' && (
+                                <input
+                                  type="number"
+                                  value={customValue}
+                                  onChange={(e) => updateCustomField(originalIdx, col.id, e.target.value)}
+                                  className="w-full px-3 py-2 border-2 border-black rounded-lg font-medium focus:outline-none focus:ring-2 focus:ring-black"
+                                />
+                              )}
+                              {col.type === 'select' && (col.options && col.options.length > 0 ? (
+                                <select
+                                  value={customValue}
+                                  onChange={(e) => updateCustomField(originalIdx, col.id, e.target.value)}
+                                  className="w-full px-3 py-2 border-2 border-black rounded-lg font-medium focus:outline-none focus:ring-2 focus:ring-black bg-white"
+                                >
+                                  <option value="">Select</option>
+                                  {col.options.map(option => (
+                                    <option key={option} value={option}>{option}</option>
+                                  ))}
+                                </select>
+                              ) : (
+                                <input
+                                  type="text"
+                                  value={customValue}
+                                  onChange={(e) => updateCustomField(originalIdx, col.id, e.target.value)}
+                                  className="w-full px-3 py-2 border-2 border-black rounded-lg font-medium focus:outline-none focus:ring-2 focus:ring-black"
+                                />
+                              ))}
+                              {(col.type === 'text' || !col.type) && (
+                                <input
+                                  type="text"
+                                  value={customValue}
+                                  onChange={(e) => updateCustomField(originalIdx, col.id, e.target.value)}
+                                  className="w-full px-3 py-2 border-2 border-black rounded-lg font-medium focus:outline-none focus:ring-2 focus:ring-black"
+                                />
+                              )}
+                            </>
+                          ) : (
+                            <span className="font-medium text-gray-800 whitespace-pre-wrap">
+                              {col.type === 'date' && customValue
+                                ? new Date(customValue).toLocaleDateString()
+                                : (customValue || '-')}
+                            </span>
+                          )}
+                        </td>
+                      );
                     })}
                     {isEditMode && (
                       <td className="px-4 py-3 text-center">

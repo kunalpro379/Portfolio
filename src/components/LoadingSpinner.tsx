@@ -1,50 +1,21 @@
-import { RefreshCw } from 'lucide-react';
+import LoadingAnimation from './LoadingAnimation';
 
 interface LoadingSpinnerProps {
   size?: 'sm' | 'md' | 'lg' | 'xl';
   text?: string;
 }
 
-export default function LoadingSpinner({ size = 'md', text = 'Loading' }: LoadingSpinnerProps) {
+export default function LoadingSpinner({ size = 'md' }: LoadingSpinnerProps) {
   const sizeClasses = {
-    sm: 'w-40 h-40',
-    md: 'w-56 h-56',
-    lg: 'w-72 h-72',
-    xl: 'w-96 h-96'
-  };
-
-  const iconSizes = {
-    sm: 80,
-    md: 112,
-    lg: 144,
-    xl: 192
-  };
-
-  const textSizes = {
-    sm: 'text-sm',
-    md: 'text-base',
-    lg: 'text-lg',
-    xl: 'text-xl'
+    sm: 'w-16 h-16',
+    md: 'w-24 h-24',
+    lg: 'w-32 h-32',
+    xl: 'w-40 h-40'
   };
 
   return (
-    <div className="flex flex-col items-center gap-6">
-      <div className="relative flex items-center justify-center">
-        {/* Rotating refresh icon */}
-        <RefreshCw 
-          size={iconSizes[size]} 
-          strokeWidth={2.5}
-          className="text-black animate-spin"
-          style={{ animationDuration: '1.5s' }}
-        />
-        
-        {/* Loading text in center */}
-        <div className="absolute inset-0 flex items-center justify-center">
-          <span className={`${textSizes[size]} font-medium text-black text-center px-2`}>
-            {text}
-          </span>
-        </div>
-      </div>
+    <div className="flex w-full items-center justify-center">
+      <LoadingAnimation className={sizeClasses[size]} />
     </div>
   );
 }

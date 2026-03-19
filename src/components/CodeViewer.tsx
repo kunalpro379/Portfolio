@@ -217,8 +217,8 @@ export default function CodeViewer({ file, onClose }: CodeViewerProps) {
           {loading ? (
             <div className="flex items-center justify-center h-full">
               <div className="text-center">
-                <div className="animate-spin w-8 h-8 border-3 border-blue-500 border-t-transparent rounded-full mx-auto mb-4"></div>
-                <p className="text-gray-600">Loading file content...</p>
+                <img src="/loading.gif" alt="Loading" className="w-10 h-10 object-contain mx-auto mb-4" />
+                <p className="text-gray-600">Loading file content</p>
               </div>
             </div>
           ) : error ? (

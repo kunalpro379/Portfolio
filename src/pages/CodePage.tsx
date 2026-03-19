@@ -633,8 +633,8 @@ export default function CodePage() {
                     {/* GitHub Content */}
                     {githubLoading ? (
                       <div className="text-center py-4">
-                        <div className="animate-spin w-4 h-4 border-2 border-black border-t-transparent rounded-full mx-auto mb-2"></div>
-                        <p className="text-xs font-medium">Loading...</p>
+                        <img src="/loading.gif" alt="Loading" className="w-8 h-8 object-contain mx-auto mb-2" />
+                        <p className="text-xs font-medium">Loading</p>
                       </div>
                     ) : (
                       <div className="space-y-1">
@@ -668,8 +668,8 @@ export default function CodePage() {
                 ) : (
                   /* Loading GitHub repo */
                   <div className="text-center py-8">
-                    <div className="animate-spin w-6 h-6 border-2 border-black border-t-transparent rounded-full mx-auto mb-2"></div>
-                    <p className="text-xs font-medium">Loading repository...</p>
+                    <img src="/loading.gif" alt="Loading" className="w-10 h-10 object-contain mx-auto mb-2" />
+                    <p className="text-xs font-medium">Loading repository</p>
                   </div>
                 )}
               </div>

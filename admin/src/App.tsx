@@ -25,7 +25,11 @@ function PrivateRoute({ children }: { children: React.ReactNode }) {
   const { isAuthenticated, loading } = useAuth();
   
   if (loading) {
-    return <div className="flex items-center justify-center min-h-screen">Loading...</div>;
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <img src="/loading.gif" alt="Loading" className="w-20 h-20 object-contain" />
+      </div>
+    );
   }
   
   return isAuthenticated ? <Layout>{children}</Layout> : <Navigate to="/login" />;
@@ -35,7 +39,11 @@ function PrivateRouteNoLayout({ children }: { children: React.ReactNode }) {
   const { isAuthenticated, loading } = useAuth();
   
   if (loading) {
-    return <div className="flex items-center justify-center min-h-screen">Loading...</div>;
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <img src="/loading.gif" alt="Loading" className="w-20 h-20 object-contain" />
+      </div>
+    );
   }
   
   return isAuthenticated ? <>{children}</> : <Navigate to="/login" />;

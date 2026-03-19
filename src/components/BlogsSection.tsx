@@ -117,8 +117,8 @@ export default function BlogsSection() {
         <div className="max-w-[1440px] mx-auto px-6 md:px-12 relative z-10">
           <div className="flex items-center justify-center py-20">
             <div className="flex flex-col items-center gap-4">
-              <div className="animate-spin w-16 h-16 border-4 border-pink-500 border-t-transparent rounded-full" style={{ animationDuration: '1.5s' }}></div>
-              <div className="text-pink-500 text-lg font-bold">Loading blogs & documentation...</div>
+              <img src="/loading.gif" alt="Loading" className="w-16 h-16 object-contain" />
+              <div className="text-pink-500 text-lg font-bold">Loading blogs and documentation</div>
             </div>
           </div>
         </div>

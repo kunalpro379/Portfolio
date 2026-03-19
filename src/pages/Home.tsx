@@ -8,6 +8,7 @@ import ExperienceSection from "@/components/ExperienceSection";
 import EducationSection from "@/components/EducationSection";
 import BlogsSection from "@/components/BlogsSection";
 import ContactSection from "@/components/ContactSection";
+import GtaMumbaiMap from "@/components/GtaMumbaiMap";
 import { Volume2, VolumeX } from "lucide-react";
 
 const Home = memo(function Home() {
@@ -219,15 +220,14 @@ const Home = memo(function Home() {
       {/* Background Texture Pattern on Top */}
       <div className="fixed inset-0 -z-[8] opacity-20 mix-blend-multiply" style={{ backgroundImage: 'url(/page7.png)', backgroundRepeat: 'repeat', filter: 'grayscale(100%) brightness(0)' }} />
 
-      {/* Red MAP Ribbon - Left Side - Small Horizontal Gift Tag Style */}
+      {/* Desktop-only MAP vertical strip */}
       <button
         onClick={() => setShowMap(!showMap)}
-        className="fixed left-0 top-1/3 z-[300] bg-gradient-to-br from-red-600 via-red-500 to-red-600 text-white font-black text-[9px] px-2.5 py-1.5 transition-all hover:scale-110 active:scale-95"
+        className="hidden lg:flex fixed left-0 top-1/3 z-[300] h-36 w-12 items-center justify-center bg-gradient-to-b from-red-600 via-red-500 to-red-700 text-white font-black text-xs tracking-[0.12em] transition-all hover:w-14 active:scale-95 rounded-r-md"
         style={{
-          clipPath: 'polygon(0 0, 100% 0, 85% 50%, 100% 100%, 0 100%)',
-          letterSpacing: '0.5px',
-          minWidth: '90px',
-          boxShadow: '3px 3px 0px 0px rgba(0,0,0,1), inset -2px -2px 4px rgba(0,0,0,0.3), inset 2px 2px 4px rgba(255,255,255,0.3)',
+          writingMode: 'vertical-rl',
+          textOrientation: 'upright',
+          boxShadow: '3px 3px 0px 0px rgba(0,0,0,1), inset -2px -2px 6px rgba(0,0,0,0.28), inset 2px 2px 6px rgba(255,255,255,0.22)',
           border: '2px solid black',
           textShadow: '1px 1px 2px rgba(0,0,0,0.8)'
         }}
@@ -287,15 +287,7 @@ const Home = memo(function Home() {
                 </h3>
               </div>
               <div className="p-4 md:p-6 bg-gradient-to-br from-gray-50 to-gray-100">
-                <div className="relative group">
-                  <img 
-                    src="/map.png" 
-                    alt="GTAVI Mumbai Map" 
-                    className="w-full h-auto border-4 border-black rounded-2xl shadow-lg group-hover:scale-[1.02] transition-transform duration-300"
-                  />
-                  {/* Overlay on hover */}
-                  <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-all duration-300 rounded-2xl pointer-events-none"></div>
-                </div>
+                <GtaMumbaiMap className="h-[340px] md:h-[460px]" />
               </div>
             </div>
           </div>
@@ -327,11 +319,7 @@ const Home = memo(function Home() {
                 </h2>
               </div>
               <div className="p-4 bg-gray-100">
-                <img 
-                  src="/map.png" 
-                  alt="MAP" 
-                  className="w-full h-auto border-4 border-black rounded-xl shadow-lg"
-                />
+                <GtaMumbaiMap className="h-[56vh] min-h-[360px]" />
               </div>
             </div>
           </div>

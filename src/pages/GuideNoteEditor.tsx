@@ -561,7 +561,7 @@ export default function GuideNoteEditorPage() {
               <div className="flex items-center justify-center h-full">
                 <div className="text-center">
                   <LoadingSpinner size="lg" />
-                  <p className="text-gray-600 font-medium text-sm mt-4">Loading content...</p>
+                  <p className="text-gray-600 font-medium text-sm mt-4">Loading content</p>
                 </div>
               </div>
             ) : selectedDoc ? (
@@ -1104,7 +1104,7 @@ export default function GuideNoteEditorPage() {
                   <div className="flex items-center justify-center h-full">
                     <div className="text-center">
                       <LoadingSpinner size="lg" />
-                      <p className="text-gray-300 font-medium text-sm mt-4">Loading content...</p>
+                      <p className="text-gray-300 font-medium text-sm mt-4">Loading content</p>
                     </div>
                   </div>
                 ) : (

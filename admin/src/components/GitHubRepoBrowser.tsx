@@ -200,8 +200,8 @@ export default function GitHubRepoBrowser({ repo, onBack }: GitHubRepoBrowserPro
       {/* Content */}
       {loading ? (
         <div className="bg-white border-2 border-black rounded-xl p-8 text-center shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
-          <div className="animate-spin w-8 h-8 border-3 border-black border-t-transparent rounded-full mx-auto mb-4"></div>
-          <p className="font-bold text-black">Loading repository content...</p>
+          <img src="/loading.gif" alt="Loading" className="w-12 h-12 object-contain mx-auto mb-4" />
+          <p className="font-bold text-black">Loading repository content</p>
         </div>
       ) : (
         <div className="bg-white border-2 border-black rounded-xl p-6 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
@@ -292,8 +292,8 @@ export default function GitHubRepoBrowser({ repo, onBack }: GitHubRepoBrowserPro
             <div className="flex-1 overflow-auto p-4">
               {fileLoading ? (
                 <div className="flex items-center justify-center py-12">
-                  <div className="animate-spin w-8 h-8 border-3 border-black border-t-transparent rounded-full"></div>
-                  <span className="ml-3 font-bold text-black">Loading file content...</span>
+                  <img src="/loading.gif" alt="Loading" className="w-10 h-10 object-contain" />
+                  <span className="ml-3 font-bold text-black">Loading file content</span>
                 </div>
               ) : (
                 <pre className="bg-gray-900 text-green-400 p-4 rounded-lg border-2 border-black text-sm font-mono overflow-auto whitespace-pre-wrap">

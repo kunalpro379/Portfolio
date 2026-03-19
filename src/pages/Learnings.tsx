@@ -5,6 +5,7 @@ import { API_ENDPOINTS, API_BASE_URL } from "@/config/api";
 import ExcalidrawCanvas from "@/components/ExcalidrawCanvas";
 import LoadingSpinner from "@/components/LoadingSpinner";
 import NotesTabContent from "@/components/NotesTabContent";
+import GtaMumbaiMap from "@/components/GtaMumbaiMap";
 
 interface ProjectData {
   size?: "big" | "small" | "large" | "medium"
@@ -270,6 +271,27 @@ export default function LearningsPage() {
   const changeTab = (tab: 'guide' | 'files' | 'todo' | 'documentation' | 'blogs' | 'projects' | 'diagrams' | 'code') => {
     setSearchParams({ tab });
     setActiveTab(tab);
+  };
+
+  const handleCreateBlog = () => {
+    const input = window.prompt('Enter new blog ID (example: aws-vpc-traffic-flow)');
+    if (!input) {
+      return;
+    }
+
+    const blogId = input
+      .trim()
+      .toLowerCase()
+      .replace(/[^a-z0-9\s-]/g, '')
+      .replace(/\s+/g, '-')
+      .replace(/-+/g, '-');
+
+    if (!blogId) {
+      alert('Please enter a valid blog ID');
+      return;
+    }
+
+    handleNavigate(`/learnings/blogs/create/${encodeURIComponent(blogId)}`);
   };
 
   const handleCreateCodeFolder = async () => {
@@ -690,15 +712,14 @@ export default function LearningsPage() {
       {/* Background Texture Pattern on Top */}
       <div className="fixed inset-0 z-[2] opacity-20 mix-blend-multiply" style={{ backgroundImage: 'url(/page7.png)', backgroundRepeat: 'repeat', filter: 'grayscale(100%) brightness(0)' }} />
       
-      {/* Red MAP Ribbon - Left Side - Small Horizontal Gift Tag Style */}
+      {/* Desktop-only MAP vertical strip */}
       <button
         onClick={() => setShowMap(!showMap)}
-        className="fixed left-0 top-1/3 z-[300] bg-gradient-to-br from-red-600 via-red-500 to-red-600 text-white font-black text-[9px] px-2.5 py-1.5 transition-all hover:scale-110 active:scale-95"
+        className="hidden lg:flex fixed left-0 top-1/3 z-[300] h-36 w-12 items-center justify-center bg-gradient-to-b from-red-600 via-red-500 to-red-700 text-white font-black text-xs tracking-[0.12em] transition-all hover:w-14 active:scale-95 rounded-r-md"
         style={{
-          clipPath: 'polygon(0 0, 100% 0, 85% 50%, 100% 100%, 0 100%)',
-          letterSpacing: '0.5px',
-          minWidth: '90px',
-          boxShadow: '3px 3px 0px 0px rgba(0,0,0,1), inset -2px -2px 4px rgba(0,0,0,0.3), inset 2px 2px 4px rgba(255,255,255,0.3)',
+          writingMode: 'vertical-rl',
+          textOrientation: 'upright',
+          boxShadow: '3px 3px 0px 0px rgba(0,0,0,1), inset -2px -2px 6px rgba(0,0,0,0.28), inset 2px 2px 6px rgba(255,255,255,0.22)',
           border: '2px solid black',
           textShadow: '1px 1px 2px rgba(0,0,0,0.8)'
         }}
@@ -1261,6 +1282,16 @@ export default function LearningsPage() {
               {/* BLOGS TAB */}
               {activeTab === 'blogs' && (
                 <>
+                  <div className="mb-4 flex justify-end">
+                    <button
+                      onClick={handleCreateBlog}
+                      className="px-5 py-2.5 bg-pink-500 text-white border-3 border-black rounded-xl font-bold hover:bg-pink-600 transition-all shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] flex items-center gap-2"
+                    >
+                      <Plus size={16} strokeWidth={2.5} />
+                      Create Blog
+                    </button>
+                  </div>
+
                   {/* Search Bar */}
                   <div className="mb-6">
                     <div className="relative max-w-2xl">
@@ -1344,7 +1375,7 @@ export default function LearningsPage() {
                             </div>
                             <h3 className="text-sm md:text-base font-black text-black mb-2 line-clamp-2 leading-tight">{blog.title}</h3>
                             <p className="text-gray-700 mb-3 font-medium text-xs line-clamp-2 leading-relaxed">{blog.shortDescription}</p>
-                            <div className="flex items-center gap-2 text-[10px] text-gray-600 font-black">
+                            <div className="flex items-center justify-between gap-2 text-[10px] text-gray-600 font-black">
                               <div className="flex items-center gap-1">
                                 <Calendar size={10} strokeWidth={2.5} />
                                 <span>
@@ -1355,6 +1386,16 @@ export default function LearningsPage() {
                                   })}
                                 </span>
                               </div>
+                              <button
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  handleNavigate(`/learnings/blogs/edit/${blog.blogId}`);
+                                }}
+                                className="p-1.5 bg-white border-2 border-black rounded-lg hover:bg-pink-100 transition"
+                                title="Edit blog"
+                              >
+                                <Edit size={12} strokeWidth={2.5} className="text-black" />
+                              </button>
                             </div>
                           </div>
                         </div>
@@ -2059,11 +2100,7 @@ export default function LearningsPage() {
                 </h2>
               </div>
               <div className="p-4 bg-gray-100">
-                <img 
-                  src="/map.png" 
-                  alt="" 
-                  className="w-full h-auto border-4 border-black rounded-xl shadow-lg"
-                />
+                <GtaMumbaiMap className="h-[56vh] min-h-[360px]" />
               </div>
             </div>
           </div>

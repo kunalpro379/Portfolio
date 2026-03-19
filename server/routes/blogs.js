@@ -2,6 +2,7 @@ import express from 'express';
 import multer from 'multer';
 import { BlobServiceClient } from '@azure/storage-blob';
 import Blog from '../models/Blog.js';
+import Password from '../models/Password.js';
 
 const router = express.Router();
 
@@ -140,7 +141,16 @@ router.get('/:blogId/md-content', async (req, res) => {
 router.put('/:blogId', async (req, res) => {
     try {
         const { blogId } = req.params;
-        const updateData = req.body;
+        const updateData = { ...req.body };
+
+        if (updateData.password) {
+            const isValid = await Password.verifyPassword('TODO_PASSWORD', updateData.password);
+            if (!isValid) {
+                return res.status(401).json({ message: 'Incorrect password' });
+            }
+        }
+
+        delete updateData.password;
 
         const blog = await Blog.findOneAndUpdate(
             { blogId },

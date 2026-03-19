@@ -329,8 +329,8 @@ export default function BlogDetail() {
               {contentLoading ? (
                 <div className="flex items-center justify-center py-12">
                   <div className="text-center">
-                    <div className="animate-spin w-8 h-8 border-3 border-black border-t-transparent rounded-full mx-auto mb-4"></div>
-                    <p className="text-gray-600 font-medium">Loading content...</p>
+                    <img src="/loading.gif" alt="Loading" className="w-10 h-10 object-contain mx-auto mb-4" />
+                    <p className="text-gray-600 font-medium">Loading content</p>
                   </div>
                 </div>
               ) : blog.content ? (

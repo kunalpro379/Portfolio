@@ -109,8 +109,8 @@ export default function GitHubRepoManager({ onRepoSelect }: GitHubRepoManagerPro
     return (
       <div className="bg-white border-2 border-black rounded-xl p-6 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
         <div className="flex items-center justify-center py-8">
-          <div className="animate-spin w-6 h-6 border-2 border-black border-t-transparent rounded-full"></div>
-          <span className="ml-3 font-bold text-black">Loading repositories...</span>
+          <img src="/loading.gif" alt="Loading" className="w-8 h-8 object-contain" />
+          <span className="ml-3 font-bold text-black">Loading repositories</span>
         </div>
       </div>
     );

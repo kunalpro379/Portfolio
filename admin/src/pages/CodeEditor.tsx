@@ -156,8 +156,8 @@ export default function CodeEditor() {
     return (
       <div className="min-h-screen bg-gray-900 flex items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin w-8 h-8 border-3 border-white border-t-transparent rounded-full mx-auto mb-4"></div>
-          <p className="text-white font-bold">Loading file...</p>
+          <img src="/loading.gif" alt="Loading" className="w-12 h-12 object-contain mx-auto mb-4" />
+          <p className="text-white font-bold">Loading file</p>
         </div>
       </div>
     );

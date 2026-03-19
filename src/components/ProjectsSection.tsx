@@ -143,8 +143,8 @@ export default function ProjectsSection() {
           <SectionHeader icon={FolderKanban} title="FEATURED PROJECTS" subtitle="PREMIUM WORK COLLECTION" />
           <div className="flex items-center justify-center py-20">
             <div className="flex flex-col items-center gap-4">
-              <div className="animate-spin w-16 h-16 border-4 border-sky-400 border-t-transparent rounded-full" style={{ animationDuration: '1.5s' }}></div>
-              <div className="text-sky-400 text-lg font-bold">Loading projects...</div>
+              <img src="/loading.gif" alt="Loading" className="w-16 h-16 object-contain" />
+              <div className="text-sky-400 text-lg font-bold">Loading projects</div>
             </div>
           </div>
         </div>

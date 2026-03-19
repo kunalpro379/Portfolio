@@ -7,6 +7,8 @@ import CodeEditorPage from './pages/CodeEditorPage';
 import DiagramsPage from './pages/DiagramsPage';
 import ProjectDetail from './pages/ProjectDetail';
 import BlogDetail from './pages/BlogDetail';
+import CreateBlog from './pages/CreateBlog';
+import EditBlog from './pages/EditBlog';
 import NotesDetail from './pages/NotesDetail';
 import DocumentationDetail from './pages/DocumentationDetail';
 import GuideNoteEditor from './pages/GuideNoteEditor';
@@ -44,6 +46,8 @@ function App() {
         <Route path="/learnings/diagrams" element={<DiagramsPage />} />
         <Route path="/projects/:id" element={<ProjectDetail />} />
         <Route path="/learnings/blogs/:id" element={<BlogDetail />} />
+        <Route path="/learnings/blogs/create/:blogId" element={<CreateBlog />} />
+        <Route path="/learnings/blogs/edit/:blogId" element={<EditBlog />} />
         <Route path="/learnings/notes/:id" element={<NotesDetail />} />
         <Route path="/learnings/documentation/:docId" element={<DocumentationDetail />} />
         <Route path="/learnings/guide/create" element={<GuideCreate />} />

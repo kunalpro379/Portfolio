@@ -217,8 +217,8 @@ export default function DiagramsPage() {
     return (
       <div className="min-h-screen bg-white flex items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin w-16 h-16 border-4 border-black border-t-transparent rounded-full mx-auto mb-4"></div>
-          <h3 className="text-2xl font-black mb-2">Loading Diagram...</h3>
+          <img src="/loading.gif" alt="Loading" className="w-16 h-16 object-contain mx-auto mb-4" />
+          <h3 className="text-2xl font-black mb-2">Loading Diagram</h3>
           <p className="text-gray-600 font-medium">Please wait while we fetch your diagram</p>
         </div>
       </div>
@@ -230,8 +230,8 @@ export default function DiagramsPage() {
     return (
       <div className="min-h-screen bg-white flex items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin w-16 h-16 border-4 border-black border-t-transparent rounded-full mx-auto mb-4"></div>
-          <h3 className="text-2xl font-black mb-2">Loading Diagram...</h3>
+          <img src="/loading.gif" alt="Loading" className="w-16 h-16 object-contain mx-auto mb-4" />
+          <h3 className="text-2xl font-black mb-2">Loading Diagram</h3>
           <p className="text-gray-600 font-medium">Please wait while we fetch your diagram</p>
         </div>
       </div>
