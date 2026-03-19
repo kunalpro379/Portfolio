@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useCallback, useEffect, useRef } from 'react';
 import { Excalidraw, MainMenu, WelcomeScreen } from '@excalidraw/excalidraw';
 import { Save, Share2, Lock, Unlock, X, ZoomIn } from 'lucide-react';
 
@@ -28,6 +28,12 @@ export default function ExcalidrawCanvas({
   const [showShareModal, setShowShareModal] = useState(false);
   const [shareLink, setShareLink] = useState('');
   const [showControls, setShowControls] = useState(true);
+  const hasUnsavedChangesRef = useRef(false);
+  const isSavingRef = useRef(false);
+
+  useEffect(() => {
+    isSavingRef.current = isSaving;
+  }, [isSaving]);
 
   // Mobile touch optimization
   useEffect(() => {
@@ -89,7 +95,7 @@ export default function ExcalidrawCanvas({
     }
   }, []);
 
-  const handleSave = useCallback(async () => {
+  const saveCanvas = useCallback(async (showSuccessMessage: boolean) => {
     if (!excalidrawAPI || viewOnly) return;
 
     try {
@@ -109,13 +115,16 @@ export default function ExcalidrawCanvas({
       };
 
       await onSave(canvasData);
+      hasUnsavedChangesRef.current = false;
       
-      // Show success message briefly at center
-      const successMsg = document.createElement('div');
-      successMsg.textContent = 'Saved changes';
-      successMsg.style.cssText = 'position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:white;color:black;padding:16px 32px;border-radius:12px;font-weight:bold;z-index:9999;border:3px solid black;box-shadow:4px 4px 0px 0px rgba(0,0,0,1);font-size:18px;';
-      document.body.appendChild(successMsg);
-      setTimeout(() => successMsg.remove(), 2000);
+      if (showSuccessMessage) {
+        // Show success message briefly at center
+        const successMsg = document.createElement('div');
+        successMsg.textContent = 'Saved changes';
+        successMsg.style.cssText = 'position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:white;color:black;padding:16px 32px;border-radius:12px;font-weight:bold;z-index:9999;border:3px solid black;box-shadow:4px 4px 0px 0px rgba(0,0,0,1);font-size:18px;';
+        document.body.appendChild(successMsg);
+        setTimeout(() => successMsg.remove(), 2000);
+      }
     } catch (error) {
       console.error('Error saving canvas:', error);
       alert('Failed to save canvas');
@@ -123,6 +132,25 @@ export default function ExcalidrawCanvas({
       setIsSaving(false);
     }
   }, [excalidrawAPI, onSave, viewOnly]);
+
+  const handleSave = useCallback(async () => {
+    await saveCanvas(true);
+  }, [saveCanvas]);
+
+  // Autosave every 1 minute when there are unsaved edits.
+  useEffect(() => {
+    if (viewOnly) return;
+
+    const autoSaveInterval = setInterval(async () => {
+      if (!hasUnsavedChangesRef.current || isSavingRef.current) {
+        return;
+      }
+
+      await saveCanvas(false);
+    }, 60000);
+
+    return () => clearInterval(autoSaveInterval);
+  }, [saveCanvas, viewOnly]);
 
   const handleShare = () => {
     const baseUrl = window.location.origin;
@@ -276,6 +304,11 @@ export default function ExcalidrawCanvas({
             }
           }}
           initialData={initialData}
+          onChange={() => {
+            if (!viewOnly) {
+              hasUnsavedChangesRef.current = true;
+            }
+          }}
           viewModeEnabled={viewOnly}
           zenModeEnabled={false}
           gridModeEnabled={false}

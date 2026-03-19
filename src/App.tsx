@@ -59,10 +59,9 @@ function App() {
         <Route path="/learnings/guide/:guideId/title/:titleId" element={<TitleEditor />} />
         <Route path="/learnings/guide/:guideId/title/:titleId/view" element={<GuideNoteEditor />} />
         <Route path="/learnings/guide/:guideId/title/:titleId/edit" element={<GuideNoteEditor />} />
+        <Route path="/learn/guide/:guideId/title/:titleId" element={<GuideNoteEditor />} />
         <Route path="/learn/:guideSlug/:titleSlug" element={<GuideNoteEditor />} />
         <Route path="/todo/:todoId" element={<TodoDetail />} />
-        <Route path="/learnings/guide/:guideId/title/:titleId/edit" element={<GuideNoteEditor />} />
-        <Route path="/learn/:guideSlug/:titleSlug" element={<GuideNoteEditor />} />
         <Route path="/privacy-policy" element={<PrivacyPolicy />} />
         <Route path="/terms" element={<Terms />} />
         <Route path="/about" element={<About />} />

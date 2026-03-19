@@ -687,10 +687,7 @@ router.get('/guides/:guideId/titles/:titleId/share', async (req, res) => {
       return res.status(404).json({ message: 'Title not found' });
     }
     
-    // Use slug-based URL for sharing (view mode)
-    const guideSlug = guide.guideSlug || guide.guideId;
-    const titleSlug = title.titleSlug || title.titleId;
-    const shareUrl = `${req.protocol}://${req.get('host')}/learn/${guideSlug}/${titleSlug}`;
+    const shareUrl = `${req.protocol}://${req.get('host')}/learn/guide/${guide.guideId}/title/${title.titleId}`;
     
     res.json({
       shareUrl,

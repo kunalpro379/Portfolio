@@ -39,10 +39,7 @@ export default function GuideView() {
 
   const handleTitleClick = (title: any, clickMode: 'view' | 'edit') => {
     if (clickMode === 'view') {
-      // Use slug-based URL for view mode
-      const guideSlug = guide?.guideSlug || guide?.guideId;
-      const titleSlug = title.titleSlug || title.titleId;
-      navigate(`/learn/${guideSlug}/${titleSlug}`);
+      navigate(`/learn/guide/${guideId}/title/${title.titleId}`);
     } else {
       // Ask for password for edit mode
       setSelectedTitleId(title.titleId);
@@ -86,8 +83,8 @@ export default function GuideView() {
 
   const handleShareTitle = async (titleId: string) => {
     try {
-      const url = await getTitleShareLink(guideId!, titleId);
-      setShareUrl(url);
+      await getTitleShareLink(guideId!, titleId);
+      setShareUrl(`${window.location.origin}/learn/guide/${guideId}/title/${titleId}`);
       setShowShareModal(true);
     } catch (err) {
       alert('Failed to get share link');

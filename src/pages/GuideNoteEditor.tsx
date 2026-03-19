@@ -1,10 +1,10 @@
-﻿import { useState, useEffect } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+﻿import { useState, useEffect, useMemo, useRef } from 'react';
+import { useNavigate, useParams, useLocation } from 'react-router-dom';
 import { ArrowLeft, Save, Upload, Image as ImageIcon, Trash2, FileText, Plus, Youtube } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
-import { vscDarkPlus } from 'react-syntax-highlighter/dist/esm/styles/prism';
+import { oneLight } from 'react-syntax-highlighter/dist/esm/styles/prism';
 import ExcalidrawCanvas from '@/components/ExcalidrawCanvas';
 import LoadingSpinner from '@/components/LoadingSpinner';
 import YouTubeTranscriptModal from '@/components/YouTubeTranscriptModal';
@@ -22,11 +22,13 @@ import {
 
 export default function GuideNoteEditorPage() {
   const navigate = useNavigate();
+  const location = useLocation();
   const params = useParams<{ guideId?: string; titleId?: string; mode?: string; guideSlug?: string; titleSlug?: string }>();
   
-  // Determine if we're using slug-based URL (view mode) or ID-based URL (edit mode)
+  // Public view mode for both slug and ID based learn URLs
+  const isPublicLearnRoute = location.pathname.startsWith('/learn/guide/');
   const isSlugBased = !!(params.guideSlug && params.titleSlug);
-  const isViewMode = isSlugBased || params.mode === 'view';
+  const isViewMode = isPublicLearnRoute || isSlugBased || params.mode === 'view';
   
   const guideId = params.guideId;
   const titleId = params.titleId;
@@ -45,21 +47,134 @@ export default function GuideNoteEditorPage() {
   const [showDiagramCanvas, setShowDiagramCanvas] = useState(false);
   const [showMobileSidebar, setShowMobileSidebar] = useState(false);
   const [showYouTubeModal, setShowYouTubeModal] = useState(false);
+  const rightContentRef = useRef<HTMLDivElement | null>(null);
+  const headingRenderCursorRef = useRef<Record<string, number>>({});
+
+  const createBaseSlug = (text: string) => {
+    return text
+      .toLowerCase()
+      .replace(/[^a-z0-9\s-]/g, '')
+      .trim()
+      .replace(/\s+/g, '-');
+  };
+
+  const extractHeadingText = (node: any): string => {
+    if (typeof node === 'string' || typeof node === 'number') {
+      return String(node);
+    }
+    if (Array.isArray(node)) {
+      return node.map(extractHeadingText).join('');
+    }
+    if (node && typeof node === 'object' && 'props' in node) {
+      return extractHeadingText((node as any).props?.children);
+    }
+    return '';
+  };
+
+  const markdownHeadings = useMemo(() => {
+    const lines = (content || '').split('\n');
+    const headingCounts: Record<string, number> = {};
+    const headings: Array<{ id: string; text: string; level: number }> = [];
+    let inCodeFence = false;
+
+    for (const line of lines) {
+      const trimmed = line.trim();
+      if (trimmed.startsWith('```')) {
+        inCodeFence = !inCodeFence;
+        continue;
+      }
+      if (inCodeFence) continue;
+
+      const match = /^(#{1,3})\s+(.+)$/.exec(trimmed);
+      if (!match) continue;
+
+      const level = match[1].length;
+      const rawText = match[2].replace(/\s+#*\s*$/, '').trim();
+      if (!rawText) continue;
+
+      const baseId = createBaseSlug(rawText) || `heading-${headings.length + 1}`;
+      headingCounts[baseId] = (headingCounts[baseId] || 0) + 1;
+      const id = headingCounts[baseId] === 1 ? baseId : `${baseId}-${headingCounts[baseId]}`;
+
+      headings.push({ id, text: rawText, level });
+    }
+
+    return headings;
+  }, [content]);
+
+  const headingIdQueue = useMemo(() => {
+    const queue: Record<string, string[]> = {};
+    for (const heading of markdownHeadings) {
+      const key = `${heading.level}:${heading.text}`;
+      if (!queue[key]) queue[key] = [];
+      queue[key].push(heading.id);
+    }
+    return queue;
+  }, [markdownHeadings]);
+
+  useEffect(() => {
+    headingRenderCursorRef.current = {};
+  }, [content, selectedDoc?.documentId]);
+
+  const getRenderedHeadingId = (level: number, text: string) => {
+    const key = `${level}:${text}`;
+    const cursor = headingRenderCursorRef.current[key] || 0;
+    const queue = headingIdQueue[key] || [];
+    const id = queue[cursor] || createBaseSlug(text);
+    headingRenderCursorRef.current[key] = cursor + 1;
+    return id;
+  };
+
+  const scrollToHeading = (headingId: string) => {
+    const container = rightContentRef.current;
+    if (!container) return;
+
+    const target = container.querySelector(`[data-heading-id="${headingId}"]`) as HTMLElement | null;
+    if (!target) return;
+
+    container.scrollTo({
+      top: target.offsetTop - 16,
+      behavior: 'smooth'
+    });
+    setShowMobileSidebar(false);
+  };
 
   const markdownComponents = {
-    h1: ({ children, ...props }: any) => <h1 className="text-3xl font-black text-black mt-8 mb-4" {...props}>{children}</h1>,
-    h2: ({ children, ...props }: any) => <h2 className="text-2xl font-black text-black mt-7 mb-3" {...props}>{children}</h2>,
-    h3: ({ children, ...props }: any) => <h3 className="text-xl font-bold text-black mt-6 mb-3" {...props}>{children}</h3>,
+    h1: ({ children, ...props }: any) => {
+      const text = extractHeadingText(children);
+      const id = getRenderedHeadingId(1, text);
+      return <h1 data-heading-id={id} id={id} className="text-3xl font-black text-black mt-8 mb-4" {...props}>{children}</h1>;
+    },
+    h2: ({ children, ...props }: any) => {
+      const text = extractHeadingText(children);
+      const id = getRenderedHeadingId(2, text);
+      return <h2 data-heading-id={id} id={id} className="text-2xl font-black text-black mt-7 mb-3" {...props}>{children}</h2>;
+    },
+    h3: ({ children, ...props }: any) => {
+      const text = extractHeadingText(children);
+      const id = getRenderedHeadingId(3, text);
+      return <h3 data-heading-id={id} id={id} className="text-xl font-bold text-black mt-6 mb-3" {...props}>{children}</h3>;
+    },
     p: ({ children, ...props }: any) => <p className="text-gray-800 leading-8 mb-4" {...props}>{children}</p>,
     ul: ({ children, ...props }: any) => <ul className="list-disc list-outside pl-6 space-y-2 mb-4 text-gray-800" {...props}>{children}</ul>,
     ol: ({ children, ...props }: any) => <ol className="list-decimal list-outside pl-6 space-y-2 mb-4 text-gray-800" {...props}>{children}</ol>,
     li: ({ children, ...props }: any) => <li className="leading-7" {...props}>{children}</li>,
     blockquote: ({ children, ...props }: any) => <blockquote className="border-l-4 border-gray-300 pl-4 italic text-gray-700 my-4" {...props}>{children}</blockquote>,
+    table: ({ children, ...props }: any) => (
+      <div className="my-6 overflow-x-auto rounded-lg border border-gray-300">
+        <table className="w-full border-collapse text-sm" {...props}>{children}</table>
+      </div>
+    ),
+    thead: ({ children, ...props }: any) => <thead className="bg-gray-100" {...props}>{children}</thead>,
+    tbody: ({ children, ...props }: any) => <tbody {...props}>{children}</tbody>,
+    tr: ({ children, ...props }: any) => <tr className="border-b border-gray-200" {...props}>{children}</tr>,
+    th: ({ children, ...props }: any) => <th className="border border-gray-300 px-3 py-2 text-left font-bold text-gray-900" {...props}>{children}</th>,
+    td: ({ children, ...props }: any) => <td className="border border-gray-300 px-3 py-2 align-top text-gray-800" {...props}>{children}</td>,
     code({ inline, className, children, ...props }: any) {
       const match = /language-(\w+)/.exec(className || '');
       return !inline ? (
         <SyntaxHighlighter
-          style={vscDarkPlus}
+          style={oneLight}
           language={match?.[1] || 'text'}
           PreTag="div"
           customStyle={{ borderRadius: '0.75rem', margin: '1rem 0', padding: '1rem' }}
@@ -472,7 +587,7 @@ export default function GuideNoteEditorPage() {
           {/* Left Sidebar - Hidden on mobile by default */}
           <div className={`${
             showMobileSidebar ? 'translate-x-0' : '-translate-x-full'
-          } md:translate-x-0 fixed md:relative z-50 md:z-0 w-72 md:w-72 h-full bg-white border-r border-gray-200 flex flex-col overflow-hidden flex-shrink-0 transition-transform duration-300`}>
+          } md:translate-x-0 fixed md:relative z-50 md:z-0 w-72 md:w-72 h-full bg-white/95 border-r-2 border-dotted border-black/30 flex flex-col overflow-y-auto flex-shrink-0 transition-transform duration-300`}>
             {/* Guide Info Card */}
             <div className="p-3 md:p-4 border-b border-gray-200 flex-shrink-0">
               <div className="bg-gradient-to-br from-blue-50 to-white border-2 border-black rounded-xl p-3 md:p-4 shadow-sm">
@@ -556,6 +671,30 @@ export default function GuideNoteEditorPage() {
               </div>
             </div>
 
+            {/* Headings Navigation */}
+            <div className="border-b border-gray-200 flex-shrink-0">
+              <div className="px-3 py-2 bg-gray-50 border-b border-gray-200 flex items-center gap-2">
+                <span className="font-black text-[10px] md:text-xs uppercase tracking-wider text-gray-700">Navigation</span>
+              </div>
+              <div className="p-2 max-h-56 md:max-h-72 overflow-y-auto">
+                {markdownHeadings.length === 0 ? (
+                  <p className="text-xs text-gray-500 text-center py-2">No headings found</p>
+                ) : (
+                  markdownHeadings.map((heading) => (
+                    <button
+                      key={heading.id}
+                      onClick={() => scrollToHeading(heading.id)}
+                      className={`w-full text-left px-2 py-1.5 mb-1 rounded border border-gray-200 bg-white hover:bg-gray-50 transition-all text-xs ${
+                        heading.level === 1 ? 'font-bold' : heading.level === 2 ? 'pl-4 font-semibold' : 'pl-6'
+                      }`}
+                    >
+                      {heading.text}
+                    </button>
+                  ))
+                )}
+              </div>
+            </div>
+
             {/* Attachments */}
             <div className="flex-1 overflow-y-auto">
               <div className="px-3 py-2 bg-gray-50 border-b border-gray-200 flex items-center gap-2">
@@ -586,28 +725,20 @@ export default function GuideNoteEditorPage() {
           </div>
 
           {/* Right Content Area */}
-          <div className="flex-1 overflow-y-auto bg-white/80">
+          <div ref={rightContentRef} className="flex-1 overflow-y-auto">
             {loadingDoc ? (
               <div className="flex items-center justify-center h-full">
                 <LoadingSpinner size="xl" />
               </div>
             ) : selectedDoc ? (
               <div className="w-full mx-auto max-w-6xl px-3 py-4 md:px-8 md:py-8">
-                <div className="rounded-2xl border-2 border-black/15 bg-white p-4 shadow-sm md:p-8">
-                  {/* Document Header - Mobile Optimized */}
-                  <div className="mb-4 md:mb-8 pb-3 md:pb-4 border-b border-gray-200">
-                    <h1 className="text-xl md:text-3xl font-black text-black mb-1 md:mb-2 break-words">
-                      {selectedDoc.name.replace('.md', '')}
-                    </h1>
-                  </div>
-
-                  {/* Rendered Markdown - Mobile Optimized */}
+                <article className="rounded-2xl border border-black/20 bg-white/95 p-4 shadow-sm md:p-8">
                   <div className="prose prose-sm md:prose-lg max-w-none prose-headings:tracking-tight prose-img:rounded-lg prose-img:shadow-md">
                     <ReactMarkdown remarkPlugins={[remarkGfm]} components={markdownComponents}>
                       {content || '*No content*'}
                     </ReactMarkdown>
                   </div>
-                </div>
+                </article>
               </div>
             ) : (
               <div className="flex items-center justify-center h-full p-8">
