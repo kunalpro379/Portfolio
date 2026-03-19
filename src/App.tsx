@@ -21,6 +21,7 @@ import Terms from './pages/Terms';
 import About from './pages/About';
 import Contact from './pages/Contact';
 import AIChatButton from './components/AIChatButton';
+import GlobalBackground from './components/GlobalBackground';
 import { trackPageView } from './lib/tracking';
 
 // Component to track page views
@@ -36,7 +37,8 @@ function PageViewTracker() {
 
 function App() {
   return (
-    <>
+    <div className="relative min-h-screen">
+      <GlobalBackground />
       <PageViewTracker />
       <Routes>
         <Route path="/" element={<Home />} />
@@ -46,6 +48,7 @@ function App() {
         <Route path="/learnings/diagrams" element={<DiagramsPage />} />
         <Route path="/projects/:id" element={<ProjectDetail />} />
         <Route path="/learnings/blogs/:id" element={<BlogDetail />} />
+        <Route path="/learnings/blogs/create" element={<CreateBlog />} />
         <Route path="/learnings/blogs/create/:blogId" element={<CreateBlog />} />
         <Route path="/learnings/blogs/edit/:blogId" element={<EditBlog />} />
         <Route path="/learnings/notes/:id" element={<NotesDetail />} />
@@ -67,7 +70,7 @@ function App() {
         <Route path="*" element={<div className="min-h-screen flex items-center justify-center"><div className="text-center"><h1 className="text-2xl font-bold mb-4">404 - Page Not Found</h1><a href="/" className="text-blue-600 hover:underline">Go Home</a></div></div>} />
       </Routes>
       <AIChatButton />
-    </>
+    </div>
   );
 }
 

@@ -274,24 +274,7 @@ export default function LearningsPage() {
   };
 
   const handleCreateBlog = () => {
-    const input = window.prompt('Enter new blog ID (example: aws-vpc-traffic-flow)');
-    if (!input) {
-      return;
-    }
-
-    const blogId = input
-      .trim()
-      .toLowerCase()
-      .replace(/[^a-z0-9\s-]/g, '')
-      .replace(/\s+/g, '-')
-      .replace(/-+/g, '-');
-
-    if (!blogId) {
-      alert('Please enter a valid blog ID');
-      return;
-    }
-
-    handleNavigate(`/learnings/blogs/create/${encodeURIComponent(blogId)}`);
+    handleNavigate('/learnings/blogs/create');
   };
 
   const handleCreateCodeFolder = async () => {

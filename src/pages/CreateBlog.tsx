@@ -24,10 +24,16 @@ const blogEndpoints = {
   mdFile: (id: string) => `${API_BASE_URL}${API_ENDPOINTS.blogs}/${id}/md-file`
 };
 
+const sectionClass =
+  'rounded-2xl border border-black/20 bg-white/85 backdrop-blur-md shadow-[0_10px_30px_rgba(0,0,0,0.12)]';
+
+const inputClass =
+  'w-full rounded-xl border border-black/20 bg-white px-4 py-3 text-sm font-medium text-black placeholder:text-black/45 focus:border-black focus:outline-none';
+
 export default function CreateBlog() {
-  const { blogId } = useParams();
+  const { blogId: routeBlogId } = useParams();
   const navigate = useNavigate();
-  
+
   const [activeTab, setActiveTab] = useState<'metadata' | 'markdown'>('metadata');
   const [loading, setLoading] = useState(false);
   const [title, setTitle] = useState('');
@@ -42,6 +48,7 @@ export default function CreateBlog() {
   const [assets, setAssets] = useState<Asset[]>([]);
   const [coverImage, setCoverImage] = useState<File | null>(null);
   const [coverPreview, setCoverPreview] = useState<string>('');
+  const [createdBlogId, setCreatedBlogId] = useState<string | null>(routeBlogId || null);
 
   const addBlogLink = () => {
     setBlogLinks([...blogLinks, { platform: '', url: '' }]);
@@ -71,8 +78,8 @@ export default function CreateBlog() {
     setAssets(assets.filter(asset => asset.id !== id));
   };
 
-  const updateAsset = (id: string, field: keyof Asset, value: any) => {
-    setAssets(assets.map(asset => 
+  const updateAsset = (id: string, field: keyof Asset, value: string | File | null) => {
+    setAssets(assets.map(asset =>
       asset.id === id ? { ...asset, [field]: value } : asset
     ));
   };
@@ -104,9 +111,8 @@ export default function CreateBlog() {
 
     setLoading(true);
     try {
-      // 1. Create blog with metadata
       const blogData = {
-        blogId,
+        blogId: routeBlogId,
         title,
         tagline,
         subject,
@@ -130,45 +136,51 @@ export default function CreateBlog() {
         throw new Error('Failed to create blog');
       }
 
-      // 2. Upload cover image if any
+      const createResult = await createResponse.json();
+      const savedBlogId = createResult?.blog?.blogId || routeBlogId;
+
+      if (!savedBlogId) {
+        throw new Error('Blog ID was not returned by server');
+      }
+
+      setCreatedBlogId(savedBlogId);
+
       if (coverImage) {
         const formData = new FormData();
         formData.append('cover', coverImage);
 
-        await fetch(blogEndpoints.cover(blogId!), {
+        await fetch(blogEndpoints.cover(savedBlogId), {
           method: 'POST',
           body: formData
         });
       }
 
-      // 3. Upload assets if any
       const assetsWithFiles = assets.filter(a => a.file);
       if (assetsWithFiles.length > 0) {
         const formData = new FormData();
         const assetNames: string[] = [];
-        
+
         assetsWithFiles.forEach(asset => {
           if (asset.file) {
             formData.append('assets', asset.file);
             assetNames.push(asset.assetName);
           }
         });
-        
+
         formData.append('assetNames', JSON.stringify(assetNames));
 
-        await fetch(blogEndpoints.assets(blogId!), {
+        await fetch(blogEndpoints.assets(savedBlogId), {
           method: 'POST',
           body: formData
         });
       }
 
-      // 4. Save MD file if content exists
       if (mdContent) {
         const mdBlob = new Blob([mdContent], { type: 'text/markdown' });
         const mdFormData = new FormData();
-        mdFormData.append('mdFile', mdBlob, `${blogId}.md`);
+        mdFormData.append('mdFile', mdBlob, `${savedBlogId}.md`);
 
-        await fetch(blogEndpoints.mdFile(blogId!), {
+        await fetch(blogEndpoints.mdFile(savedBlogId), {
           method: 'POST',
           body: mdFormData
         });
@@ -185,63 +197,56 @@ export default function CreateBlog() {
   };
 
   return (
-    <div className="h-screen overflow-y-auto bg-gray-50">
-      <div className="p-4 md:p-6">
-        <div className="max-w-[1800px] mx-auto">
-        {/* Header */}
-        <div className="bg-white border-4 border-black rounded-2xl p-4 md:p-6 mb-4 md:mb-6 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
-          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+    <div className="relative z-10 min-h-screen px-4 py-6 md:px-8">
+      <div className="mx-auto max-w-7xl space-y-6">
+        <div className={`${sectionClass} p-5 md:p-6`}>
+          <div className="flex flex-col items-start justify-between gap-4 md:flex-row md:items-center">
             <div>
-              <h1 className="text-2xl md:text-3xl font-black text-black mb-2" style={{ fontFamily: 'Comic Sans MS, cursive' }}>
-                Create New Blog
-              </h1>
-              <p className="text-sm md:text-base text-gray-600 font-medium">
-                Blog ID: <span className="font-black text-black">{blogId}</span>
+              <h1 className="text-2xl font-semibold tracking-tight text-black md:text-3xl">Create New Blog</h1>
+              <p className="mt-1 text-sm text-black/65">
+                Blog ID: <span className="font-semibold text-black">{createdBlogId || 'Auto-generated on save'}</span>
               </p>
             </div>
-            <div className="flex gap-2 md:gap-3 w-full sm:w-auto">
+            <div className="flex w-full gap-3 md:w-auto">
               <button
                 onClick={() => navigate('/learnings?tab=blogs')}
-                className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-4 md:px-5 py-2 md:py-3 bg-white border-3 border-black rounded-xl font-bold hover:bg-gray-50 transition shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] text-sm md:text-base"
+                className="flex flex-1 items-center justify-center gap-2 rounded-xl border border-black/20 bg-white px-4 py-2.5 text-sm font-semibold text-black transition hover:bg-black/5 md:flex-none"
               >
-                <X className="w-4 h-4 md:w-5 md:h-5" strokeWidth={2.5} />
+                <X className="h-4 w-4" strokeWidth={2} />
                 Cancel
               </button>
               <button
                 onClick={handleSave}
                 disabled={loading}
-                className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-4 md:px-6 py-2 md:py-3 bg-black text-white border-3 border-black rounded-xl font-bold hover:bg-gray-800 transition shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] disabled:opacity-50 text-sm md:text-base"
+                className="flex flex-1 items-center justify-center gap-2 rounded-xl border border-black bg-black px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-black/90 disabled:cursor-not-allowed disabled:opacity-60 md:flex-none"
               >
-                <Save className="w-4 h-4 md:w-5 md:h-5" strokeWidth={2.5} />
+                <Save className="h-4 w-4" strokeWidth={2} />
                 {loading ? 'Saving...' : 'Save Blog'}
               </button>
             </div>
           </div>
         </div>
 
-        {/* Main Content Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 md:gap-6">
-          {/* Left Section */}
-          <div className="lg:col-span-9 space-y-4 md:space-y-6 order-1">
-            {/* Tabs */}
-            <div className="bg-white border-4 border-black rounded-2xl p-2 shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]">
-              <div className="flex gap-2">
+        <div className="grid grid-cols-1 gap-6 lg:grid-cols-12">
+          <div className="space-y-6 lg:col-span-8">
+            <div className={`${sectionClass} p-2`}>
+              <div className="grid grid-cols-2 gap-2">
                 <button
                   onClick={() => setActiveTab('metadata')}
-                  className={`flex-1 px-4 md:px-6 py-2 md:py-3 rounded-xl font-black uppercase tracking-wide transition-all border-3 border-black text-xs md:text-base ${
+                  className={`rounded-xl px-4 py-2.5 text-sm font-semibold transition ${
                     activeTab === 'metadata'
-                      ? 'bg-black text-white shadow-[4px_4px_0px_0px_rgba(0,0,0,0.3)]'
-                      : 'bg-white text-black hover:bg-gray-50 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]'
+                      ? 'bg-black text-white'
+                      : 'bg-white text-black hover:bg-black/5'
                   }`}
                 >
                   METADATA
                 </button>
                 <button
                   onClick={() => setActiveTab('markdown')}
-                  className={`flex-1 px-6 py-3 rounded-xl font-black uppercase tracking-wide transition-all border-3 border-black ${
+                  className={`rounded-xl px-4 py-2.5 text-sm font-semibold transition ${
                     activeTab === 'markdown'
-                      ? 'bg-black text-white shadow-[4px_4px_0px_0px_rgba(0,0,0,0.3)]'
-                      : 'bg-white text-black hover:bg-gray-50 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]'
+                      ? 'bg-black text-white'
+                      : 'bg-white text-black hover:bg-black/5'
                   }`}
                 >
                   MARKDOWN
@@ -249,136 +254,84 @@ export default function CreateBlog() {
               </div>
             </div>
 
-            {/* Metadata Tab */}
             {activeTab === 'metadata' && (
               <>
-                {/* Basic Info Card */}
-                <div className="bg-white border-4 border-black rounded-2xl p-4 md:p-6 shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]">
-                  <h2 className="text-xl md:text-2xl font-black text-black mb-4 md:mb-6" style={{ fontFamily: 'Comic Sans MS, cursive' }}>
-                    Basic Information
-                  </h2>
-              
-                  <div className="space-y-5">
+                <div className={`${sectionClass} p-5 md:p-6`}>
+                  <h2 className="text-lg font-semibold text-black md:text-xl">Basic Information</h2>
+                  <div className="mt-5 space-y-4">
                     <div>
-                      <label className="block text-sm font-black text-black mb-2 uppercase tracking-wide">Title *</label>
-                      <input
-                        type="text"
-                        value={title}
-                        onChange={(e) => setTitle(e.target.value)}
-                        className="w-full px-4 py-3 bg-white border-3 border-black rounded-xl font-medium focus:outline-none focus:ring-4 focus:ring-black/20 shadow-[3px_3px_0px_0px_rgba(0,0,0,1)]"
-                        placeholder="Enter blog title"
-                      />
+                      <label className="mb-2 block text-xs font-semibold uppercase tracking-wide text-black/70">Title *</label>
+                      <input type="text" value={title} onChange={(e) => setTitle(e.target.value)} className={inputClass} placeholder="Enter blog title" />
                     </div>
 
                     <div>
-                      <label className="block text-sm font-black text-black mb-2 uppercase tracking-wide">Tagline</label>
-                      <input
-                        type="text"
-                        value={tagline}
-                        onChange={(e) => setTagline(e.target.value)}
-                        className="w-full px-4 py-3 bg-white border-3 border-black rounded-xl font-medium focus:outline-none focus:ring-4 focus:ring-black/20 shadow-[3px_3px_0px_0px_rgba(0,0,0,1)]"
-                        placeholder="Short catchy tagline"
-                      />
+                      <label className="mb-2 block text-xs font-semibold uppercase tracking-wide text-black/70">Tagline</label>
+                      <input type="text" value={tagline} onChange={(e) => setTagline(e.target.value)} className={inputClass} placeholder="Short catchy tagline" />
                     </div>
 
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                       <div>
-                        <label className="block text-sm font-black text-black mb-2 uppercase tracking-wide">Subject</label>
-                        <input
-                          type="text"
-                          value={subject}
-                          onChange={(e) => setSubject(e.target.value)}
-                          className="w-full px-4 py-3 bg-white border-3 border-black rounded-xl font-medium focus:outline-none focus:ring-4 focus:ring-black/20 shadow-[3px_3px_0px_0px_rgba(0,0,0,1)]"
-                          placeholder="e.g., DevOps, React"
-                        />
+                        <label className="mb-2 block text-xs font-semibold uppercase tracking-wide text-black/70">Subject</label>
+                        <input type="text" value={subject} onChange={(e) => setSubject(e.target.value)} className={inputClass} placeholder="e.g., DevOps, React" />
                       </div>
-
                       <div>
-                        <label className="block text-sm font-black text-black mb-2 uppercase tracking-wide">Date</label>
-                        <input
-                          type="date"
-                          value={datetime}
-                          onChange={(e) => setDatetime(e.target.value)}
-                          className="w-full px-4 py-3 bg-white border-3 border-black rounded-xl font-medium focus:outline-none focus:ring-4 focus:ring-black/20 shadow-[3px_3px_0px_0px_rgba(0,0,0,1)]"
-                        />
+                        <label className="mb-2 block text-xs font-semibold uppercase tracking-wide text-black/70">Date</label>
+                        <input type="date" value={datetime} onChange={(e) => setDatetime(e.target.value)} className={inputClass} />
                       </div>
                     </div>
 
                     <div>
-                      <label className="block text-sm font-black text-black mb-2 uppercase tracking-wide">Short Description</label>
-                      <textarea
-                        value={shortDescription}
-                        onChange={(e) => setShortDescription(e.target.value)}
-                        rows={3}
-                        className="w-full px-4 py-3 bg-white border-3 border-black rounded-xl font-medium focus:outline-none focus:ring-4 focus:ring-black/20 shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] resize-none"
-                        placeholder="Brief description for preview"
-                      />
+                      <label className="mb-2 block text-xs font-semibold uppercase tracking-wide text-black/70">Short Description</label>
+                      <textarea value={shortDescription} onChange={(e) => setShortDescription(e.target.value)} rows={3} className={`${inputClass} resize-none`} placeholder="Brief description for preview" />
                     </div>
 
                     <div>
-                      <label className="block text-sm font-black text-black mb-2 uppercase tracking-wide">Tags</label>
-                      <input
-                        type="text"
-                        value={tags}
-                        onChange={(e) => setTags(e.target.value)}
-                        className="w-full px-4 py-3 bg-white border-3 border-black rounded-xl font-medium focus:outline-none focus:ring-4 focus:ring-black/20 shadow-[3px_3px_0px_0px_rgba(0,0,0,1)]"
-                        placeholder="AWS, VPC, Networking (comma separated)"
-                      />
+                      <label className="mb-2 block text-xs font-semibold uppercase tracking-wide text-black/70">Tags</label>
+                      <input type="text" value={tags} onChange={(e) => setTags(e.target.value)} className={inputClass} placeholder="AWS, VPC, Networking (comma separated)" />
                     </div>
 
                     <div>
-                      <label className="block text-sm font-black text-black mb-2 uppercase tracking-wide">Footer</label>
-                      <input
-                        type="text"
-                        value={footer}
-                        onChange={(e) => setFooter(e.target.value)}
-                        className="w-full px-4 py-3 bg-white border-3 border-black rounded-xl font-medium focus:outline-none focus:ring-4 focus:ring-black/20 shadow-[3px_3px_0px_0px_rgba(0,0,0,1)]"
-                        placeholder="Footer text"
-                      />
+                      <label className="mb-2 block text-xs font-semibold uppercase tracking-wide text-black/70">Footer</label>
+                      <input type="text" value={footer} onChange={(e) => setFooter(e.target.value)} className={inputClass} placeholder="Footer text" />
                     </div>
                   </div>
                 </div>
 
-                {/* Blog Links Card */}
-                <div className="bg-white border-4 border-black rounded-2xl p-4 md:p-6 shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]">
-                  <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-4 md:mb-6 gap-3">
-                    <h2 className="text-xl md:text-2xl font-black text-black" style={{ fontFamily: 'Comic Sans MS, cursive' }}>
-                      Blog Links
-                    </h2>
+                <div className={`${sectionClass} p-5 md:p-6`}>
+                  <div className="mb-5 flex flex-col items-start justify-between gap-3 sm:flex-row sm:items-center">
+                    <h2 className="text-lg font-semibold text-black md:text-xl">Blog Links</h2>
                     <button
                       onClick={addBlogLink}
-                      className="flex items-center gap-2 px-3 md:px-4 py-2 bg-blue-200 border-3 border-black rounded-xl font-bold hover:bg-blue-300 transition shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] text-sm md:text-base whitespace-nowrap"
+                      className="inline-flex items-center gap-2 rounded-lg border border-black/25 bg-white px-3 py-2 text-sm font-semibold text-black transition hover:bg-black/5"
                     >
-                      <LinkIcon className="w-4 h-4" strokeWidth={2.5} />
+                      <LinkIcon className="h-4 w-4" strokeWidth={2} />
                       Add Link
                     </button>
                   </div>
 
-                  <div className="space-y-4">
+                  <div className="space-y-3">
                     {blogLinks.map((link, index) => (
-                      <div key={index} className="flex flex-col sm:flex-row gap-3 items-start">
-                        <div className="flex-1 grid grid-cols-1 sm:grid-cols-2 gap-3 w-full">
-                          <input
-                            type="text"
-                            value={link.platform}
-                            onChange={(e) => updateBlogLink(index, 'platform', e.target.value)}
-                            className="px-4 py-3 bg-white border-3 border-black rounded-xl font-medium focus:outline-none focus:ring-4 focus:ring-black/20 shadow-[3px_3px_0px_0px_rgba(0,0,0,1)]"
-                            placeholder="Platform (e.g., Medium, Dev.to)"
-                          />
-                          <input
-                            type="url"
-                            value={link.url}
-                            onChange={(e) => updateBlogLink(index, 'url', e.target.value)}
-                            className="px-4 py-3 bg-white border-3 border-black rounded-xl font-medium focus:outline-none focus:ring-4 focus:ring-black/20 shadow-[3px_3px_0px_0px_rgba(0,0,0,1)]"
-                            placeholder="URL"
-                          />
-                        </div>
+                      <div key={index} className="grid grid-cols-1 gap-3 md:grid-cols-[1fr_1fr_auto]">
+                        <input
+                          type="text"
+                          value={link.platform}
+                          onChange={(e) => updateBlogLink(index, 'platform', e.target.value)}
+                          className={inputClass}
+                          placeholder="Platform (e.g., Medium, Dev.to)"
+                        />
+                        <input
+                          type="url"
+                          value={link.url}
+                          onChange={(e) => updateBlogLink(index, 'url', e.target.value)}
+                          className={inputClass}
+                          placeholder="URL"
+                        />
                         {blogLinks.length > 1 && (
                           <button
                             onClick={() => removeBlogLink(index)}
-                            className="p-2 md:p-3 bg-red-100 border-3 border-black rounded-xl hover:bg-red-200 transition shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] w-full sm:w-auto"
+                            className="inline-flex items-center justify-center rounded-xl border border-black/20 bg-white px-3 py-2 text-black transition hover:bg-black/5"
                           >
-                            <Trash2 className="w-5 h-5 md:w-6 md:h-6 text-black mx-auto" strokeWidth={2.5} />
+                            <Trash2 className="h-4 w-4" strokeWidth={2} />
                           </button>
                         )}
                       </div>
@@ -388,37 +341,27 @@ export default function CreateBlog() {
               </>
             )}
 
-            {/* Markdown Tab */}
             {activeTab === 'markdown' && (
-              <div className="bg-white border-4 border-black rounded-2xl p-4 md:p-6 shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]">
-                <h2 className="text-xl md:text-2xl font-black text-black mb-4 md:mb-6" style={{ fontFamily: 'Comic Sans MS, cursive' }}>
-                  Content Editor
-                </h2>
-                <div className="border-3 border-black rounded-xl overflow-hidden shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+              <div className={`${sectionClass} p-5 md:p-6`}>
+                <h2 className="text-lg font-semibold text-black md:text-xl">Content Editor</h2>
+                <div className="mt-4 overflow-hidden rounded-xl border border-black/20">
                   <MDEditor
                     value={mdContent}
                     onChange={(val) => setMdContent(val || '')}
-                    height={600}
+                    height={560}
                     preview="live"
                   />
                 </div>
-                <p className="text-sm text-gray-600 font-medium mt-3">
-                  Tip: Reference assets using their asset name in markdown
-                </p>
+                <p className="mt-3 text-xs text-black/60">Tip: Reference assets using their asset name in markdown.</p>
               </div>
             )}
           </div>
 
-          {/* Right Section - Assets */}
-          <div className="lg:col-span-3 flex flex-col gap-4 md:gap-6 order-2">
-            {/* Cover Image */}
-            <div className="bg-white border-4 border-black rounded-2xl p-4 md:p-6 shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]">
-              <h2 className="text-xl md:text-2xl font-black text-black mb-3 md:mb-4" style={{ fontFamily: 'Comic Sans MS, cursive' }}>
-                Cover Image
-              </h2>
-              
-              <label className="block">
-                <div className="w-full p-3 md:p-4 bg-purple-200 border-3 border-black rounded-xl text-center font-bold cursor-pointer hover:bg-purple-300 transition text-sm md:text-base">
+          <div className="space-y-6 lg:col-span-4">
+            <div className={`${sectionClass} p-5 md:p-6`}>
+              <h2 className="text-lg font-semibold text-black md:text-xl">Cover Image</h2>
+              <label className="mt-4 block">
+                <div className="w-full cursor-pointer rounded-xl border border-black/25 bg-white px-4 py-3 text-center text-sm font-semibold text-black transition hover:bg-black/5">
                   Choose Cover
                 </div>
                 <input
@@ -431,13 +374,13 @@ export default function CreateBlog() {
 
               {coverPreview && (
                 <div className="mt-4">
-                  <img src={coverPreview} alt="Cover" className="w-full h-40 object-cover rounded border-3 border-black" />
+                  <img src={coverPreview} alt="Cover" className="h-44 w-full rounded-xl border border-black/15 object-cover" />
                   <button
                     onClick={() => {
                       setCoverImage(null);
                       setCoverPreview('');
                     }}
-                    className="w-full mt-2 p-2 bg-red-100 border-2 border-black rounded-lg hover:bg-red-200 font-bold text-sm"
+                    className="mt-2 w-full rounded-lg border border-black/20 bg-white px-3 py-2 text-sm font-medium text-black transition hover:bg-black/5"
                   >
                     Remove
                   </button>
@@ -445,29 +388,26 @@ export default function CreateBlog() {
               )}
             </div>
 
-            {/* Assets */}
-            <div className="bg-white border-4 border-black rounded-2xl p-4 md:p-6 shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] flex-1 flex flex-col">
-              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-4 md:mb-6 gap-3">
-                <h2 className="text-xl md:text-2xl font-black text-black" style={{ fontFamily: 'Comic Sans MS, cursive' }}>
-                  Assets
-                </h2>
+            <div className={`${sectionClass} p-5 md:p-6`}>
+              <div className="mb-4 flex items-center justify-between">
+                <h2 className="text-lg font-semibold text-black md:text-xl">Assets</h2>
                 <button
                   onClick={addAsset}
-                  className="flex items-center gap-2 px-3 md:px-4 py-2 bg-green-200 border-3 border-black rounded-xl font-bold hover:bg-green-300 transition shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] text-sm md:text-base whitespace-nowrap"
+                  className="inline-flex items-center gap-2 rounded-lg border border-black/25 bg-white px-3 py-2 text-sm font-semibold text-black transition hover:bg-black/5"
                 >
-                  <Upload className="w-4 h-4" strokeWidth={2.5} />
+                  <Upload className="h-4 w-4" strokeWidth={2} />
                   Add
                 </button>
               </div>
 
-              <div className="space-y-3 flex-1 overflow-y-auto">
+              <div className="max-h-[56vh] space-y-3 overflow-y-auto pr-1">
                 {assets.length === 0 ? (
-                  <p className="text-center text-gray-600 py-8">No assets yet</p>
+                  <p className="rounded-xl border border-dashed border-black/20 bg-white/70 py-8 text-center text-sm text-black/55">No assets yet</p>
                 ) : (
                   assets.map((asset) => (
-                    <div key={asset.id} className="border-3 border-black rounded-xl p-2 bg-gray-50 space-y-2">
+                    <div key={asset.id} className="space-y-2 rounded-xl border border-black/15 bg-white p-3">
                       <label className="block">
-                        <div className="w-full p-2 bg-yellow-200 border-2 border-black rounded-lg text-center font-bold text-xs cursor-pointer hover:bg-yellow-300">
+                        <div className="w-full cursor-pointer rounded-lg border border-black/20 bg-white px-3 py-2 text-center text-xs font-semibold text-black transition hover:bg-black/5">
                           Choose File
                         </div>
                         <input
@@ -479,36 +419,24 @@ export default function CreateBlog() {
                       </label>
 
                       {asset.preview && (
-                        <img src={asset.preview} alt="Preview" className="w-full h-24 object-cover rounded border-2 border-black" />
+                        <img src={asset.preview} alt="Preview" className="h-24 w-full rounded-lg border border-black/10 object-cover" />
                       )}
 
-                      <div>
-                        <label className="block text-xs font-black text-black mb-1 uppercase text-[10px]">Filename</label>
-                        <input
-                          type="text"
-                          value={asset.filename}
-                          readOnly
-                          className="w-full px-2 py-1 bg-gray-200 border-2 border-black rounded-lg text-xs font-medium"
-                        />
-                      </div>
+                      <input type="text" value={asset.filename} readOnly className={`${inputClass} bg-black/5`} placeholder="Filename" />
 
-                      <div>
-                        <label className="block text-xs font-black text-black mb-1 uppercase text-[10px]">Asset Name *</label>
-                        <input
-                          type="text"
-                          value={asset.assetName}
-                          onChange={(e) => updateAsset(asset.id, 'assetName', e.target.value)}
-                          className="w-full px-2 py-1 bg-white border-2 border-black rounded-lg text-xs font-medium focus:outline-none focus:ring-2 focus:ring-black/20"
-                          placeholder="e.g., diagram-1"
-                        />
-                        <p className="text-[10px] text-gray-600 mt-1">Use: {`{{${asset.assetName || 'name'}}}`}</p>
-                      </div>
+                      <input
+                        type="text"
+                        value={asset.assetName}
+                        onChange={(e) => updateAsset(asset.id, 'assetName', e.target.value)}
+                        className={inputClass}
+                        placeholder="Asset name (e.g., diagram-1)"
+                      />
 
                       <button
                         onClick={() => removeAsset(asset.id)}
-                        className="w-full flex items-center justify-center gap-1 p-1.5 bg-red-100 border-2 border-black rounded-lg hover:bg-red-200 font-bold text-xs"
+                        className="inline-flex w-full items-center justify-center gap-1 rounded-lg border border-black/20 bg-white px-3 py-2 text-xs font-semibold text-black transition hover:bg-black/5"
                       >
-                        <Trash2 className="w-3 h-3" strokeWidth={2.5} />
+                        <Trash2 className="h-3.5 w-3.5" strokeWidth={2} />
                         Remove
                       </button>
                     </div>
@@ -519,7 +447,6 @@ export default function CreateBlog() {
           </div>
         </div>
       </div>
-    </div>
     </div>
   );
 }

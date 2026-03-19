@@ -20,6 +20,28 @@ const upload = multer({
   }
 });
 
+const toSlug = (value = '') =>
+    value
+        .toLowerCase()
+        .trim()
+        .replace(/[^a-z0-9\s-]/g, '')
+        .replace(/\s+/g, '-')
+        .replace(/-+/g, '-')
+        .replace(/(^-|-$)/g, '');
+
+const getUniqueBlogId = async (seed) => {
+    const base = toSlug(seed) || `blog-${Date.now()}`;
+    let candidate = base;
+    let suffix = 1;
+
+    while (await Blog.exists({ blogId: candidate })) {
+        candidate = `${base}-${suffix}`;
+        suffix += 1;
+    }
+
+    return candidate;
+};
+
 // Upload to Azure Blob Storage
 const uploadToAzure = async (buffer, folder, filename, fileType) => {
   try {
@@ -57,15 +79,20 @@ router.post('/create', async (req, res) => {
     try {
         const { blogId, title, tagline, subject, shortDescription, tags, datetime, footer, blogLinks } = req.body;
 
-        if (!blogId || !title) {
-            return res.status(400).json({ message: 'Blog ID and title are required' });
+        if (!title) {
+            return res.status(400).json({ message: 'Title is required' });
         }
 
+        const normalizedInputId = blogId ? toSlug(blogId) : '';
+        const finalBlogId = normalizedInputId
+            ? await getUniqueBlogId(normalizedInputId)
+            : await getUniqueBlogId(title);
+
         // Generate slug from title
-        const slug = title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+        const slug = toSlug(title);
 
         const blog = new Blog({
-            blogId,
+            blogId: finalBlogId,
             title,
             slug,
             tagline: tagline || '',
@@ -90,6 +117,9 @@ router.post('/create', async (req, res) => {
         });
     } catch (error) {
         console.error('Create blog error:', error);
+        if (error.code === 11000) {
+            return res.status(409).json({ message: 'A blog with this ID already exists' });
+        }
         res.status(500).json({ message: 'Server error', error: error.message });
     }
 });
