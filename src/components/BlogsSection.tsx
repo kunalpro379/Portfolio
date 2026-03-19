@@ -54,7 +54,7 @@ export default function BlogsSection() {
           const contentType = docsResponse.headers.get('content-type');
           if (contentType && contentType.includes('application/json')) {
             const docsData = await docsResponse.json();
-            setDocumentation(docsData.docs.filter((doc: Documentation) => doc.isPublic).slice(0, 4));
+            setDocumentation(docsData.docs.filter((doc: Documentation) => doc.isPublic).slice(0, 5));
           }
         }
 
@@ -73,7 +73,7 @@ export default function BlogsSection() {
           const contentType = blogsResponse.headers.get('content-type');
           if (contentType && contentType.includes('application/json')) {
             const blogsData = await blogsResponse.json();
-            setBlogs(blogsData.blogs.slice(0, 4));
+            setBlogs(blogsData.blogs.slice(0, 5));
           }
         }
       } catch (error) {
@@ -163,7 +163,7 @@ export default function BlogsSection() {
               ref={blogsScrollRef}
               className="overflow-x-auto pt-4 pb-8 -mx-6 px-6 md:-mx-12 md:px-12 scrollbar-hide"
             >
-              <div className="flex sm:grid sm:grid-cols-2 md:grid md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6 min-w-max sm:min-w-0 md:min-w-0">
+              <div className="flex sm:grid sm:grid-cols-2 md:grid md:grid-cols-3 lg:grid-cols-5 gap-4 md:gap-6 min-w-max sm:min-w-0 md:min-w-0">
                 {blogsWithColors.map((blog, idx) => {
                   const rotations = ['-rotate-1', 'rotate-1', '-rotate-2', 'rotate-2'];
                   const hoverRotations = ['hover:rotate-0', 'hover:-rotate-1', 'hover:rotate-1', 'hover:-rotate-2'];
@@ -274,7 +274,7 @@ export default function BlogsSection() {
               ref={docsScrollRef}
               className="overflow-x-auto pt-4 pb-8 -mx-6 px-6 md:-mx-12 md:px-12 scrollbar-hide"
             >
-              <div className="flex sm:grid sm:grid-cols-2 md:grid md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6 min-w-max sm:min-w-0 md:min-w-0">
+              <div className="flex sm:grid sm:grid-cols-2 md:grid md:grid-cols-3 lg:grid-cols-5 gap-4 md:gap-6 min-w-max sm:min-w-0 md:min-w-0">
                 {docs.map((doc, idx) => {
                   const rotations = ['rotate-2', '-rotate-1', 'rotate-1', '-rotate-2'];
                   const hoverRotations = ['hover:-rotate-1', 'hover:rotate-1', 'hover:-rotate-1', 'hover:rotate-2'];
