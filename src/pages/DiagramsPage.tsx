@@ -29,6 +29,7 @@ export default function DiagramsPage() {
   const [showPasswordModal, setShowPasswordModal] = useState(false);
   const [password, setPassword] = useState('');
   const [passwordError, setPasswordError] = useState('');
+  const [editPassword, setEditPassword] = useState<string | null>(null); // Store password for saving
 
   const EDIT_PASSWORD = '';
 
@@ -145,6 +146,7 @@ export default function DiagramsPage() {
   const handlePasswordSubmit = () => {
     if (password === EDIT_PASSWORD) {
       console.log('Opening canvas in edit mode');
+      setEditPassword(password); // Store password for saving
       setViewOnly(false);
       setShowPasswordModal(false);
       setSelectedCanvas(null);
@@ -160,21 +162,29 @@ export default function DiagramsPage() {
     setPassword('');
     setPasswordError('');
     setSelectedCanvas(null);
+    setEditPassword(null); // Clear stored password
   };
 
   const handleSaveCanvas = async (data: any) => {
     if (!activeCanvas) return;
     
     try {
+      const token = localStorage.getItem('token');
       const response = await fetch(`${API_BASE_URL}/api/diagrams/${activeCanvas}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
+          ...(token && { 'Authorization': `Bearer ${token}` })
         },
-        body: JSON.stringify({ data }),
+        body: JSON.stringify({ 
+          data
+        }),
       });
 
-      if (!response.ok) throw new Error('Failed to save canvas');
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Failed to save canvas');
+      }
       
       console.log('Canvas saved successfully');
     } catch (error) {

@@ -117,6 +117,7 @@ export default function LearningsPage() {
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [selectedCanvas, setSelectedCanvas] = useState<any>(null);
   const [password, setPassword] = useState('');
+  const [editPassword, setEditPassword] = useState<string | null>(null); // Store password for saving
   const [newCanvasName, setNewCanvasName] = useState('');
   const [newCanvasPublic, setNewCanvasPublic] = useState(false);
   const [showViewEditModal, setShowViewEditModal] = useState(false);
@@ -374,8 +375,12 @@ export default function LearningsPage() {
     if (!deleteCanvasId) return;
     
     try {
+      const token = localStorage.getItem('token');
       const response = await fetch(`${API_BASE_URL}/api/diagrams/${deleteCanvasId}`, {
         method: 'DELETE',
+        headers: {
+          ...(token && { 'Authorization': `Bearer ${token}` })
+        }
       });
       
       if (!response.ok) throw new Error('Failed to delete diagram');
@@ -406,6 +411,7 @@ export default function LearningsPage() {
 
   const handlePasswordSubmit = () => {
     if (password === 'kunal') {
+      setEditPassword(password); // Store password for saving
       setPassword('');
       setDiagramAuthenticated(true);
       const canvasToLoad = createdCanvasId || selectedCanvas?.canvasId;
@@ -488,15 +494,22 @@ export default function LearningsPage() {
     if (!activeCanvas) return;
 
     try {
+      const token = localStorage.getItem('token');
       const response = await fetch(`${API_BASE_URL}/api/diagrams/${activeCanvas}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
+          ...(token && { 'Authorization': `Bearer ${token}` })
         },
-        body: JSON.stringify({ data })
+        body: JSON.stringify({ 
+          data
+        })
       });
 
-      if (!response.ok) throw new Error('Failed to save canvas');
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Failed to save canvas');
+      }
     } catch (error) {
       console.error('Error saving canvas:', error);
       throw error;

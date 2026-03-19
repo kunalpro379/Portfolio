@@ -1,11 +1,42 @@
 import express from 'express';
 import { BlobServiceClient } from '@azure/storage-blob';
+import jwt from 'jsonwebtoken';
 import Diagram from '../models/Diagram.js';
 import Password from '../models/Password.js';
 import crypto from 'crypto';
 import databaseUtils from '../utils/database.js';
 
 const router = express.Router();
+const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key-change-in-production';
+
+// JWT Authentication Middleware
+function authenticateToken(req, res, next) {
+  try {
+    const token = req.headers.authorization?.split(' ')[1];
+    
+    if (!token) {
+      return res.status(401).json({
+        success: false,
+        message: 'Authentication token required'
+      });
+    }
+
+    const decoded = jwt.verify(token, JWT_SECRET);
+    req.user = decoded;
+    next();
+  } catch (error) {
+    if (error.name === 'TokenExpiredError') {
+      return res.status(401).json({
+        success: false,
+        message: 'Token expired'
+      });
+    }
+    return res.status(401).json({
+      success: false,
+      message: 'Invalid authentication token'
+    });
+  }
+}
 
 // Azure Blob Storage configuration
 const AZURE_STORAGE_CONNECTION_STRING = process.env.AZURE_STORAGE_CONNECTION_STRING;
@@ -280,27 +311,11 @@ router.post('/', async (req, res) => {
   }
 });
 
-// PUT update canvas with password protection
-router.put('/:canvasId', async (req, res) => {
+// PUT update canvas (requires authentication)
+router.put('/:canvasId', authenticateToken, async (req, res) => {
   try {
     const { canvasId } = req.params;
-    const { data, name, isPublic, password } = req.body;
-
-    if (!password) {
-      return res.status(401).json({
-        success: false,
-        message: 'Password required'
-      });
-    }
-
-    // Check password using bcrypt
-    const isValid = await Password.verifyPassword('TODO_PASSWORD', password);
-    if (!isValid) {
-      return res.status(401).json({
-        success: false,
-        message: 'Incorrect password'
-      });
-    }
+    const { data, name, isPublic } = req.body;
 
     const canvas = await Diagram.findOne({ canvasId });
 
@@ -364,27 +379,10 @@ router.put('/:canvasId', async (req, res) => {
   }
 });
 
-// DELETE canvas with password protection
-router.delete('/:canvasId', async (req, res) => {
+// DELETE canvas (requires authentication)
+router.delete('/:canvasId', authenticateToken, async (req, res) => {
   try {
     const { canvasId } = req.params;
-    const { password } = req.body;
-
-    if (!password) {
-      return res.status(401).json({
-        success: false,
-        message: 'Password required'
-      });
-    }
-
-    // Check password using bcrypt
-    const isValid = await Password.verifyPassword('TODO_PASSWORD', password);
-    if (!isValid) {
-      return res.status(401).json({
-        success: false,
-        message: 'Incorrect password'
-      });
-    }
 
     const canvas = await Diagram.findOne({ canvasId });
 

@@ -48,6 +48,11 @@ next-env.d.ts
 admin/.env
 server/.env
 *.env
+
+# Large files
+*.exe
+*.msi
+*.iso
 !*.env.example
 .env
 server/.env
