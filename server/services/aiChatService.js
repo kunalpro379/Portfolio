@@ -1,4 +1,3 @@
-import Groq from 'groq-sdk';
 import { KnowledgeBase } from '../models/KnowledgeBase.js';
 import { BlobServiceClient } from '@azure/storage-blob';
 import { searchKnowledgeBase as vectorSearch } from '../../vectordb.js';
@@ -11,9 +10,8 @@ const __dirname = path.dirname(__filename);
 
 class AIChatService {
   constructor() {
-    this.groq = new Groq({
-      apiKey: process.env.GROQ_API_KEY
-    });
+    this.openRouterApiKey = process.env.OPENROUTER_API_KEY;
+    this.openRouterBaseUrl = 'https://openrouter.ai/api/v1';
     
     // Initialize Azure Blob Service for reading uploaded files
     this.blobServiceClient = null;
@@ -471,7 +469,7 @@ class AIChatService {
     });
   }
 
-  // Generate AI response using Groq with RAG context
+  // Generate AI response using DeepSeek via OpenRouter with RAG context
   async generateResponse(userQuery, context = []) {
     try {
       // Prepare context from vector search results
@@ -501,27 +499,42 @@ Guidelines:
 - Use a friendly, professional tone
 - For schedule queries, format the response clearly with subject, time, room, and teacher information`;
 
-      console.log('Making Groq API call with model: llama-3.1-8b-instant');
+      console.log('Making OpenRouter API call with DeepSeek model');
       
-      const completion = await this.groq.chat.completions.create({
-        messages: [
-          {
-            role: "system",
-            content: systemPrompt
-          },
-          {
-            role: "user",
-            content: userQuery
-          }
-        ],
-        model: "llama-3.1-8b-instant",
-        temperature: 0.7,
-        max_tokens: 1000,
-        top_p: 1,
-        stream: false
+      const response = await fetch(`${this.openRouterBaseUrl}/chat/completions`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${this.openRouterApiKey}`,
+          'Content-Type': 'application/json',
+          'HTTP-Referer': 'https://kunalportfolio.com',
+          'X-Title': 'Kunal Portfolio AI Assistant'
+        },
+        body: JSON.stringify({
+          model: 'deepseek/deepseek-chat',
+          messages: [
+            {
+              role: 'system',
+              content: systemPrompt
+            },
+            {
+              role: 'user',
+              content: userQuery
+            }
+          ],
+          temperature: 0.7,
+          max_tokens: 1000,
+          top_p: 1
+        })
       });
 
-      console.log('Groq API call successful');
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error('OpenRouter API error:', errorText);
+        throw new Error(`OpenRouter API error: ${response.status}`);
+      }
+
+      const completion = await response.json();
+      console.log('OpenRouter API call successful');
 
       return {
         response: completion.choices[0]?.message?.content || "I'm sorry, I couldn't generate a response.",
@@ -611,14 +624,14 @@ Guidelines:
       
       return {
         knowledgeBase: fileCount > 0 ? 'files_available' : 'no_files',
-        groq: 'connected',
+        openrouter: this.openRouterApiKey ? 'connected' : 'not_configured',
         azure: this.blobServiceClient ? 'connected' : 'not_configured',
         fileCount
       };
     } catch (error) {
       return {
         knowledgeBase: 'error',
-        groq: 'unknown',
+        openrouter: 'unknown',
         azure: 'unknown',
         error: error.message
       };

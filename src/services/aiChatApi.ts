@@ -22,7 +22,7 @@ export interface HealthResponse {
   status: string;
   services: {
     qdrant: string;
-    groq: string;
+    openrouter: string;
     error?: string;
   };
   timestamp: string;

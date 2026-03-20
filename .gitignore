@@ -56,3 +56,8 @@ server/.env
 !*.env.example
 .env
 server/.env
+
+# API Keys and Secrets
+public/API.txt
+*.secret
+*.key

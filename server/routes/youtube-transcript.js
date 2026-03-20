@@ -1,19 +1,17 @@
 import express from 'express';
 import { getSubtitles } from 'youtube-captions-scraper';
 import fetch from 'node-fetch';
-import { Groq } from 'groq-sdk';
 import { QdrantClient } from '@qdrant/js-client-rest';
 import GuideNote from '../models/GuideNote.js';
 import CONFIG from '../../config.shared.js';
 
 const router = express.Router();
 
-// Initialize Groq client
-const groq = new Groq({
-  apiKey: process.env.GROQ_API_KEY
-});
+// Initialize OpenRouter for DeepSeek
+const OPENROUTER_API_KEY = process.env.OPENROUTER_API_KEY;
+const OPENROUTER_BASE_URL = 'https://openrouter.ai/api/v1';
 
-console.log('Groq API Key loaded:', process.env.GROQ_API_KEY ? `${process.env.GROQ_API_KEY.substring(0, 10)}...` : 'NOT FOUND');
+console.log('OpenRouter API Key loaded:', OPENROUTER_API_KEY ? `${OPENROUTER_API_KEY.substring(0, 10)}...` : 'NOT FOUND');
 
 // Initialize Qdrant client
 let qdrantClient;
@@ -125,26 +123,40 @@ function chunkTranscript(transcript, maxChunkSize = 2000) {
   return chunks;
 }
 
-// Generate embeddings using Groq
+// Generate embeddings using DeepSeek via OpenRouter
 async function generateEmbedding(text) {
   try {
-    // Use Groq's llama-3.3-70b-versatile to create a semantic summary for embedding
-    const completion = await groq.chat.completions.create({
-      messages: [
-        {
-          role: 'system',
-          content: 'You are a semantic analysis expert. Create a concise, information-dense summary that captures the core meaning and key concepts for semantic search purposes.'
-        },
-        {
-          role: 'user',
-          content: `Create a semantic summary (max 150 words) capturing the essential meaning and key concepts of this text:\n\n${text.substring(0, 1500)}`
-        }
-      ],
-      model: 'llama-3.3-70b-versatile',
-      temperature: 0.2,
-      max_tokens: 200
+    // Use DeepSeek to create a semantic summary for embedding
+    const response = await fetch(`${OPENROUTER_BASE_URL}/chat/completions`, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${OPENROUTER_API_KEY}`,
+        'Content-Type': 'application/json',
+        'HTTP-Referer': 'https://kunalportfolio.com',
+        'X-Title': 'Kunal Portfolio YouTube Transcript'
+      },
+      body: JSON.stringify({
+        model: 'deepseek/deepseek-chat',
+        messages: [
+          {
+            role: 'system',
+            content: 'You are a semantic analysis expert. Create a concise, information-dense summary that captures the core meaning and key concepts for semantic search purposes.'
+          },
+          {
+            role: 'user',
+            content: `Create a semantic summary (max 150 words) capturing the essential meaning and key concepts of this text:\n\n${text.substring(0, 1500)}`
+          }
+        ],
+        temperature: 0.2,
+        max_tokens: 200
+      })
     });
     
+    if (!response.ok) {
+      throw new Error(`OpenRouter API error: ${response.status}`);
+    }
+    
+    const completion = await response.json();
     const summary = completion.choices[0]?.message?.content || text;
     
     // Create a simple embedding from the summary (word frequency based)
@@ -172,15 +184,24 @@ async function generateEmbedding(text) {
 // Process chunk with LLM
 async function processChunkWithLLM(chunk, chunkIndex, totalChunks, videoTitle) {
   try {
-    console.log('Using Groq API Key:', process.env.GROQ_API_KEY);
-    console.log('API Key length:', process.env.GROQ_API_KEY?.length);
-    console.log('API Key first 20 chars:', process.env.GROQ_API_KEY?.substring(0, 20));
+    console.log('Using OpenRouter API Key:', OPENROUTER_API_KEY);
+    console.log('API Key length:', OPENROUTER_API_KEY?.length);
+    console.log('API Key first 20 chars:', OPENROUTER_API_KEY?.substring(0, 20));
     
-    const completion = await groq.chat.completions.create({
-      messages: [
-        {
-          role: 'system',
-          content: `You are an expert educator who creates comprehensive, in-depth learning materials. Your goal is to transform video transcripts into detailed educational content that thoroughly explains every concept, idea, and topic discussed.
+    const response = await fetch(`${OPENROUTER_BASE_URL}/chat/completions`, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${OPENROUTER_API_KEY}`,
+        'Content-Type': 'application/json',
+        'HTTP-Referer': 'https://kunalportfolio.com',
+        'X-Title': 'Kunal Portfolio YouTube Transcript'
+      },
+      body: JSON.stringify({
+        model: 'deepseek/deepseek-chat',
+        messages: [
+          {
+            role: 'system',
+            content: `You are an expert educator who creates comprehensive, in-depth learning materials. Your goal is to transform video transcripts into detailed educational content that thoroughly explains every concept, idea, and topic discussed.
 
 CRITICAL INSTRUCTIONS:
 - Create EXTENSIVE, DETAILED explanations for every concept mentioned
@@ -192,10 +213,10 @@ CRITICAL INSTRUCTIONS:
 - DO NOT include any metadata, timestamps, or processing information
 - Focus ONLY on educational content and explanations
 - Make it comprehensive enough that someone could learn the entire topic from your explanation alone`
-        },
-        {
-          role: 'user',
-          content: `Transform this transcript segment (part ${chunkIndex + 1} of ${totalChunks}) into an in-depth educational guide. Explain every concept thoroughly with detailed explanations, examples, and insights.
+          },
+          {
+            role: 'user',
+            content: `Transform this transcript segment (part ${chunkIndex + 1} of ${totalChunks}) into an in-depth educational guide. Explain every concept thoroughly with detailed explanations, examples, and insights.
 
 Video: "${videoTitle}"
 
@@ -203,13 +224,18 @@ Transcript:
 ${chunk}
 
 Create a comprehensive, detailed explanation covering all concepts discussed. Use markdown formatting and make it educational and thorough.`
-        }
-      ],
-      model: 'llama-3.3-70b-versatile',
-      temperature: 0.7,
-      max_tokens: 3000
+          }
+        ],
+        temperature: 0.7,
+        max_tokens: 3000
+      })
     });
     
+    if (!response.ok) {
+      throw new Error(`OpenRouter API error: ${response.status}`);
+    }
+    
+    const completion = await response.json();
     return completion.choices[0]?.message?.content || '';
   } catch (error) {
     console.error('Error processing chunk with LLM:', error);
