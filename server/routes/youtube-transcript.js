@@ -22,12 +22,12 @@ try {
       apiKey: process.env.QDRANT_API_KEY,
       checkCompatibility: false, // Skip version check
     });
-    console.log('✓ Qdrant client initialized for YouTube transcripts');
+    console.log('Qdrant client initialized for YouTube transcripts');
   } else {
-    console.warn('⚠ Qdrant credentials not found');
+    console.warn('Qdrant credentials not found');
   }
 } catch (error) {
-  console.error('✗ Failed to initialize Qdrant:', error);
+  console.error('Failed to initialize Qdrant:', error);
 }
 
 const COLLECTION_NAME = 'youtube_transcripts';
@@ -126,7 +126,7 @@ function chunkTranscript(transcript, maxChunkSize = 2000) {
 // Generate embeddings using DeepSeek via OpenRouter
 async function generateEmbedding(text) {
   try {
-    // Use DeepSeek to create a semantic summary for embedding
+    // Use DeepSeek R1 to create a semantic summary for embedding
     const response = await fetch(`${OPENROUTER_BASE_URL}/chat/completions`, {
       method: 'POST',
       headers: {
@@ -136,11 +136,11 @@ async function generateEmbedding(text) {
         'X-Title': 'Kunal Portfolio YouTube Transcript'
       },
       body: JSON.stringify({
-        model: 'deepseek/deepseek-chat',
+        model: 'deepseek/deepseek-r1',
         messages: [
           {
             role: 'system',
-            content: 'You are a semantic analysis expert. Create a concise, information-dense summary that captures the core meaning and key concepts for semantic search purposes.'
+            content: 'You are a semantic analysis expert. Create a concise, information-dense summary that captures the core meaning and key concepts for semantic search purposes. Focus on extracting the essential technical concepts, key ideas, and main topics without any casual language or emojis.'
           },
           {
             role: 'user',
@@ -197,7 +197,7 @@ async function processChunkWithLLM(chunk, chunkIndex, totalChunks, videoTitle) {
         'X-Title': 'Kunal Portfolio YouTube Transcript'
       },
       body: JSON.stringify({
-        model: 'deepseek/deepseek-chat',
+        model: 'deepseek/deepseek-r1',
         messages: [
           {
             role: 'system',
@@ -205,14 +205,16 @@ async function processChunkWithLLM(chunk, chunkIndex, totalChunks, videoTitle) {
 
 CRITICAL INSTRUCTIONS:
 - Create EXTENSIVE, DETAILED explanations for every concept mentioned
-- Break down complex topics into simple, understandable parts
-- Provide examples, analogies, and real-world applications
+- Break down complex topics into simple, understandable parts with thorough analysis
+- Provide examples, analogies, and real-world applications with depth
 - Explain WHY things work the way they do, not just WHAT they are
 - Use clear markdown formatting with headers, lists, and code blocks
 - Write as if teaching someone who wants to deeply understand the topic
-- DO NOT include any metadata, timestamps, or processing information
+- DO NOT include any metadata, timestamps, processing information, or emojis
 - Focus ONLY on educational content and explanations
-- Make it comprehensive enough that someone could learn the entire topic from your explanation alone`
+- Make it comprehensive enough that someone could learn the entire topic from your explanation alone
+- Maintain a professional, academic tone throughout
+- Provide detailed technical explanations where applicable`
           },
           {
             role: 'user',
@@ -226,8 +228,8 @@ ${chunk}
 Create a comprehensive, detailed explanation covering all concepts discussed. Use markdown formatting and make it educational and thorough.`
           }
         ],
-        temperature: 0.7,
-        max_tokens: 3000
+        temperature: 0.8,
+        max_tokens: 4000
       })
     });
     

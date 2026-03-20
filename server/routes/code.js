@@ -167,7 +167,67 @@ router.post('/folder/create', async (req, res) => {
   }
 });
 
-// Create file
+// Create file - support both /files and /file/create endpoints
+router.post('/files', async (req, res) => {
+  try {
+    const { filename, folderPath, content = '', language } = req.body;
+    
+    if (!filename || !folderPath) {
+      return res.status(400).json({ error: 'Filename and folder path are required' });
+    }
+    
+    const fileId = generateId();
+    const detectedLanguage = language || getLanguageFromExtension(filename);
+    
+    // Store content in Azure Blob Storage
+    let blobUrl = '';
+    if (containerClient) {
+      try {
+        const blobName = `${folderPath}/${fileId}_${filename}`;
+        const blockBlobClient = containerClient.getBlockBlobClient(blobName);
+        
+        await blockBlobClient.upload(content, Buffer.byteLength(content, 'utf8'), {
+          blobHTTPHeaders: {
+            blobContentType: 'text/plain'
+          }
+        });
+        
+        blobUrl = blockBlobClient.url;
+      } catch (blobError) {
+        console.error('Error uploading to blob storage:', blobError);
+      }
+    }
+    
+    const fileData = {
+      fileId,
+      filename,
+      folderPath,
+      content,
+      language: detectedLanguage,
+      size: Buffer.byteLength(content, 'utf8'),
+      blobUrl,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString()
+    };
+    
+    const client = new MongoClient(MONGODB_URI);
+    await client.connect();
+    
+    const db = client.db(DATABASE_NAME);
+    const collection = db.collection('codeFiles');
+    
+    await collection.insertOne(fileData);
+    
+    await client.close();
+    
+    res.json({ success: true, file: fileData });
+  } catch (error) {
+    console.error('Error creating code file:', error);
+    res.status(500).json({ error: 'Failed to create file' });
+  }
+});
+
+// Create file (legacy endpoint)
 router.post('/file/create', async (req, res) => {
   try {
     const { filename, folderPath, content = '', language } = req.body;

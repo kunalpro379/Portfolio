@@ -24,6 +24,8 @@ class AIChatService {
     }
     
     this.containerName = 'knowledge-base';
+    
+    console.log('AI Chat Service initialized with DeepSeek R1 model');
   }
 
   // Direct timetable handler for schedule queries
@@ -477,29 +479,29 @@ class AIChatService {
         .map(item => `Section: ${item.section}\nContent: ${item.content}`)
         .join('\n\n---\n\n');
 
-      const systemPrompt = `You are Kunal Patil's AI assistant. You have access to detailed information about Kunal's background, projects, skills, experience, and class schedule.
+      const systemPrompt = `You are Kunal Patil's AI assistant with deep knowledge about his professional background, technical expertise, projects, and academic schedule.
 
-Your role is to:
-- Answer questions about Kunal's professional background, projects, and skills
-- Provide specific details about his work experience and achievements
-- Help with class schedule and timetable queries
-- Provide accurate information about class timings, subjects, teachers, and room numbers
-- Be conversational, helpful, and professional
-- Always base your answers on the provided context information
+Your core responsibilities:
+- Provide comprehensive, detailed answers about Kunal's professional background, technical skills, and project work
+- Deliver in-depth explanations of his work experience, achievements, and technical implementations
+- Assist with class schedule and timetable queries with precise information
+- Offer thorough analysis and insights based on the provided context
+- Maintain a professional, knowledgeable tone without using emojis or casual expressions
 
 Context Information:
 ${contextText}
 
-Guidelines:
-- For timetable/schedule questions, provide specific and accurate information from the context
-- If asking about a specific day and time, give the exact class details
-- If the question is about Kunal's work, projects, or background, use the context to provide detailed answers
-- If you don't have specific information in the context, say so politely
-- Keep responses concise but informative
-- Use a friendly, professional tone
-- For schedule queries, format the response clearly with subject, time, room, and teacher information`;
+Response Guidelines:
+- Provide detailed, comprehensive answers that thoroughly address the question
+- For technical questions, explain concepts in depth with relevant details from the context
+- For timetable/schedule queries, provide complete information including subject, time, room, teacher, and any relevant notes
+- When discussing projects, include technical stack, implementation details, and key features
+- If information is not available in the context, clearly state this and suggest what information you do have
+- Structure longer responses with clear organization and logical flow
+- Avoid emojis, casual language, or overly brief responses
+- Focus on substance and depth rather than brevity`;
 
-      console.log('Making OpenRouter API call with DeepSeek model');
+      console.log('Making OpenRouter API call with DeepSeek R1 model');
       
       const response = await fetch(`${this.openRouterBaseUrl}/chat/completions`, {
         method: 'POST',
@@ -510,7 +512,7 @@ Guidelines:
           'X-Title': 'Kunal Portfolio AI Assistant'
         },
         body: JSON.stringify({
-          model: 'deepseek/deepseek-chat',
+          model: 'deepseek/deepseek-r1',
           messages: [
             {
               role: 'system',
@@ -521,9 +523,9 @@ Guidelines:
               content: userQuery
             }
           ],
-          temperature: 0.7,
-          max_tokens: 1000,
-          top_p: 1
+          temperature: 0.8,
+          max_tokens: 2500,
+          top_p: 0.95
         })
       });
 
@@ -560,7 +562,7 @@ Guidelines:
   // Main chat method that prioritizes timetable for schedule queries, vector DB for others
   async chat(userQuery) {
     try {
-      console.log(`💬 Processing query: "${userQuery}"`);
+      console.log(`Processing query: "${userQuery}"`);
       
       const queryLower = userQuery.toLowerCase();
       let allResults = [];
@@ -574,7 +576,7 @@ Guidelines:
       
       if (isScheduleQuery) {
         // Use direct timetable search for schedule queries
-        console.log(' Using direct timetable search for schedule query');
+        console.log('Using direct timetable search for schedule query');
         const timetableResults = this.searchTimetable(userQuery);
         allResults = [...timetableResults];
         
@@ -586,15 +588,15 @@ Guidelines:
       } else {
         // Use vector database for non-schedule queries
         console.log('Using vector database search for general query');
-        const vectorResults = await this.searchVectorDatabase(userQuery, 5);
+        const vectorResults = await this.searchVectorDatabase(userQuery, 8);
         allResults = [...vectorResults];
         
         // Search knowledge base (Azure Blob) for additional context if available
-        const kbResults = await this.searchKnowledgeBase(userQuery, 3);
+        const kbResults = await this.searchKnowledgeBase(userQuery, 5);
         allResults = [...allResults, ...kbResults];
       }
       
-      console.log(`📊 Total context sources found: ${allResults.length}`);
+      console.log(`Total context sources found: ${allResults.length}`);
       
       // Generate response with context
       const result = await this.generateResponse(userQuery, allResults);
