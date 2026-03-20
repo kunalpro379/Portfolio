@@ -1157,7 +1157,7 @@ export default function LearningsPage() {
                     </div>
                   </div>
 
-                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4">
                     {documentation.filter(doc =>
                       doc.title.toLowerCase().includes(docSearch.toLowerCase()) ||
                       doc.description?.toLowerCase().includes(docSearch.toLowerCase()) ||
@@ -1304,7 +1304,7 @@ export default function LearningsPage() {
                     </div>
                   </div>
 
-                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4">
                     {blogs.filter(blog => 
                       blog.title.toLowerCase().includes(blogSearch.toLowerCase()) ||
                       blog.shortDescription.toLowerCase().includes(blogSearch.toLowerCase()) ||
@@ -1411,7 +1411,7 @@ export default function LearningsPage() {
                     </div>
                   </div>
 
-                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4">
                     {projects.filter(project =>
                       project.title.toLowerCase().includes(projectSearch.toLowerCase()) ||
                       project.tagline.toLowerCase().includes(projectSearch.toLowerCase()) ||
