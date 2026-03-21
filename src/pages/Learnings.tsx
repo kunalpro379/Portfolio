@@ -1157,7 +1157,7 @@ export default function LearningsPage() {
                     </div>
                   </div>
 
-                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+                  <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 md:gap-4">
                     {documentation.filter(doc =>
                       doc.title.toLowerCase().includes(docSearch.toLowerCase()) ||
                       doc.description?.toLowerCase().includes(docSearch.toLowerCase()) ||
@@ -1183,52 +1183,52 @@ export default function LearningsPage() {
                         <div
                           key={doc.docId}
                           onClick={() => handleNavigate(`/learnings/documentation/${doc.docId}`)}
-                          className="relative aspect-[3/4] cursor-pointer group rounded-2xl md:rounded-3xl border-[3px] border-black bg-white overflow-hidden hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] transition-all hover:-translate-y-1"
+                          className="relative aspect-[4/5] cursor-pointer group rounded-xl md:rounded-2xl border-[3px] border-black bg-white overflow-hidden hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all hover:-translate-y-1"
                           style={{ 
-                            borderRadius: idx % 2 === 0 ? '20px 25px 20px 25px' : '25px 20px 25px 20px'
+                            borderRadius: idx % 2 === 0 ? '16px 20px 16px 20px' : '20px 16px 20px 16px'
                           }}
                         >
-                          {/* Header with Icon - 45% height */}
-                          <div className="relative w-full h-[45%] bg-gradient-to-br from-blue-500 to-blue-600 border-b-[3px] border-black flex items-center justify-center">
-                            <FileText size={64} strokeWidth={2} className="text-white/90" />
+                          {/* Header with Icon - 40% height */}
+                          <div className="relative w-full h-[40%] bg-gradient-to-br from-blue-500 to-blue-600 border-b-[3px] border-black flex items-center justify-center">
+                            <FileText size={48} strokeWidth={2} className="text-white/90" />
                           </div>
                           
-                          {/* Content - 55% height */}
-                          <div className="p-4 h-[55%] flex flex-col">
+                          {/* Content - 60% height */}
+                          <div className="p-3 h-[60%] flex flex-col">
                             {/* Title */}
-                            <h3 className="text-sm md:text-base font-black text-black mb-2 line-clamp-2 leading-tight">
+                            <h3 className="text-xs md:text-sm font-black text-black mb-1.5 line-clamp-2 leading-tight">
                               {doc.title}
                             </h3>
                             
                             {/* Description */}
                             {doc.description && (
-                              <p className="text-gray-700 text-xs font-medium leading-relaxed line-clamp-2 mb-3 flex-1">
+                              <p className="text-gray-700 text-[10px] md:text-xs font-medium leading-relaxed line-clamp-2 mb-2 flex-1">
                                 {doc.description}
                               </p>
                             )}
                             
                             {/* Footer - Badges and Date */}
-                            <div className="mt-auto space-y-2">
-                              <div className="flex items-center gap-2 flex-wrap">
-                                <span className="px-2.5 py-1 bg-blue-100 border-2 border-black rounded-lg text-[10px] font-black uppercase tracking-wider" style={{ borderRadius: '6px 8px 7px 9px' }}>
+                            <div className="mt-auto space-y-1.5">
+                              <div className="flex items-center gap-1.5 flex-wrap">
+                                <span className="px-2 py-0.5 bg-blue-100 border-2 border-black rounded text-[9px] font-black uppercase tracking-wider" style={{ borderRadius: '4px 6px 5px 7px' }}>
                                   {doc.subject}
                                 </span>
                                 {doc.isPublic && (
-                                  <span className="px-2.5 py-1 bg-green-100 border-2 border-black rounded-lg text-[10px] font-black uppercase tracking-wider" style={{ borderRadius: '8px 6px 9px 7px' }}>
+                                  <span className="px-2 py-0.5 bg-green-100 border-2 border-black rounded text-[9px] font-black uppercase tracking-wider" style={{ borderRadius: '6px 4px 7px 5px' }}>
                                     Public
                                   </span>
                                 )}
                               </div>
-                              <div className="flex items-center gap-3 text-[10px] text-gray-600 font-bold">
+                              <div className="flex items-center gap-2 text-[9px] text-gray-600 font-bold">
                                 {doc.date && (
                                   <div className="flex items-center gap-1">
-                                    <Calendar size={10} strokeWidth={2.5} />
+                                    <Calendar size={9} strokeWidth={2.5} />
                                     <span>{doc.date}</span>
                                   </div>
                                 )}
                                 {doc.time && (
                                   <div className="flex items-center gap-1">
-                                    <Clock size={10} strokeWidth={2.5} />
+                                    <Clock size={9} strokeWidth={2.5} />
                                     <span>{doc.time}</span>
                                   </div>
                                 )}
@@ -1269,7 +1269,7 @@ export default function LearningsPage() {
                     </button>
                   </div>
 
-                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+                  <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 md:gap-4">
                     {blogs.filter(blog => 
                       blog.title.toLowerCase().includes(blogSearch.toLowerCase()) ||
                       blog.shortDescription.toLowerCase().includes(blogSearch.toLowerCase()) ||
@@ -1293,14 +1293,14 @@ export default function LearningsPage() {
                         <div
                           key={blog.blogId}
                           onClick={() => handleNavigate(`/learnings/blogs/${blog.blogId}`)}
-                          className="relative aspect-[3/4] cursor-pointer group rounded-2xl md:rounded-3xl border-[3px] border-black bg-white overflow-hidden hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] transition-all hover:-translate-y-1"
+                          className="relative aspect-[4/5] cursor-pointer group rounded-xl md:rounded-2xl border-[3px] border-black bg-white overflow-hidden hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all hover:-translate-y-1"
                           style={{ 
-                            borderRadius: idx % 2 === 0 ? '20px 25px 20px 25px' : '25px 20px 25px 20px'
+                            borderRadius: idx % 2 === 0 ? '16px 20px 16px 20px' : '20px 16px 20px 16px'
                           }}
                         >
                           {/* Cover Image */}
                           {blog.coverImage && (
-                            <div className="relative w-full h-[45%] overflow-hidden border-b-[3px] border-black">
+                            <div className="relative w-full h-[40%] overflow-hidden border-b-[3px] border-black">
                               <img
                                 src={blog.coverImage}
                                 alt={blog.title}
@@ -1311,26 +1311,26 @@ export default function LearningsPage() {
                           )}
                           
                           {/* Content */}
-                          <div className="p-4 h-[55%] flex flex-col">
+                          <div className="p-3 h-[60%] flex flex-col">
                             {/* Title */}
-                            <h3 className="text-sm md:text-base font-black text-black mb-2 line-clamp-2 leading-tight">
+                            <h3 className="text-xs md:text-sm font-black text-black mb-1.5 line-clamp-2 leading-tight">
                               {blog.title}
                             </h3>
                             
                             {/* Description */}
-                            <p className="text-gray-700 text-xs font-medium leading-relaxed line-clamp-2 mb-3 flex-1">
+                            <p className="text-gray-700 text-[10px] md:text-xs font-medium leading-relaxed line-clamp-2 mb-2 flex-1">
                               {blog.shortDescription}
                             </p>
                             
                             {/* Footer - Subject Badge and Date */}
-                            <div className="mt-auto space-y-2">
-                              <div className="flex items-center gap-2">
-                                <span className="px-2.5 py-1 bg-pink-100 border-2 border-black rounded-lg text-[10px] font-black uppercase tracking-wider" style={{ borderRadius: '6px 8px 7px 9px' }}>
+                            <div className="mt-auto space-y-1.5">
+                              <div className="flex items-center gap-1.5">
+                                <span className="px-2 py-0.5 bg-pink-100 border-2 border-black rounded text-[9px] font-black uppercase tracking-wider" style={{ borderRadius: '4px 6px 5px 7px' }}>
                                   {blog.subject}
                                 </span>
                               </div>
-                              <div className="flex items-center gap-1.5 text-[10px] text-gray-600 font-bold">
-                                <Calendar size={10} strokeWidth={2.5} />
+                              <div className="flex items-center gap-1 text-[9px] text-gray-600 font-bold">
+                                <Calendar size={9} strokeWidth={2.5} />
                                 <span>
                                   {new Date(blog.datetime).toLocaleDateString('en-US', {
                                     month: 'short',
