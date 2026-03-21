@@ -197,7 +197,7 @@ export default function BlogsSection() {
                         }}
                       >
                         {blog.coverImage && (
-                          <div className="relative h-32 md:h-40 overflow-hidden bg-gray-50 flex-shrink-0 border-b-4 border-black">
+                          <div className="relative h-24 md:h-28 overflow-hidden bg-gray-50 flex-shrink-0 border-b-4 border-black">
                             <img
                               src={blog.coverImage}
                               alt={blog.title}
@@ -210,20 +210,20 @@ export default function BlogsSection() {
                           </div>
                         )}
 
-                        <div className="p-3 md:p-4 space-y-2 md:space-y-3 flex-grow">
-                          <div className="inline-block px-3 py-1 bg-pink-100 border-2 border-black rounded-lg text-[10px] md:text-xs font-bold">
+                        <div className="p-2.5 md:p-3 space-y-1.5 md:space-y-2 flex-grow">
+                          <div className="inline-block px-2.5 py-0.5 bg-pink-100 border-2 border-black rounded-lg text-[9px] md:text-[10px] font-bold">
                             {blog.subject}
                           </div>
-                          <h3 className="card-title text-sm md:text-base lg:text-lg font-black leading-tight text-black line-clamp-2">
+                          <h3 className="card-title text-xs md:text-sm font-black leading-tight text-black line-clamp-2">
                             {blog.title}
                           </h3>
-                          <p className="card-description text-xs md:text-sm text-gray-700 leading-relaxed line-clamp-2 font-medium">
+                          <p className="card-description text-[10px] md:text-xs text-gray-700 leading-relaxed line-clamp-2 font-medium">
                             {blog.shortDescription}
                           </p>
                         </div>
 
-                        <div className="px-3 md:px-4 pb-3 md:pb-4 flex-shrink-0">
-                          <div className="text-[10px] md:text-xs text-gray-600 font-bold">
+                        <div className="px-2.5 md:px-3 pb-2.5 md:pb-3 flex-shrink-0">
+                          <div className="text-[9px] md:text-[10px] text-gray-600 font-bold">
                             {new Date(blog.datetime).toLocaleDateString('en-US', {
                               month: 'short',
                               day: 'numeric',
@@ -302,25 +302,25 @@ export default function BlogsSection() {
                   >
                     <Link to={`/learnings/documentation/${doc.docId}`}>
                       <div
-                        className={`doc-card relative bg-white overflow-hidden border-[3px] border-black transition-all duration-300 h-full flex flex-col min-h-[220px] ${shadows[idx % 4]} ${hoverShadows[idx % 4]}`}
+                        className={`doc-card relative bg-white overflow-hidden border-[3px] border-black transition-all duration-300 h-full flex flex-col min-h-[180px] ${shadows[idx % 4]} ${hoverShadows[idx % 4]}`}
                         style={{
                           borderRadius: idx % 2 === 0 ? '25px 20px 25px 18px' : '20px 25px 18px 25px'
                         }}
                       >
-                        <div className="p-3 md:p-4 space-y-2 flex-grow">
-                          <div className="inline-block px-3 py-1 bg-blue-100 border-2 border-black rounded-lg text-[10px] md:text-xs font-bold">
+                        <div className="p-2.5 md:p-3 space-y-1.5 flex-grow">
+                          <div className="inline-block px-2.5 py-0.5 bg-blue-100 border-2 border-black rounded-lg text-[9px] md:text-[10px] font-bold">
                             {doc.subject}
                           </div>
-                          <h3 className="card-title text-sm md:text-base lg:text-lg font-black leading-tight text-black line-clamp-2">
+                          <h3 className="card-title text-xs md:text-sm font-black leading-tight text-black line-clamp-2">
                             {doc.title}
                           </h3>
-                          <p className="card-description text-xs md:text-sm text-gray-700 leading-relaxed line-clamp-2 font-medium">
+                          <p className="card-description text-[10px] md:text-xs text-gray-700 leading-relaxed line-clamp-2 font-medium">
                             {doc.description}
                           </p>
                         </div>
 
-                        <div className="px-3 md:px-4 pb-3 md:pb-4 flex-shrink-0">
-                          <div className="text-[10px] md:text-xs text-gray-600 font-bold">
+                        <div className="px-2.5 md:px-3 pb-2.5 md:pb-3 flex-shrink-0">
+                          <div className="text-[9px] md:text-[10px] text-gray-600 font-bold">
                             {new Date(doc.date || doc.createdAt).toLocaleDateString('en-US', {
                               month: 'short',
                               day: 'numeric',

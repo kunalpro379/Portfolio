@@ -311,7 +311,7 @@ export default function NotesTabContent({ notes, activeSubTab: propActiveSubTab 
               </div>
             </div>
           ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 md:gap-4">
               {guides.map((guide, idx) => {
                 const titleCount = guide.titles.length;
                 
@@ -319,46 +319,56 @@ export default function NotesTabContent({ notes, activeSubTab: propActiveSubTab 
                   <div
                     key={guide.guideId}
                     onClick={() => handleViewGuide(guide)}
-                    className="bg-gradient-to-br from-yellow-50/80 to-white/80 backdrop-blur-sm border-[3px] border-black p-5 transition-all duration-300 hover:-translate-y-2 group h-full flex flex-col cursor-pointer hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,0.3)] relative rounded-2xl"
+                    className="relative aspect-[4/5] cursor-pointer group rounded-xl md:rounded-2xl border-[3px] border-black bg-white overflow-hidden hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all hover:-translate-y-1"
+                    style={{ 
+                      borderRadius: idx % 2 === 0 ? '16px 20px 16px 20px' : '20px 16px 20px 16px'
+                    }}
                   >
-                    <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity flex gap-1">
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleDeleteGuide(guide.guideId);
-                        }}
-                        className="p-1.5 bg-red-500 text-white border-2 border-black rounded-lg hover:bg-red-600 transition-all"
-                      >
-                        <Trash2 size={14} strokeWidth={2.5} />
-                      </button>
-                    </div>
+                    {/* Delete Button */}
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleDeleteGuide(guide.guideId);
+                      }}
+                      className="absolute top-2 right-2 z-10 p-1.5 bg-red-500 text-white border-2 border-black rounded-lg hover:bg-red-600 transition-all opacity-0 group-hover:opacity-100"
+                    >
+                      <Trash2 size={12} strokeWidth={2.5} />
+                    </button>
 
-                    <div className="flex items-start gap-3 mb-3">
-                      <div className="p-2.5 bg-gradient-to-br from-yellow-400 to-yellow-600 border-[3px] border-black rounded-lg group-hover:rotate-12 transition-transform flex-shrink-0">
-                        <BookOpen size={20} strokeWidth={2.5} className="text-white" />
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <span className="px-3 py-1.5 bg-yellow-100 border-2 border-black rounded-lg text-[10px] font-black uppercase tracking-wider inline-block mb-2">
+                    {/* Header with Icon - 40% height */}
+                    <div className="relative w-full h-[40%] bg-gradient-to-br from-yellow-400 to-yellow-600 border-b-[3px] border-black flex items-center justify-center">
+                      <BookOpen size={48} strokeWidth={2} className="text-white/90" />
+                    </div>
+                    
+                    {/* Content - 60% height */}
+                    <div className="p-3 h-[60%] flex flex-col">
+                      {/* Topic Badge */}
+                      <div className="mb-1.5">
+                        <span className="px-2 py-0.5 bg-yellow-100 border-2 border-black rounded text-[9px] font-black uppercase tracking-wider inline-block" style={{ borderRadius: '4px 6px 5px 7px' }}>
                           {guide.topic}
                         </span>
-                        <h3 className="text-base md:text-lg font-black text-black mb-2 leading-tight line-clamp-2">
-                          {guide.name}
-                        </h3>
                       </div>
-                    </div>
-                    
-                    {guide.description && (
-                      <p className="text-gray-700 mb-3 font-medium leading-relaxed line-clamp-3 text-sm flex-1">
-                        {guide.description}
-                      </p>
-                    )}
-                    
-                    <div className="mt-auto pt-3 border-t-2 border-dashed border-gray-300">
-                      <div className="flex items-center justify-between text-xs text-gray-600 font-black">
-                        <span>{new Date(guide.updatedAt).toLocaleDateString()}</span>
-                        <span className="px-2 py-1 bg-blue-100 border-2 border-black rounded text-[10px]">
-                          {titleCount} {titleCount === 1 ? 'title' : 'titles'}
-                        </span>
+
+                      {/* Title */}
+                      <h3 className="text-xs md:text-sm font-black text-black mb-1.5 line-clamp-2 leading-tight">
+                        {guide.name}
+                      </h3>
+                      
+                      {/* Description */}
+                      {guide.description && (
+                        <p className="text-gray-700 text-[10px] md:text-xs font-medium leading-relaxed line-clamp-2 mb-2 flex-1">
+                          {guide.description}
+                        </p>
+                      )}
+                      
+                      {/* Footer - Date and Title Count */}
+                      <div className="mt-auto space-y-1.5">
+                        <div className="flex items-center justify-between text-[9px] text-gray-600 font-bold">
+                          <span>{new Date(guide.updatedAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</span>
+                          <span className="px-2 py-0.5 bg-blue-100 border-2 border-black rounded text-[9px] font-black">
+                            {titleCount} {titleCount === 1 ? 'title' : 'titles'}
+                          </span>
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -388,15 +398,8 @@ export default function NotesTabContent({ notes, activeSubTab: propActiveSubTab 
               </div>
             </div>
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 md:gap-4">
               {notes.map((note, idx) => {
-                const styles = [
-                  { bg: 'from-white to-stone-50', icon: 'from-amber-400 to-yellow-500', border: 'border-amber-200', shadow: 'shadow-[5px_5px_0px_0px_rgba(251,191,36,0.3)]', hoverShadow: 'hover:shadow-[8px_8px_0px_0px_rgba(251,191,36,0.5)]' },
-                  { bg: 'from-amber-50 to-yellow-50', icon: 'from-yellow-500 to-amber-600', border: 'border-yellow-200', shadow: 'shadow-[5px_5px_0px_0px_rgba(234,179,8,0.3)]', hoverShadow: 'hover:shadow-[8px_8px_0px_0px_rgba(234,179,8,0.5)]' },
-                  { bg: 'from-stone-50 to-white', icon: 'from-amber-500 to-orange-500', border: 'border-stone-200', shadow: 'shadow-[5px_5px_0px_0px_rgba(120,113,108,0.3)]', hoverShadow: 'hover:shadow-[8px_8px_0px_0px_rgba(120,113,108,0.5)]' },
-                ];
-                const style = styles[idx % styles.length];
-                
                 return (
                   <div
                     key={note.folderId}
@@ -405,34 +408,37 @@ export default function NotesTabContent({ notes, activeSubTab: propActiveSubTab 
                         navigate(`/learnings/notes/${note.folderId}`);
                       }
                     }}
-                    className={`bg-gradient-to-br ${style.bg} border-3 border-black rounded-2xl p-5 transition-all duration-300 cursor-pointer hover:-translate-y-2 ${style.shadow} ${style.hoverShadow} group`}
+                    className="relative aspect-[4/5] cursor-pointer group border-[3px] border-black bg-white overflow-hidden hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all hover:-translate-y-1"
                     style={{ 
-                      borderRadius: idx % 2 === 0 ? '16px 20px 18px 22px' : '20px 16px 22px 18px'
+                      borderRadius: '0px 20px 0px 20px'
                     }}
                   >
-                    <div className="flex items-start gap-3 mb-3">
-                      <div className={`p-3 bg-gradient-to-br ${style.icon} border-3 border-black rounded-xl group-hover:rotate-12 transition-transform flex-shrink-0 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]`}>
-                        <FolderOpen size={24} strokeWidth={2.5} className="text-white" />
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <h3 className="text-base font-black text-black mb-2 leading-tight line-clamp-2">
-                          {note.name}
-                        </h3>
-                      </div>
+                    {/* Header with Icon - 40% height */}
+                    <div className="relative w-full h-[40%] bg-gradient-to-br from-amber-400 to-yellow-500 border-b-[3px] border-black flex items-center justify-center">
+                      <FolderOpen size={48} strokeWidth={2} className="text-white/90" />
                     </div>
                     
-                    <div className={`pt-3 border-t-2 border-dashed ${style.border}`}>
-                      <div className="flex items-center gap-2 text-xs text-gray-600 font-bold">
-                        <svg className="w-3.5 h-3.5 text-amber-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-                          <path strokeLinecap="round" strokeLinejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                        </svg>
-                        <span>
-                          {new Date(note.createdAt).toLocaleDateString('en-US', {
-                            month: 'short',
-                            day: 'numeric',
-                            year: 'numeric'
-                          })}
-                        </span>
+                    {/* Content - 60% height */}
+                    <div className="p-3 h-[60%] flex flex-col">
+                      {/* Title */}
+                      <h3 className="text-xs md:text-sm font-black text-black mb-2 line-clamp-2 leading-tight flex-1">
+                        {note.name}
+                      </h3>
+                      
+                      {/* Footer - Date */}
+                      <div className="mt-auto">
+                        <div className="flex items-center gap-1 text-[9px] text-gray-600 font-bold">
+                          <svg className="w-3 h-3 text-amber-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                          </svg>
+                          <span>
+                            {new Date(note.createdAt).toLocaleDateString('en-US', {
+                              month: 'short',
+                              day: 'numeric',
+                              year: 'numeric'
+                            })}
+                          </span>
+                        </div>
                       </div>
                     </div>
                   </div>
