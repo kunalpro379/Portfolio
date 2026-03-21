@@ -1183,86 +1183,55 @@ export default function LearningsPage() {
                         <div
                           key={doc.docId}
                           onClick={() => handleNavigate(`/learnings/documentation/${doc.docId}`)}
-                          className="relative aspect-square cursor-pointer group"
-                          style={{ perspective: "1000px" }}
+                          className="relative aspect-[3/4] cursor-pointer group rounded-2xl md:rounded-3xl border-[3px] border-black bg-white overflow-hidden hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] transition-all hover:-translate-y-1"
+                          style={{ 
+                            borderRadius: idx % 2 === 0 ? '20px 25px 20px 25px' : '25px 20px 25px 20px'
+                          }}
                         >
-                          <div className="relative w-full h-full">
-                            {/* FRONT SIDE - Project Card Style */}
-                            <div className="absolute inset-0 rounded-2xl md:rounded-3xl border border-zinc-700 bg-gradient-to-br from-zinc-900 via-black to-zinc-900 overflow-hidden transition-all duration-300 hover:shadow-[8px_8px_0px_0px_rgba(59,130,246,0.5)]">
-                              {/* Background Pattern/Gradient */}
-                              <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(59,130,246,0.15)_0%,transparent_60%)]" />
-                              
-                              <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(59,130,246,0.08)_0%,transparent_60%)] opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-
-                              {/* Mobile Layout - Title at Bottom Center */}
-                              <div className="md:hidden relative z-10 h-full flex flex-col justify-end p-3 md:p-4">
-                                <div className="mb-2 flex items-center gap-2 flex-wrap justify-center">
-                                  <span className="px-2 py-1 bg-blue-500/90 text-white text-[9px] font-black uppercase tracking-wider rounded" style={{ borderRadius: '4px 6px 5px 7px' }}>
-                                    {doc.subject}
+                          {/* Header with Icon - 45% height */}
+                          <div className="relative w-full h-[45%] bg-gradient-to-br from-blue-500 to-blue-600 border-b-[3px] border-black flex items-center justify-center">
+                            <FileText size={64} strokeWidth={2} className="text-white/90" />
+                          </div>
+                          
+                          {/* Content - 55% height */}
+                          <div className="p-4 h-[55%] flex flex-col">
+                            {/* Title */}
+                            <h3 className="text-sm md:text-base font-black text-black mb-2 line-clamp-2 leading-tight">
+                              {doc.title}
+                            </h3>
+                            
+                            {/* Description */}
+                            {doc.description && (
+                              <p className="text-gray-700 text-xs font-medium leading-relaxed line-clamp-2 mb-3 flex-1">
+                                {doc.description}
+                              </p>
+                            )}
+                            
+                            {/* Footer - Badges and Date */}
+                            <div className="mt-auto space-y-2">
+                              <div className="flex items-center gap-2 flex-wrap">
+                                <span className="px-2.5 py-1 bg-blue-100 border-2 border-black rounded-lg text-[10px] font-black uppercase tracking-wider" style={{ borderRadius: '6px 8px 7px 9px' }}>
+                                  {doc.subject}
+                                </span>
+                                {doc.isPublic && (
+                                  <span className="px-2.5 py-1 bg-green-100 border-2 border-black rounded-lg text-[10px] font-black uppercase tracking-wider" style={{ borderRadius: '8px 6px 9px 7px' }}>
+                                    Public
                                   </span>
-                                  {doc.isPublic && (
-                                    <span className="px-2 py-1 bg-green-500/90 text-white text-[9px] font-black uppercase tracking-wider rounded" style={{ borderRadius: '6px 4px 7px 5px' }}>
-                                      Public
-                                    </span>
-                                  )}
-                                </div>
-                                <h3 className="text-base md:text-lg font-black uppercase tracking-tight text-white text-center leading-tight mb-3 line-clamp-2">
-                                  {doc.title}
-                                </h3>
+                                )}
                               </div>
-
-                              {/* Desktop Layout - Title at Bottom */}
-                              <div className="hidden md:block relative z-10 h-full p-4 md:p-6">
-                                <div className="h-full flex flex-col justify-end">
-                                  <div className="space-y-2">
-                                    <div className="mb-2 flex items-center gap-2 flex-wrap">
-                                      <span className="px-3 py-1.5 bg-blue-500/90 text-white text-[10px] font-black uppercase tracking-wider rounded-lg" style={{ borderRadius: '6px 8px 7px 9px' }}>
-                                        {doc.subject}
-                                      </span>
-                                      {doc.isPublic && (
-                                        <span className="px-3 py-1.5 bg-green-500/90 text-white text-[10px] font-black uppercase tracking-wider rounded-lg" style={{ borderRadius: '8px 6px 9px 7px' }}>
-                                          Public
-                                        </span>
-                                      )}
-                                    </div>
-                                    <div>
-                                      <h3
-                                        className="text-lg md:text-xl lg:text-2xl font-black uppercase tracking-tight text-white leading-none mb-2 line-clamp-2"
-                                        style={{
-                                          WebkitTextStroke: "1.5px black",
-                                          paintOrder: "stroke fill"
-                                        }}
-                                      >
-                                        {doc.title}
-                                      </h3>
-                                      <div className="h-[2px] w-8 md:w-12 bg-blue-500/60" />
-                                    </div>
-
-                                    {doc.description && (
-                                      <p className="text-white/70 text-xs md:text-sm font-medium leading-relaxed max-w-lg line-clamp-2">
-                                        {doc.description}
-                                      </p>
-                                    )}
+                              <div className="flex items-center gap-3 text-[10px] text-gray-600 font-bold">
+                                {doc.date && (
+                                  <div className="flex items-center gap-1">
+                                    <Calendar size={10} strokeWidth={2.5} />
+                                    <span>{doc.date}</span>
                                   </div>
-                                  
-                                  {/* Date - Bottom Left */}
-                                  <div className="flex justify-start pt-3">
-                                    <div className="flex items-center gap-3 text-white/60 text-[10px] font-bold">
-                                      {doc.date && (
-                                        <div className="flex items-center gap-1.5">
-                                          <Calendar size={12} strokeWidth={2.5} className="text-blue-400" />
-                                          <span>{doc.date}</span>
-                                        </div>
-                                      )}
-                                      {doc.time && (
-                                        <div className="flex items-center gap-1.5">
-                                          <Clock size={12} strokeWidth={2.5} className="text-blue-400" />
-                                          <span>{doc.time}</span>
-                                        </div>
-                                      )}
-                                    </div>
+                                )}
+                                {doc.time && (
+                                  <div className="flex items-center gap-1">
+                                    <Clock size={10} strokeWidth={2.5} />
+                                    <span>{doc.time}</span>
                                   </div>
-                                </div>
+                                )}
                               </div>
                             </div>
                           </div>
@@ -1324,81 +1293,51 @@ export default function LearningsPage() {
                         <div
                           key={blog.blogId}
                           onClick={() => handleNavigate(`/learnings/blogs/${blog.blogId}`)}
-                          className="relative aspect-square cursor-pointer group"
-                          style={{ perspective: "1000px" }}
+                          className="relative aspect-[3/4] cursor-pointer group rounded-2xl md:rounded-3xl border-[3px] border-black bg-white overflow-hidden hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] transition-all hover:-translate-y-1"
+                          style={{ 
+                            borderRadius: idx % 2 === 0 ? '20px 25px 20px 25px' : '25px 20px 25px 20px'
+                          }}
                         >
-                          <div className="relative w-full h-full">
-                            {/* FRONT SIDE - Project Card Style */}
-                            <div className="absolute inset-0 rounded-2xl md:rounded-3xl border border-zinc-700 bg-gradient-to-br from-zinc-900 via-black to-zinc-900 overflow-hidden transition-all duration-300 hover:shadow-[8px_8px_0px_0px_rgba(236,72,153,0.5)]">
-                              {blog.coverImage && (
-                                <div className="absolute inset-0">
-                                  <img
-                                    src={blog.coverImage}
-                                    alt={blog.title}
-                                    loading="lazy"
-                                    className="w-full h-full object-cover opacity-100 md:opacity-70 md:group-hover:opacity-80 md:transition-opacity md:duration-500"
-                                  />
-                                  <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent" style={{
-                                    background: 'linear-gradient(to top, rgba(0,0,0,1) 0%, rgba(0,0,0,0.95) 10%, rgba(0,0,0,0.7) 20%, rgba(0,0,0,0.3) 30%, transparent 40%)'
-                                  }} />
-                                </div>
-                              )}
-
-                              <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(236,72,153,0.08)_0%,transparent_60%)] opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-
-                              {/* Mobile Layout - Title at Bottom Center */}
-                              <div className="md:hidden relative z-10 h-full flex flex-col justify-end p-3 md:p-4">
-                                <div className="mb-2">
-                                  <span className="px-2 py-1 bg-pink-500/90 text-white text-[9px] font-black uppercase tracking-wider rounded" style={{ borderRadius: '4px 6px 5px 7px' }}>
-                                    {blog.subject}
-                                  </span>
-                                </div>
-                                <h3 className="text-base md:text-lg font-black uppercase tracking-tight text-white text-center leading-tight mb-3 line-clamp-2">
-                                  {blog.title}
-                                </h3>
+                          {/* Cover Image */}
+                          {blog.coverImage && (
+                            <div className="relative w-full h-[45%] overflow-hidden border-b-[3px] border-black">
+                              <img
+                                src={blog.coverImage}
+                                alt={blog.title}
+                                loading="lazy"
+                                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                              />
+                            </div>
+                          )}
+                          
+                          {/* Content */}
+                          <div className="p-4 h-[55%] flex flex-col">
+                            {/* Title */}
+                            <h3 className="text-sm md:text-base font-black text-black mb-2 line-clamp-2 leading-tight">
+                              {blog.title}
+                            </h3>
+                            
+                            {/* Description */}
+                            <p className="text-gray-700 text-xs font-medium leading-relaxed line-clamp-2 mb-3 flex-1">
+                              {blog.shortDescription}
+                            </p>
+                            
+                            {/* Footer - Subject Badge and Date */}
+                            <div className="mt-auto space-y-2">
+                              <div className="flex items-center gap-2">
+                                <span className="px-2.5 py-1 bg-pink-100 border-2 border-black rounded-lg text-[10px] font-black uppercase tracking-wider" style={{ borderRadius: '6px 8px 7px 9px' }}>
+                                  {blog.subject}
+                                </span>
                               </div>
-
-                              {/* Desktop Layout - Title at Bottom */}
-                              <div className="hidden md:block relative z-10 h-full p-4 md:p-6">
-                                <div className="h-full flex flex-col justify-end">
-                                  <div className="space-y-2">
-                                    <div className="mb-2">
-                                      <span className="px-3 py-1.5 bg-pink-500/90 text-white text-[10px] font-black uppercase tracking-wider rounded-lg" style={{ borderRadius: '6px 8px 7px 9px' }}>
-                                        {blog.subject}
-                                      </span>
-                                    </div>
-                                    <div>
-                                      <h3
-                                        className="text-lg md:text-xl lg:text-2xl font-black uppercase tracking-tight text-white leading-none mb-2 line-clamp-2"
-                                        style={{
-                                          WebkitTextStroke: "1.5px black",
-                                          paintOrder: "stroke fill"
-                                        }}
-                                      >
-                                        {blog.title}
-                                      </h3>
-                                      <div className="h-[2px] w-8 md:w-12 bg-pink-500/60" />
-                                    </div>
-
-                                    <p className="text-white/70 text-xs md:text-sm font-medium leading-relaxed max-w-lg line-clamp-2">
-                                      {blog.tagline || blog.shortDescription}
-                                    </p>
-                                  </div>
-                                  
-                                  {/* Date - Bottom Left */}
-                                  <div className="flex justify-start pt-3">
-                                    <div className="flex items-center gap-1.5 text-white/60 text-[10px] font-bold">
-                                      <Calendar size={12} strokeWidth={2.5} />
-                                      <span>
-                                        {new Date(blog.datetime).toLocaleDateString('en-US', {
-                                          month: 'short',
-                                          day: 'numeric',
-                                          year: 'numeric'
-                                        })}
-                                      </span>
-                                    </div>
-                                  </div>
-                                </div>
+                              <div className="flex items-center gap-1.5 text-[10px] text-gray-600 font-bold">
+                                <Calendar size={10} strokeWidth={2.5} />
+                                <span>
+                                  {new Date(blog.datetime).toLocaleDateString('en-US', {
+                                    month: 'short',
+                                    day: 'numeric',
+                                    year: 'numeric'
+                                  })}
+                                </span>
                               </div>
                             </div>
                           </div>
