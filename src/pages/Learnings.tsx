@@ -1143,7 +1143,7 @@ export default function LearningsPage() {
                 <>
                   {/* Search Bar */}
                   <div className="mb-6">
-                    <div className="relative max-w-2xl">
+                    <div className="relative">
                       <input
                         type="text"
                         placeholder="Search documentation..."
@@ -1157,7 +1157,7 @@ export default function LearningsPage() {
                     </div>
                   </div>
 
-                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
                     {documentation.filter(doc =>
                       doc.title.toLowerCase().includes(docSearch.toLowerCase()) ||
                       doc.description?.toLowerCase().includes(docSearch.toLowerCase()) ||
@@ -1179,92 +1179,91 @@ export default function LearningsPage() {
                         doc.subject.toLowerCase().includes(docSearch.toLowerCase()) ||
                         doc.tags?.some(tag => tag.toLowerCase().includes(docSearch.toLowerCase()))
                       ).map((doc, idx) => {
-                        const rotations = ['rotate-2', '-rotate-1', 'rotate-1', '-rotate-2'];
-                        const hoverRotations = ['hover:-rotate-1', 'hover:rotate-1', 'hover:-rotate-1', 'hover:rotate-2'];
-                        const shadows = [
-                          'shadow-[6px_6px_0px_0px_rgba(59,130,246,0.5)]',
-                          'shadow-[5px_7px_0px_0px_rgba(236,72,153,0.5)]',
-                          'shadow-[7px_5px_0px_0px_rgba(168,85,247,0.5)]',
-                          'shadow-[6px_7px_0px_0px_rgba(34,197,94,0.5)]'
-                        ];
-                        const hoverShadows = [
-                          'hover:shadow-[10px_10px_0px_0px_rgba(59,130,246,0.7)]',
-                          'hover:shadow-[9px_11px_0px_0px_rgba(236,72,153,0.7)]',
-                          'hover:shadow-[11px_9px_0px_0px_rgba(168,85,247,0.7)]',
-                          'hover:shadow-[10px_11px_0px_0px_rgba(34,197,94,0.7)]'
-                        ];
-                        const bgGradients = [
-                          'bg-gradient-to-br from-blue-50 to-white',
-                          'bg-gradient-to-br from-pink-50 to-white',
-                          'bg-gradient-to-br from-purple-50 to-white',
-                          'bg-gradient-to-br from-green-50 to-white'
-                        ];
-                        
                         return (
                         <div
                           key={doc.docId}
                           onClick={() => handleNavigate(`/learnings/documentation/${doc.docId}`)}
-                          className={`${bgGradients[idx % 4]} backdrop-blur-sm border-[3px] border-black p-5 transition-all duration-300 cursor-pointer hover:-translate-y-2 group h-full flex flex-col ${rotations[idx % 4]} ${hoverRotations[idx % 4]} ${shadows[idx % 4]} ${hoverShadows[idx % 4]}`}
-                          style={{ 
-                            borderRadius: idx % 2 === 0 ? '20px 24px 22px 26px' : '24px 20px 26px 22px'
-                          }}
+                          className="relative aspect-square cursor-pointer group"
+                          style={{ perspective: "1000px" }}
                         >
-                          <div className="flex items-start gap-3 mb-3">
-                            <div className="p-2.5 bg-gradient-to-br from-blue-400 to-blue-600 border-[3px] border-black rounded-lg group-hover:rotate-12 transition-transform flex-shrink-0" style={{ borderRadius: '10px 12px 11px 13px' }}>
-                              <FileText size={20} strokeWidth={2.5} className="text-white" />
-                            </div>
-                            <div className="flex-1 min-w-0">
-                              <div className="flex items-center gap-2 mb-2 flex-wrap">
-                                <span className="px-3 py-1.5 bg-blue-100 border-2 border-black rounded-lg text-[10px] font-black uppercase tracking-wider" style={{ borderRadius: '6px 8px 7px 9px' }}>
-                                  {doc.subject}
-                                </span>
-                                {doc.isPublic && (
-                                  <span className="px-3 py-1.5 bg-green-100 border-2 border-black rounded-lg text-[10px] font-black uppercase tracking-wider" style={{ borderRadius: '8px 6px 9px 7px' }}>
-                                    Public
+                          <div className="relative w-full h-full">
+                            {/* FRONT SIDE - Project Card Style */}
+                            <div className="absolute inset-0 rounded-2xl md:rounded-3xl border border-zinc-700 bg-gradient-to-br from-zinc-900 via-black to-zinc-900 overflow-hidden transition-all duration-300 hover:shadow-[8px_8px_0px_0px_rgba(59,130,246,0.5)]">
+                              {/* Background Pattern/Gradient */}
+                              <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(59,130,246,0.15)_0%,transparent_60%)]" />
+                              
+                              <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(59,130,246,0.08)_0%,transparent_60%)] opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+
+                              {/* Mobile Layout - Title at Bottom Center */}
+                              <div className="md:hidden relative z-10 h-full flex flex-col justify-end p-3 md:p-4">
+                                <div className="mb-2 flex items-center gap-2 flex-wrap justify-center">
+                                  <span className="px-2 py-1 bg-blue-500/90 text-white text-[9px] font-black uppercase tracking-wider rounded" style={{ borderRadius: '4px 6px 5px 7px' }}>
+                                    {doc.subject}
                                   </span>
-                                )}
+                                  {doc.isPublic && (
+                                    <span className="px-2 py-1 bg-green-500/90 text-white text-[9px] font-black uppercase tracking-wider rounded" style={{ borderRadius: '6px 4px 7px 5px' }}>
+                                      Public
+                                    </span>
+                                  )}
+                                </div>
+                                <h3 className="text-base md:text-lg font-black uppercase tracking-tight text-white text-center leading-tight mb-3 line-clamp-2">
+                                  {doc.title}
+                                </h3>
                               </div>
-                              <h3 className="text-base md:text-lg font-black text-black mb-2 leading-tight group-hover:text-blue-600 transition-colors line-clamp-2">
-                                {doc.title}
-                              </h3>
-                            </div>
-                          </div>
-                          
-                          {doc.description && (
-                            <p className="text-gray-700 mb-3 font-medium leading-relaxed line-clamp-3 text-sm">
-                              {doc.description}
-                            </p>
-                          )}
-                          
-                          {doc.tags && doc.tags.length > 0 && (
-                            <div className="flex flex-wrap gap-2 mb-3">
-                              {doc.tags.slice(0, 3).map((tag, i) => (
-                                <span key={i} className="px-2.5 py-1 text-[10px] bg-gray-100 border-2 border-black rounded-full font-black" style={{ borderRadius: '10px 12px 11px 13px' }}>
-                                  #{tag}
-                                </span>
-                              ))}
-                              {doc.tags.length > 3 && (
-                                <span className="px-2.5 py-1 text-[10px] bg-gray-200 border-2 border-black rounded-full font-black">
-                                  +{doc.tags.length - 3}
-                                </span>
-                              )}
-                            </div>
-                          )}
-                          
-                          <div className="mt-auto pt-3 border-t-2 border-dashed border-gray-300">
-                            <div className="flex items-center gap-3 text-xs text-gray-600 font-black">
-                              {doc.date && (
-                                <div className="flex items-center gap-1.5">
-                                  <Calendar size={14} strokeWidth={2.5} className="text-blue-500" />
-                                  <span>{doc.date}</span>
+
+                              {/* Desktop Layout - Title at Bottom */}
+                              <div className="hidden md:block relative z-10 h-full p-4 md:p-6">
+                                <div className="h-full flex flex-col justify-end">
+                                  <div className="space-y-2">
+                                    <div className="mb-2 flex items-center gap-2 flex-wrap">
+                                      <span className="px-3 py-1.5 bg-blue-500/90 text-white text-[10px] font-black uppercase tracking-wider rounded-lg" style={{ borderRadius: '6px 8px 7px 9px' }}>
+                                        {doc.subject}
+                                      </span>
+                                      {doc.isPublic && (
+                                        <span className="px-3 py-1.5 bg-green-500/90 text-white text-[10px] font-black uppercase tracking-wider rounded-lg" style={{ borderRadius: '8px 6px 9px 7px' }}>
+                                          Public
+                                        </span>
+                                      )}
+                                    </div>
+                                    <div>
+                                      <h3
+                                        className="text-lg md:text-xl lg:text-2xl font-black uppercase tracking-tight text-white leading-none mb-2 line-clamp-2"
+                                        style={{
+                                          WebkitTextStroke: "1.5px black",
+                                          paintOrder: "stroke fill"
+                                        }}
+                                      >
+                                        {doc.title}
+                                      </h3>
+                                      <div className="h-[2px] w-8 md:w-12 bg-blue-500/60" />
+                                    </div>
+
+                                    {doc.description && (
+                                      <p className="text-white/70 text-xs md:text-sm font-medium leading-relaxed max-w-lg line-clamp-2">
+                                        {doc.description}
+                                      </p>
+                                    )}
+                                  </div>
+                                  
+                                  {/* Date - Bottom Left */}
+                                  <div className="flex justify-start pt-3">
+                                    <div className="flex items-center gap-3 text-white/60 text-[10px] font-bold">
+                                      {doc.date && (
+                                        <div className="flex items-center gap-1.5">
+                                          <Calendar size={12} strokeWidth={2.5} className="text-blue-400" />
+                                          <span>{doc.date}</span>
+                                        </div>
+                                      )}
+                                      {doc.time && (
+                                        <div className="flex items-center gap-1.5">
+                                          <Clock size={12} strokeWidth={2.5} className="text-blue-400" />
+                                          <span>{doc.time}</span>
+                                        </div>
+                                      )}
+                                    </div>
+                                  </div>
                                 </div>
-                              )}
-                              {doc.time && (
-                                <div className="flex items-center gap-1.5">
-                                  <Clock size={14} strokeWidth={2.5} className="text-blue-500" />
-                                  <span>{doc.time}</span>
-                                </div>
-                              )}
+                              </div>
                             </div>
                           </div>
                         </div>
@@ -1278,19 +1277,9 @@ export default function LearningsPage() {
               {/* BLOGS TAB */}
               {activeTab === 'blogs' && (
                 <>
-                  <div className="mb-4 flex justify-end">
-                    <button
-                      onClick={handleCreateBlog}
-                      className="px-5 py-2.5 bg-pink-500 text-white border-3 border-black rounded-xl font-bold hover:bg-pink-600 transition-all shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] flex items-center gap-2"
-                    >
-                      <Plus size={16} strokeWidth={2.5} />
-                      Create Blog
-                    </button>
-                  </div>
-
-                  {/* Search Bar */}
-                  <div className="mb-6">
-                    <div className="relative max-w-2xl">
+                  {/* Search Bar and Create Button in Same Row */}
+                  <div className="mb-6 flex flex-col md:flex-row gap-3 md:gap-4 items-stretch md:items-center">
+                    <div className="relative flex-1">
                       <input
                         type="text"
                         placeholder="Search blogs..."
@@ -1302,9 +1291,16 @@ export default function LearningsPage() {
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                       </svg>
                     </div>
+                    <button
+                      onClick={handleCreateBlog}
+                      className="px-5 py-3 bg-pink-500 text-white border-3 border-black rounded-xl font-bold hover:bg-pink-600 transition-all shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] flex items-center justify-center gap-2 whitespace-nowrap"
+                    >
+                      <Plus size={16} strokeWidth={2.5} />
+                      Create Blog
+                    </button>
                   </div>
 
-                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
                     {blogs.filter(blog => 
                       blog.title.toLowerCase().includes(blogSearch.toLowerCase()) ||
                       blog.shortDescription.toLowerCase().includes(blogSearch.toLowerCase()) ||
@@ -1324,63 +1320,85 @@ export default function LearningsPage() {
                         blog.shortDescription.toLowerCase().includes(blogSearch.toLowerCase()) ||
                         blog.subject.toLowerCase().includes(blogSearch.toLowerCase())
                       ).map((blog, idx) => {
-                        const rotations = ['-rotate-1', 'rotate-1', '-rotate-2', 'rotate-2'];
-                        const hoverRotations = ['hover:rotate-0', 'hover:-rotate-1', 'hover:rotate-1', 'hover:-rotate-2'];
-                        const shadows = [
-                          'shadow-[5px_5px_0px_0px_rgba(244,114,182,0.5)]',
-                          'shadow-[6px_5px_0px_0px_rgba(251,146,60,0.5)]',
-                          'shadow-[5px_6px_0px_0px_rgba(167,139,250,0.5)]',
-                          'shadow-[6px_6px_0px_0px_rgba(34,197,94,0.5)]'
-                        ];
-                        const hoverShadows = [
-                          'hover:shadow-[9px_9px_0px_0px_rgba(244,114,182,0.7)]',
-                          'hover:shadow-[10px_9px_0px_0px_rgba(251,146,60,0.7)]',
-                          'hover:shadow-[9px_10px_0px_0px_rgba(167,139,250,0.7)]',
-                          'hover:shadow-[10px_10px_0px_0px_rgba(34,197,94,0.7)]'
-                        ];
-                        const bgGradients = [
-                          'bg-gradient-to-br from-pink-50 to-white',
-                          'bg-gradient-to-br from-orange-50 to-white',
-                          'bg-gradient-to-br from-purple-50 to-white',
-                          'bg-gradient-to-br from-green-50 to-white'
-                        ];
-                        
                         return (
                         <div
                           key={blog.blogId}
                           onClick={() => handleNavigate(`/learnings/blogs/${blog.blogId}`)}
-                          className={`${bgGradients[idx % 4]} backdrop-blur-sm border-[3px] border-black overflow-hidden transition-all duration-300 cursor-pointer hover:-translate-y-2 group ${rotations[idx % 4]} ${hoverRotations[idx % 4]} ${shadows[idx % 4]} ${hoverShadows[idx % 4]}`}
-                          style={{ 
-                            borderRadius: idx % 2 === 0 ? '18px 22px 20px 24px' : '22px 18px 24px 20px'
-                          }}
+                          className="relative aspect-square cursor-pointer group"
+                          style={{ perspective: "1000px" }}
                         >
-                          {blog.coverImage && (
-                            <div className="relative overflow-hidden">
-                              <img
-                                src={blog.coverImage}
-                                alt={blog.title}
-                                className="w-full h-32 object-cover border-b-3 border-black group-hover:scale-105 transition-transform"
-                              />
-                            </div>
-                          )}
-                          <div className="p-4">
-                            <div className="mb-2">
-                              <span className="px-3 py-1.5 bg-pink-100 border-2 border-black rounded-lg text-[10px] font-black uppercase tracking-wider" style={{ borderRadius: '6px 8px 7px 9px' }}>
-                                {blog.subject}
-                              </span>
-                            </div>
-                            <h3 className="text-sm md:text-base font-black text-black mb-2 line-clamp-2 leading-tight">{blog.title}</h3>
-                            <p className="text-gray-700 mb-3 font-medium text-xs line-clamp-2 leading-relaxed">{blog.shortDescription}</p>
-                            <div className="flex items-center gap-2 text-[10px] text-gray-600 font-black">
-                              <div className="flex items-center gap-1">
-                                <Calendar size={10} strokeWidth={2.5} />
-                                <span>
-                                  {new Date(blog.datetime).toLocaleDateString('en-US', {
-                                    month: 'short',
-                                    day: 'numeric',
-                                    year: 'numeric'
-                                  })}
-                                </span>
+                          <div className="relative w-full h-full">
+                            {/* FRONT SIDE - Project Card Style */}
+                            <div className="absolute inset-0 rounded-2xl md:rounded-3xl border border-zinc-700 bg-gradient-to-br from-zinc-900 via-black to-zinc-900 overflow-hidden transition-all duration-300 hover:shadow-[8px_8px_0px_0px_rgba(236,72,153,0.5)]">
+                              {blog.coverImage && (
+                                <div className="absolute inset-0">
+                                  <img
+                                    src={blog.coverImage}
+                                    alt={blog.title}
+                                    loading="lazy"
+                                    className="w-full h-full object-cover opacity-100 md:opacity-70 md:group-hover:opacity-80 md:transition-opacity md:duration-500"
+                                  />
+                                  <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent" style={{
+                                    background: 'linear-gradient(to top, rgba(0,0,0,1) 0%, rgba(0,0,0,0.95) 10%, rgba(0,0,0,0.7) 20%, rgba(0,0,0,0.3) 30%, transparent 40%)'
+                                  }} />
+                                </div>
+                              )}
+
+                              <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(236,72,153,0.08)_0%,transparent_60%)] opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+
+                              {/* Mobile Layout - Title at Bottom Center */}
+                              <div className="md:hidden relative z-10 h-full flex flex-col justify-end p-3 md:p-4">
+                                <div className="mb-2">
+                                  <span className="px-2 py-1 bg-pink-500/90 text-white text-[9px] font-black uppercase tracking-wider rounded" style={{ borderRadius: '4px 6px 5px 7px' }}>
+                                    {blog.subject}
+                                  </span>
+                                </div>
+                                <h3 className="text-base md:text-lg font-black uppercase tracking-tight text-white text-center leading-tight mb-3 line-clamp-2">
+                                  {blog.title}
+                                </h3>
+                              </div>
+
+                              {/* Desktop Layout - Title at Bottom */}
+                              <div className="hidden md:block relative z-10 h-full p-4 md:p-6">
+                                <div className="h-full flex flex-col justify-end">
+                                  <div className="space-y-2">
+                                    <div className="mb-2">
+                                      <span className="px-3 py-1.5 bg-pink-500/90 text-white text-[10px] font-black uppercase tracking-wider rounded-lg" style={{ borderRadius: '6px 8px 7px 9px' }}>
+                                        {blog.subject}
+                                      </span>
+                                    </div>
+                                    <div>
+                                      <h3
+                                        className="text-lg md:text-xl lg:text-2xl font-black uppercase tracking-tight text-white leading-none mb-2 line-clamp-2"
+                                        style={{
+                                          WebkitTextStroke: "1.5px black",
+                                          paintOrder: "stroke fill"
+                                        }}
+                                      >
+                                        {blog.title}
+                                      </h3>
+                                      <div className="h-[2px] w-8 md:w-12 bg-pink-500/60" />
+                                    </div>
+
+                                    <p className="text-white/70 text-xs md:text-sm font-medium leading-relaxed max-w-lg line-clamp-2">
+                                      {blog.tagline || blog.shortDescription}
+                                    </p>
+                                  </div>
+                                  
+                                  {/* Date - Bottom Left */}
+                                  <div className="flex justify-start pt-3">
+                                    <div className="flex items-center gap-1.5 text-white/60 text-[10px] font-bold">
+                                      <Calendar size={12} strokeWidth={2.5} />
+                                      <span>
+                                        {new Date(blog.datetime).toLocaleDateString('en-US', {
+                                          month: 'short',
+                                          day: 'numeric',
+                                          year: 'numeric'
+                                        })}
+                                      </span>
+                                    </div>
+                                  </div>
+                                </div>
                               </div>
                             </div>
                           </div>
