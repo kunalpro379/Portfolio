@@ -335,8 +335,8 @@ export default function NotesTabContent({ notes, activeSubTab: propActiveSubTab 
                       <Trash2 size={12} strokeWidth={2.5} />
                     </button>
 
-                    {/* Header with Icon - 40% height */}
-                    <div className="relative w-full h-[40%] bg-gradient-to-br from-yellow-400 to-yellow-600 border-b-[3px] border-black flex items-center justify-center">
+                    {/* Header with Icon - 40% height - Lavender */}
+                    <div className="relative w-full h-[40%] bg-gradient-to-br from-purple-300 to-purple-400 border-b-[3px] border-black flex items-center justify-center">
                       <BookOpen size={48} strokeWidth={2} className="text-white/90" />
                     </div>
                     
@@ -344,7 +344,7 @@ export default function NotesTabContent({ notes, activeSubTab: propActiveSubTab 
                     <div className="p-3 h-[60%] flex flex-col">
                       {/* Topic Badge */}
                       <div className="mb-1.5">
-                        <span className="px-2 py-0.5 bg-yellow-100 border-2 border-black rounded text-[9px] font-black uppercase tracking-wider inline-block" style={{ borderRadius: '4px 6px 5px 7px' }}>
+                        <span className="px-2 py-0.5 bg-purple-100 border-2 border-black rounded text-[9px] font-black uppercase tracking-wider inline-block" style={{ borderRadius: '4px 6px 5px 7px' }}>
                           {guide.topic}
                         </span>
                       </div>
@@ -413,8 +413,8 @@ export default function NotesTabContent({ notes, activeSubTab: propActiveSubTab 
                       borderRadius: idx % 2 === 0 ? '16px 20px 16px 20px' : '20px 16px 20px 16px'
                     }}
                   >
-                    {/* Header with Icon - 50% height - Yellow with Grayish tone */}
-                    <div className="relative w-full h-[50%] bg-gradient-to-br from-yellow-600 to-amber-700 border-b-[3px] border-black flex items-center justify-center">
+                    {/* Header with Icon - 50% height - Pinkish Red */}
+                    <div className="relative w-full h-[50%] bg-gradient-to-br from-rose-500 to-pink-600 border-b-[3px] border-black flex items-center justify-center">
                       <FolderOpen size={40} strokeWidth={2} className="text-white/90" />
                     </div>
                     

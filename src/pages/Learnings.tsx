@@ -65,6 +65,7 @@ interface Documentation {
   slug: string;
   isPublic: boolean;
   createdAt: string;
+  coverImage?: string;
 }
 
 interface GitHubRepo {
@@ -1188,10 +1189,21 @@ export default function LearningsPage() {
                             borderRadius: idx % 2 === 0 ? '16px 20px 16px 20px' : '20px 16px 20px 16px'
                           }}
                         >
-                          {/* Header with Icon - 40% height */}
-                          <div className="relative w-full h-[40%] bg-gradient-to-br from-blue-500 to-blue-600 border-b-[3px] border-black flex items-center justify-center">
-                            <FileText size={48} strokeWidth={2} className="text-white/90" />
-                          </div>
+                          {/* Header with Cover Image or Icon - 40% height */}
+                          {doc.coverImage ? (
+                            <div className="relative w-full h-[40%] border-b-[3px] border-black overflow-hidden">
+                              <img
+                                src={doc.coverImage}
+                                alt={doc.title}
+                                className="w-full h-full object-cover"
+                                loading="lazy"
+                              />
+                            </div>
+                          ) : (
+                            <div className="relative w-full h-[40%] bg-gradient-to-br from-blue-500 to-blue-600 border-b-[3px] border-black flex items-center justify-center">
+                              <FileText size={48} strokeWidth={2} className="text-white/90" />
+                            </div>
+                          )}
                           
                           {/* Content - 60% height */}
                           <div className="p-3 h-[60%] flex flex-col">
