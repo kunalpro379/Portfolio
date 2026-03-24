@@ -58,6 +58,7 @@ const config = {
       docById: (id: string) => `${getApiBaseUrl()}/api/documentation/${id}`,
       docCreate: `${getApiBaseUrl()}/api/documentation/create`,
       docUploadAsset: `${getApiBaseUrl()}/api/documentation/upload-asset`,
+      docCover: (id: string) => `${getApiBaseUrl()}/api/documentation/${id}/cover`,
       docAsset: (id: string, name: string) => `${getApiBaseUrl()}/api/documentation/asset/${id}/${name}`,
       docFiles: (id: string) => `${getApiBaseUrl()}/api/documentation/${id}/files`,
       docFileById: (docId: string, fileId: string) => `${getApiBaseUrl()}/api/documentation/${docId}/files/${fileId}`,

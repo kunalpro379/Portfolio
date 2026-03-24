@@ -35,6 +35,8 @@ export default function CreateDocumentation() {
   const [newFileName, setNewFileName] = useState('');
   const [newFileType, setNewFileType] = useState<'markdown' | 'diagram'>('markdown');
   const [isFullscreen, setIsFullscreen] = useState(false);
+  const [coverImage, setCoverImage] = useState<File | null>(null);
+  const [coverPreview, setCoverPreview] = useState<string>('');
   const [formData, setFormData] = useState({
     title: '',
     subject: '',
@@ -45,6 +47,15 @@ export default function CreateDocumentation() {
     isPublic: false,
     assets: {} as Record<string, string>
   });
+
+  const handleCoverChange = (file: File) => {
+    setCoverImage(file);
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      setCoverPreview(reader.result as string);
+    };
+    reader.readAsDataURL(file);
+  };
 
   const handleAssetUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const uploadFiles = e.target.files;
@@ -358,6 +369,17 @@ export default function CreateDocumentation() {
       const data = await response.json();
       const docId = data.doc.docId;
 
+      // Upload cover image if provided
+      if (coverImage) {
+        const coverFormData = new FormData();
+        coverFormData.append('cover', coverImage);
+
+        await fetch(config.api.endpoints.docCover(docId), {
+          method: 'POST',
+          body: coverFormData
+        });
+      }
+
       // Update all files
       for (const file of files) {
         const serverFile = data.doc.files?.find((f: any) => f.name === file.name);
@@ -620,6 +642,41 @@ export default function CreateDocumentation() {
                 />
                 <span className="font-black uppercase">Make Public</span>
               </label>
+            </div>
+
+            {/* Cover Image */}
+            <div>
+              <label className="block text-sm font-black mb-2 uppercase">Cover Image</label>
+              <input
+                type="file"
+                accept="image/*"
+                onChange={(e) => {
+                  const file = e.target.files?.[0];
+                  if (file) handleCoverChange(file);
+                }}
+                className="hidden"
+                id="cover-upload"
+              />
+              <label htmlFor="cover-upload">
+                <div className="w-full p-4 bg-blue-200 border-3 border-black rounded-xl text-center font-bold cursor-pointer hover:bg-blue-300 transition">
+                  {coverImage ? 'Change Cover' : 'Upload Cover'}
+                </div>
+              </label>
+
+              {coverPreview && (
+                <div className="mt-4 relative">
+                  <img src={coverPreview} alt="Cover" className="w-full h-48 object-cover rounded-xl border-3 border-black" />
+                  <button
+                    onClick={() => {
+                      setCoverImage(null);
+                      setCoverPreview('');
+                    }}
+                    className="absolute top-2 right-2 p-2 bg-red-500 text-white rounded-lg hover:bg-red-600 border-2 border-black"
+                  >
+                    <X className="w-4 h-4" strokeWidth={2.5} />
+                  </button>
+                </div>
+              )}
             </div>
 
             {/* Assets */}

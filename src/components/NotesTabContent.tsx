@@ -400,12 +400,6 @@ export default function NotesTabContent({ notes, activeSubTab: propActiveSubTab 
           ) : (
             <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 md:gap-4">
               {notes.map((note, idx) => {
-                // Mock file names for preview (in real scenario, fetch from API)
-                const mockFiles = ['file1.pdf', 'file2.docx', 'file3.txt', 'file4.xlsx', 'file5.png', 'file6.jpg', 'file7.pptx'];
-                const maxVisibleFiles = 5; // Maximum files that can fit in the space
-                const filesToShow = mockFiles.slice(0, maxVisibleFiles);
-                const hasMore = mockFiles.length > maxVisibleFiles;
-                
                 return (
                   <div
                     key={note.folderId}
@@ -414,42 +408,25 @@ export default function NotesTabContent({ notes, activeSubTab: propActiveSubTab 
                         navigate(`/learnings/notes/${note.folderId}`);
                       }
                     }}
-                    className="relative aspect-[4/5] cursor-pointer group rounded-xl md:rounded-2xl border-[3px] border-black bg-white overflow-hidden hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all hover:-translate-y-1"
+                    className="relative aspect-[4/3] cursor-pointer group rounded-xl md:rounded-2xl border-[3px] border-black bg-white overflow-hidden hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all hover:-translate-y-1"
                     style={{ 
                       borderRadius: idx % 2 === 0 ? '16px 20px 16px 20px' : '20px 16px 20px 16px'
                     }}
                   >
-                    {/* Header with Icon - 35% height - Yellow with Grayish tone */}
-                    <div className="relative w-full h-[35%] bg-gradient-to-br from-yellow-600 to-amber-700 border-b-[3px] border-black flex items-center justify-center">
+                    {/* Header with Icon - 50% height - Yellow with Grayish tone */}
+                    <div className="relative w-full h-[50%] bg-gradient-to-br from-yellow-600 to-amber-700 border-b-[3px] border-black flex items-center justify-center">
                       <FolderOpen size={40} strokeWidth={2} className="text-white/90" />
                     </div>
                     
-                    {/* Content - 65% height */}
-                    <div className="p-3 h-[65%] flex flex-col">
+                    {/* Content - 50% height */}
+                    <div className="p-3 h-[50%] flex flex-col justify-between">
                       {/* Title */}
-                      <h3 className="text-xs md:text-sm font-black text-black mb-2 line-clamp-1 leading-tight">
+                      <h3 className="text-xs md:text-sm font-black text-black line-clamp-2 leading-tight">
                         {note.name}
                       </h3>
                       
-                      {/* File Preview List - Dynamic based on available space */}
-                      <div className="flex-1 mb-2 overflow-hidden">
-                        <div className="space-y-0.5">
-                          {filesToShow.map((file, i) => (
-                            <div key={i} className="flex items-center gap-1">
-                              <div className="w-1 h-1 bg-gray-400 rounded-full flex-shrink-0"></div>
-                              <span className="text-[9px] text-gray-500 font-medium truncate">{file}</span>
-                            </div>
-                          ))}
-                          {hasMore && (
-                            <div className="flex items-center gap-1 pt-0.5">
-                              <span className="text-[9px] text-gray-400 font-medium italic">more...</span>
-                            </div>
-                          )}
-                        </div>
-                      </div>
-                      
                       {/* Footer - Date */}
-                      <div className="mt-auto">
+                      <div>
                         <div className="flex items-center gap-1 text-[9px] text-gray-600 font-bold">
                           <svg className="w-3 h-3 text-amber-700" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
                             <path strokeLinecap="round" strokeLinejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />

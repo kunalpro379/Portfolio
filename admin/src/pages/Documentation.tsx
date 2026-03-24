@@ -14,6 +14,7 @@ interface Doc {
   isPublic: boolean;
   createdAt: string;
   updatedAt: string;
+  coverImage?: string;
 }
 
 export default function Documentation() {
@@ -146,56 +147,69 @@ export default function Documentation() {
             {filteredDocs.map((doc) => (
               <div
                 key={doc._id}
-                className="bg-white border-4 border-black rounded-2xl p-6 shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[-2px] hover:translate-y-[-2px] transition"
+                className="bg-white border-4 border-black rounded-2xl overflow-hidden shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[-2px] hover:translate-y-[-2px] transition"
               >
-                {/* Header */}
-                <div className="flex items-start justify-between mb-4">
-                  <div className="flex-1">
-                    <div className="flex items-center gap-2 mb-2">
-                      {doc.isPublic ? (
-                        <Eye className="w-4 h-4 text-green-600" strokeWidth={2.5} />
-                      ) : (
-                        <EyeOff className="w-4 h-4 text-red-600" strokeWidth={2.5} />
-                      )}
-                      <span className={`text-xs font-bold px-2 py-1 rounded-lg border-2 border-black ${
-                        doc.isPublic ? 'bg-green-100' : 'bg-red-100'
-                      }`}>
-                        {doc.isPublic ? 'PUBLIC' : 'PRIVATE'}
-                      </span>
-                    </div>
-                    <h3 className="text-xl font-black text-black mb-1 line-clamp-2">
-                      {doc.title}
-                    </h3>
+                {/* Cover Image */}
+                {doc.coverImage && (
+                  <div className="h-48 border-b-4 border-black overflow-hidden">
+                    <img 
+                      src={doc.coverImage} 
+                      alt={doc.title}
+                      className="w-full h-full object-cover"
+                    />
                   </div>
-                </div>
+                )}
 
-                {/* Subject */}
-                <div className="flex items-center gap-2 mb-4">
-                  <Tag className="w-4 h-4 text-gray-600" strokeWidth={2.5} />
-                  <span className="text-sm font-bold text-gray-700">{doc.subject}</span>
-                </div>
+                <div className="p-6">
+                  {/* Header */}
+                  <div className="flex items-start justify-between mb-4">
+                    <div className="flex-1">
+                      <div className="flex items-center gap-2 mb-2">
+                        {doc.isPublic ? (
+                          <Eye className="w-4 h-4 text-green-600" strokeWidth={2.5} />
+                        ) : (
+                          <EyeOff className="w-4 h-4 text-red-600" strokeWidth={2.5} />
+                        )}
+                        <span className={`text-xs font-bold px-2 py-1 rounded-lg border-2 border-black ${
+                          doc.isPublic ? 'bg-green-100' : 'bg-red-100'
+                        }`}>
+                          {doc.isPublic ? 'PUBLIC' : 'PRIVATE'}
+                        </span>
+                      </div>
+                      <h3 className="text-xl font-black text-black mb-1 line-clamp-2">
+                        {doc.title}
+                      </h3>
+                    </div>
+                  </div>
 
-                {/* Date */}
-                <div className="flex items-center gap-2 mb-4 text-sm text-gray-600">
-                  <Calendar className="w-4 h-4" strokeWidth={2.5} />
-                  <span>Created: {formatDate(doc.createdAt)}</span>
-                </div>
+                  {/* Subject */}
+                  <div className="flex items-center gap-2 mb-4">
+                    <Tag className="w-4 h-4 text-gray-600" strokeWidth={2.5} />
+                    <span className="text-sm font-bold text-gray-700">{doc.subject}</span>
+                  </div>
 
-                {/* Actions */}
-                <div className="flex gap-2 pt-4 border-t-3 border-black">
-                  <button
-                    onClick={() => navigate(`/documentation/edit/${doc.docId}`)}
-                    className="flex-1 flex items-center justify-center gap-2 px-4 py-2 bg-blue-200 border-3 border-black rounded-xl font-bold hover:bg-blue-300 transition shadow-[3px_3px_0px_0px_rgba(0,0,0,1)]"
-                  >
-                    <Edit className="w-4 h-4" strokeWidth={2.5} />
-                    Edit
-                  </button>
-                  <button
-                    onClick={() => deleteDoc(doc.docId)}
-                    className="flex items-center justify-center px-4 py-2 bg-red-200 border-3 border-black rounded-xl font-bold hover:bg-red-300 transition shadow-[3px_3px_0px_0px_rgba(0,0,0,1)]"
-                  >
-                    <Trash2 className="w-6 h-6" strokeWidth={2.5} />
-                  </button>
+                  {/* Date */}
+                  <div className="flex items-center gap-2 mb-4 text-sm text-gray-600">
+                    <Calendar className="w-4 h-4" strokeWidth={2.5} />
+                    <span>Created: {formatDate(doc.createdAt)}</span>
+                  </div>
+
+                  {/* Actions */}
+                  <div className="flex gap-2 pt-4 border-t-3 border-black">
+                    <button
+                      onClick={() => navigate(`/documentation/edit/${doc.docId}`)}
+                      className="flex-1 flex items-center justify-center gap-2 px-4 py-2 bg-blue-200 border-3 border-black rounded-xl font-bold hover:bg-blue-300 transition shadow-[3px_3px_0px_0px_rgba(0,0,0,1)]"
+                    >
+                      <Edit className="w-4 h-4" strokeWidth={2.5} />
+                      Edit
+                    </button>
+                    <button
+                      onClick={() => deleteDoc(doc.docId)}
+                      className="flex items-center justify-center px-4 py-2 bg-red-200 border-3 border-black rounded-xl font-bold hover:bg-red-300 transition shadow-[3px_3px_0px_0px_rgba(0,0,0,1)]"
+                    >
+                      <Trash2 className="w-6 h-6" strokeWidth={2.5} />
+                    </button>
+                  </div>
                 </div>
               </div>
             ))}

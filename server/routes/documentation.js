@@ -431,6 +431,59 @@ router.post('/upload-asset', upload.single('asset'), async (req, res) => {
   }
 });
 
+// Upload cover image for documentation
+router.post('/:docId/cover', upload.single('cover'), async (req, res) => {
+  try {
+    const { docId } = req.params;
+
+    if (!req.file) {
+      return res.status(400).json({ message: 'No file uploaded' });
+    }
+
+    const doc = await Documentation.findOne({ docId });
+    if (!doc) {
+      return res.status(404).json({ message: 'Documentation not found' });
+    }
+
+    const file = req.file;
+    const timestamp = Date.now();
+    const fileName = `${timestamp}-${file.originalname}`;
+    const blobPath = `documentation/covers/${fileName}`;
+
+    const containerClient = blobServiceClient.getContainerClient(containerName);
+    const blockBlobClient = containerClient.getBlockBlobClient(blobPath);
+
+    await blockBlobClient.uploadData(file.buffer, {
+      blobHTTPHeaders: { blobContentType: file.mimetype }
+    });
+
+    // Delete old cover image if exists
+    if (doc.coverImage) {
+      try {
+        const oldUrlParts = doc.coverImage.split('/');
+        const oldFileName = oldUrlParts[oldUrlParts.length - 1];
+        const oldBlobPath = `documentation/covers/${oldFileName}`;
+        const oldBlockBlobClient = containerClient.getBlockBlobClient(oldBlobPath);
+        await oldBlockBlobClient.deleteIfExists();
+      } catch (deleteError) {
+        console.error('Error deleting old cover:', deleteError);
+      }
+    }
+
+    doc.coverImage = blockBlobClient.url;
+    doc.updatedAt = new Date();
+    await doc.save();
+
+    res.json({
+      message: 'Cover image uploaded successfully',
+      url: blockBlobClient.url
+    });
+  } catch (error) {
+    console.error('Cover upload error:', error);
+    res.status(500).json({ message: 'Server error', error: error.message });
+  }
+});
+
 router.delete('/asset/:docId/:assetName', async (req, res) => {
   try {
     const { docId, assetName } = req.params;

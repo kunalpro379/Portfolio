@@ -38,6 +38,7 @@ export default function EditDocumentation() {
   const [newFileName, setNewFileName] = useState('');
   const [newFileType, setNewFileType] = useState<'markdown' | 'diagram'>('markdown');
   const [isFullscreen, setIsFullscreen] = useState(false);
+  const [coverImage, setCoverImage] = useState('');
   const [formData, setFormData] = useState({
     title: '',
     subject: '',
@@ -68,6 +69,8 @@ export default function EditDocumentation() {
         isPublic: data.doc.isPublic,
         assets: data.doc.assets || {}
       });
+
+      setCoverImage(data.doc.coverImage || '');
 
       if (data.doc.assets) {
         const assetArray = Object.entries(data.doc.assets).map(([name, url]) => ({
@@ -292,6 +295,30 @@ export default function EditDocumentation() {
 
     if (indexDiagram) {
       loadFile(indexDiagram);
+    }
+  };
+
+  const handleCoverUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    try {
+      const formData = new FormData();
+      formData.append('cover', file);
+
+      const response = await fetch(config.api.endpoints.docCover(docId!), {
+        method: 'POST',
+        body: formData
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        setCoverImage(data.url);
+        alert('Cover image uploaded successfully!');
+      }
+    } catch (error) {
+      console.error('Error uploading cover:', error);
+      alert('Error uploading cover image');
     }
   };
 
@@ -730,6 +757,29 @@ export default function EditDocumentation() {
                 />
                 <span className="font-black uppercase">Make Public</span>
               </label>
+            </div>
+
+            {/* Cover Image */}
+            <div>
+              <label className="block text-sm font-black mb-2 uppercase">Cover Image</label>
+              <input
+                type="file"
+                accept="image/*"
+                onChange={handleCoverUpload}
+                className="hidden"
+                id="cover-upload"
+              />
+              <label htmlFor="cover-upload">
+                <div className="w-full p-4 bg-blue-200 border-3 border-black rounded-xl text-center font-bold cursor-pointer hover:bg-blue-300 transition">
+                  {coverImage ? 'Change Cover' : 'Upload Cover'}
+                </div>
+              </label>
+
+              {coverImage && (
+                <div className="mt-4">
+                  <img src={coverImage} alt="Cover" className="w-full h-48 object-cover rounded-xl border-3 border-black" />
+                </div>
+              )}
             </div>
 
             {/* Assets */}

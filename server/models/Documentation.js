@@ -56,6 +56,10 @@ const documentationSchema = new mongoose.Schema({
     type: String,
     default: ''
   },
+  coverImage: {
+    type: String,
+    default: ''
+  },
   files: [{
     fileId: String,
     name: String,

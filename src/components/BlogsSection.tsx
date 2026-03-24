@@ -12,6 +12,7 @@ interface Documentation {
   date: string;
   isPublic: boolean;
   createdAt: string;
+  coverImage?: string;
 }
 
 interface Blog {
@@ -307,6 +308,18 @@ export default function BlogsSection() {
                           borderRadius: idx % 2 === 0 ? '25px 20px 25px 18px' : '20px 25px 18px 25px'
                         }}
                       >
+                        {/* Cover Image or Default Background */}
+                        {doc.coverImage ? (
+                          <div className="relative h-24 md:h-28 overflow-hidden bg-gray-50 flex-shrink-0 border-b-4 border-black">
+                            <img
+                              src={doc.coverImage}
+                              alt={doc.title}
+                              className="w-full h-full object-cover"
+                              loading="lazy"
+                            />
+                          </div>
+                        ) : null}
+
                         <div className="p-2.5 md:p-3 space-y-1.5 flex-grow">
                           <div className="inline-block px-2.5 py-0.5 bg-blue-100 border-2 border-black rounded-lg text-[9px] md:text-[10px] font-bold">
                             {doc.subject}
