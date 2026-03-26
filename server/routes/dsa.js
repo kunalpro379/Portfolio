@@ -92,8 +92,11 @@ router.post('/:dsaId/folders', async (req, res) => {
     const { dsaId } = req.params;
     const { name, path } = req.body;
 
+    console.log('Creating folder:', { dsaId, name, path });
+
     const project = await DSA.findOne({ dsaId });
     if (!project) {
+      console.log('Project not found:', dsaId);
       return res.status(404).json({ message: 'DSA project not found' });
     }
 
@@ -110,13 +113,15 @@ router.post('/:dsaId/folders', async (req, res) => {
     project.updatedAt = new Date();
     await project.save();
 
+    console.log('Folder created successfully:', project.folders[project.folders.length - 1]);
+
     res.json({
       message: 'Folder created successfully',
       folder: project.folders[project.folders.length - 1]
     });
   } catch (error) {
     console.error('Create folder error:', error);
-    res.status(500).json({ message: 'Server error' });
+    res.status(500).json({ message: 'Server error', error: error.message });
   }
 });
 
@@ -126,8 +131,11 @@ router.post('/:dsaId/files', async (req, res) => {
     const { dsaId } = req.params;
     const { name, path, language, content } = req.body;
 
+    console.log('Creating file:', { dsaId, name, path, language });
+
     const project = await DSA.findOne({ dsaId });
     if (!project) {
+      console.log('Project not found:', dsaId);
       return res.status(404).json({ message: 'DSA project not found' });
     }
 
@@ -139,9 +147,12 @@ router.post('/:dsaId/files', async (req, res) => {
     const containerClient = blobServiceClient.getContainerClient(containerName);
     const blockBlobClient = containerClient.getBlockBlobClient(azurePath);
     
-    await blockBlobClient.upload(content || '', (content || '').length, {
+    const fileContent = content || '';
+    await blockBlobClient.upload(fileContent, fileContent.length, {
       blobHTTPHeaders: { blobContentType: 'text/plain' }
     });
+
+    console.log('File uploaded to Azure:', azurePath);
 
     project.files.push({
       fileId,
@@ -158,13 +169,15 @@ router.post('/:dsaId/files', async (req, res) => {
     project.updatedAt = new Date();
     await project.save();
 
+    console.log('File created successfully:', project.files[project.files.length - 1]);
+
     res.json({
       message: 'File created successfully',
       file: project.files[project.files.length - 1]
     });
   } catch (error) {
     console.error('Create file error:', error);
-    res.status(500).json({ message: 'Server error' });
+    res.status(500).json({ message: 'Server error', error: error.message });
   }
 });
 

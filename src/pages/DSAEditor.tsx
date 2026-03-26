@@ -45,23 +45,26 @@ export default function DSAEditor() {
   const loadProject = async () => {
     try {
       setLoading(true);
+      console.log('Loading DSA project:', dsaId);
       const proj = await fetchDSAProject(dsaId!);
+      console.log('Project loaded:', proj);
       setProject(proj);
       buildTree(proj);
     } catch (err) {
       console.error('Error loading project:', err);
-      alert('Failed to load project');
+      alert(`Failed to load project: ${err instanceof Error ? err.message : 'Unknown error'}`);
     } finally {
       setLoading(false);
     }
   };
 
   const buildTree = (proj: DSAProject) => {
+    console.log('Building tree with project:', proj);
     const root: TreeNode[] = [];
     const folderMap = new Map<string, TreeNode>();
 
     // Add folders
-    proj.folders.forEach(folder => {
+    proj.folders?.forEach(folder => {
       const node: TreeNode = {
         type: 'folder',
         name: folder.name,
@@ -83,7 +86,7 @@ export default function DSAEditor() {
     });
 
     // Add files
-    proj.files.forEach(file => {
+    proj.files?.forEach(file => {
       const node: TreeNode = {
         type: 'file',
         name: file.name,
@@ -103,6 +106,7 @@ export default function DSAEditor() {
       }
     });
 
+    console.log('Tree built:', root);
     setTree(root);
   };
 
@@ -185,14 +189,16 @@ export default function DSAEditor() {
     setCreating(true);
     try {
       if (createType === 'folder') {
-        await createDSAFolder(dsaId!, { name: createName, path: createName });
+        const result = await createDSAFolder(dsaId!, { name: createName, path: createName });
+        console.log('Folder created:', result);
       } else {
         const lang = createName.endsWith('.cpp') ? 'cpp' : 
                      createName.endsWith('.java') ? 'java' :
                      createName.endsWith('.py') ? 'python' :
                      createName.endsWith('.js') ? 'javascript' : 'cpp';
         
-        await createDSAFile(dsaId!, { name: createName, path: createName, language: lang, content: '' });
+        const result = await createDSAFile(dsaId!, { name: createName, path: createName, language: lang, content: '' });
+        console.log('File created:', result);
       }
       
       setShowCreateModal(false);
@@ -200,7 +206,7 @@ export default function DSAEditor() {
       await loadProject();
     } catch (err) {
       console.error(`Error creating ${createType}:`, err);
-      alert(`Failed to create ${createType}`);
+      alert(`Failed to create ${createType}: ${err instanceof Error ? err.message : 'Unknown error'}`);
     } finally {
       setCreating(false);
     }

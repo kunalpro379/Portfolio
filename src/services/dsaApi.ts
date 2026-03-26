@@ -55,24 +55,32 @@ export const createDSAProject = async (projectData: { name: string; description?
 };
 
 export const createDSAFolder = async (dsaId: string, folderData: { name: string; path: string }): Promise<DSAFolder> => {
+  console.log('Creating folder:', dsaId, folderData);
   const response = await fetch(`${API_BASE_URL}/api/dsa/${dsaId}/folders`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(folderData)
   });
-  if (!response.ok) throw new Error('Failed to create folder');
+  
   const data = await response.json();
+  console.log('Folder response:', response.status, data);
+  
+  if (!response.ok) throw new Error(data.message || 'Failed to create folder');
   return data.folder;
 };
 
 export const createDSAFile = async (dsaId: string, fileData: { name: string; path: string; language: string; content?: string }): Promise<DSAFile> => {
+  console.log('Creating file:', dsaId, fileData);
   const response = await fetch(`${API_BASE_URL}/api/dsa/${dsaId}/files`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(fileData)
   });
-  if (!response.ok) throw new Error('Failed to create file');
+  
   const data = await response.json();
+  console.log('File response:', response.status, data);
+  
+  if (!response.ok) throw new Error(data.message || 'Failed to create file');
   return data.file;
 };
 

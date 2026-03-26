@@ -1451,33 +1451,7 @@ export default function LearningsPage() {
               {activeTab === 'code' && (
                 <>
                   {/* Create Codebook Button */}
-                  <div className="flex justify-end gap-3 mb-6">
-                    <button
-                      onClick={() => {
-                        const name = prompt('Enter DSA project name:');
-                        if (!name) return;
-                        const description = prompt('Enter description (optional):') || '';
-                        
-                        fetch(`${API_BASE_URL}/api/dsa/create`, {
-                          method: 'POST',
-                          headers: { 'Content-Type': 'application/json' },
-                          body: JSON.stringify({ name, description })
-                        })
-                        .then(res => res.json())
-                        .then(data => {
-                          alert('DSA project created!');
-                          navigate(`/learnings/dsa/${data.project.dsaId}`);
-                        })
-                        .catch(err => {
-                          console.error('Error creating DSA project:', err);
-                          alert('Failed to create DSA project');
-                        });
-                      }}
-                      className="px-6 py-2.5 bg-gradient-to-r from-purple-600 to-indigo-600 text-white rounded-xl font-medium hover:from-purple-700 hover:to-indigo-700 transition-all shadow-sm hover:shadow-md text-sm flex items-center gap-2"
-                    >
-                      <Code2 size={18} strokeWidth={2} />
-                      <span>Create DSA Project</span>
-                    </button>
+                  <div className="flex justify-end mb-6">
                     <button
                       onClick={() => setShowCreateCodeFolderModal(true)}
                       className="px-6 py-2.5 bg-stone-900 text-white rounded-xl font-medium hover:bg-stone-800 transition-all shadow-sm hover:shadow-md text-sm flex items-center gap-2"
@@ -1609,22 +1583,22 @@ export default function LearningsPage() {
                         onClick={() => {
                           handleNavigate(`/learnings/dsa/${project.dsaId}`);
                         }}
-                        className="group relative bg-gradient-to-br from-purple-600 to-indigo-700 border-2 border-purple-400/30 rounded-xl p-4 transition-all duration-300 cursor-pointer shadow-[0_8px_0_0_rgba(168,85,247,0.3)] hover:shadow-[0_12px_0_0_rgba(168,85,247,0.4)] hover:-translate-y-1 flex items-center gap-3"
+                        className="group relative bg-white border-3 border-black rounded-xl p-4 transition-all duration-300 cursor-pointer shadow-[0_8px_0_0_rgba(0,0,0,0.2)] hover:shadow-[0_12px_0_0_rgba(0,0,0,0.3)] hover:-translate-y-1 flex items-center gap-3"
                       >
                         {/* Icon */}
-                        <div className="flex-shrink-0 w-9 h-9 bg-white/20 border border-white/40 rounded-lg flex items-center justify-center group-hover:scale-105 transition-transform">
-                          <Code2 size={16} strokeWidth={2} className="text-white" />
+                        <div className="flex-shrink-0 w-9 h-9 bg-purple-100 border-2 border-black rounded-lg flex items-center justify-center group-hover:scale-105 transition-transform">
+                          <Code2 size={16} strokeWidth={2.5} className="text-purple-600" />
                         </div>
 
                         {/* Content */}
                         <div className="flex-1 min-w-0">
-                          <h3 className="text-sm font-semibold text-white transition-colors line-clamp-1 mb-1">
+                          <h3 className="text-sm font-semibold text-black transition-colors line-clamp-1 mb-1">
                             {project.name}
                           </h3>
                           <div className="flex items-center gap-2 text-[10px]">
-                            <span className="text-purple-100 font-medium">DSA Practice</span>
+                            <span className="text-gray-700 font-medium">DSA Practice</span>
                             {project.files && project.files.length > 0 && (
-                              <span className="px-2 py-0.5 bg-white/20 text-white border border-white/30 rounded-full font-medium text-[9px]">
+                              <span className="px-2 py-0.5 bg-purple-100 text-purple-700 border-2 border-black rounded-full font-bold text-[9px]">
                                 {project.files.length} {project.files.length === 1 ? 'file' : 'files'}
                               </span>
                             )}
@@ -1633,7 +1607,7 @@ export default function LearningsPage() {
 
                         {/* Arrow - Always at Right End */}
                         <div className="flex-shrink-0 opacity-70 group-hover:opacity-100 transition-all">
-                          <ChevronRight size={18} strokeWidth={2} className="text-white" />
+                          <ChevronRight size={18} strokeWidth={2.5} className="text-black" />
                         </div>
                       </div>
                       );
