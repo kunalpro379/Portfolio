@@ -1631,38 +1631,6 @@ export default function LearningsPage() {
                           </div>
                         </div>
 
-                        {/* Delete Button */}
-                        <button
-                          onClick={async (e) => {
-                            e.stopPropagation();
-                            if (!window.confirm(`Delete DSA project "${project.name}"? This will delete all files inside.`)) return;
-                            
-                            try {
-                              const response = await fetch(`${API_BASE_URL}/api/dsa/${project.dsaId}`, {
-                                method: 'DELETE',
-                              });
-                              
-                              if (!response.ok) throw new Error('Failed to delete DSA project');
-                              
-                              // Refresh DSA projects list
-                              const dsaRes = await fetch(`${API_BASE_URL}/api/dsa`);
-                              if (dsaRes.ok) {
-                                const dsaData = await dsaRes.json();
-                                setDsaProjects(dsaData.projects || []);
-                              }
-                              
-                              alert('DSA project deleted successfully');
-                            } catch (error) {
-                              console.error('Error deleting DSA project:', error);
-                              alert('Failed to delete DSA project');
-                            }
-                          }}
-                          className="flex-shrink-0 p-1.5 bg-purple-900/50 border border-red-400/50 text-red-300 rounded-md hover:bg-red-500 hover:text-white hover:border-red-500 transition-all opacity-0 group-hover:opacity-100 z-10"
-                          title="Delete DSA project"
-                        >
-                          <Trash2 size={12} strokeWidth={2} />
-                        </button>
-
                         {/* Arrow - Always at Right End */}
                         <div className="flex-shrink-0 opacity-70 group-hover:opacity-100 transition-all">
                           <ChevronRight size={18} strokeWidth={2} className="text-white" />

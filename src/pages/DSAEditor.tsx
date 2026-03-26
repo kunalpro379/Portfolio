@@ -1,8 +1,9 @@
 import { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { ArrowLeft, Play, Palette, Plus, FolderPlus, File, Folder, ChevronRight, ChevronDown, Save } from 'lucide-react';
+import { ArrowLeft, Play, Palette, Plus, FolderPlus, File, Folder, ChevronRight, ChevronDown, Save, X } from 'lucide-react';
 import { Excalidraw } from '@excalidraw/excalidraw';
 import Editor from '@monaco-editor/react';
+import LoadingSpinner from '@/components/LoadingSpinner';
 import { fetchDSAProject, createDSAFolder, createDSAFile, fetchDSAFileContent, updateDSAFile, saveDSACanvas, type DSAProject, type DSAFile } from '@/services/dsaApi';
 
 interface TreeNode {
@@ -29,6 +30,13 @@ export default function DSAEditor() {
   const [saving, setSaving] = useState(false);
   const [running, setRunning] = useState(false);
   const [output, setOutput] = useState('');
+  const [loading, setLoading] = useState(true);
+  
+  // Modal states
+  const [showCreateModal, setShowCreateModal] = useState(false);
+  const [createType, setCreateType] = useState<'file' | 'folder'>('file');
+  const [createName, setCreateName] = useState('');
+  const [creating, setCreating] = useState(false);
 
   useEffect(() => {
     loadProject();
@@ -36,12 +44,15 @@ export default function DSAEditor() {
 
   const loadProject = async () => {
     try {
+      setLoading(true);
       const proj = await fetchDSAProject(dsaId!);
       setProject(proj);
       buildTree(proj);
     } catch (err) {
       console.error('Error loading project:', err);
       alert('Failed to load project');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -156,33 +167,42 @@ export default function DSAEditor() {
   };
 
   const handleCreateFolder = async () => {
-    const name = prompt('Enter folder name:');
-    if (!name) return;
-
-    try {
-      await createDSAFolder(dsaId!, { name, path: name });
-      await loadProject();
-    } catch (err) {
-      console.error('Error creating folder:', err);
-      alert('Failed to create folder');
-    }
+    setCreateType('folder');
+    setCreateName('');
+    setShowCreateModal(true);
   };
 
   const handleCreateFile = async () => {
-    const name = prompt('Enter file name (e.g., main.cpp):');
-    if (!name) return;
+    setCreateType('file');
+    setCreateName('');
+    setShowCreateModal(true);
+  };
 
-    const lang = name.endsWith('.cpp') ? 'cpp' : 
-                 name.endsWith('.java') ? 'java' :
-                 name.endsWith('.py') ? 'python' :
-                 name.endsWith('.js') ? 'javascript' : 'cpp';
+  const handleCreateSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!createName.trim()) return;
 
+    setCreating(true);
     try {
-      await createDSAFile(dsaId!, { name, path: name, language: lang, content: '' });
+      if (createType === 'folder') {
+        await createDSAFolder(dsaId!, { name: createName, path: createName });
+      } else {
+        const lang = createName.endsWith('.cpp') ? 'cpp' : 
+                     createName.endsWith('.java') ? 'java' :
+                     createName.endsWith('.py') ? 'python' :
+                     createName.endsWith('.js') ? 'javascript' : 'cpp';
+        
+        await createDSAFile(dsaId!, { name: createName, path: createName, language: lang, content: '' });
+      }
+      
+      setShowCreateModal(false);
+      setCreateName('');
       await loadProject();
     } catch (err) {
-      console.error('Error creating file:', err);
-      alert('Failed to create file');
+      console.error(`Error creating ${createType}:`, err);
+      alert(`Failed to create ${createType}`);
+    } finally {
+      setCreating(false);
     }
   };
 
@@ -200,8 +220,8 @@ export default function DSAEditor() {
     return nodes.map(node => (
       <div key={node.id}>
         <div
-          className={`flex items-center gap-2 px-2 py-1.5 hover:bg-gray-700 cursor-pointer rounded ${
-            selectedFile?.fileId === node.id ? 'bg-gray-700' : ''
+          className={`flex items-center gap-2 px-2 py-1.5 hover:bg-gray-100 cursor-pointer rounded ${
+            selectedFile?.fileId === node.id ? 'bg-gray-200 border-2 border-black' : ''
           }`}
           style={{ paddingLeft: `${depth * 16 + 8}px` }}
           onClick={() => {
@@ -215,15 +235,15 @@ export default function DSAEditor() {
         >
           {node.type === 'folder' && (
             expandedFolders.has(node.path) ? 
-              <ChevronDown size={14} className="text-gray-400" /> : 
-              <ChevronRight size={14} className="text-gray-400" />
+              <ChevronDown size={14} className="text-black" strokeWidth={2.5} /> : 
+              <ChevronRight size={14} className="text-black" strokeWidth={2.5} />
           )}
           {node.type === 'folder' ? (
-            <Folder size={14} className="text-yellow-400" />
+            <Folder size={14} className="text-yellow-600" strokeWidth={2.5} />
           ) : (
-            <File size={14} className="text-blue-400" />
+            <File size={14} className="text-blue-600" strokeWidth={2.5} />
           )}
-          <span className="text-xs text-gray-200 flex-1">{node.name}</span>
+          <span className="text-xs text-black font-medium flex-1">{node.name}</span>
         </div>
         {node.type === 'folder' && expandedFolders.has(node.path) && node.children && (
           <div>{renderTree(node.children, depth + 1)}</div>
@@ -232,12 +252,81 @@ export default function DSAEditor() {
     ));
   };
 
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center h-screen bg-black">
+        <LoadingSpinner />
+      </div>
+    );
+  }
+
   if (!project) {
-    return <div className="flex items-center justify-center h-screen">Loading...</div>;
+    return (
+      <div className="flex items-center justify-center h-screen bg-black">
+        <div className="text-white">Project not found</div>
+      </div>
+    );
   }
 
   return (
     <div className="h-screen flex flex-col bg-black text-white">
+      {/* Create Modal */}
+      {showCreateModal && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+          <div className="bg-white border-4 border-black rounded-2xl p-6 w-96 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-xl font-black text-black">
+                Create {createType === 'folder' ? 'Folder' : 'File'}
+              </h3>
+              <button
+                onClick={() => setShowCreateModal(false)}
+                className="p-1 hover:bg-gray-100 rounded"
+              >
+                <X size={20} className="text-black" strokeWidth={2.5} />
+              </button>
+            </div>
+
+            <form onSubmit={handleCreateSubmit}>
+              <div className="mb-4">
+                <label className="block text-sm font-black text-black mb-2 uppercase">
+                  {createType === 'folder' ? 'Folder Name' : 'File Name'}
+                </label>
+                <input
+                  type="text"
+                  value={createName}
+                  onChange={(e) => setCreateName(e.target.value)}
+                  placeholder={createType === 'folder' ? 'my-folder' : 'main.cpp'}
+                  className="w-full px-4 py-3 border-3 border-black rounded-xl font-medium focus:outline-none focus:ring-4 focus:ring-black/20"
+                  autoFocus
+                />
+                {createType === 'file' && (
+                  <p className="text-xs text-gray-600 mt-2 font-medium">
+                    Supported: .cpp, .java, .py, .js
+                  </p>
+                )}
+              </div>
+
+              <div className="flex gap-3">
+                <button
+                  type="button"
+                  onClick={() => setShowCreateModal(false)}
+                  className="flex-1 px-4 py-3 bg-gray-200 border-3 border-black rounded-xl font-bold hover:bg-gray-300 transition"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  disabled={creating || !createName.trim()}
+                  className="flex-1 px-4 py-3 bg-green-400 border-3 border-black rounded-xl font-bold hover:bg-green-500 transition disabled:opacity-50 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]"
+                >
+                  {creating ? 'Creating...' : 'Create'}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
       {/* Header */}
       <div className="flex items-center justify-between px-4 py-3 bg-gray-900 border-b border-gray-700">
         <div className="flex items-center gap-4">
@@ -298,24 +387,24 @@ export default function DSAEditor() {
       {/* Main Content */}
       <div className="flex-1 flex overflow-hidden">
         {/* Sidebar - File Tree */}
-        <div className="w-64 bg-gray-900 border-r border-gray-700 flex flex-col">
-          <div className="p-3 border-b border-gray-700">
+        <div className="w-64 bg-white border-r-4 border-black flex flex-col">
+          <div className="p-3 border-b-3 border-black">
             <div className="flex items-center justify-between mb-2">
-              <span className="text-xs font-bold text-gray-400 uppercase">Files</span>
+              <span className="text-xs font-black text-black uppercase">Files</span>
               <div className="flex gap-1">
                 <button
                   onClick={handleCreateFolder}
-                  className="p-1.5 bg-gray-800 hover:bg-gray-700 rounded border border-gray-600"
+                  className="p-1.5 bg-gray-100 hover:bg-gray-200 rounded border-2 border-black"
                   title="New Folder"
                 >
-                  <FolderPlus size={14} />
+                  <FolderPlus size={14} className="text-black" strokeWidth={2.5} />
                 </button>
                 <button
                   onClick={handleCreateFile}
-                  className="p-1.5 bg-gray-800 hover:bg-gray-700 rounded border border-gray-600"
+                  className="p-1.5 bg-gray-100 hover:bg-gray-200 rounded border-2 border-black"
                   title="New File"
                 >
-                  <Plus size={14} />
+                  <Plus size={14} className="text-black" strokeWidth={2.5} />
                 </button>
               </div>
             </div>
@@ -323,7 +412,7 @@ export default function DSAEditor() {
           
           <div className="flex-1 overflow-y-auto p-2">
             {tree.length === 0 ? (
-              <div className="text-center py-8 text-gray-500 text-xs">
+              <div className="text-center py-8 text-gray-500 text-xs font-medium">
                 No files yet. Create one!
               </div>
             ) : (
