@@ -1,9 +1,9 @@
 import { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { ArrowLeft, Play, Palette, Plus, FolderPlus, File, Folder, ChevronRight, ChevronDown, Trash2, Save } from 'lucide-react';
+import { ArrowLeft, Play, Palette, Plus, FolderPlus, File, Folder, ChevronRight, ChevronDown, Save } from 'lucide-react';
 import { Excalidraw } from '@excalidraw/excalidraw';
 import Editor from '@monaco-editor/react';
-import { fetchDSAProject, createDSAFolder, createDSAFile, fetchDSAFileContent, updateDSAFile, saveDSACanvas, deleteDSAFile, deleteDSAFolder, type DSAProject, type DSAFile, type DSAFolder } from '@/services/dsaApi';
+import { fetchDSAProject, createDSAFolder, createDSAFile, fetchDSAFileContent, updateDSAFile, saveDSACanvas, type DSAProject, type DSAFile } from '@/services/dsaApi';
 
 interface TreeNode {
   type: 'file' | 'folder';
@@ -133,9 +133,6 @@ export default function DSAEditor() {
     if (!selectedFile || !excalidrawRef.current) return;
 
     try {
-      const elements = excalidrawRef.current.getSceneElements();
-      const appState = excalidrawRef.current.getAppState();
-      
       // Export as PNG
       const canvas = document.createElement('canvas');
       canvas.width = 1200;
@@ -370,10 +367,12 @@ export default function DSAEditor() {
                     }}
                   />
                 ) : (
-                  <div className="flex-1 bg-white">
+                  <div className="flex-1 bg-white relative">
                     <Excalidraw
-                      ref={excalidrawRef}
                       theme="light"
+                      excalidrawAPI={(api) => {
+                        excalidrawRef.current = api;
+                      }}
                     />
                     <button
                       onClick={handleSaveCanvas}
