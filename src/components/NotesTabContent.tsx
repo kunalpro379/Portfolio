@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { FolderOpen, Plus, ListTodo, Lock, Unlock, BookOpen, Trash2 } from 'lucide-react';
+import { FolderOpen, Plus, ListTodo, Lock, Unlock, BookOpen, Trash2, Code2 } from 'lucide-react';
 import LoadingSpinner from './LoadingSpinner';
 import TodoCard from './TodoCard';
 import TodoForm from './TodoForm';
@@ -11,6 +11,12 @@ import {
   createGuide,
   type Guide
 } from '@/services/guideNotesApi';
+import {
+  fetchDSAProjects,
+  createDSAProject,
+  deleteDSAProject,
+  type DSAProject
+} from '@/services/dsaApi';
 import {
   fetchTodos,
   fetchTodoById,
@@ -39,12 +45,12 @@ interface Note {
 
 interface NotesTabContentProps {
   notes: Note[];
-  activeSubTab?: 'guide' | 'notes' | 'todo';
+  activeSubTab?: 'guide' | 'notes' | 'todo' | 'dsa';
 }
 
 export default function NotesTabContent({ notes, activeSubTab: propActiveSubTab }: NotesTabContentProps) {
   const navigate = useNavigate();
-  const [activeSubTab, setActiveSubTab] = useState<'guide' | 'notes' | 'todo'>(propActiveSubTab || 'guide');
+  const [activeSubTab, setActiveSubTab] = useState<'guide' | 'notes' | 'todo' | 'dsa'>(propActiveSubTab || 'guide');
 
   // Update activeSubTab when prop changes
   useEffect(() => {
@@ -59,6 +65,13 @@ export default function NotesTabContent({ notes, activeSubTab: propActiveSubTab 
   const [showCreateGuideModal, setShowCreateGuideModal] = useState(false);
   const [guideFormData, setGuideFormData] = useState({ name: '', topic: '', description: '' });
   const [creatingGuide, setCreatingGuide] = useState(false);
+
+  // DSA State
+  const [dsaProjects, setDsaProjects] = useState<any[]>([]);
+  const [dsaLoading, setDsaLoading] = useState(false);
+  const [showCreateDSAModal, setShowCreateDSAModal] = useState(false);
+  const [dsaFormData, setDsaFormData] = useState({ name: '', description: '' });
+  const [creatingDSA, setCreatingDSA] = useState(false);
 
   // Todo State
   const [todos, setTodos] = useState<Todo[]>([]);
@@ -75,6 +88,8 @@ export default function NotesTabContent({ notes, activeSubTab: propActiveSubTab 
   useEffect(() => {
     if (activeSubTab === 'guide') {
       loadGuides();
+    } else if (activeSubTab === 'dsa') {
+      loadDSAProjects();
     }
   }, [activeSubTab]);
 
@@ -160,6 +175,64 @@ export default function NotesTabContent({ notes, activeSubTab: propActiveSubTab 
     } catch (err) {
       console.error('Error deleting guide:', err);
       alert('Failed to delete guide');
+    }
+  };
+
+  // DSA Functions
+  const loadDSAProjects = async () => {
+    try {
+      setDsaLoading(true);
+      const projects = await fetchDSAProjects();
+      setDsaProjects(projects);
+    } catch (err) {
+      console.error('Error loading DSA projects:', err);
+    } finally {
+      setDsaLoading(false);
+    }
+  };
+
+  const handleCreateDSA = () => {
+    setShowCreateDSAModal(true);
+  };
+
+  const handleDSAFormSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    if (!dsaFormData.name.trim()) {
+      alert('Please enter a project name');
+      return;
+    }
+
+    try {
+      setCreatingDSA(true);
+      const newProject = await createDSAProject({
+        name: dsaFormData.name,
+        description: dsaFormData.description
+      });
+      
+      setShowCreateDSAModal(false);
+      setDsaFormData({ name: '', description: '' });
+      await loadDSAProjects();
+      
+      // Navigate to the newly created DSA project
+      navigate(`/learnings/dsa/${newProject.dsaId}`);
+    } catch (err) {
+      console.error('Error creating DSA project:', err);
+      alert('Failed to create DSA project. Please try again.');
+    } finally {
+      setCreatingDSA(false);
+    }
+  };
+
+  const handleDeleteDSA = async (dsaId: string) => {
+    if (!window.confirm('Are you sure you want to delete this DSA project and all its files?')) return;
+    
+    try {
+      await deleteDSAProject(dsaId);
+      await loadDSAProjects();
+    } catch (err) {
+      console.error('Error deleting DSA project:', err);
+      alert('Failed to delete DSA project');
     }
   };
 

@@ -26,6 +26,7 @@ async function loadRoutes() {
     const { default: todosRoutes } = await import('./routes/todos.js');
     const { default: blogsRoutes } = await import('./routes/blogs.js');
     const { default: documentationRoutes } = await import('./routes/documentation.js');
+    const { default: dsaRoutes } = await import('./routes/dsa.js');
     const { default: healthRoutes } = await import('./routes/health.js');
     
     app.use('/api/auth', authRoutes);
@@ -36,6 +37,7 @@ async function loadRoutes() {
     app.use('/api/todos', todosRoutes);
     app.use('/api/blogs', blogsRoutes);
     app.use('/api/documentation', documentationRoutes);
+    app.use('/api/dsa', dsaRoutes);
     app.use('/api/health', healthRoutes);
 
     // Load AI Chat routes with error handling

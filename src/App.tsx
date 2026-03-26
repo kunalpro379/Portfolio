@@ -4,6 +4,7 @@ import Home from './pages/Home';
 import Learnings from './pages/Learnings';
 import CodePage from './pages/CodePage';
 import CodeEditorPage from './pages/CodeEditorPage';
+import DSAEditor from './pages/DSAEditor';
 import DiagramsPage from './pages/DiagramsPage';
 import ProjectDetail from './pages/ProjectDetail';
 import BlogDetail from './pages/BlogDetail';
@@ -45,6 +46,7 @@ function App() {
         <Route path="/learnings" element={<Learnings />} />
         <Route path="/learnings/code" element={<CodePage />} />
         <Route path="/learnings/code-editor" element={<CodeEditorPage />} />
+        <Route path="/learnings/dsa/:dsaId" element={<DSAEditor />} />
         <Route path="/learnings/diagrams" element={<DiagramsPage />} />
         <Route path="/projects/:id" element={<ProjectDetail />} />
         <Route path="/learnings/blogs/:id" element={<BlogDetail />} />

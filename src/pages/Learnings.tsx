@@ -84,7 +84,7 @@ export default function LearningsPage() {
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
   const tabFromUrl = searchParams.get('tab') || 'blogs';
-  const [activeTab, setActiveTab] = useState<'guide' | 'files' | 'todo' | 'documentation' | 'blogs' | 'projects' | 'diagrams' | 'code'>(tabFromUrl as any);
+  const [activeTab, setActiveTab] = useState<'guide' | 'files' | 'todo' | 'dsa' | 'documentation' | 'blogs' | 'projects' | 'diagrams' | 'code'>(tabFromUrl as any);
 
   // State for API data
   const [projects, setProjects] = useState<ProjectData[]>([]);
@@ -94,6 +94,7 @@ export default function LearningsPage() {
   const [diagrams, setDiagrams] = useState<any[]>([]);
   const [codeFiles, setCodeFiles] = useState<CodeFolder[]>([]);
   const [githubRepos, setGithubRepos] = useState<GitHubRepo[]>([]);
+  const [dsaProjects, setDsaProjects] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -227,10 +228,11 @@ export default function LearningsPage() {
             break;
 
           case 'code':
-            // Fetch both code folders and GitHub repos in parallel
-            const [codeRes, githubRes] = await Promise.allSettled([
+            // Fetch code folders, GitHub repos, and DSA projects in parallel
+            const [codeRes, githubRes, dsaRes] = await Promise.allSettled([
               fetch(`${API_BASE_URL}${API_ENDPOINTS.code}/folders?parentPath=`),
-              fetch(`${API_BASE_URL}${API_ENDPOINTS.github.repos}`)
+              fetch(`${API_BASE_URL}${API_ENDPOINTS.github.repos}`),
+              fetch(`${API_BASE_URL}/api/dsa`)
             ]);
 
             // Handle code folders
@@ -249,6 +251,15 @@ export default function LearningsPage() {
             } else {
               console.error('Failed to fetch GitHub repos');
               setGithubRepos([]);
+            }
+
+            // Handle DSA projects
+            if (dsaRes.status === 'fulfilled' && dsaRes.value.ok) {
+              const dsaData = await dsaRes.value.json();
+              setDsaProjects(dsaData.projects || []);
+            } else {
+              console.error('Failed to fetch DSA projects');
+              setDsaProjects([]);
             }
             break;
         }
@@ -1440,7 +1451,33 @@ export default function LearningsPage() {
               {activeTab === 'code' && (
                 <>
                   {/* Create Codebook Button */}
-                  <div className="flex justify-end mb-6">
+                  <div className="flex justify-end gap-3 mb-6">
+                    <button
+                      onClick={() => {
+                        const name = prompt('Enter DSA project name:');
+                        if (!name) return;
+                        const description = prompt('Enter description (optional):') || '';
+                        
+                        fetch(`${API_BASE_URL}/api/dsa/create`, {
+                          method: 'POST',
+                          headers: { 'Content-Type': 'application/json' },
+                          body: JSON.stringify({ name, description })
+                        })
+                        .then(res => res.json())
+                        .then(data => {
+                          alert('DSA project created!');
+                          navigate(`/learnings/dsa/${data.project.dsaId}`);
+                        })
+                        .catch(err => {
+                          console.error('Error creating DSA project:', err);
+                          alert('Failed to create DSA project');
+                        });
+                      }}
+                      className="px-6 py-2.5 bg-gradient-to-r from-purple-600 to-indigo-600 text-white rounded-xl font-medium hover:from-purple-700 hover:to-indigo-700 transition-all shadow-sm hover:shadow-md text-sm flex items-center gap-2"
+                    >
+                      <Code2 size={18} strokeWidth={2} />
+                      <span>Create DSA Project</span>
+                    </button>
                     <button
                       onClick={() => setShowCreateCodeFolderModal(true)}
                       className="px-6 py-2.5 bg-stone-900 text-white rounded-xl font-medium hover:bg-stone-800 transition-all shadow-sm hover:shadow-md text-sm flex items-center gap-2"
@@ -1564,8 +1601,78 @@ export default function LearningsPage() {
                       );
                     })}
 
+                    {/* DSA Projects */}
+                    {dsaProjects.map((project, idx) => {
+                      return (
+                      <div
+                        key={project.dsaId}
+                        onClick={() => {
+                          handleNavigate(`/learnings/dsa/${project.dsaId}`);
+                        }}
+                        className="group relative bg-gradient-to-br from-purple-600 to-indigo-700 border-2 border-purple-400/30 rounded-xl p-4 transition-all duration-300 cursor-pointer shadow-[0_8px_0_0_rgba(168,85,247,0.3)] hover:shadow-[0_12px_0_0_rgba(168,85,247,0.4)] hover:-translate-y-1 flex items-center gap-3"
+                      >
+                        {/* Icon */}
+                        <div className="flex-shrink-0 w-9 h-9 bg-white/20 border border-white/40 rounded-lg flex items-center justify-center group-hover:scale-105 transition-transform">
+                          <Code2 size={16} strokeWidth={2} className="text-white" />
+                        </div>
+
+                        {/* Content */}
+                        <div className="flex-1 min-w-0">
+                          <h3 className="text-sm font-semibold text-white transition-colors line-clamp-1 mb-1">
+                            {project.name}
+                          </h3>
+                          <div className="flex items-center gap-2 text-[10px]">
+                            <span className="text-purple-100 font-medium">DSA Practice</span>
+                            {project.files && project.files.length > 0 && (
+                              <span className="px-2 py-0.5 bg-white/20 text-white border border-white/30 rounded-full font-medium text-[9px]">
+                                {project.files.length} {project.files.length === 1 ? 'file' : 'files'}
+                              </span>
+                            )}
+                          </div>
+                        </div>
+
+                        {/* Delete Button */}
+                        <button
+                          onClick={async (e) => {
+                            e.stopPropagation();
+                            if (!window.confirm(`Delete DSA project "${project.name}"? This will delete all files inside.`)) return;
+                            
+                            try {
+                              const response = await fetch(`${API_BASE_URL}/api/dsa/${project.dsaId}`, {
+                                method: 'DELETE',
+                              });
+                              
+                              if (!response.ok) throw new Error('Failed to delete DSA project');
+                              
+                              // Refresh DSA projects list
+                              const dsaRes = await fetch(`${API_BASE_URL}/api/dsa`);
+                              if (dsaRes.ok) {
+                                const dsaData = await dsaRes.json();
+                                setDsaProjects(dsaData.projects || []);
+                              }
+                              
+                              alert('DSA project deleted successfully');
+                            } catch (error) {
+                              console.error('Error deleting DSA project:', error);
+                              alert('Failed to delete DSA project');
+                            }
+                          }}
+                          className="flex-shrink-0 p-1.5 bg-purple-900/50 border border-red-400/50 text-red-300 rounded-md hover:bg-red-500 hover:text-white hover:border-red-500 transition-all opacity-0 group-hover:opacity-100 z-10"
+                          title="Delete DSA project"
+                        >
+                          <Trash2 size={12} strokeWidth={2} />
+                        </button>
+
+                        {/* Arrow - Always at Right End */}
+                        <div className="flex-shrink-0 opacity-70 group-hover:opacity-100 transition-all">
+                          <ChevronRight size={18} strokeWidth={2} className="text-white" />
+                        </div>
+                      </div>
+                      );
+                    })}
+
                     {/* Empty State */}
-                    {codeFiles.length === 0 && githubRepos.length === 0 && (
+                    {codeFiles.length === 0 && githubRepos.length === 0 && dsaProjects.length === 0 && (
                       <div className="col-span-full text-center py-20">
                         <div className="bg-gradient-to-br from-amber-50 to-stone-50 border-2 border-dashed border-stone-400 rounded-2xl p-12 inline-block shadow-sm">
                           <div className="w-16 h-16 bg-gradient-to-br from-amber-100 to-stone-100 rounded-xl flex items-center justify-center mx-auto mb-4">
