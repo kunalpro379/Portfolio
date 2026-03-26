@@ -1,4 +1,4 @@
-import { Clock, Calendar, ArrowLeft, FolderOpen, FileText, BookOpen, Code, FileImage, Plus, Github, Menu, X, Home, LogOut, Eye, Edit, Trash2, ListTodo, ChevronRight } from "lucide-react";
+import { Clock, Calendar, ArrowLeft, FolderOpen, FileText, BookOpen, Code, Code2, FileImage, Plus, Github, Menu, X, Home, LogOut, Eye, Edit, Trash2, ListTodo, ChevronRight } from "lucide-react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { API_ENDPOINTS, API_BASE_URL } from "@/config/api";
