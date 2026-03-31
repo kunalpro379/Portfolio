@@ -199,7 +199,7 @@ export default function HeroSection() {
                   <div className="bg-white/60 backdrop-blur-sm border-2 border-black rounded-xl md:rounded-2xl overflow-hidden shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] transition-all cursor-pointer">
                     <div className="relative p-0">
                       <img 
-                        src="/LLMBattle.png" 
+                        src="/LLMbattle.png" 
                         alt="LLM Battle" 
                         className="w-full h-auto object-cover opacity-30 grayscale hover:opacity-50 transition-opacity duration-300"
                       />
