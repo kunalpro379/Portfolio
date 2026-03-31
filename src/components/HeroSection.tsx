@@ -33,7 +33,6 @@ const technologies = [
 ];
 
 export default function HeroSection() {
-  const [imagesLoaded, setImagesLoaded] = useState(false);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const shouldReduceMotion = useReducedMotion();
 
@@ -187,7 +186,7 @@ export default function HeroSection() {
                         src="/me.png"
                         alt="Hero Character"
                         loading="eager"
-                        fetchpriority="high"
+                        fetchPriority="high"
                         width={500}
                         height={500}
                         decoding="async"
