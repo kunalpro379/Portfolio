@@ -258,6 +258,7 @@ const Home = memo(function Home() {
       <div id="blogs">
         <BlogsSection />
       </div>
+
         {/* Education Section */}
       <div id="education">
         <EducationSection />
