@@ -49,9 +49,6 @@ export default function HeroSection() {
   );
 
   useEffect(() => {
-    // Since the image is already preloaded in HTML, just set it as loaded
-    setImagesLoaded(true);
-
     // Image rotation for heroImages2
     const interval = setInterval(() => {
       setCurrentImageIndex((prev) => (prev + 1) % heroImages2.length);
@@ -65,12 +62,6 @@ export default function HeroSection() {
     initial: { opacity: 0 },
     animate: { opacity: 1 },
     transition: { duration: 0.5 }
-  };
-
-  const slideIn = shouldReduceMotion ? {} : {
-    initial: { opacity: 0, x: -20 },
-    animate: { opacity: 1, x: 0 },
-    transition: { duration: 0.6 }
   };
 
   return (
@@ -142,7 +133,7 @@ export default function HeroSection() {
                   Crafting Future Tech
                 </span>
               </motion.div>
-              <h1 className="hero-title text-5xl md:text-6xl lg:text-[10rem] font-black tracking-tighter leading-[0.8] mb-3 md:mb-6 lg:mb-8 select-none text-left text-black">
+              <h1 className="hero-title text-4xl md:text-5xl lg:text-7xl font-black tracking-tighter leading-[0.8] mb-3 md:mb-6 lg:mb-8 select-none text-left text-black">
                 KUNAL<br />
                 <span className="text-transparent bg-clip-text bg-gradient-to-b from-black to-black/40">PATIL</span>
               </h1>
@@ -200,7 +191,7 @@ export default function HeroSection() {
               {/* Battle Ground Card - Bottom */}
               <div className="relative group">
                 <a 
-                  href="https://arenakunalpatil.me" 
+                  href="https://arena.kunalpatil.me" 
                   target="_blank" 
                   rel="noopener noreferrer"
                   className="block"
@@ -208,7 +199,7 @@ export default function HeroSection() {
                   <div className="bg-white/60 backdrop-blur-sm border-2 border-black rounded-xl md:rounded-2xl overflow-hidden shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] transition-all cursor-pointer">
                     <div className="relative p-0">
                       <img 
-                        src="/public/LLMBattle.png" 
+                        src="/LLMBattle.png" 
                         alt="LLM Battle" 
                         className="w-full h-auto object-cover opacity-30 grayscale hover:opacity-50 transition-opacity duration-300"
                       />
@@ -221,7 +212,7 @@ export default function HeroSection() {
                     Join the Battle Ground of AI Agents
                   </h3>
                   <a 
-                    href="https://arenakunalpatil.me" 
+                    href="https://arena.kunalpatil.me" 
                     target="_blank" 
                     rel="noopener noreferrer"
                     className="inline-block px-6 md:px-8 py-2 md:py-2.5 bg-black text-white rounded-full font-black uppercase tracking-wider text-xs md:text-sm hover:bg-sky-500 transition-all active:scale-95 shadow-lg"
