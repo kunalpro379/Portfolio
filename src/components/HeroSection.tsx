@@ -133,7 +133,7 @@ export default function HeroSection() {
                   Crafting Future Tech
                 </span>
               </motion.div>
-              <h1 className="hero-title text-4xl md:text-5xl lg:text-7xl font-black tracking-tighter leading-[0.8] mb-3 md:mb-6 lg:mb-8 select-none text-left text-black">
+              <h1 className="hero-title text-5xl md:text-7xl lg:text-9xl font-black tracking-tighter leading-[0.8] mb-3 md:mb-6 lg:mb-8 select-none text-left text-black">
                 KUNAL<br />
                 <span className="text-transparent bg-clip-text bg-gradient-to-b from-black to-black/40">PATIL</span>
               </h1>
@@ -145,7 +145,7 @@ export default function HeroSection() {
               </p>
             
 
-              <div className="mt-3 md:mt-8 flex flex-col gap-3 md:gap-6 w-full sm:w-auto mb-6 md:mb-20">
+              <div className="mt-3 md:mt-8 flex flex-col gap-3 md:gap-6 w-full sm:w-auto mb-3 md:mb-6">
                 <div className="flex gap-3 md:gap-6">
                   <a 
                     href="/learnings?tab=projects" 
@@ -164,9 +164,35 @@ export default function HeroSection() {
                   Contact Me
                 </a>
               </div>
+
+              {/* Animated Images Card - Below Buttons */}
+              <div className="relative w-full mt-6">
+                <div className="relative w-full aspect-square max-w-[400px]">
+                  <div className="absolute inset-0 rounded-[2rem] md:rounded-[4rem] rotate-6 scale-95" />
+                  <div className="absolute inset-0 bg-black/5 rounded-[2rem] md:rounded-[4rem] -rotate-3 border border-black/10 backdrop-blur-sm" />
+                  <div className="absolute inset-0 rounded-[2rem] md:rounded-[4rem] overflow-hidden border border-black/20 bg-gradient-to-br from-amber-50/70 to-orange-100/50 rotate-3">
+                    {heroImages2.map((img, index) => {
+                      const isActive = currentImageIndex === index;
+                      return (
+                        <img
+                          key={img}
+                          src={img}
+                          alt="Character"
+                          loading="lazy"
+                          decoding="async"
+                          width={500}
+                          height={500}
+                          className={`absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[100%] h-[100%] md:w-[85%] md:h-[95%] object-contain md:object-cover grayscale rounded-2xl transition-opacity duration-1000 -rotate-3 ${isActive ? 'opacity-100' : 'opacity-0'}`}
+                          style={{ pointerEvents: 'none' }}
+                        />
+                      );
+                    })}
+                  </div>
+                </div>
+              </div>
             </div>
 
-            {/* Right Column - Image Card and Battle Card Stack */}
+            {/* Right Column - Image Card, Battle Card, and Engineering Vault */}
             <div className="md:w-1/2 lg:w-1/2 order-2 flex flex-col gap-6">
               {/* Image Card - Top */}
               <div className="relative group">
@@ -188,7 +214,7 @@ export default function HeroSection() {
                 </div>
               </div>
 
-              {/* Battle Ground Card - Bottom */}
+              {/* Battle Ground Card */}
               <div className="relative group">
                 <a 
                   href="https://arena.kunalpatil.me" 
@@ -206,7 +232,6 @@ export default function HeroSection() {
                     </div>
                   </div>
                 </a>
-                {/* Text and Button Outside Card */}
                 <div className="mt-4 text-center">
                   <h3 className="text-sm md:text-lg font-black text-black mb-3">
                     Join the Battle Ground of AI Agents
@@ -221,72 +246,18 @@ export default function HeroSection() {
                   </a>
                 </div>
               </div>
-            </div>
-          </div>
 
-          {/* Second Screen - About Content */}
-          <div id="about" className="pt-0 pb-10 flex flex-col lg:flex-row items-center px-6 md:px-24 max-w-7xl mx-auto w-full gap-10">
-            {/* Image First on Desktop, Second on Mobile */}
-            <div className="relative w-full lg:w-[45%] aspect-square select-none order-2 lg:order-1">
-              <div className="relative w-full h-full max-w-[500px] mx-auto">
-                <div className="absolute inset-0 rounded-[2rem] md:rounded-[4rem] rotate-6 scale-95" />
-                <div className="absolute inset-0 bg-black/5 rounded-[2rem] md:rounded-[4rem] -rotate-3 border border-black/10 backdrop-blur-sm" />
-                <div className="absolute inset-0 rounded-[2rem] md:rounded-[4rem] overflow-hidden border border-black/20 bg-gradient-to-br from-amber-50/70 to-orange-100/50 rotate-3">
-                  {heroImages2.map((img, index) => {
-                    const isActive = currentImageIndex === index;
-                    return (
-                      <img
-                        key={img}
-                        src={img}
-                        alt="Character"
-                        loading="lazy"
-                        decoding="async"
-                        width={500}
-                        height={500}
-                        className={`absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[100%] h-[100%] md:w-[85%] md:h-[95%] object-contain md:object-cover grayscale rounded-2xl transition-opacity duration-1000 -rotate-3 ${isActive ? 'opacity-100' : 'opacity-0'}`}
-                        style={{ pointerEvents: 'none' }}
-                      />
-                    );
-                  })}
-                </div>
-              </div>
-            </div>
-
-            {/* Text Content - First on Mobile, Second on Desktop */}
-            <div className="space-y-6 md:space-y-10 w-full lg:w-1/2 order-1 lg:order-2">
-              <div className="space-y-3 md:space-y-4">
-                <div className="w-full max-w-md">
-                  <img
-                    src="/hero.png"
-                    alt="Engineering Vault VI"
-                    width={448}
-                    height={280}
-                    loading="lazy"
-                    decoding="async"
-                    className="w-full h-auto object-contain"
-                  />
-                </div>
-              </div>
-
-              <div className="space-y-4 md:space-y-6">
-                <p className="text-lg md:text-2xl text-black/70 font-handwriting leading-relaxed">
-                  I'm someone who enjoys going deep into problems, understanding how things really work, and finishing what I start.
-                </p>
-
-                <div className="flex flex-wrap gap-6 md:gap-10">
-                  <div>
-                    <div className="text-2xl md:text-4xl font-black mb-1 text-black">02+</div>
-                    <div className="text-[8px] md:text-[10px] uppercase font-black tracking-widest text-black/50">Years Exp.</div>
-                  </div>
-                  <div>
-                    <div className="text-2xl md:text-4xl font-black mb-1 text-black">40+</div>
-                    <div className="text-[8px] md:text-[10px] uppercase font-black tracking-widest text-black/50">Projects</div>
-                  </div>
-                  <div>
-                    <div className="text-2xl md:text-4xl font-black mb-1 text-black">12k+</div>
-                    <div className="text-[8px] md:text-[10px] uppercase font-black tracking-widest text-black/50">Commits</div>
-                  </div>
-                </div>
+              {/* Engineering Vault Image */}
+              <div className="w-full max-w-md mx-auto">
+                <img
+                  src="/hero.png"
+                  alt="Engineering Vault VI"
+                  width={448}
+                  height={280}
+                  loading="lazy"
+                  decoding="async"
+                  className="w-full h-auto object-contain"
+                />
               </div>
             </div>
           </div>
