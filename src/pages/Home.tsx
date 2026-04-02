@@ -223,12 +223,12 @@ const Home = memo(function Home() {
       {/* Desktop-only MAP vertical strip */}
       <button
         onClick={() => setShowMap(!showMap)}
-        className="hidden lg:flex fixed left-0 top-1/3 z-[300] h-36 w-12 items-center justify-center bg-gradient-to-b from-red-600 via-red-500 to-red-700 text-white font-black text-xs tracking-[0.12em] transition-all hover:w-14 active:scale-95 rounded-r-md"
+        className="hidden lg:flex fixed left-0 top-1/3 z-[300] h-36 w-12 items-center justify-center bg-gradient-to-b from-slate-800 via-slate-900 to-black text-white font-black text-xs tracking-[0.12em] transition-all hover:w-14 active:scale-95 rounded-r-md"
         style={{
           writingMode: 'vertical-rl',
           textOrientation: 'upright',
-          boxShadow: '3px 3px 0px 0px rgba(0,0,0,1), inset -2px -2px 6px rgba(0,0,0,0.28), inset 2px 2px 6px rgba(255,255,255,0.22)',
-          border: '2px solid black',
+          boxShadow: '3px 3px 0px 0px rgba(0,0,0,1), inset -2px -2px 6px rgba(0,0,0,0.5), inset 2px 2px 6px rgba(255,255,255,0.1)',
+          border: '2px solid rgba(148, 163, 184, 0.3)',
           textShadow: '1px 1px 2px rgba(0,0,0,0.8)'
         }}
       >
@@ -280,14 +280,14 @@ const Home = memo(function Home() {
 
           {/* Map Container */}
           <div className="relative">
-            <div className="bg-white/80 backdrop-blur-sm border-4 border-black rounded-3xl overflow-hidden shadow-[12px_12px_0px_0px_rgba(0,0,0,1)] hover:shadow-[16px_16px_0px_0px_rgba(0,0,0,1)] transition-all">
-              <div className="bg-gradient-to-r from-red-600 via-red-500 to-red-600 text-white px-6 py-4 border-b-4 border-black">
+            <div className="bg-gradient-to-br from-slate-900 via-slate-800 to-black backdrop-blur-sm border-4 border-slate-700 rounded-3xl overflow-hidden shadow-[12px_12px_0px_0px_rgba(0,0,0,0.5)] hover:shadow-[16px_16px_0px_0px_rgba(0,0,0,0.6)] transition-all">
+              <div className="bg-gradient-to-r from-slate-800 via-slate-700 to-slate-800 text-white px-6 py-4 border-b-4 border-slate-600">
                 <h3 className="text-xl md:text-2xl font-black flex items-center gap-3">
                   <span></span>
                   <span>GTAV Mumbai</span>
                 </h3>
               </div>
-              <div className="p-4 md:p-6 bg-gradient-to-br from-gray-50 to-gray-100">
+              <div className="p-4 md:p-6 bg-gradient-to-br from-slate-900 to-black">
                 <GtaMumbaiMap className="h-[340px] md:h-[460px]" />
               </div>
             </div>
@@ -307,19 +307,19 @@ const Home = memo(function Home() {
             {/* Close Button */}
             <button
               onClick={() => setShowMap(false)}
-              className="absolute -top-4 -right-4 bg-red-600 text-white w-12 h-12 rounded-full border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] transition-all hover:scale-110 font-black text-xl z-10"
+              className="absolute -top-4 -right-4 bg-gradient-to-br from-slate-700 to-slate-900 text-white w-12 h-12 rounded-full border-4 border-slate-600 shadow-[4px_4px_0px_0px_rgba(0,0,0,0.5)] hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,0.6)] transition-all hover:scale-110 font-black text-xl z-10"
             >
               ✕
             </button>
             
             {/* Map Container */}
-            <div className="bg-white border-4 border-black rounded-2xl overflow-hidden shadow-2xl">
-              <div className="bg-gradient-to-r from-red-600 to-red-500 text-white px-6 py-4 border-b-4 border-black">
+            <div className="bg-gradient-to-br from-slate-900 to-black border-4 border-slate-700 rounded-2xl overflow-hidden shadow-2xl">
+              <div className="bg-gradient-to-r from-slate-800 to-slate-700 text-white px-6 py-4 border-b-4 border-slate-600">
                 <h2 className="text-2xl font-black flex items-center gap-3">
                   GTAVI Mumbai
                 </h2>
               </div>
-              <div className="p-4 bg-gray-100">
+              <div className="p-4 bg-gradient-to-br from-slate-900 to-black">
                 <GtaMumbaiMap className="h-[56vh] min-h-[360px]" />
               </div>
             </div>

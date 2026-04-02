@@ -128,7 +128,10 @@ const uploadToAzure = async (buffer, guideId, titleId, filename, fileType) => {
 // Create new guide
 router.post('/guides', async (req, res) => {
   try {
-    console.log('Creating guide with data:', req.body);
+    console.log('=== CREATE GUIDE REQUEST ===');
+    console.log('Request body:', JSON.stringify(req.body, null, 2));
+    console.log('Request headers:', req.headers);
+    
     const { name, topic, description } = req.body;
     
     if (!name || !topic) {
@@ -141,7 +144,7 @@ router.post('/guides', async (req, res) => {
     
     console.log('Generated IDs:', { guideId, guideSlug });
     
-    const guide = new GuideNote({
+    const guideData = {
       guideId,
       guideSlug,
       name,
@@ -150,22 +153,33 @@ router.post('/guides', async (req, res) => {
       titles: [],
       createdAt: new Date(),
       updatedAt: new Date()
-    });
+    };
+    
+    console.log('Creating guide with data:', JSON.stringify(guideData, null, 2));
+    
+    const guide = new GuideNote(guideData);
     
     console.log('Saving guide to database...');
-    await guide.save();
-    console.log('Guide saved successfully:', guideId);
+    const savedGuide = await guide.save();
+    console.log('Guide saved successfully:', savedGuide.guideId);
     
     res.status(201).json({
       message: 'Guide created successfully',
-      guide
+      guide: savedGuide
     });
   } catch (error) {
-    console.error('Create guide error:', error);
+    console.error('=== CREATE GUIDE ERROR ===');
+    console.error('Error name:', error.name);
+    console.error('Error message:', error.message);
     console.error('Error stack:', error.stack);
+    if (error.errors) {
+      console.error('Validation errors:', JSON.stringify(error.errors, null, 2));
+    }
+    
     res.status(500).json({ 
       message: 'Server error', 
       error: error.message,
+      errorName: error.name,
       details: error.toString()
     });
   }

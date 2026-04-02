@@ -53,7 +53,22 @@ export default function AboutSection() {
         <div className="relative w-full h-full max-w-[500px] mx-auto">
           <div className="absolute inset-0 rounded-[2rem] md:rounded-[4rem] rotate-6 scale-95" />
           <div className="absolute inset-0 bg-black/5 rounded-[2rem] md:rounded-[4rem] -rotate-3 border border-black/10 backdrop-blur-sm" />
-          <div className="absolute inset-0 rounded-[2rem] md:rounded-[4rem] overflow-hidden border border-black/20">
+          <div className="absolute inset-0 rounded-[2rem] md:rounded-[4rem] overflow-hidden border border-black/20 bg-amber-50/20">
+            {/* Colored patches */}
+            <div className="absolute top-[10%] left-[5%] w-[25%] h-[30%] bg-yellow-200/40 rounded-full blur-[60px]"></div>
+            <div className="absolute top-[5%] left-[15%] w-[15%] h-[20%] bg-yellow-300/30 rounded-full blur-[40px]"></div>
+            <div className="absolute top-[20%] right-[10%] w-[20%] h-[25%] bg-gray-300/35 rounded-full blur-[50px]"></div>
+            <div className="absolute top-[30%] right-[5%] w-[12%] h-[18%] bg-gray-400/25 rounded-full blur-[35px]"></div>
+            <div className="absolute bottom-[15%] left-[8%] w-[22%] h-[28%] bg-red-200/35 rounded-full blur-[55px]"></div>
+            <div className="absolute bottom-[25%] left-[20%] w-[14%] h-[16%] bg-red-300/25 rounded-full blur-[40px]"></div>
+            <div className="absolute top-[40%] left-[35%] w-[18%] h-[22%] bg-green-200/30 rounded-full blur-[45px]"></div>
+            <div className="absolute top-[50%] left-[25%] w-[12%] h-[15%] bg-green-300/25 rounded-full blur-[35px]"></div>
+            <div className="absolute bottom-[20%] right-[15%] w-[24%] h-[26%] bg-blue-200/40 rounded-full blur-[58px]"></div>
+            <div className="absolute bottom-[10%] right-[8%] w-[16%] h-[20%] bg-blue-300/30 rounded-full blur-[42px]"></div>
+            <div className="absolute top-[60%] right-[30%] w-[10%] h-[12%] bg-purple-200/25 rounded-full blur-[30px]"></div>
+            <div className="absolute bottom-[40%] left-[50%] w-[13%] h-[16%] bg-orange-200/28 rounded-full blur-[38px]"></div>
+
+            {/* Animated Images */}
             {imagesLoaded ? (
               heroImages2.map((img, index) => {
                 const isActive = currentImageIndex === index;
@@ -84,7 +99,13 @@ export default function AboutSection() {
                 );
               })
             ) : (
-              <div className="absolute inset-0 bg-gradient-to-br from-amber-100 to-amber-200" />
+              <div className="absolute inset-0 bg-amber-50/30">
+                <div className="absolute top-0 left-0 w-[40%] h-[40%] bg-yellow-200/60 blur-[80px]"></div>
+                <div className="absolute top-0 right-0 w-[35%] h-[35%] bg-gray-300/50 blur-[80px]"></div>
+                <div className="absolute bottom-0 left-0 w-[38%] h-[38%] bg-red-200/55 blur-[80px]"></div>
+                <div className="absolute bottom-0 right-0 w-[40%] h-[40%] bg-blue-200/60 blur-[80px]"></div>
+                <div className="absolute top-[30%] left-[30%] w-[35%] h-[35%] bg-green-200/50 blur-[80px]"></div>
+              </div>
             )}
           </div>
         </div>
@@ -135,7 +156,7 @@ export default function AboutSection() {
           <p>My focus is on making AI production-ready, not experimental. Currently, I'm exploring how generative AI, agents, and real-time infrastructure can come together to build practical, scalable, and high-impact systems.</p>
         </div>
 
-        {/* Skills Table */}
+       {/* Skills Table */}
         <div className="mt-8 bg-gray-100 border-2 border-black rounded-2xl overflow-hidden">
           <div className="grid grid-cols-1 divide-y divide-black/20">
             <div className="p-6">

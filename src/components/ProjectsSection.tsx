@@ -171,7 +171,7 @@ export default function ProjectsSection() {
         <SectionHeader icon={FolderKanban} title="FEATURED PROJECTS" subtitle="PREMIUM WORK COLLECTION" />
 
         {/* Mobile Layout - Simple Vertical Stack */}
-        <div className="block md:hidden space-y-4 mt-8">
+        <div className="block md:hidden space-y-3 sm:space-y-4 mt-6 sm:mt-8">
           {projects.map((project, index) => (
             <div key={index} className="w-full aspect-[4/3]">
               <ProjectCard {...project} size="medium" />
@@ -180,7 +180,7 @@ export default function ProjectsSection() {
         </div>
 
         {/* Tablet Layout - 2 Column Grid */}
-        <div className="hidden md:grid lg:hidden grid-cols-2 gap-4 mt-8">
+        <div className="hidden md:grid lg:hidden grid-cols-2 gap-3 md:gap-4 mt-6 md:mt-8">
           {projects.map((project, index) => (
             <div key={index} className="w-full aspect-[4/3]">
               <ProjectCard {...project} size="medium" />
@@ -188,68 +188,72 @@ export default function ProjectsSection() {
           ))}
         </div>
 
-        {/* Desktop Layout - Bento Grid with Proper Heights */}
-        <div className="hidden lg:grid grid-cols-4 gap-4 xl:gap-6 mt-8" style={{ gridAutoRows: '280px' }}>
-          {projects.slice(0, 24).map((project, index) => {
-            // First 6 cards - alternating pattern (tall, medium, medium, tall, medium, medium)
-            if (index === 0 || index === 3) {
+        {/* Desktop Layout - Bento Grid with Proper Heights - Show ALL Projects */}
+        <div className="hidden lg:grid grid-cols-4 gap-3 xl:gap-4 2xl:gap-6 mt-8" style={{ gridAutoRows: '240px' }}>
+          {projects.map((project, index) => {
+            // Repeat the pattern every 13 cards
+            const patternIndex = index % 13;
+            
+            // Pattern: tall, medium, medium, tall, medium, medium (cards 0-5)
+            if (patternIndex === 0 || patternIndex === 3) {
               return (
                 <div key={index} className="col-span-1 row-span-2">
                   <ProjectCard {...project} size="big" />
                 </div>
               );
             }
-            if (index === 1 || index === 2 || index === 4 || index === 5) {
+            if (patternIndex === 1 || patternIndex === 2 || patternIndex === 4 || patternIndex === 5) {
               return (
                 <div key={index} className="col-span-1 row-span-1">
                   <ProjectCard {...project} size="medium" />
                 </div>
               );
             }
-            // Cards 7-9: medium, wide, medium
-            if (index === 6 || index === 8) {
+            // Cards 6-8: medium, wide, medium
+            if (patternIndex === 6 || patternIndex === 8) {
               return (
                 <div key={index} className="col-span-1 row-span-1">
                   <ProjectCard {...project} size="medium" />
                 </div>
               );
             }
-            if (index === 7) {
+            if (patternIndex === 7) {
               return (
                 <div key={index} className="col-span-2 row-span-1">
                   <ProjectCard {...project} size="big-width" />
                 </div>
               );
             }
-            // Cards 10-13: tall, wide, medium, large
-            if (index === 9) {
+            // Cards 9-12: tall, wide, medium, large
+            if (patternIndex === 9) {
               return (
                 <div key={index} className="col-span-1 row-span-2">
                   <ProjectCard {...project} size="big" />
                 </div>
               );
             }
-            if (index === 10) {
+            if (patternIndex === 10) {
               return (
                 <div key={index} className="col-span-2 row-span-1">
                   <ProjectCard {...project} size="big-width" />
                 </div>
               );
             }
-            if (index === 11) {
+            if (patternIndex === 11) {
               return (
                 <div key={index} className="col-span-1 row-span-1">
-                  <ProjectCard {...project} size="big-width" />
+                  <ProjectCard {...project} size="medium" />
                 </div>
               );
             }
-            if (index === 12) {
+            if (patternIndex === 12) {
               return (
                 <div key={index} className="col-span-2 row-span-2">
                   <ProjectCard {...project} size="big" />
                 </div>
               );
             }
+            // Default fallback
             return (
               <div key={index} className="col-span-1 row-span-1">
                 <ProjectCard {...project} size="medium" />

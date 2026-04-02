@@ -125,7 +125,7 @@ export default function HeroSection() {
       <div className="relative z-[5]">
         <div className="flex flex-col">
           {/* First Screen - Hero Content */}
-          <div className="min-h-[75vh] flex flex-col md:flex-row lg:flex-row items-start justify-between px-6 md:px-12 lg:px-24 max-w-7xl mx-auto w-full gap-6 pt-32 md:pt-32 pb-0">
+          <div className="min-h-[75vh] flex flex-col md:flex-row lg:flex-row items-start justify-between px-6 md:px-12 lg:px-24 max-w-7xl mx-auto w-full gap-6 pt-16 md:pt-32 pb-0">
             {/* Text Content - First Column (Left) */}
             <div className="flex flex-col items-start justify-center md:w-1/2 lg:w-1/2 order-1">
               <motion.div {...fadeIn} className="mb-2 md:mb-6">
@@ -133,7 +133,7 @@ export default function HeroSection() {
                   Crafting Future Tech
                 </span>
               </motion.div>
-              <h1 className="hero-title text-5xl md:text-7xl lg:text-9xl font-black tracking-tighter leading-[0.8] mb-3 md:mb-6 lg:mb-8 select-none text-left text-black">
+              <h1 className="hero-title text-8xl md:text-7xl lg:text-9xl font-black tracking-tighter leading-[0.8] mb-3 md:mb-6 lg:mb-8 select-none text-left text-black">
                 KUNAL<br />
                 <span className="text-transparent bg-clip-text bg-gradient-to-b from-black to-black/40">PATIL</span>
               </h1>
@@ -165,12 +165,38 @@ export default function HeroSection() {
                 </a>
               </div>
 
-              {/* Animated Images Card - Below Buttons */}
-              <div className="relative w-full mt-6">
-                <div className="relative w-full aspect-square max-w-[400px]">
+              {/* Animated Images Card - Below Buttons - Hidden on mobile, shown on desktop */}
+              <div className="relative mt-6 w-full max-w-[380px] sm:max-w-[420px] md:max-w-[300px] lg:max-w-[350px] xl:max-w-[400px] mx-auto hidden md:block">
+                <div className="relative aspect-square w-full">
                   <div className="absolute inset-0 rounded-[2rem] md:rounded-[4rem] rotate-6 scale-95" />
                   <div className="absolute inset-0 bg-black/5 rounded-[2rem] md:rounded-[4rem] -rotate-3 border border-black/10 backdrop-blur-sm" />
-                  <div className="absolute inset-0 rounded-[2rem] md:rounded-[4rem] overflow-hidden border border-black/20 bg-gradient-to-br from-amber-50/70 to-orange-100/50 rotate-3">
+                  <div className="absolute inset-0 rounded-[2rem] md:rounded-[4rem] overflow-hidden border border-black/20">
+                    {/* Patchy color background */}
+                    <div className="absolute inset-0 bg-amber-50/20">
+                      {/* Yellow patches */}
+                      <div className="absolute top-[10%] left-[5%] w-[25%] h-[30%] bg-yellow-200/40 rounded-full blur-[60px]"></div>
+                      <div className="absolute top-[5%] left-[15%] w-[15%] h-[20%] bg-yellow-300/30 rounded-full blur-[40px]"></div>
+                      
+                      {/* Gray patches */}
+                      <div className="absolute top-[20%] right-[10%] w-[20%] h-[25%] bg-gray-300/35 rounded-full blur-[50px]"></div>
+                      <div className="absolute top-[30%] right-[5%] w-[12%] h-[18%] bg-gray-400/25 rounded-full blur-[35px]"></div>
+                      
+                      {/* Red patches */}
+                      <div className="absolute bottom-[15%] left-[8%] w-[22%] h-[28%] bg-red-200/35 rounded-full blur-[55px]"></div>
+                      <div className="absolute bottom-[25%] left-[20%] w-[14%] h-[16%] bg-red-300/25 rounded-full blur-[40px]"></div>
+                      
+                      {/* Green patches */}
+                      <div className="absolute top-[40%] left-[35%] w-[18%] h-[22%] bg-green-200/30 rounded-full blur-[45px]"></div>
+                      <div className="absolute top-[50%] left-[25%] w-[12%] h-[15%] bg-green-300/25 rounded-full blur-[35px]"></div>
+                      
+                      {/* Blue patches */}
+                      <div className="absolute bottom-[20%] right-[15%] w-[24%] h-[26%] bg-blue-200/40 rounded-full blur-[58px]"></div>
+                      <div className="absolute bottom-[10%] right-[8%] w-[16%] h-[20%] bg-blue-300/30 rounded-full blur-[42px]"></div>
+                      
+                      {/* Additional trailing patches */}
+                      <div className="absolute top-[60%] right-[30%] w-[10%] h-[12%] bg-purple-200/25 rounded-full blur-[30px]"></div>
+                      <div className="absolute bottom-[40%] left-[50%] w-[13%] h-[16%] bg-orange-200/28 rounded-full blur-[38px]"></div>
+                    </div>
                     {heroImages2.map((img, index) => {
                       const isActive = currentImageIndex === index;
                       return (
@@ -193,62 +219,81 @@ export default function HeroSection() {
             </div>
 
             {/* Right Column - Image Card, Battle Card, and Engineering Vault */}
-            <div className="md:w-1/2 lg:w-1/2 order-2 flex flex-col gap-6">
-              {/* Image Card - Top */}
-              <div className="relative group">
-                <div className="bg-white/60 backdrop-blur-sm border-2 border-black rounded-xl md:rounded-2xl overflow-hidden shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] transition-all">
-                  <div className="relative p-3 md:p-4">
-                    <div className="relative w-full aspect-square max-w-[200px] md:max-w-[280px] mx-auto">
-                      <img
-                        src="/me.png"
-                        alt="Hero Character"
-                        loading="eager"
-                        fetchPriority="high"
-                        width={500}
-                        height={500}
-                        decoding="async"
-                        className="w-full h-full object-cover grayscale rounded-lg"
-                      />
-                    </div>
+            <div className="md:w-1/2 lg:w-1/2 order-2 flex flex-col gap-2 sm:gap-3 md:gap-4 lg:gap-6">
+              {/* Image Card - Order 1 on mobile */}
+              <div className="relative group order-1">
+                <div className="relative w-full aspect-square max-w-[380px] sm:max-w-[420px] md:max-w-[300px] lg:max-w-[350px] xl:max-w-[400px] mx-auto">
+                  <div className="absolute inset-0 rounded-[2rem] md:rounded-[4rem] rotate-6 scale-95" />
+                  <div className="absolute inset-0 bg-black/5 rounded-[2rem] md:rounded-[4rem] -rotate-3 border border-black/10 backdrop-blur-sm" />
+                  <div className="absolute inset-0 rounded-[2rem] md:rounded-[4rem] overflow-hidden border border-black/20 bg-amber-50/20">
+                    {/* Colored patches */}
+                    <div className="absolute top-[10%] left-[5%] w-[25%] h-[30%] bg-yellow-200/40 rounded-full blur-[60px]"></div>
+                    <div className="absolute top-[5%] left-[15%] w-[15%] h-[20%] bg-yellow-300/30 rounded-full blur-[40px]"></div>
+                    <div className="absolute top-[20%] right-[10%] w-[20%] h-[25%] bg-gray-300/35 rounded-full blur-[50px]"></div>
+                    <div className="absolute top-[30%] right-[5%] w-[12%] h-[18%] bg-gray-400/25 rounded-full blur-[35px]"></div>
+                    <div className="absolute bottom-[15%] left-[8%] w-[22%] h-[28%] bg-red-200/35 rounded-full blur-[55px]"></div>
+                    <div className="absolute bottom-[25%] left-[20%] w-[14%] h-[16%] bg-red-300/25 rounded-full blur-[40px]"></div>
+                    <div className="absolute top-[40%] left-[35%] w-[18%] h-[22%] bg-green-200/30 rounded-full blur-[45px]"></div>
+                    <div className="absolute top-[50%] left-[25%] w-[12%] h-[15%] bg-green-300/25 rounded-full blur-[35px]"></div>
+                    <div className="absolute bottom-[20%] right-[15%] w-[24%] h-[26%] bg-blue-200/40 rounded-full blur-[58px]"></div>
+                    <div className="absolute bottom-[10%] right-[8%] w-[16%] h-[20%] bg-blue-300/30 rounded-full blur-[42px]"></div>
+                    <div className="absolute top-[60%] right-[30%] w-[10%] h-[12%] bg-purple-200/25 rounded-full blur-[30px]"></div>
+                    <div className="absolute bottom-[40%] left-[50%] w-[13%] h-[16%] bg-orange-200/28 rounded-full blur-[38px]"></div>
+                    
+                    {/* Image */}
+                    <img
+                      src="/me.png"
+                      alt="Hero Character"
+                      loading="eager"
+                      fetchPriority="high"
+                      width={500}
+                      height={500}
+                      decoding="async"
+                      className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[100%] h-[100%] md:w-[85%] md:h-[95%] object-contain md:object-cover grayscale rounded-2xl transition-all duration-300 group-hover:scale-105"
+                    />
                   </div>
                 </div>
               </div>
 
-              {/* Battle Ground Card */}
-              <div className="relative group">
+              {/* Battle Ground Card - Order 2 on mobile */}
+              <div className="relative group max-w-[380px] sm:max-w-[420px] md:max-w-[300px] lg:max-w-[350px] xl:max-w-[400px] mx-auto w-full order-2">
                 <a 
                   href="https://arena.kunalpatil.me" 
                   target="_blank" 
                   rel="noopener noreferrer"
                   className="block"
                 >
-                  <div className="bg-white/60 backdrop-blur-sm border-2 border-black rounded-xl md:rounded-2xl overflow-hidden shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] transition-all cursor-pointer">
-                    <div className="relative p-0">
+                  <div className="relative bg-white border-2 border-black rounded-lg sm:rounded-xl md:rounded-2xl overflow-hidden shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] transition-all cursor-pointer">
+                    <div className="relative">
                       <img 
                         src="/LLMbattle.png" 
                         alt="LLM Battle" 
-                        className="w-full h-auto object-cover opacity-30 grayscale hover:opacity-50 transition-opacity duration-300"
+                        className="w-full h-auto object-cover transition-all duration-300 group-hover:scale-105"
+                        style={{ 
+                          filter: 'sepia(0.4) saturate(0.6) hue-rotate(20deg) brightness(0.95)',
+                          opacity: 1
+                        }}
                       />
                     </div>
                   </div>
                 </a>
-                <div className="mt-4 text-center">
-                  <h3 className="text-sm md:text-lg font-black text-black mb-3">
+                <div className="mt-1.5 sm:mt-2 md:mt-3 lg:mt-4 text-center">
+                  <h3 className="text-sm xs:text-base sm:text-lg md:text-base lg:text-lg font-black text-black mb-2 sm:mb-3 md:mb-3 px-1 sm:px-2 leading-tight">
                     Join the Battle Ground of AI Agents
                   </h3>
                   <a 
                     href="https://arena.kunalpatil.me" 
                     target="_blank" 
                     rel="noopener noreferrer"
-                    className="inline-block px-6 md:px-8 py-2 md:py-2.5 bg-black text-white rounded-full font-black uppercase tracking-wider text-xs md:text-sm hover:bg-sky-500 transition-all active:scale-95 shadow-lg"
+                    className="inline-block px-5 xs:px-6 sm:px-7 md:px-6 lg:px-8 py-2 xs:py-2.5 sm:py-3 md:py-2.5 bg-black text-white rounded-full font-black uppercase tracking-wider text-xs xs:text-sm sm:text-base md:text-sm hover:bg-sky-500 transition-all active:scale-95 shadow-lg"
                   >
                     Join
                   </a>
                 </div>
               </div>
 
-              {/* Engineering Vault Image */}
-              <div className="w-full max-w-md mx-auto">
+              {/* Engineering Vault Image - Order 4 on mobile */}
+              <div className="w-full max-w-[380px] sm:max-w-[420px] md:max-w-[300px] lg:max-w-[350px] xl:max-w-[400px] mx-auto order-4">
                 <img
                   src="/hero.png"
                   alt="Engineering Vault VI"
@@ -259,15 +304,110 @@ export default function HeroSection() {
                   className="w-full h-auto object-contain"
                 />
               </div>
+
+              {/* Animated Images Card - Order 3 on mobile, shown only on mobile */}
+              <div className="relative w-full max-w-[380px] sm:max-w-[420px] md:max-w-[300px] lg:max-w-[350px] xl:max-w-[400px] mx-auto order-3 md:hidden">
+                <div className="relative aspect-square w-full">
+                  <div className="absolute inset-0 rounded-[2rem] md:rounded-[4rem] rotate-6 scale-95" />
+                  <div className="absolute inset-0 bg-black/5 rounded-[2rem] md:rounded-[4rem] -rotate-3 border border-black/10 backdrop-blur-sm" />
+                  <div className="absolute inset-0 rounded-[2rem] md:rounded-[4rem] overflow-hidden border border-black/20">
+                    <div className="absolute inset-0 bg-amber-50/20">
+                      <div className="absolute top-[10%] left-[5%] w-[25%] h-[30%] bg-yellow-200/40 rounded-full blur-[60px]"></div>
+                      <div className="absolute top-[5%] left-[15%] w-[15%] h-[20%] bg-yellow-300/30 rounded-full blur-[40px]"></div>
+                      <div className="absolute top-[20%] right-[10%] w-[20%] h-[25%] bg-gray-300/35 rounded-full blur-[50px]"></div>
+                      <div className="absolute top-[30%] right-[5%] w-[12%] h-[18%] bg-gray-400/25 rounded-full blur-[35px]"></div>
+                      <div className="absolute bottom-[15%] left-[8%] w-[22%] h-[28%] bg-red-200/35 rounded-full blur-[55px]"></div>
+                      <div className="absolute bottom-[25%] left-[20%] w-[14%] h-[16%] bg-red-300/25 rounded-full blur-[40px]"></div>
+                      <div className="absolute top-[40%] left-[35%] w-[18%] h-[22%] bg-green-200/30 rounded-full blur-[45px]"></div>
+                      <div className="absolute top-[50%] left-[25%] w-[12%] h-[15%] bg-green-300/25 rounded-full blur-[35px]"></div>
+                      <div className="absolute bottom-[20%] right-[15%] w-[24%] h-[26%] bg-blue-200/40 rounded-full blur-[58px]"></div>
+                      <div className="absolute bottom-[10%] right-[8%] w-[16%] h-[20%] bg-blue-300/30 rounded-full blur-[42px]"></div>
+                      <div className="absolute top-[60%] right-[30%] w-[10%] h-[12%] bg-purple-200/25 rounded-full blur-[30px]"></div>
+                      <div className="absolute bottom-[40%] left-[50%] w-[13%] h-[16%] bg-orange-200/28 rounded-full blur-[38px]"></div>
+                    </div>
+                    {heroImages2.map((img, index) => {
+                      const isActive = currentImageIndex === index;
+                      return (
+                        <img
+                          key={img}
+                          src={img}
+                          alt="Character"
+                          loading="lazy"
+                          decoding="async"
+                          width={500}
+                          height={500}
+                          className={`absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[100%] h-[100%] md:w-[85%] md:h-[95%] object-contain md:object-cover grayscale rounded-2xl transition-opacity duration-1000 -rotate-3 ${isActive ? 'opacity-100' : 'opacity-0'}`}
+                          style={{ pointerEvents: 'none' }}
+                        />
+                      );
+                    })}
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
 
           {/* Mobile Only - Additional Text Below Image Section */}
-          <div className="px-6 pb-10 max-w-7xl mx-auto w-full">
-            <div className="space-y-4 text-base md:text-2xl lg:text-3xl text-black font-handwriting leading-relaxed">
-              <p>I'm a backend-focused engineer who enjoys building systems that are reliable, scalable, and ready for real users. I spend most of my time designing APIs, real-time systems, and cloud-native backends using Node.js and AWS.</p>
-              <p>I care deeply about performance, clean architecture, and fault tolerance — not just making things work, but making them last. Alongside backend and DevOps, I work extensively with AI systems, including LLMs, generative models, and image generation workflows integrated into real applications.</p>
-              <p>My focus is on making AI production-ready, not experimental. Currently, I'm exploring how generative AI, agents, and real-time infrastructure can come together to build practical, scalable, and high-impact systems.</p>
+          <div className="px-4 sm:px-6 pb-10 max-w-7xl mx-auto w-full">
+            {/* Professional Bio Card */}
+            <div className="relative bg-gradient-to-br from-zinc-900 via-neutral-900 to-black rounded-2xl md:rounded-3xl border border-zinc-800/50 shadow-[0_20px_60px_-15px_rgba(0,0,0,0.5)] overflow-hidden">
+              {/* Subtle diagonal lines pattern */}
+              <div className="absolute inset-0 opacity-[0.02]" style={{
+                backgroundImage: `repeating-linear-gradient(45deg, transparent, transparent 35px, rgba(255,255,255,.05) 35px, rgba(255,255,255,.05) 70px)`
+              }} />
+              
+              {/* Premium gold accent line at top */}
+              <div className="h-[2px] bg-gradient-to-r from-transparent via-amber-500/60 to-transparent" />
+              
+              {/* Content */}
+              <div className="relative p-6 sm:p-8 md:p-12 space-y-8 md:space-y-10">
+                {/* Intro paragraph with elegant styling */}
+                <div className="relative">
+                  <div className="absolute -left-4 sm:-left-6 top-0 w-[2px] h-full bg-gradient-to-b from-amber-500/60 via-amber-600/40 to-transparent" />
+                  <p className="text-zinc-100 text-xs sm:text-base md:text-lg lg:text-xl font-light leading-relaxed tracking-wide" style={{ fontFamily: "'Inter', 'SF Pro Display', -apple-system, sans-serif" }}>
+                    I'm a <span className="font-semibold text-amber-400/90">backend-focused engineer</span> who enjoys building systems that are reliable, scalable, and ready for real users. I spend most of my time designing <span className="font-medium text-zinc-300">APIs, real-time systems, and cloud-native backends</span> using Node.js and AWS.
+                  </p>
+                </div>
+
+                {/* Elegant divider */}
+                <div className="flex items-center gap-4">
+                  <div className="h-[1px] flex-1 bg-gradient-to-r from-transparent via-zinc-700/50 to-transparent" />
+                  <div className="w-1.5 h-1.5 bg-amber-500/60 rounded-full" />
+                  <div className="h-[1px] flex-1 bg-gradient-to-r from-transparent via-zinc-700/50 to-transparent" />
+                </div>
+
+                {/* Core values paragraph */}
+                <p className="text-zinc-200 text-xs sm:text-base md:text-lg lg:text-xl font-light leading-relaxed tracking-wide" style={{ fontFamily: "'Inter', 'SF Pro Display', -apple-system, sans-serif" }}>
+                  I care deeply about <span className="font-medium text-zinc-100">performance, clean architecture, and fault tolerance</span> — not just making things work, but <span className="font-semibold text-amber-400/90">making them last</span>. Alongside backend and DevOps, I work extensively with <span className="font-medium text-zinc-300">AI systems</span>, including LLMs, generative models, and image generation workflows integrated into real applications.
+                </p>
+
+                {/* Elegant divider */}
+                <div className="flex items-center gap-4">
+                  <div className="h-[1px] flex-1 bg-gradient-to-r from-transparent via-zinc-700/50 to-transparent" />
+                  <div className="w-1.5 h-1.5 bg-amber-500/60 rounded-full" />
+                  <div className="h-[1px] flex-1 bg-gradient-to-r from-transparent via-zinc-700/50 to-transparent" />
+                </div>
+
+                {/* Focus statement with premium badge */}
+                <div className="relative bg-gradient-to-br from-zinc-800/40 to-zinc-900/40 rounded-xl md:rounded-2xl p-6 md:p-8 border border-zinc-800/50 backdrop-blur-sm">
+                  {/* Premium badge */}
+                  <div className="absolute -top-3 left-6 md:left-8">
+                    <div className="relative">
+                      <div className="absolute inset-0 bg-gradient-to-r from-amber-500/20 to-amber-600/20 blur-xl" />
+                      <span className="relative px-4 py-1.5 bg-gradient-to-r from-zinc-900 to-black border border-amber-500/30 text-amber-400/90 text-xs md:text-sm font-semibold uppercase tracking-[0.2em] rounded-full inline-block" style={{ fontFamily: "'Inter', sans-serif" }}>
+                        Current Focus
+                      </span>
+                    </div>
+                  </div>
+                  
+                  <p className="text-zinc-100 text-xs sm:text-base md:text-lg lg:text-xl font-light leading-relaxed tracking-wide pt-4" style={{ fontFamily: "'Inter', 'SF Pro Display', -apple-system, sans-serif" }}>
+                    My focus is on making AI <span className="font-semibold text-amber-400/90">production-ready</span>, not experimental. Currently, I'm exploring how <span className="font-medium text-zinc-300">generative AI, agents, and real-time infrastructure</span> can come together to build practical, scalable, and high-impact systems.
+                  </p>
+                </div>
+              </div>
+
+              {/* Premium gold accent line at bottom */}
+              <div className="h-[2px] bg-gradient-to-r from-transparent via-amber-500/60 to-transparent" />
             </div>
 
             {/* Skills Table */}
@@ -275,19 +415,27 @@ export default function HeroSection() {
               <div className="grid grid-cols-1 divide-y divide-black/20">
                 <div className="p-6">
                   <h3 className="text-black font-black uppercase tracking-wider text-sm mb-3">LANGUAGES</h3>
-                  <div className="text-black/70 text-sm md:text-base font-handwriting leading-relaxed">C/C++, Java, Python, JavaScript, SQL</div>
+                  <div className="text-black/70 text-sm md:text-base font-handwriting leading-relaxed">
+                    C/C++, Java, Python, JavaScript, SQL
+                  </div>
                 </div>
                 <div className="p-6">
                   <h3 className="text-black font-black uppercase tracking-wider text-sm mb-3">TECHNOLOGIES & TOOLS</h3>
-                  <div className="text-black/70 text-sm md:text-base font-handwriting leading-relaxed">AWS, Kubernetes, Docker, Kafka, Spring Boot, React.JS, Azure, GitHub Actions, Linux</div>
+                  <div className="text-black/70 text-sm md:text-base font-handwriting leading-relaxed">
+                    AWS, Kubernetes, Docker, Kafka, Spring Boot, React.JS, Azure, GitHub Actions, Linux
+                  </div>
                 </div>
                 <div className="p-6">
                   <h3 className="text-black font-black uppercase tracking-wider text-sm mb-3">DATABASES</h3>
-                  <div className="text-black/70 text-sm md:text-base font-handwriting leading-relaxed">MySQL, MongoDB, GraphQL, Supabase, Redis</div>
+                  <div className="text-black/70 text-sm md:text-base font-handwriting leading-relaxed">
+                    MySQL, MongoDB, GraphQL, Supabase, Redis
+                  </div>
                 </div>
                 <div className="p-6">
                   <h3 className="text-black font-black uppercase tracking-wider text-sm mb-3">AI/ML</h3>
-                  <div className="text-black/70 text-sm md:text-base font-handwriting leading-relaxed">Machine Learning, Data Analysis, Deep Learning, Generative AI, AI Agents</div>
+                  <div className="text-black/70 text-sm md:text-base font-handwriting leading-relaxed">
+                    Machine Learning, Data Analysis, Deep Learning, Generative AI, AI Agents
+                  </div>
                 </div>
               </div>
             </div>

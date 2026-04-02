@@ -115,14 +115,17 @@ const ProjectCard = memo(function ProjectCard({
 
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(0,163,255,0.08)_0%,transparent_60%)] opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
 
-          {/* Mobile Layout - Title at Bottom Center + Read More Button */}
-          <div className="md:hidden relative z-10 h-full flex flex-col justify-end p-3 md:p-4">
-            <h3 className="card-title text-lg md:text-xl font-black uppercase tracking-tight text-white text-center leading-tight mb-3 line-clamp-2">
+          {/* Mobile Layout - Title at Bottom Center + Description + Read More Button */}
+          <div className="md:hidden relative z-10 h-full flex flex-col justify-end p-3">
+            <h3 className="card-title text-base sm:text-lg font-black uppercase tracking-tight text-white text-center leading-tight mb-2">
               {title}
             </h3>
+            <p className="text-white/80 text-xs text-center leading-relaxed mb-3 line-clamp-1">
+              {tagline}
+            </p>
             <button 
               onClick={handleCardClick}
-              className="ml-auto flex items-center gap-2 px-3 py-2 md:px-4 md:py-2 bg-white text-black rounded-lg text-xs font-bold uppercase tracking-wider hover:bg-gray-100 transition-all shadow-lg"
+              className="ml-auto flex items-center gap-2 px-3 py-1.5 sm:px-4 sm:py-2 bg-white text-black rounded-lg text-xs font-bold uppercase tracking-wider hover:bg-gray-100 transition-all shadow-lg"
             >
               Read More
               <ArrowRight size={14} />
@@ -135,10 +138,12 @@ const ProjectCard = memo(function ProjectCard({
               <div className="space-y-2 md:space-y-3">
                 <div>
                   <h3
-                    className={`card-title text-xl md:text-2xl lg:text-3xl font-black uppercase tracking-tight ${titleColor === "black" ? "text-black" : "text-white"} leading-none mb-2 line-clamp-2`}
+                    className={`card-title text-lg md:text-xl lg:text-2xl xl:text-3xl font-black uppercase tracking-tight ${titleColor === "black" ? "text-black" : "text-white"} leading-none mb-2`}
                     style={{
                       WebkitTextStroke: titleColor === "black" ? "1.5px white" : "1.5px black",
-                      paintOrder: "stroke fill"
+                      paintOrder: "stroke fill",
+                      wordBreak: "break-word",
+                      hyphens: "auto"
                     }}
                   >
                     {title}
@@ -147,7 +152,7 @@ const ProjectCard = memo(function ProjectCard({
                 </div>
 
                 <p
-                  className={`card-description ${descriptionColor === "black" ? "text-black/70" : "text-white/70"} text-xs md:text-sm font-medium leading-relaxed max-w-lg line-clamp-3`}
+                  className={`card-description ${descriptionColor === "black" ? "text-black/70" : "text-white/70"} text-xs md:text-sm font-medium leading-relaxed max-w-lg line-clamp-2 md:line-clamp-3`}
                 >
                   {tagline}
                 </p>

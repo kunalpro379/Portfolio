@@ -498,14 +498,20 @@ router.delete('/folders/:folderId', async (req, res) => {
 // Create folder with language support
 router.post('/folders', async (req, res) => {
   try {
+    console.log('=== CREATE CODE FOLDER REQUEST ===');
+    console.log('Request body:', JSON.stringify(req.body, null, 2));
+    
     const { name, description, language, parentPath = '', createdAt } = req.body;
     
     if (!name) {
+      console.log('Validation failed: missing name');
       return res.status(400).json({ error: 'Folder name is required' });
     }
     
     const folderId = generateId();
     const path = parentPath ? `${parentPath}/${name}` : name;
+    
+    console.log('Generated folder data:', { folderId, path, parentPath });
     
     const folderData = {
       folderId,
@@ -517,17 +523,23 @@ router.post('/folders', async (req, res) => {
       createdAt: createdAt || new Date().toISOString()
     };
     
+    console.log('Connecting to MongoDB...');
     const client = new MongoClient(MONGODB_URI);
     await client.connect();
+    console.log('MongoDB connected');
     
     const db = client.db(DATABASE_NAME);
     const collection = db.collection('codeFolders');
     
+    console.log('Inserting folder into database...');
     await collection.insertOne(folderData);
+    console.log('Folder inserted successfully');
     
     // Create a default main file based on language
     const defaultContent = getDefaultTemplate(language || 'javascript');
     const defaultFilename = getDefaultFilename(language || 'javascript');
+    
+    console.log('Creating default file:', defaultFilename);
     
     // Create default file
     const fileId = generateId();
@@ -540,6 +552,7 @@ router.post('/folders', async (req, res) => {
         const blobName = `${path}/${defaultFilename}`;
         const blockBlobClient = containerClient.getBlockBlobClient(blobName);
         
+        console.log('Uploading to Azure:', blobName);
         await blockBlobClient.upload(defaultContent, Buffer.byteLength(defaultContent, 'utf8'), {
           blobHTTPHeaders: {
             blobContentType: 'text/plain'
@@ -547,6 +560,7 @@ router.post('/folders', async (req, res) => {
         });
         
         blobUrl = blockBlobClient.url;
+        console.log('File uploaded to Azure successfully');
       } catch (blobError) {
         console.error('Error uploading to blob storage:', blobError);
       }

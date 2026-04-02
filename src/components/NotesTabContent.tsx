@@ -661,20 +661,20 @@ export default function NotesTabContent({ notes, activeSubTab: propActiveSubTab 
 
       {/* Create Guide Modal */}
       {showCreateGuideModal && (
-        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-[500] p-4" onClick={() => setShowCreateGuideModal(false)}>
-          <div className="bg-white border-4 border-black rounded-2xl p-8 max-w-2xl w-full shadow-2xl" onClick={(e) => e.stopPropagation()}>
-            <h2 className="text-3xl font-black text-black mb-6">Create New Guide</h2>
+        <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-[500] p-4" onClick={() => setShowCreateGuideModal(false)}>
+          <div className="bg-white border border-gray-200 rounded-lg p-8 max-w-2xl w-full shadow-xl" onClick={(e) => e.stopPropagation()}>
+            <h2 className="text-2xl font-bold text-black mb-6">Create New Guide</h2>
             
-            <form onSubmit={handleGuideFormSubmit} className="space-y-6">
+            <form onSubmit={handleGuideFormSubmit} className="space-y-5">
               <div>
-                <label className="block text-sm font-bold text-black mb-2">
+                <label className="block text-sm font-semibold text-gray-700 mb-2">
                   Guide Name <span className="text-red-500">*</span>
                 </label>
                 <input
                   type="text"
                   value={guideFormData.name}
                   onChange={(e) => setGuideFormData({ ...guideFormData, name: e.target.value })}
-                  className="w-full px-4 py-3 border-3 border-black rounded-xl font-medium text-black focus:outline-none focus:ring-4 focus:ring-yellow-200 transition-all"
+                  className="w-full px-4 py-2.5 border border-gray-300 rounded-md font-normal text-gray-900 focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent transition-all"
                   placeholder="e.g., React Best Practices"
                   required
                   autoFocus
@@ -682,27 +682,27 @@ export default function NotesTabContent({ notes, activeSubTab: propActiveSubTab 
               </div>
 
               <div>
-                <label className="block text-sm font-bold text-black mb-2">
+                <label className="block text-sm font-semibold text-gray-700 mb-2">
                   Topic <span className="text-red-500">*</span>
                 </label>
                 <input
                   type="text"
                   value={guideFormData.topic}
                   onChange={(e) => setGuideFormData({ ...guideFormData, topic: e.target.value })}
-                  className="w-full px-4 py-3 border-3 border-black rounded-xl font-medium text-black focus:outline-none focus:ring-4 focus:ring-yellow-200 transition-all"
+                  className="w-full px-4 py-2.5 border border-gray-300 rounded-md font-normal text-gray-900 focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent transition-all"
                   placeholder="e.g., Web Development"
                   required
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-bold text-black mb-2">
+                <label className="block text-sm font-semibold text-gray-700 mb-2">
                   Description
                 </label>
                 <textarea
                   value={guideFormData.description}
                   onChange={(e) => setGuideFormData({ ...guideFormData, description: e.target.value })}
-                  className="w-full px-4 py-3 border-3 border-black rounded-xl font-medium text-black focus:outline-none focus:ring-4 focus:ring-yellow-200 transition-all resize-none"
+                  className="w-full px-4 py-2.5 border border-gray-300 rounded-md font-normal text-gray-900 focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent transition-all resize-none"
                   placeholder="Brief description of your guide..."
                   rows={4}
                 />
@@ -716,23 +716,23 @@ export default function NotesTabContent({ notes, activeSubTab: propActiveSubTab 
                     setGuideFormData({ name: '', topic: '', description: '' });
                   }}
                   disabled={creatingGuide}
-                  className="flex-1 px-6 py-3 bg-gray-200 border-3 border-black rounded-xl font-bold text-black hover:bg-gray-300 transition-all shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="flex-1 px-6 py-2.5 bg-white border border-gray-300 rounded-md font-semibold text-gray-700 hover:bg-gray-50 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={creatingGuide}
-                  className="flex-1 px-6 py-3 bg-gradient-to-r from-yellow-400 to-yellow-500 border-3 border-black rounded-xl font-bold text-black hover:from-yellow-500 hover:to-yellow-600 transition-all shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                  className="flex-1 px-6 py-2.5 bg-black border border-black rounded-md font-semibold text-white hover:bg-gray-900 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                 >
                   {creatingGuide ? (
                     <>
-                      <div className="w-5 h-5 border-3 border-black border-t-transparent rounded-full animate-spin"></div>
+                      <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
                       <span>Creating...</span>
                     </>
                   ) : (
                     <>
-                      <Plus size={20} strokeWidth={2.5} />
+                      <Plus size={18} strokeWidth={2} />
                       <span>Create Guide</span>
                     </>
                   )}
