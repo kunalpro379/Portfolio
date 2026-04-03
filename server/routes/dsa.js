@@ -101,7 +101,8 @@ router.post('/:dsaId/folders', async (req, res) => {
     }
 
     const folderId = generateId();
-    const fullPath = path ? `${path}/${name}` : name;
+    // Use the path as-is from frontend (it already includes the name)
+    const fullPath = path;
 
     project.folders.push({
       folderId,
@@ -140,7 +141,8 @@ router.post('/:dsaId/files', async (req, res) => {
     }
 
     const fileId = generateId();
-    const fullPath = path ? `${path}/${name}` : name;
+    // Use the path as-is from frontend (it already includes the name)
+    const fullPath = path;
     const azurePath = `dsa/${dsaId}/files/${fileId}-${name}`;
 
     // Upload to Azure

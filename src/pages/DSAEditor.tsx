@@ -370,6 +370,7 @@ export default function DSAEditor() {
       if (createType === 'folder') {
         // Create folder at root or inside selected folder
         const folderPath = selectedFolder ? `${selectedFolder}/${createName}` : createName;
+        console.log('Creating folder with path:', folderPath);
         const result = await createDSAFolder(dsaId!, { name: createName, path: folderPath });
         console.log('Folder created:', result);
       } else {
@@ -380,6 +381,7 @@ export default function DSAEditor() {
                      createName.endsWith('.js') ? 'javascript' : 'cpp';
         
         const filePath = selectedFolder ? `${selectedFolder}/${createName}` : createName;
+        console.log('Creating file with path:', filePath);
         
         const result = await createDSAFile(dsaId!, { 
           name: createName, 
@@ -392,6 +394,7 @@ export default function DSAEditor() {
       
       setShowCreateModal(false);
       setCreateName('');
+      setSelectedFolder(null); // Clear folder selection after creating
       await loadProject();
     } catch (err) {
       console.error(`Error creating ${createType}:`, err);
@@ -657,6 +660,13 @@ export default function DSAEditor() {
               </span>
             )}
             
+            {/* Debug: Show canvas URL */}
+            {selectedFile.canvasAzureUrl && (
+              <span className="text-xs text-blue-600 font-medium" title={selectedFile.canvasAzureUrl}>
+                ✓ Canvas saved
+              </span>
+            )}
+            
             <select
               value={language}
               onChange={(e) => setLanguage(e.target.value)}
@@ -675,6 +685,27 @@ export default function DSAEditor() {
             >
               <Save size={16} strokeWidth={2.5} />
               {saving ? 'Saving...' : 'Save All'}
+            </button>
+            
+            {/* Debug button */}
+            <button
+              onClick={() => {
+                console.log('=== DEBUG INFO ===');
+                console.log('Selected file:', selectedFile);
+                console.log('Canvas URL:', selectedFile?.canvasAzureUrl);
+                console.log('Canvas data:', canvasData);
+                console.log('Excalidraw ref:', excalidrawRef.current);
+                if (excalidrawRef.current) {
+                  const elements = excalidrawRef.current.getSceneElements();
+                  console.log('Current canvas elements:', elements);
+                  console.log('Elements count:', elements?.length);
+                }
+                alert(`Canvas URL: ${selectedFile?.canvasAzureUrl || 'Not saved yet'}\nElements in canvas: ${canvasData?.elements?.length || 0}`);
+              }}
+              className="px-3 py-2 bg-gray-200 hover:bg-gray-300 border-2 border-black rounded-lg text-xs font-bold"
+              title="Debug Canvas"
+            >
+              🐛
             </button>
             
             <button
