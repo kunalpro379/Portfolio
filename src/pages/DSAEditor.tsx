@@ -30,6 +30,7 @@ export default function DSAEditor() {
   const [showCanvas, setShowCanvas] = useState(false);
   const [canvasData, setCanvasData] = useState<any>(null);
   const [saving, setSaving] = useState(false);
+  const [lastSaved, setLastSaved] = useState<Date | null>(null);
   const [running, setRunning] = useState(false);
   const [output, setOutput] = useState('');
   const [loading, setLoading] = useState(true);
@@ -46,6 +47,18 @@ export default function DSAEditor() {
   useEffect(() => {
     loadProject();
   }, [dsaId]);
+
+  // Auto-save every 10 minutes
+  useEffect(() => {
+    if (!selectedFile) return;
+
+    const autoSaveInterval = setInterval(() => {
+      console.log('🔄 Auto-saving...');
+      handleSave(true); // Pass true to indicate auto-save (no alert)
+    }, 10 * 60 * 1000); // 10 minutes
+
+    return () => clearInterval(autoSaveInterval);
+  }, [selectedFile, code, canvasData]);
 
   const loadProject = async () => {
     try {
@@ -147,8 +160,13 @@ export default function DSAEditor() {
     // Instantly set selected file and show loading
     setSelectedFile(file);
     setLoadingFile(true);
+    setCanvasData(null); // Clear previous canvas data immediately
     
     try {
+      console.log('=== LOADING FILE ===');
+      console.log('File:', file.name, file.fileId);
+      console.log('Canvas URL:', file.canvasAzureUrl);
+      
       const { content } = await fetchDSAFileContent(dsaId!, file.fileId);
       setCode(content);
       
@@ -163,22 +181,26 @@ export default function DSAEditor() {
       // Load THIS FILE's canvas data if exists
       if (file.canvasAzureUrl) {
         try {
-          console.log('Loading canvas for file:', file.name, file.canvasAzureUrl);
+          console.log('Fetching canvas from:', file.canvasAzureUrl);
           const canvasResponse = await fetch(file.canvasAzureUrl);
+          console.log('Canvas response status:', canvasResponse.status);
+          
           if (canvasResponse.ok) {
             const canvasJson = await canvasResponse.json();
-            console.log('Canvas loaded successfully for', file.name);
+            console.log('✓ Canvas loaded successfully');
+            console.log('Elements count:', canvasJson.elements?.length || 0);
             setCanvasData(canvasJson);
           } else {
-            console.log('No canvas found, initializing empty canvas for', file.name);
+            console.log('Canvas not found (404), initializing empty');
             setCanvasData({ elements: [], appState: {} });
           }
         } catch (err) {
-          console.log('No canvas data found for this file, initializing empty canvas');
+          console.error('Error loading canvas:', err);
+          console.log('Initializing empty canvas due to error');
           setCanvasData({ elements: [], appState: {} });
         }
       } else {
-        console.log('No canvas URL, initializing empty canvas for', file.name);
+        console.log('No canvas URL, initializing empty canvas');
         setCanvasData({ elements: [], appState: {} });
       }
     } catch (err) {
@@ -189,12 +211,12 @@ export default function DSAEditor() {
     }
   };
 
-  const handleSave = async () => {
+  const handleSave = async (isAutoSave = false) => {
     if (!selectedFile) return;
     
     setSaving(true);
     try {
-      console.log('=== SAVING CODE + CANVAS ===');
+      console.log(isAutoSave ? '🔄 Auto-saving...' : '=== MANUAL SAVE ===');
       console.log('File:', selectedFile.name, selectedFile.fileId);
       
       // 1. Save code first
@@ -238,10 +260,22 @@ export default function DSAEditor() {
         console.log('No canvas ref available, skipping canvas save');
       }
       
-      alert(`✓ Saved ${selectedFile.name}\n• Code saved\n• Canvas saved to Azure`);
+      setLastSaved(new Date());
+      
+      // Only show alert for manual saves
+      if (!isAutoSave) {
+        alert(`✓ Saved ${selectedFile.name}\n• Code saved\n• Canvas saved to Azure`);
+      } else {
+        console.log('✓ Auto-save completed at', new Date().toLocaleTimeString());
+      }
     } catch (err) {
       console.error('Error saving:', err);
-      alert(`Failed to save: ${err instanceof Error ? err.message : 'Unknown error'}`);
+      // Only show error alert for manual saves
+      if (!isAutoSave) {
+        alert(`Failed to save: ${err instanceof Error ? err.message : 'Unknown error'}`);
+      } else {
+        console.error('Auto-save failed:', err);
+      }
     } finally {
       setSaving(false);
     }
@@ -458,7 +492,7 @@ export default function DSAEditor() {
       )}
 
       {/* Fullscreen Canvas Modal */}
-      {isCanvasFullscreen && selectedFile && (
+      {isCanvasFullscreen && selectedFile && canvasData && (
         <div className="fixed inset-0 bg-white z-[9999] flex flex-col">
           <div className="flex items-center justify-between px-6 py-4 bg-purple-500 border-b-4 border-black">
             <div className="flex items-center gap-4">
@@ -484,7 +518,7 @@ export default function DSAEditor() {
           </div>
           <div className="flex-1">
             <Excalidraw
-              key={`canvas-fullscreen-${selectedFile.fileId}`}
+              key={`canvas-fullscreen-${selectedFile.fileId}-${Date.now()}`}
               theme="light"
               initialData={canvasData}
               excalidrawAPI={(api) => {
@@ -567,6 +601,12 @@ export default function DSAEditor() {
         
         {selectedFile && (
           <div className="flex items-center gap-3">
+            {lastSaved && (
+              <span className="text-xs text-gray-600 font-medium">
+                Last saved: {lastSaved.toLocaleTimeString()}
+              </span>
+            )}
+            
             <select
               value={language}
               onChange={(e) => setLanguage(e.target.value)}
@@ -579,7 +619,7 @@ export default function DSAEditor() {
             </select>
             
             <button
-              onClick={handleSave}
+              onClick={() => handleSave(false)}
               disabled={saving}
               className="px-5 py-2 bg-green-400 hover:bg-green-500 border-3 border-black rounded-lg text-sm font-black flex items-center gap-2 disabled:opacity-50 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] transition-all"
             >
@@ -783,10 +823,10 @@ export default function DSAEditor() {
                 </div>
 
                 {/* Canvas - Hidden when code is shown */}
-                {selectedFile && (
+                {selectedFile && canvasData && (
                   <div className={`flex-1 m-4 border-4 border-black rounded-xl overflow-hidden shadow-[8px_8px_0px_0px_rgba(0,0,0,0.1)] relative ${showCanvas ? 'block' : 'hidden'}`}>
                     <Excalidraw
-                      key={`canvas-${selectedFile.fileId}`}
+                      key={`canvas-${selectedFile.fileId}-${Date.now()}`}
                       theme="light"
                       initialData={canvasData}
                       excalidrawAPI={(api) => {
