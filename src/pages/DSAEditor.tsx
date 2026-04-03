@@ -77,43 +77,61 @@ export default function DSAEditor() {
   };
 
   const buildTree = (proj: DSAProject) => {
-    console.log('Building tree with project:', proj);
+    console.log('=== BUILDING TREE ===');
+    console.log('Project:', proj.name);
+    console.log('Files count:', proj.files?.length || 0);
+    console.log('Folders count:', proj.folders?.length || 0);
     console.log('Files:', proj.files);
     console.log('Folders:', proj.folders);
     
     const root: TreeNode[] = [];
     const folderMap = new Map<string, TreeNode>();
 
-    // Add folders first
-    if (proj.folders && proj.folders.length > 0) {
-      proj.folders.forEach(folder => {
-        const node: TreeNode = {
-          type: 'folder',
-          name: folder.name,
-          path: folder.path,
-          id: folder.folderId,
-          children: []
-        };
-        folderMap.set(folder.path, node);
+    // Sort folders by path depth (parent folders first)
+    const sortedFolders = (proj.folders || []).sort((a, b) => {
+      const aDepth = a.path.split('/').length;
+      const bDepth = b.path.split('/').length;
+      return aDepth - bDepth;
+    });
 
-        // Check if this folder has a parent
-        const pathParts = folder.path.split('/');
-        if (pathParts.length > 1) {
-          // Has parent folder
-          const parentPath = pathParts.slice(0, -1).join('/');
-          const parent = folderMap.get(parentPath);
-          if (parent && parent.children) {
-            parent.children.push(node);
-          } else {
-            // Parent not found yet, add to root
-            root.push(node);
-          }
+    console.log('Sorted folders:', sortedFolders);
+
+    // Add folders first
+    sortedFolders.forEach(folder => {
+      const node: TreeNode = {
+        type: 'folder',
+        name: folder.name,
+        path: folder.path,
+        id: folder.folderId,
+        children: []
+      };
+      
+      console.log('Processing folder:', folder.name, 'path:', folder.path);
+      folderMap.set(folder.path, node);
+
+      // Check if this folder has a parent
+      const pathParts = folder.path.split('/');
+      if (pathParts.length > 1) {
+        // Has parent folder
+        const parentPath = pathParts.slice(0, -1).join('/');
+        console.log('Looking for parent:', parentPath);
+        const parent = folderMap.get(parentPath);
+        if (parent && parent.children) {
+          console.log('Found parent, adding to parent.children');
+          parent.children.push(node);
         } else {
-          // Root level folder
+          // Parent not found yet, add to root
+          console.log('Parent not found, adding to root');
           root.push(node);
         }
-      });
-    }
+      } else {
+        // Root level folder
+        console.log('Root level folder, adding to root');
+        root.push(node);
+      }
+    });
+
+    console.log('Folder map:', folderMap);
 
     // Add files
     if (proj.files && proj.files.length > 0) {
@@ -126,32 +144,39 @@ export default function DSAEditor() {
           language: file.language
         };
 
+        console.log('Processing file:', file.name, 'path:', file.path);
+
         // Check if this file is in a folder
         const pathParts = file.path.split('/');
         if (pathParts.length > 1) {
           // File is in a folder
           const parentPath = pathParts.slice(0, -1).join('/');
+          console.log('File parent path:', parentPath);
           const parent = folderMap.get(parentPath);
           if (parent && parent.children) {
+            console.log('Found parent folder, adding file to it');
             parent.children.push(node);
           } else {
             // Parent folder not found, add to root
+            console.log('Parent folder not found, adding file to root');
             root.push(node);
           }
         } else {
           // Root level file
+          console.log('Root level file');
           root.push(node);
         }
       });
     }
 
-    console.log('Tree built:', root);
-    console.log('Folder map:', folderMap);
+    console.log('Final tree structure:', root);
+    console.log('Tree root nodes count:', root.length);
     setTree(root);
     
     // Auto-expand all folders if there are any
     if (proj.folders && proj.folders.length > 0) {
       const allFolderPaths = new Set(proj.folders.map(f => f.path));
+      console.log('Auto-expanding folders:', allFolderPaths);
       setExpandedFolders(allFolderPaths);
     }
   };
@@ -533,18 +558,6 @@ export default function DSAEditor() {
         <div className="fixed inset-0 bg-white z-[9999] flex flex-col">
           <div className="flex items-center justify-between px-6 py-4 bg-purple-500 border-b-4 border-black">
             <div className="flex items-center gap-4">
-              <h2 className="text-white font-black text-lg">{selectedFile.name} - Canvas</h2>
-              <span className="text-purple-100 text-sm font-bold">• Fullscreen Mode</span>
-            </div>
-            <div className="flex gap-3">
-              <button
-                onClick={handleSave}
-                disabled={saving}
-                className="px-5 py-2 bg-white text-black border-3 border-black rounded-lg font-black hover:bg-gray-100 transition-all shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] disabled:opacity-50 flex items-center gap-2"
-              >
-                <Save size={18} strokeWidth={2.5} />
-                {saving ? 'Saving...' : 'Save All'}
-              </button>
               <button
                 onClick={() => setIsCanvasFullscreen(false)}
                 className="px-5 py-2 bg-black text-white border-3 border-black rounded-lg font-black hover:bg-gray-800 transition-all shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]"
