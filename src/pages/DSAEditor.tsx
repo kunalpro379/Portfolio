@@ -226,10 +226,10 @@ export default function DSAEditor() {
     return nodes.map(node => (
       <div key={node.id}>
         <div
-          className={`flex items-center gap-2 px-2 py-1.5 hover:bg-gray-100 cursor-pointer rounded ${
-            selectedFile?.fileId === node.id ? 'bg-gray-200 border-2 border-black' : ''
+          className={`flex items-center gap-2 px-3 py-2 hover:bg-purple-50 cursor-pointer rounded-lg transition-all ${
+            selectedFile?.fileId === node.id ? 'bg-purple-100 border-2 border-purple-400 shadow-sm' : 'border-2 border-transparent'
           }`}
-          style={{ paddingLeft: `${depth * 16 + 8}px` }}
+          style={{ paddingLeft: `${depth * 16 + 12}px` }}
           onClick={() => {
             if (node.type === 'folder') {
               toggleFolder(node.path);
@@ -241,15 +241,15 @@ export default function DSAEditor() {
         >
           {node.type === 'folder' && (
             expandedFolders.has(node.path) ? 
-              <ChevronDown size={14} className="text-black" strokeWidth={2.5} /> : 
-              <ChevronRight size={14} className="text-black" strokeWidth={2.5} />
+              <ChevronDown size={16} className="text-gray-700" strokeWidth={2.5} /> : 
+              <ChevronRight size={16} className="text-gray-700" strokeWidth={2.5} />
           )}
           {node.type === 'folder' ? (
-            <Folder size={14} className="text-yellow-600" strokeWidth={2.5} />
+            <Folder size={16} className="text-yellow-600" strokeWidth={2.5} />
           ) : (
-            <File size={14} className="text-blue-600" strokeWidth={2.5} />
+            <File size={16} className="text-blue-600" strokeWidth={2.5} />
           )}
-          <span className="text-xs text-black font-medium flex-1">{node.name}</span>
+          <span className="text-sm text-gray-900 font-semibold flex-1">{node.name}</span>
         </div>
         {node.type === 'folder' && expandedFolders.has(node.path) && node.children && (
           <div>{renderTree(node.children, depth + 1)}</div>
@@ -260,22 +260,33 @@ export default function DSAEditor() {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center h-screen bg-black">
-        <LoadingSpinner />
+      <div className="flex items-center justify-center h-screen bg-gradient-to-br from-purple-50 to-blue-50">
+        <div className="text-center">
+          <LoadingSpinner />
+          <p className="mt-4 text-gray-700 font-bold">Loading project...</p>
+        </div>
       </div>
     );
   }
 
   if (!project) {
     return (
-      <div className="flex items-center justify-center h-screen bg-black">
-        <div className="text-white">Project not found</div>
+      <div className="flex items-center justify-center h-screen bg-gradient-to-br from-red-50 to-orange-50">
+        <div className="text-center bg-white border-4 border-black rounded-2xl p-8 shadow-[8px_8px_0px_0px_rgba(0,0,0,0.2)]">
+          <div className="text-red-600 font-black text-xl mb-2">Project not found</div>
+          <button
+            onClick={() => navigate('/learnings?tab=code')}
+            className="mt-4 px-6 py-2 bg-black text-white border-2 border-black rounded-lg font-bold hover:bg-gray-800 transition"
+          >
+            Go Back
+          </button>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="h-screen flex flex-col bg-black text-white">
+    <div className="h-screen flex flex-col bg-gradient-to-br from-gray-50 to-gray-100">
       {/* Create Modal */}
       {showCreateModal && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
@@ -302,7 +313,7 @@ export default function DSAEditor() {
                   value={createName}
                   onChange={(e) => setCreateName(e.target.value)}
                   placeholder={createType === 'folder' ? 'my-folder' : 'main.cpp'}
-                  className="w-full px-4 py-3 border-3 border-black rounded-xl font-medium focus:outline-none focus:ring-4 focus:ring-black/20"
+                  className="w-full px-4 py-3 border-3 border-black rounded-xl font-medium text-black focus:outline-none focus:ring-4 focus:ring-black/20"
                   autoFocus
                 />
                 {createType === 'file' && (
@@ -334,24 +345,24 @@ export default function DSAEditor() {
       )}
 
       {/* Header */}
-      <div className="flex items-center justify-between px-4 py-3 bg-gray-900 border-b border-gray-700">
+      <div className="flex items-center justify-between px-6 py-4 bg-white border-b-4 border-black shadow-lg">
         <div className="flex items-center gap-4">
           <button
             onClick={() => navigate('/learnings?tab=code')}
-            className="flex items-center gap-2 text-gray-400 hover:text-white transition"
+            className="flex items-center gap-2 px-4 py-2 bg-gray-100 hover:bg-gray-200 border-2 border-black rounded-lg transition font-bold text-sm"
           >
-            <ArrowLeft size={18} />
-            <span className="text-sm font-medium">Back</span>
+            <ArrowLeft size={18} strokeWidth={2.5} />
+            <span>Back</span>
           </button>
-          <h1 className="text-lg font-bold">{project.name}</h1>
+          <h1 className="text-2xl font-black text-black">{project.name}</h1>
         </div>
         
         {selectedFile && (
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-3">
             <select
               value={language}
               onChange={(e) => setLanguage(e.target.value)}
-              className="px-3 py-1.5 bg-gray-800 border border-gray-600 rounded-lg text-sm font-medium"
+              className="px-4 py-2 bg-white border-3 border-black rounded-lg text-sm font-bold text-black"
             >
               <option value="cpp">C++</option>
               <option value="java">Java</option>
@@ -362,28 +373,28 @@ export default function DSAEditor() {
             <button
               onClick={handleSave}
               disabled={saving}
-              className="px-4 py-1.5 bg-green-600 hover:bg-green-700 rounded-lg text-sm font-medium flex items-center gap-2 disabled:opacity-50"
+              className="px-5 py-2 bg-green-400 hover:bg-green-500 border-3 border-black rounded-lg text-sm font-black flex items-center gap-2 disabled:opacity-50 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] transition-all"
             >
-              <Save size={16} />
+              <Save size={16} strokeWidth={2.5} />
               {saving ? 'Saving...' : 'Save'}
             </button>
             
             <button
               onClick={handleRun}
               disabled={running}
-              className="px-4 py-1.5 bg-blue-600 hover:bg-blue-700 rounded-lg text-sm font-medium flex items-center gap-2 disabled:opacity-50"
+              className="px-5 py-2 bg-blue-400 hover:bg-blue-500 border-3 border-black rounded-lg text-sm font-black flex items-center gap-2 disabled:opacity-50 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] transition-all"
             >
-              <Play size={16} />
+              <Play size={16} strokeWidth={2.5} />
               {running ? 'Running...' : 'Run'}
             </button>
             
             <button
               onClick={() => setShowCanvas(!showCanvas)}
-              className={`px-4 py-1.5 rounded-lg text-sm font-medium flex items-center gap-2 ${
-                showCanvas ? 'bg-purple-600 hover:bg-purple-700' : 'bg-gray-700 hover:bg-gray-600'
+              className={`px-5 py-2 border-3 border-black rounded-lg text-sm font-black flex items-center gap-2 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] transition-all ${
+                showCanvas ? 'bg-purple-400 hover:bg-purple-500' : 'bg-gray-200 hover:bg-gray-300'
               }`}
             >
-              <Palette size={16} />
+              <Palette size={16} strokeWidth={2.5} />
               Canvas
             </button>
           </div>
@@ -393,33 +404,36 @@ export default function DSAEditor() {
       {/* Main Content */}
       <div className="flex-1 flex overflow-hidden">
         {/* Sidebar - File Tree */}
-        <div className="w-64 bg-white border-r-4 border-black flex flex-col">
-          <div className="p-3 border-b-3 border-black">
-            <div className="flex items-center justify-between mb-2">
-              <span className="text-xs font-black text-black uppercase">Files</span>
-              <div className="flex gap-1">
+        <div className="w-72 bg-white border-r-4 border-black flex flex-col shadow-lg">
+          <div className="p-4 border-b-3 border-black bg-gradient-to-r from-purple-50 to-blue-50">
+            <div className="flex items-center justify-between mb-3">
+              <span className="text-sm font-black text-black uppercase tracking-wider">Files</span>
+              <div className="flex gap-2">
                 <button
                   onClick={handleCreateFolder}
-                  className="p-1.5 bg-gray-100 hover:bg-gray-200 rounded border-2 border-black"
+                  className="p-2 bg-white hover:bg-gray-50 rounded-lg border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] transition-all"
                   title="New Folder"
                 >
-                  <FolderPlus size={14} className="text-black" strokeWidth={2.5} />
+                  <FolderPlus size={16} className="text-black" strokeWidth={2.5} />
                 </button>
                 <button
                   onClick={handleCreateFile}
-                  className="p-1.5 bg-gray-100 hover:bg-gray-200 rounded border-2 border-black"
+                  className="p-2 bg-white hover:bg-gray-50 rounded-lg border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] transition-all"
                   title="New File"
                 >
-                  <Plus size={14} className="text-black" strokeWidth={2.5} />
+                  <Plus size={16} className="text-black" strokeWidth={2.5} />
                 </button>
               </div>
             </div>
           </div>
           
-          <div className="flex-1 overflow-y-auto p-2">
+          <div className="flex-1 overflow-y-auto p-3 bg-gray-50">
             {tree.length === 0 ? (
-              <div className="text-center py-8 text-gray-500 text-xs font-medium">
-                No files yet. Create one!
+              <div className="text-center py-12">
+                <div className="bg-white border-2 border-dashed border-gray-300 rounded-xl p-6">
+                  <File size={32} className="mx-auto mb-3 text-gray-400" strokeWidth={2} />
+                  <p className="text-sm text-gray-600 font-medium">No files yet. Create one!</p>
+                </div>
               </div>
             ) : (
               renderTree(tree)
@@ -428,41 +442,46 @@ export default function DSAEditor() {
         </div>
 
         {/* Editor Area */}
-        <div className="flex-1 flex flex-col">
+        <div className="flex-1 flex flex-col bg-white">
           {selectedFile ? (
             <>
               {/* File Tab */}
-              <div className="flex items-center gap-2 px-4 py-2 bg-gray-800 border-b border-gray-700">
-                <div className="flex items-center gap-2 px-3 py-1.5 bg-gray-900 rounded-lg border border-gray-600">
-                  <div className="flex gap-1">
-                    <div className="w-2 h-2 rounded-full bg-red-500"></div>
-                    <div className="w-2 h-2 rounded-full bg-yellow-500"></div>
-                    <div className="w-2 h-2 rounded-full bg-green-500"></div>
+              <div className="flex items-center gap-3 px-6 py-3 bg-gradient-to-r from-gray-100 to-gray-50 border-b-3 border-black">
+                <div className="flex items-center gap-3 px-4 py-2 bg-white rounded-lg border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,0.2)]">
+                  <div className="flex gap-1.5">
+                    <div className="w-3 h-3 rounded-full bg-red-400 border border-red-600"></div>
+                    <div className="w-3 h-3 rounded-full bg-yellow-400 border border-yellow-600"></div>
+                    <div className="w-3 h-3 rounded-full bg-green-400 border border-green-600"></div>
                   </div>
-                  <span className="text-sm font-medium">{selectedFile.name}</span>
-                  <span className="text-xs text-gray-500">• Note: Write code in main class only</span>
+                  <span className="text-sm font-bold text-black">{selectedFile.name}</span>
                 </div>
+                <span className="text-xs text-gray-600 font-medium">• Write code in main class only</span>
               </div>
 
               {/* Editor or Canvas */}
               <div className="flex-1 flex">
                 {!showCanvas ? (
-                  <Editor
-                    height="100%"
-                    language={language}
-                    value={code}
-                    onChange={(value) => setCode(value || '')}
-                    theme="vs-dark"
-                    options={{
-                      minimap: { enabled: false },
-                      fontSize: 14,
-                      lineNumbers: 'on',
-                      scrollBeyondLastLine: false,
-                      automaticLayout: true
-                    }}
-                  />
+                  <div className="flex-1 border-4 border-black m-4 rounded-xl overflow-hidden shadow-[8px_8px_0px_0px_rgba(0,0,0,0.1)]">
+                    <Editor
+                      height="100%"
+                      language={language}
+                      value={code}
+                      onChange={(value) => setCode(value || '')}
+                      theme="vs-light"
+                      options={{
+                        minimap: { enabled: true },
+                        fontSize: 14,
+                        lineNumbers: 'on',
+                        scrollBeyondLastLine: false,
+                        automaticLayout: true,
+                        fontFamily: "'Fira Code', 'Consolas', 'Monaco', monospace",
+                        fontLigatures: true,
+                        padding: { top: 16, bottom: 16 }
+                      }}
+                    />
+                  </div>
                 ) : (
-                  <div className="flex-1 bg-white relative">
+                  <div className="flex-1 m-4 border-4 border-black rounded-xl overflow-hidden shadow-[8px_8px_0px_0px_rgba(0,0,0,0.1)] relative">
                     <Excalidraw
                       theme="light"
                       excalidrawAPI={(api) => {
@@ -471,7 +490,7 @@ export default function DSAEditor() {
                     />
                     <button
                       onClick={handleSaveCanvas}
-                      className="absolute bottom-4 right-4 px-4 py-2 bg-purple-600 text-white rounded-lg font-medium hover:bg-purple-700 shadow-lg"
+                      className="absolute bottom-6 right-6 px-6 py-3 bg-purple-400 text-black border-3 border-black rounded-xl font-black hover:bg-purple-500 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] transition-all"
                     >
                       Save Canvas
                     </button>
@@ -480,18 +499,21 @@ export default function DSAEditor() {
 
                 {/* Output Panel (when running) */}
                 {output && (
-                  <div className="w-96 bg-gray-900 border-l border-gray-700 p-4 overflow-auto">
-                    <div className="text-xs font-bold text-gray-400 mb-2">OUTPUT</div>
-                    <pre className="text-xs text-green-400 font-mono">{output}</pre>
+                  <div className="w-96 bg-gray-900 border-l-4 border-black p-6 overflow-auto">
+                    <div className="text-sm font-black text-gray-400 mb-3 uppercase tracking-wider">Output</div>
+                    <pre className="text-sm text-green-400 font-mono leading-relaxed">{output}</pre>
                   </div>
                 )}
               </div>
             </>
           ) : (
-            <div className="flex-1 flex items-center justify-center text-gray-500">
+            <div className="flex-1 flex items-center justify-center">
               <div className="text-center">
-                <File size={48} className="mx-auto mb-4 opacity-50" />
-                <p className="text-sm">Select a file to start coding</p>
+                <div className="w-24 h-24 bg-gradient-to-br from-purple-100 to-blue-100 rounded-2xl border-3 border-black flex items-center justify-center mx-auto mb-6 shadow-[6px_6px_0px_0px_rgba(0,0,0,0.1)]">
+                  <File size={48} className="text-purple-600" strokeWidth={2} />
+                </div>
+                <p className="text-lg font-bold text-gray-700">Select a file to start coding</p>
+                <p className="text-sm text-gray-500 mt-2">Choose from the sidebar or create a new file</p>
               </div>
             </div>
           )}

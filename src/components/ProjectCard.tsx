@@ -117,7 +117,7 @@ const ProjectCard = memo(function ProjectCard({
 
           {/* Mobile Layout - Title at Bottom Center + Description + Read More Button */}
           <div className="md:hidden relative z-10 h-full flex flex-col justify-end p-3">
-            <h3 className="card-title text-base sm:text-lg font-black uppercase tracking-tight text-white text-center leading-tight mb-2">
+            <h3 className="card-title text-base sm:text-lg font-black uppercase tracking-tight text-white text-center leading-tight mb-2 line-clamp-2">
               {title}
             </h3>
             <p className="text-white/80 text-xs text-center leading-relaxed mb-3 line-clamp-1">
@@ -138,7 +138,7 @@ const ProjectCard = memo(function ProjectCard({
               <div className="space-y-2 md:space-y-3">
                 <div>
                   <h3
-                    className={`card-title text-lg md:text-xl lg:text-2xl xl:text-3xl font-black uppercase tracking-tight ${titleColor === "black" ? "text-black" : "text-white"} leading-none mb-2`}
+                    className={`card-title text-base md:text-lg lg:text-xl xl:text-2xl font-black uppercase tracking-tight ${titleColor === "black" ? "text-black" : "text-white"} leading-tight mb-2 line-clamp-2`}
                     style={{
                       WebkitTextStroke: titleColor === "black" ? "1.5px white" : "1.5px black",
                       paintOrder: "stroke fill",
