@@ -150,21 +150,21 @@ export default function AboutSection() {
 
       {/* Additional Text & Skills - Full Width Below */}
       <div className="w-full order-3 px-6 pb-10 max-w-7xl mx-auto">
-        <div className="space-y-6 text-xl md:text-3xl lg:text-4xl leading-relaxed" style={{ fontFamily: "'Kalam', 'Comic Sans MS', 'Brush Script MT', cursive" }}>
-          <p className="font-bold text-gray-800">
-            I'm a <span className="font-black text-black bg-gradient-to-r from-yellow-200 via-yellow-300 to-yellow-200 px-3 py-1 rounded-lg shadow-sm" style={{ fontFamily: "'Kalam', 'Comic Sans MS', cursive", fontWeight: 700 }}>backend-focused engineer</span> who enjoys building systems that are reliable, scalable, and ready for real users. I spend most of my time designing APIs, real-time systems, and cloud-native backends using <span className="font-black text-black bg-gradient-to-r from-green-200 via-green-300 to-green-200 px-3 py-1 rounded-lg shadow-sm" style={{ fontFamily: "'Kalam', 'Comic Sans MS', cursive", fontWeight: 700 }}>Node.js and AWS</span>.
+        <div className="space-y-8 text-2xl md:text-4xl lg:text-5xl leading-relaxed" style={{ fontFamily: "'Kalam', 'Comic Sans MS', 'Brush Script MT', cursive" }}>
+          <p className="font-black text-gray-900" style={{ fontWeight: 900, textShadow: '1px 1px 0px rgba(0,0,0,0.1)' }}>
+            I'm a <span className="font-black text-black bg-gradient-to-r from-yellow-300 via-yellow-400 to-yellow-300 px-4 py-2 rounded-2xl shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] border-3 border-black transform -rotate-1 inline-block" style={{ fontFamily: "'Kalam', 'Comic Sans MS', cursive", fontWeight: 900 }}>backend-focused engineer</span> who enjoys building systems that are reliable, scalable, and ready for real users. I spend most of my time designing APIs, real-time systems, and cloud-native backends using <span className="font-black text-black bg-gradient-to-r from-green-300 via-green-400 to-green-300 px-4 py-2 rounded-2xl shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] border-3 border-black transform rotate-1 inline-block" style={{ fontFamily: "'Kalam', 'Comic Sans MS', cursive", fontWeight: 900 }}>Node.js and AWS</span>.
           </p>
           
-          <p className="font-bold text-gray-800">
-            I care deeply about performance, clean architecture, and fault tolerance — not just making things work, but <span className="font-black text-black bg-gradient-to-r from-orange-200 via-orange-300 to-orange-200 px-3 py-1 rounded-lg shadow-sm" style={{ fontFamily: "'Kalam', 'Comic Sans MS', cursive", fontWeight: 700 }}>making them last</span>. Alongside backend and DevOps, I work extensively with AI systems, including LLMs, generative models, and image generation workflows integrated into real applications.
+          <p className="font-black text-gray-900" style={{ fontWeight: 900, textShadow: '1px 1px 0px rgba(0,0,0,0.1)' }}>
+            I care deeply about performance, clean architecture, and fault tolerance — not just making things work, but <span className="font-black text-black bg-gradient-to-r from-orange-300 via-orange-400 to-orange-300 px-4 py-2 rounded-2xl shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] border-3 border-black transform -rotate-1 inline-block" style={{ fontFamily: "'Kalam', 'Comic Sans MS', cursive", fontWeight: 900 }}>making them last</span>. Alongside backend and DevOps, I work extensively with AI systems, including LLMs, generative models, and image generation workflows integrated into real applications.
           </p>
           
-          <div className="inline-block bg-gradient-to-r from-amber-100 via-amber-200 to-amber-100 border-3 border-black rounded-2xl px-8 py-4 shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] transform -rotate-1">
-            <p className="text-xl md:text-2xl font-black text-black uppercase tracking-wide" style={{ fontFamily: "'Kalam', 'Comic Sans MS', cursive", fontWeight: 900 }}>⚡ Current Focus</p>
+          <div className="inline-block bg-gradient-to-r from-purple-300 via-purple-400 to-purple-300 border-4 border-black rounded-3xl px-10 py-5 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] transform -rotate-2 hover:rotate-0 transition-transform">
+            <p className="text-2xl md:text-3xl font-black text-black uppercase tracking-wider" style={{ fontFamily: "'Kalam', 'Comic Sans MS', cursive", fontWeight: 900 }}>⚡ CURRENT FOCUS</p>
           </div>
           
-          <p className="font-bold text-gray-800">
-            My focus is on making AI <span className="font-black text-black bg-gradient-to-r from-blue-200 via-blue-300 to-blue-200 px-3 py-1 rounded-lg shadow-sm" style={{ fontFamily: "'Kalam', 'Comic Sans MS', cursive", fontWeight: 700 }}>production-ready</span>, not experimental. Currently, I'm exploring how generative AI, agents, and real-time infrastructure can come together to build practical, scalable, and high-impact systems.
+          <p className="font-black text-gray-900" style={{ fontWeight: 900, textShadow: '1px 1px 0px rgba(0,0,0,0.1)' }}>
+            My focus is on making AI <span className="font-black text-black bg-gradient-to-r from-blue-300 via-blue-400 to-blue-300 px-4 py-2 rounded-2xl shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] border-3 border-black transform rotate-1 inline-block" style={{ fontFamily: "'Kalam', 'Comic Sans MS', cursive", fontWeight: 900 }}>production-ready</span>, not experimental. Currently, I'm exploring how generative AI, agents, and real-time infrastructure can come together to build practical, scalable, and high-impact systems.
           </p>
         </div>
 
