@@ -198,11 +198,38 @@ router.post('/guides', async (req, res) => {
 // Get all guides
 router.get('/guides', async (req, res) => {
   try {
-    const guides = await GuideNote.find().sort({ updatedAt: -1 });
+    console.log('=== GET ALL GUIDES REQUEST ===');
+    console.log('MongoDB connection state:', mongoose.connection.readyState);
+    
+    // Check MongoDB connection
+    if (mongoose.connection.readyState !== 1) {
+      console.error('MongoDB not connected. State:', mongoose.connection.readyState);
+      return res.status(503).json({ 
+        message: 'Database not connected',
+        dbState: mongoose.connection.readyState 
+      });
+    }
+    
+    console.log('Fetching guides from database...');
+    const guides = await GuideNote.find()
+      .sort({ updatedAt: -1 })
+      .lean()
+      .maxTimeMS(5000); // Add 5 second timeout
+    
+    console.log(`Found ${guides.length} guides`);
+    
     res.json({ guides });
   } catch (error) {
-    console.error('Get guides error:', error);
-    res.status(500).json({ message: 'Server error', error: error.message });
+    console.error('=== GET GUIDES ERROR ===');
+    console.error('Error name:', error.name);
+    console.error('Error message:', error.message);
+    console.error('Error stack:', error.stack);
+    
+    res.status(500).json({ 
+      message: 'Server error', 
+      error: error.message,
+      errorName: error.name 
+    });
   }
 });
 
