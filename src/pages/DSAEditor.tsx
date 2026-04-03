@@ -24,6 +24,7 @@ export default function DSAEditor() {
   const [tree, setTree] = useState<TreeNode[]>([]);
   const [expandedFolders, setExpandedFolders] = useState<Set<string>>(new Set());
   const [selectedFile, setSelectedFile] = useState<DSAFile | null>(null);
+  const [selectedFolder, setSelectedFolder] = useState<string | null>(null); // Track selected folder path
   const [code, setCode] = useState('');
   const [language, setLanguage] = useState('cpp');
   const [showCanvas, setShowCanvas] = useState(false);
@@ -271,15 +272,25 @@ export default function DSAEditor() {
     setCreating(true);
     try {
       if (createType === 'folder') {
-        const result = await createDSAFolder(dsaId!, { name: createName, path: createName });
+        // Create folder at root or inside selected folder
+        const folderPath = selectedFolder ? `${selectedFolder}/${createName}` : createName;
+        const result = await createDSAFolder(dsaId!, { name: createName, path: folderPath });
         console.log('Folder created:', result);
       } else {
+        // Create file inside selected folder or at root
         const lang = createName.endsWith('.cpp') ? 'cpp' : 
                      createName.endsWith('.java') ? 'java' :
                      createName.endsWith('.py') ? 'python' :
                      createName.endsWith('.js') ? 'javascript' : 'cpp';
         
-        const result = await createDSAFile(dsaId!, { name: createName, path: createName, language: lang, content: '' });
+        const filePath = selectedFolder ? `${selectedFolder}/${createName}` : createName;
+        
+        const result = await createDSAFile(dsaId!, { 
+          name: createName, 
+          path: filePath, 
+          language: lang, 
+          content: '' 
+        });
         console.log('File created:', result);
       }
       
@@ -304,22 +315,38 @@ export default function DSAEditor() {
     setExpandedFolders(newExpanded);
   };
 
+  const handleFolderClick = (path: string) => {
+    // Toggle selection
+    if (selectedFolder === path) {
+      setSelectedFolder(null); // Unselect
+    } else {
+      setSelectedFolder(path); // Select
+    }
+    // Also toggle expand/collapse
+    toggleFolder(path);
+  };
+
   const renderTree = (nodes: TreeNode[], depth = 0) => {
     return nodes.map(node => (
       <div key={node.id}>
         <div
           className={`flex items-center gap-2 px-3 py-2 cursor-pointer rounded-lg transition-all ${
-            selectedFile?.fileId === node.id 
+            node.type === 'folder' && selectedFolder === node.path
+              ? 'bg-yellow-100 border-2 border-yellow-500 shadow-sm'
+              : selectedFile?.fileId === node.id 
               ? 'bg-purple-100 border-2 border-purple-400 shadow-sm' 
               : 'border-2 border-transparent hover:bg-purple-50'
           }`}
           style={{ paddingLeft: `${depth * 16 + 12}px` }}
           onClick={() => {
             if (node.type === 'folder') {
-              toggleFolder(node.path);
+              handleFolderClick(node.path);
             } else {
               const file = project?.files.find(f => f.fileId === node.id);
-              if (file) handleFileClick(file);
+              if (file) {
+                setSelectedFolder(null); // Clear folder selection when file is selected
+                handleFileClick(file);
+              }
             }
           }}
         >
@@ -329,11 +356,17 @@ export default function DSAEditor() {
               <ChevronRight size={16} className="text-gray-700" strokeWidth={2.5} />
           )}
           {node.type === 'folder' ? (
-            <Folder size={16} className="text-yellow-600" strokeWidth={2.5} />
+            <Folder size={16} className={selectedFolder === node.path ? "text-yellow-600" : "text-yellow-500"} strokeWidth={2.5} />
           ) : (
             <File size={16} className="text-blue-600" strokeWidth={2.5} />
           )}
-          <span className="text-sm text-gray-900 font-semibold flex-1">{node.name}</span>
+          <span className={`text-sm flex-1 ${
+            node.type === 'folder' && selectedFolder === node.path 
+              ? 'text-gray-900 font-black' 
+              : 'text-gray-900 font-semibold'
+          }`}>
+            {node.name}
+          </span>
           {loadingFile && selectedFile?.fileId === node.id && (
             <div className="animate-spin rounded-full h-4 w-4 border-2 border-purple-500 border-t-transparent"></div>
           )}
@@ -590,7 +623,15 @@ export default function DSAEditor() {
         <div className="w-72 bg-white border-r-4 border-black flex flex-col shadow-lg">
           <div className="p-4 border-b-3 border-black bg-gradient-to-r from-purple-50 to-blue-50">
             <div className="flex items-center justify-between mb-3">
-              <span className="text-sm font-black text-black uppercase tracking-wider">Files</span>
+              <div className="flex-1">
+                <span className="text-sm font-black text-black uppercase tracking-wider">Files</span>
+                {selectedFolder && (
+                  <div className="text-xs text-yellow-700 font-bold mt-1 flex items-center gap-1">
+                    <Folder size={12} strokeWidth={2.5} />
+                    Selected: {selectedFolder.split('/').pop()}
+                  </div>
+                )}
+              </div>
               <div className="flex gap-2">
                 <button
                   onClick={handleCreateFolder}
@@ -602,7 +643,7 @@ export default function DSAEditor() {
                 <button
                   onClick={handleCreateFile}
                   className="p-2 bg-white hover:bg-gray-50 rounded-lg border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] transition-all"
-                  title="New File"
+                  title={selectedFolder ? `New File in ${selectedFolder.split('/').pop()}` : "New File"}
                 >
                   <Plus size={16} className="text-black" strokeWidth={2.5} />
                 </button>

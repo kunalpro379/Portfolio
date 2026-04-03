@@ -253,31 +253,50 @@ router.put('/:dsaId/files/:fileId', async (req, res) => {
 // Save canvas
 router.post('/:dsaId/files/:fileId/canvas', upload.single('canvas'), async (req, res) => {
   try {
+    console.log('=== SAVE CANVAS REQUEST ===');
     const { dsaId, fileId } = req.params;
+    console.log('DSA ID:', dsaId);
+    console.log('File ID:', fileId);
+    console.log('Has file:', !!req.file);
+    console.log('File size:', req.file?.size);
 
     const project = await DSA.findOne({ dsaId });
     if (!project) {
+      console.error('Project not found:', dsaId);
       return res.status(404).json({ message: 'DSA project not found' });
     }
+    console.log('Project found:', project.name);
 
     const file = project.files.find(f => f.fileId === fileId);
     if (!file) {
+      console.error('File not found:', fileId);
       return res.status(404).json({ message: 'File not found' });
     }
+    console.log('File found:', file.name);
 
     if (!req.file) {
+      console.error('No canvas file in request');
       return res.status(400).json({ message: 'No canvas file uploaded' });
     }
 
     const canvasPath = `dsa/${dsaId}/canvas/${fileId}-canvas.json`;
+    console.log('Canvas path:', canvasPath);
+
+    // Check Azure connection
+    if (!blobServiceClient || !containerName) {
+      console.error('Azure not configured');
+      return res.status(500).json({ message: 'Azure storage not configured' });
+    }
 
     // Upload to Azure as JSON
     const containerClient = blobServiceClient.getContainerClient(containerName);
     const blockBlobClient = containerClient.getBlockBlobClient(canvasPath);
     
+    console.log('Uploading to Azure...');
     await blockBlobClient.uploadData(req.file.buffer, {
       blobHTTPHeaders: { blobContentType: 'application/json' }
     });
+    console.log('✓ Uploaded to Azure');
 
     file.canvasAzurePath = canvasPath;
     file.canvasAzureUrl = blockBlobClient.url;
@@ -285,14 +304,17 @@ router.post('/:dsaId/files/:fileId/canvas', upload.single('canvas'), async (req,
     project.updatedAt = new Date();
     await project.save();
 
-    console.log('Canvas saved to Azure:', canvasPath);
+    console.log('✓ Canvas saved to Azure:', canvasPath);
+    console.log('✓ Canvas URL:', blockBlobClient.url);
 
     res.json({
       message: 'Canvas saved successfully',
       canvasUrl: blockBlobClient.url
     });
   } catch (error) {
-    console.error('Save canvas error:', error);
+    console.error('=== SAVE CANVAS ERROR ===');
+    console.error('Error:', error);
+    console.error('Stack:', error.stack);
     res.status(500).json({ message: 'Server error', error: error.message });
   }
 });

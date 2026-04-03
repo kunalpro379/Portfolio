@@ -100,15 +100,30 @@ export const updateDSAFile = async (dsaId: string, fileId: string, content: stri
 };
 
 export const saveDSACanvas = async (dsaId: string, fileId: string, canvasBlob: Blob): Promise<string> => {
+  console.log('=== SAVING CANVAS ===');
+  console.log('DSA ID:', dsaId);
+  console.log('File ID:', fileId);
+  console.log('Blob size:', canvasBlob.size);
+  console.log('Blob type:', canvasBlob.type);
+  
   const formData = new FormData();
-  formData.append('canvas', canvasBlob);
+  formData.append('canvas', canvasBlob, 'canvas.json');
 
   const response = await fetch(`${API_BASE_URL}/api/dsa/${dsaId}/files/${fileId}/canvas`, {
     method: 'POST',
     body: formData
   });
-  if (!response.ok) throw new Error('Failed to save canvas');
+  
+  console.log('Response status:', response.status);
+  
+  if (!response.ok) {
+    const errorText = await response.text();
+    console.error('Canvas save failed:', errorText);
+    throw new Error(`Failed to save canvas: ${errorText}`);
+  }
+  
   const data = await response.json();
+  console.log('✓ Canvas saved, URL:', data.canvasUrl);
   return data.canvasUrl;
 };
 
