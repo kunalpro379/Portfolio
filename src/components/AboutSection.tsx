@@ -150,21 +150,21 @@ export default function AboutSection() {
 
       {/* Additional Text & Skills - Full Width Below */}
       <div className="w-full order-3 px-6 pb-10 max-w-7xl mx-auto">
-        <div className="space-y-6 text-xl md:text-3xl lg:text-4xl leading-relaxed">
-          <p className="font-handwriting text-gray-800">
-            I'm a <span className="font-black text-black bg-gradient-to-r from-yellow-200 via-yellow-300 to-yellow-200 px-2 py-1 rounded-lg">backend-focused engineer</span> who enjoys building systems that are reliable, scalable, and ready for real users. I spend most of my time designing APIs, real-time systems, and cloud-native backends using <span className="font-black text-black bg-gradient-to-r from-green-200 via-green-300 to-green-200 px-2 py-1 rounded-lg">Node.js and AWS</span>.
+        <div className="space-y-6 text-xl md:text-3xl lg:text-4xl leading-relaxed" style={{ fontFamily: "'Kalam', 'Comic Sans MS', 'Brush Script MT', cursive" }}>
+          <p className="font-bold text-gray-800">
+            I'm a <span className="font-black text-black bg-gradient-to-r from-yellow-200 via-yellow-300 to-yellow-200 px-3 py-1 rounded-lg shadow-sm" style={{ fontFamily: "'Kalam', 'Comic Sans MS', cursive", fontWeight: 700 }}>backend-focused engineer</span> who enjoys building systems that are reliable, scalable, and ready for real users. I spend most of my time designing APIs, real-time systems, and cloud-native backends using <span className="font-black text-black bg-gradient-to-r from-green-200 via-green-300 to-green-200 px-3 py-1 rounded-lg shadow-sm" style={{ fontFamily: "'Kalam', 'Comic Sans MS', cursive", fontWeight: 700 }}>Node.js and AWS</span>.
           </p>
           
-          <p className="font-handwriting text-gray-800">
-            I care deeply about performance, clean architecture, and fault tolerance — not just making things work, but <span className="font-black text-black bg-gradient-to-r from-orange-200 via-orange-300 to-orange-200 px-2 py-1 rounded-lg">making them last</span>. Alongside backend and DevOps, I work extensively with AI systems, including LLMs, generative models, and image generation workflows integrated into real applications.
+          <p className="font-bold text-gray-800">
+            I care deeply about performance, clean architecture, and fault tolerance — not just making things work, but <span className="font-black text-black bg-gradient-to-r from-orange-200 via-orange-300 to-orange-200 px-3 py-1 rounded-lg shadow-sm" style={{ fontFamily: "'Kalam', 'Comic Sans MS', cursive", fontWeight: 700 }}>making them last</span>. Alongside backend and DevOps, I work extensively with AI systems, including LLMs, generative models, and image generation workflows integrated into real applications.
           </p>
           
-          <div className="inline-block bg-gradient-to-r from-amber-100 via-amber-200 to-amber-100 border-2 border-black rounded-2xl px-6 py-3 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transform -rotate-1">
-            <p className="text-lg md:text-xl font-black text-black uppercase tracking-wide">Current Focus</p>
+          <div className="inline-block bg-gradient-to-r from-amber-100 via-amber-200 to-amber-100 border-3 border-black rounded-2xl px-8 py-4 shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] transform -rotate-1">
+            <p className="text-xl md:text-2xl font-black text-black uppercase tracking-wide" style={{ fontFamily: "'Kalam', 'Comic Sans MS', cursive", fontWeight: 900 }}>⚡ Current Focus</p>
           </div>
           
-          <p className="font-handwriting text-gray-800">
-            My focus is on making AI <span className="font-black text-black bg-gradient-to-r from-blue-200 via-blue-300 to-blue-200 px-2 py-1 rounded-lg">production-ready</span>, not experimental. Currently, I'm exploring how generative AI, agents, and real-time infrastructure can come together to build practical, scalable, and high-impact systems.
+          <p className="font-bold text-gray-800">
+            My focus is on making AI <span className="font-black text-black bg-gradient-to-r from-blue-200 via-blue-300 to-blue-200 px-3 py-1 rounded-lg shadow-sm" style={{ fontFamily: "'Kalam', 'Comic Sans MS', cursive", fontWeight: 700 }}>production-ready</span>, not experimental. Currently, I'm exploring how generative AI, agents, and real-time infrastructure can come together to build practical, scalable, and high-impact systems.
           </p>
         </div>
 
@@ -172,38 +172,38 @@ export default function AboutSection() {
         <div className="mt-12 bg-white/60 backdrop-blur-sm border-4 border-black rounded-3xl overflow-hidden shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
           <div className="grid grid-cols-1 divide-y-4 divide-black">
             <div className="p-6 md:p-8 bg-gradient-to-r from-purple-50 to-pink-50">
-              <h3 className="text-black font-black uppercase tracking-wider text-base md:text-lg mb-4 flex items-center gap-2">
+              <h3 className="text-black font-black uppercase tracking-wider text-base md:text-lg mb-4 flex items-center gap-2" style={{ fontFamily: "'Kalam', 'Comic Sans MS', cursive", fontWeight: 900 }}>
                 <span className="w-3 h-3 bg-purple-500 rounded-full"></span>
                 LANGUAGES
               </h3>
-              <div className="text-gray-800 text-lg md:text-2xl font-handwriting leading-relaxed">
+              <div className="text-gray-800 text-lg md:text-2xl font-bold leading-relaxed" style={{ fontFamily: "'Kalam', 'Comic Sans MS', cursive", fontWeight: 600 }}>
                 C/C++, Java, Python, JavaScript, SQL
               </div>
             </div>
             <div className="p-6 md:p-8 bg-gradient-to-r from-blue-50 to-cyan-50">
-              <h3 className="text-black font-black uppercase tracking-wider text-base md:text-lg mb-4 flex items-center gap-2">
+              <h3 className="text-black font-black uppercase tracking-wider text-base md:text-lg mb-4 flex items-center gap-2" style={{ fontFamily: "'Kalam', 'Comic Sans MS', cursive", fontWeight: 900 }}>
                 <span className="w-3 h-3 bg-blue-500 rounded-full"></span>
                 TECHNOLOGIES & TOOLS
               </h3>
-              <div className="text-gray-800 text-lg md:text-2xl font-handwriting leading-relaxed">
+              <div className="text-gray-800 text-lg md:text-2xl font-bold leading-relaxed" style={{ fontFamily: "'Kalam', 'Comic Sans MS', cursive", fontWeight: 600 }}>
                 AWS, Kubernetes, Docker, Kafka, Spring Boot, React.JS, Azure, GitHub Actions, Linux
               </div>
             </div>
             <div className="p-6 md:p-8 bg-gradient-to-r from-green-50 to-emerald-50">
-              <h3 className="text-black font-black uppercase tracking-wider text-base md:text-lg mb-4 flex items-center gap-2">
+              <h3 className="text-black font-black uppercase tracking-wider text-base md:text-lg mb-4 flex items-center gap-2" style={{ fontFamily: "'Kalam', 'Comic Sans MS', cursive", fontWeight: 900 }}>
                 <span className="w-3 h-3 bg-green-500 rounded-full"></span>
                 DATABASES
               </h3>
-              <div className="text-gray-800 text-lg md:text-2xl font-handwriting leading-relaxed">
+              <div className="text-gray-800 text-lg md:text-2xl font-bold leading-relaxed" style={{ fontFamily: "'Kalam', 'Comic Sans MS', cursive", fontWeight: 600 }}>
                 MySQL, MongoDB, GraphQL, Supabase, Redis
               </div>
             </div>
             <div className="p-6 md:p-8 bg-gradient-to-r from-orange-50 to-red-50">
-              <h3 className="text-black font-black uppercase tracking-wider text-base md:text-lg mb-4 flex items-center gap-2">
+              <h3 className="text-black font-black uppercase tracking-wider text-base md:text-lg mb-4 flex items-center gap-2" style={{ fontFamily: "'Kalam', 'Comic Sans MS', cursive", fontWeight: 900 }}>
                 <span className="w-3 h-3 bg-orange-500 rounded-full"></span>
                 AI/ML
               </h3>
-              <div className="text-gray-800 text-lg md:text-2xl font-handwriting leading-relaxed">
+              <div className="text-gray-800 text-lg md:text-2xl font-bold leading-relaxed" style={{ fontFamily: "'Kalam', 'Comic Sans MS', cursive", fontWeight: 600 }}>
                 Machine Learning, Data Analysis, Deep Learning, Generative AI, AI Agents
               </div>
             </div>
