@@ -146,7 +146,13 @@ export default function DSAEditor() {
       const { content } = await fetchDSAFileContent(dsaId!, file.fileId);
       setSelectedFile(file);
       setCode(content);
-      setLanguage(file.language);
+      
+      // Map language to Monaco language ID
+      const monacoLanguage = file.language === 'cpp' ? 'cpp' :
+                            file.language === 'java' ? 'java' :
+                            file.language === 'python' ? 'python' :
+                            file.language === 'javascript' ? 'javascript' : 'cpp';
+      setLanguage(monacoLanguage);
       setShowCanvas(false);
       
       // Load canvas data if exists
@@ -432,9 +438,6 @@ export default function DSAEditor() {
               excalidrawAPI={(api) => {
                 excalidrawRef.current = api;
               }}
-              onChange={(elements, appState) => {
-                setCanvasData({ elements, appState });
-              }}
             />
           </div>
         </div>
@@ -636,69 +639,84 @@ export default function DSAEditor() {
               </div>
 
               {/* Editor or Canvas */}
-              <div className="flex-1 flex">
-                {!showCanvas ? (
-                  <div className="flex-1 border-4 border-black m-4 rounded-xl overflow-hidden shadow-[8px_8px_0px_0px_rgba(0,0,0,0.1)] relative">
-                    <Editor
-                      height="100%"
-                      language={language}
-                      value={code}
-                      onChange={(value) => setCode(value || '')}
-                      theme="vs-light"
-                      options={{
-                        minimap: { enabled: true },
-                        fontSize: 15,
-                        lineNumbers: 'on',
-                        scrollBeyondLastLine: false,
-                        automaticLayout: true,
-                        fontFamily: "'Fira Code', 'Cascadia Code', 'Consolas', 'Monaco', monospace",
-                        fontLigatures: true,
-                        padding: { top: 16, bottom: 16 },
-                        cursorBlinking: 'smooth',
-                        cursorSmoothCaretAnimation: 'on',
-                        smoothScrolling: true,
-                        formatOnPaste: true,
-                        formatOnType: true,
-                        autoIndent: 'full',
-                        tabSize: 2,
-                        wordWrap: 'on',
-                        bracketPairColorization: { enabled: true },
-                        guides: {
-                          bracketPairs: true,
-                          indentation: true
-                        },
-                        suggest: {
-                          showKeywords: true,
-                          showSnippets: true
-                        }
-                      }}
-                    />
-                    <button
-                      onClick={() => setIsCodeFullscreen(!isCodeFullscreen)}
-                      className="absolute top-4 right-4 p-2 bg-white border-2 border-black rounded-lg hover:bg-gray-100 transition-all shadow-[2px_2px_0px_0px_rgba(0,0,0,0.3)]"
-                      title={isCodeFullscreen ? "Exit fullscreen" : "Fullscreen"}
-                    >
-                      {isCodeFullscreen ? (
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                          <path d="M8 3v3a2 2 0 0 1-2 2H3m18 0h-3a2 2 0 0 1-2-2V3m0 18v-3a2 2 0 0 1 2-2h3M3 16h3a2 2 0 0 1 2 2v3" />
-                        </svg>
-                      ) : (
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                          <path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3" />
-                        </svg>
-                      )}
-                    </button>
-                  </div>
-                ) : (
-                  <div className="flex-1 m-4 border-4 border-black rounded-xl overflow-hidden shadow-[8px_8px_0px_0px_rgba(0,0,0,0.1)] relative">
+              <div className="flex-1 flex relative">
+                {/* Code Editor - Hidden when canvas is shown */}
+                <div className={`flex-1 border-4 border-black m-4 rounded-xl overflow-hidden shadow-[8px_8px_0px_0px_rgba(0,0,0,0.1)] ${showCanvas ? 'hidden' : 'block'}`}>
+                  <Editor
+                    height="100%"
+                    language={language}
+                    value={code}
+                    onChange={(value) => setCode(value || '')}
+                    theme="vs"
+                    options={{
+                      minimap: { enabled: true },
+                      fontSize: 15,
+                      lineNumbers: 'on',
+                      scrollBeyondLastLine: false,
+                      automaticLayout: true,
+                      fontFamily: "'Consolas', 'Courier New', monospace",
+                      fontWeight: '500',
+                      letterSpacing: 0.5,
+                      lineHeight: 22,
+                      padding: { top: 16, bottom: 16 },
+                      cursorBlinking: 'smooth',
+                      cursorSmoothCaretAnimation: 'on',
+                      smoothScrolling: true,
+                      formatOnPaste: true,
+                      formatOnType: true,
+                      autoIndent: 'full',
+                      tabSize: 4,
+                      insertSpaces: true,
+                      wordWrap: 'on',
+                      bracketPairColorization: { enabled: true },
+                      guides: {
+                        bracketPairs: true,
+                        indentation: true
+                      },
+                      suggest: {
+                        showKeywords: true,
+                        showSnippets: true
+                      },
+                      quickSuggestions: {
+                        other: true,
+                        comments: false,
+                        strings: false
+                      },
+                      parameterHints: { enabled: true },
+                      folding: true,
+                      foldingStrategy: 'indentation',
+                      showFoldingControls: 'always',
+                      matchBrackets: 'always',
+                      renderLineHighlight: 'all',
+                      renderWhitespace: 'selection',
+                      colorDecorators: true
+                    }}
+                  />
+                  <button
+                    onClick={() => setIsCodeFullscreen(!isCodeFullscreen)}
+                    className="absolute top-4 right-4 p-2 bg-white border-2 border-black rounded-lg hover:bg-gray-100 transition-all shadow-[2px_2px_0px_0px_rgba(0,0,0,0.3)]"
+                    title={isCodeFullscreen ? "Exit fullscreen" : "Fullscreen"}
+                  >
+                    {isCodeFullscreen ? (
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                        <path d="M8 3v3a2 2 0 0 1-2 2H3m18 0h-3a2 2 0 0 1-2-2V3m0 18v-3a2 2 0 0 1 2-2h3M3 16h3a2 2 0 0 1 2 2v3" />
+                      </svg>
+                    ) : (
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                        <path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3" />
+                      </svg>
+                    )}
+                  </button>
+                </div>
+
+                {/* Canvas - Hidden when code is shown */}
+                {selectedFile && (
+                  <div className={`flex-1 m-4 border-4 border-black rounded-xl overflow-hidden shadow-[8px_8px_0px_0px_rgba(0,0,0,0.1)] ${showCanvas ? 'block' : 'hidden'}`}>
                     <Excalidraw
                       theme="light"
                       initialData={canvasData}
                       excalidrawAPI={(api) => {
                         excalidrawRef.current = api;
-                      }}
-                      onChange={(elements, appState) => {
-                        setCanvasData({ elements, appState });
                       }}
                     />
                     <div className="absolute bottom-6 right-6 flex gap-3">

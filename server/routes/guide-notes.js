@@ -1,5 +1,6 @@
 import express from 'express';
 import multer from 'multer';
+import mongoose from 'mongoose';
 import { BlobServiceClient } from '@azure/storage-blob';
 import GuideNote from '../models/GuideNote.js';
 import Password from '../models/Password.js';
@@ -131,6 +132,15 @@ router.post('/guides', async (req, res) => {
     console.log('=== CREATE GUIDE REQUEST ===');
     console.log('Request body:', JSON.stringify(req.body, null, 2));
     console.log('Request headers:', req.headers);
+    
+    // Check MongoDB connection
+    if (mongoose.connection.readyState !== 1) {
+      console.error('MongoDB not connected. State:', mongoose.connection.readyState);
+      return res.status(503).json({ 
+        message: 'Database not connected',
+        dbState: mongoose.connection.readyState 
+      });
+    }
     
     const { name, topic, description } = req.body;
     
