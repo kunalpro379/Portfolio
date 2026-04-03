@@ -1117,7 +1117,7 @@ export default function LearningsPage() {
       )}
 
       {/* Scrollable Main Content */}
-      <main className="flex-1 overflow-y-auto bg-transparent p-2 sm:p-3 md:p-4 lg:p-6 relative z-[50] pt-[180px] xs:pt-[190px] sm:pt-[200px] md:pt-[120px]">
+      <main className="flex-1 overflow-y-auto bg-transparent p-2 sm:p-3 md:p-4 lg:p-6 relative z-[50] pt-[220px] xs:pt-[230px] sm:pt-[240px] md:pt-[140px] lg:pt-[120px]">
         <div className="max-w-7xl mx-auto pt-2 sm:pt-3 md:pt-4">
           {/* Loading State */}
           {loading && (

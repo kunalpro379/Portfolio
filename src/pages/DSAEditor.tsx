@@ -60,54 +60,82 @@ export default function DSAEditor() {
 
   const buildTree = (proj: DSAProject) => {
     console.log('Building tree with project:', proj);
+    console.log('Files:', proj.files);
+    console.log('Folders:', proj.folders);
+    
     const root: TreeNode[] = [];
     const folderMap = new Map<string, TreeNode>();
 
-    // Add folders
-    proj.folders?.forEach(folder => {
-      const node: TreeNode = {
-        type: 'folder',
-        name: folder.name,
-        path: folder.path,
-        id: folder.folderId,
-        children: []
-      };
-      folderMap.set(folder.path, node);
+    // Add folders first
+    if (proj.folders && proj.folders.length > 0) {
+      proj.folders.forEach(folder => {
+        const node: TreeNode = {
+          type: 'folder',
+          name: folder.name,
+          path: folder.path,
+          id: folder.folderId,
+          children: []
+        };
+        folderMap.set(folder.path, node);
 
-      const parentPath = folder.path.split('/').slice(0, -1).join('/');
-      if (parentPath) {
-        const parent = folderMap.get(parentPath);
-        if (parent) {
-          parent.children!.push(node);
+        // Check if this folder has a parent
+        const pathParts = folder.path.split('/');
+        if (pathParts.length > 1) {
+          // Has parent folder
+          const parentPath = pathParts.slice(0, -1).join('/');
+          const parent = folderMap.get(parentPath);
+          if (parent && parent.children) {
+            parent.children.push(node);
+          } else {
+            // Parent not found yet, add to root
+            root.push(node);
+          }
+        } else {
+          // Root level folder
+          root.push(node);
         }
-      } else {
-        root.push(node);
-      }
-    });
+      });
+    }
 
     // Add files
-    proj.files?.forEach(file => {
-      const node: TreeNode = {
-        type: 'file',
-        name: file.name,
-        path: file.path,
-        id: file.fileId,
-        language: file.language
-      };
+    if (proj.files && proj.files.length > 0) {
+      proj.files.forEach(file => {
+        const node: TreeNode = {
+          type: 'file',
+          name: file.name,
+          path: file.path,
+          id: file.fileId,
+          language: file.language
+        };
 
-      const parentPath = file.path.split('/').slice(0, -1).join('/');
-      if (parentPath) {
-        const parent = folderMap.get(parentPath);
-        if (parent) {
-          parent.children!.push(node);
+        // Check if this file is in a folder
+        const pathParts = file.path.split('/');
+        if (pathParts.length > 1) {
+          // File is in a folder
+          const parentPath = pathParts.slice(0, -1).join('/');
+          const parent = folderMap.get(parentPath);
+          if (parent && parent.children) {
+            parent.children.push(node);
+          } else {
+            // Parent folder not found, add to root
+            root.push(node);
+          }
+        } else {
+          // Root level file
+          root.push(node);
         }
-      } else {
-        root.push(node);
-      }
-    });
+      });
+    }
 
     console.log('Tree built:', root);
+    console.log('Folder map:', folderMap);
     setTree(root);
+    
+    // Auto-expand all folders if there are any
+    if (proj.folders && proj.folders.length > 0) {
+      const allFolderPaths = new Set(proj.folders.map(f => f.path));
+      setExpandedFolders(allFolderPaths);
+    }
   };
 
   const handleFileClick = async (file: DSAFile) => {
@@ -428,11 +456,27 @@ export default function DSAEditor() {
           </div>
           
           <div className="flex-1 overflow-y-auto p-3 bg-gray-50">
-            {tree.length === 0 ? (
+            {/* Debug Info */}
+            {project && (
+              <div className="mb-3 p-2 bg-blue-50 border-2 border-blue-200 rounded-lg text-xs">
+                <div className="font-bold text-blue-900 mb-1">Debug Info:</div>
+                <div className="text-blue-800">Files: {project.files?.length || 0}</div>
+                <div className="text-blue-800">Folders: {project.folders?.length || 0}</div>
+                <div className="text-blue-800">Tree nodes: {tree.length}</div>
+              </div>
+            )}
+            
+            {tree.length === 0 && project?.files?.length === 0 && project?.folders?.length === 0 ? (
               <div className="text-center py-12">
                 <div className="bg-white border-2 border-dashed border-gray-300 rounded-xl p-6">
                   <File size={32} className="mx-auto mb-3 text-gray-400" strokeWidth={2} />
                   <p className="text-sm text-gray-600 font-medium">No files yet. Create one!</p>
+                </div>
+              </div>
+            ) : tree.length === 0 ? (
+              <div className="text-center py-12">
+                <div className="bg-yellow-50 border-2 border-yellow-300 rounded-xl p-6">
+                  <p className="text-sm text-yellow-800 font-medium">Files exist but tree is empty. Check console.</p>
                 </div>
               </div>
             ) : (
