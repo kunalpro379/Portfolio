@@ -136,12 +136,12 @@ export default function HeroSection() {
               <h1 className="hero-title text-8xl md:text-7xl lg:text-9xl font-black tracking-tighter leading-[0.8] mb-3 md:mb-6 lg:mb-8 select-none text-left" style={{
                 color: '#000',
                 textShadow: `
-                  2px 2px 0px #ff6b6b,
-                  4px 4px 0px #ee5a6f,
-                  6px 6px 0px #c44569,
-                  8px 8px 0px #a73d5f,
-                  10px 10px 0px #8b3654,
-                  12px 12px 0px #6f2e49,
+                  2px 2px 0px #fbbf24,
+                  4px 4px 0px #f59e0b,
+                  6px 6px 0px #d97706,
+                  8px 8px 0px #b45309,
+                  10px 10px 0px #92400e,
+                  12px 12px 0px #78350f,
                   14px 14px 0px rgba(0, 0, 0, 0.3),
                   16px 16px 0px rgba(0, 0, 0, 0.2),
                   18px 18px 0px rgba(0, 0, 0, 0.1)
@@ -154,12 +154,12 @@ export default function HeroSection() {
                   WebkitTextFillColor: 'transparent',
                   backgroundClip: 'text',
                   textShadow: `
-                    2px 2px 0px #4ecdc4,
-                    4px 4px 0px #45b7af,
-                    6px 6px 0px #3da199,
-                    8px 8px 0px #358b84,
-                    10px 10px 0px #2d756f,
-                    12px 12px 0px #255f5a,
+                    2px 2px 0px #a78bfa,
+                    4px 4px 0px #8b5cf6,
+                    6px 6px 0px #7c3aed,
+                    8px 8px 0px #6d28d9,
+                    10px 10px 0px #5b21b6,
+                    12px 12px 0px #4c1d95,
                     14px 14px 0px rgba(0, 0, 0, 0.3),
                     16px 16px 0px rgba(0, 0, 0, 0.2),
                     18px 18px 0px rgba(0, 0, 0, 0.1)
@@ -401,38 +401,38 @@ export default function HeroSection() {
             <div className="mt-12 bg-white/60 backdrop-blur-sm border-4 border-black rounded-3xl overflow-hidden shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
               <div className="grid grid-cols-1 divide-y-4 divide-black">
                 <div className="p-6 md:p-8 bg-gradient-to-r from-purple-50 to-pink-50">
-                  <h3 className="text-black font-black uppercase tracking-wider text-sm md:text-base mb-3 flex items-center gap-2" style={{ fontFamily: "'Caveat', 'Indie Flower', 'Patrick Hand', cursive", fontWeight: 800 }}>
+                  <h3 className="text-black font-black uppercase tracking-wider text-xs md:text-sm mb-2 flex items-center gap-2" style={{ fontFamily: "'Caveat', 'Indie Flower', 'Patrick Hand', cursive", fontWeight: 800 }}>
                     <span className="w-3 h-3 bg-purple-500 rounded-full"></span>
                     LANGUAGES
                   </h3>
-                  <div className="text-gray-800 text-sm md:text-base font-normal leading-relaxed" style={{ fontFamily: "'Caveat', 'Indie Flower', 'Patrick Hand', cursive", fontWeight: 400 }}>
+                  <div className="text-gray-800 text-xs md:text-sm font-normal leading-relaxed" style={{ fontFamily: "'Caveat', 'Indie Flower', 'Patrick Hand', cursive", fontWeight: 400 }}>
                     C/C++, Java, Python, JavaScript, SQL
                   </div>
                 </div>
                 <div className="p-6 md:p-8 bg-gradient-to-r from-blue-50 to-cyan-50">
-                  <h3 className="text-black font-black uppercase tracking-wider text-sm md:text-base mb-3 flex items-center gap-2" style={{ fontFamily: "'Caveat', 'Indie Flower', 'Patrick Hand', cursive", fontWeight: 800 }}>
+                  <h3 className="text-black font-black uppercase tracking-wider text-xs md:text-sm mb-2 flex items-center gap-2" style={{ fontFamily: "'Caveat', 'Indie Flower', 'Patrick Hand', cursive", fontWeight: 800 }}>
                     <span className="w-3 h-3 bg-blue-500 rounded-full"></span>
                     TECHNOLOGIES & TOOLS
                   </h3>
-                  <div className="text-gray-800 text-sm md:text-base font-normal leading-relaxed" style={{ fontFamily: "'Caveat', 'Indie Flower', 'Patrick Hand', cursive", fontWeight: 400 }}>
+                  <div className="text-gray-800 text-xs md:text-sm font-normal leading-relaxed" style={{ fontFamily: "'Caveat', 'Indie Flower', 'Patrick Hand', cursive", fontWeight: 400 }}>
                     AWS, Kubernetes, Docker, Kafka, Spring Boot, React.JS, Azure, GitHub Actions, Linux
                   </div>
                 </div>
                 <div className="p-6 md:p-8 bg-gradient-to-r from-green-50 to-emerald-50">
-                  <h3 className="text-black font-black uppercase tracking-wider text-sm md:text-base mb-3 flex items-center gap-2" style={{ fontFamily: "'Caveat', 'Indie Flower', 'Patrick Hand', cursive", fontWeight: 800 }}>
+                  <h3 className="text-black font-black uppercase tracking-wider text-xs md:text-sm mb-2 flex items-center gap-2" style={{ fontFamily: "'Caveat', 'Indie Flower', 'Patrick Hand', cursive", fontWeight: 800 }}>
                     <span className="w-3 h-3 bg-green-500 rounded-full"></span>
                     DATABASES
                   </h3>
-                  <div className="text-gray-800 text-sm md:text-base font-normal leading-relaxed" style={{ fontFamily: "'Caveat', 'Indie Flower', 'Patrick Hand', cursive", fontWeight: 400 }}>
+                  <div className="text-gray-800 text-xs md:text-sm font-normal leading-relaxed" style={{ fontFamily: "'Caveat', 'Indie Flower', 'Patrick Hand', cursive", fontWeight: 400 }}>
                     MySQL, MongoDB, GraphQL, Supabase, Redis
                   </div>
                 </div>
                 <div className="p-6 md:p-8 bg-gradient-to-r from-orange-50 to-red-50">
-                  <h3 className="text-black font-black uppercase tracking-wider text-sm md:text-base mb-3 flex items-center gap-2" style={{ fontFamily: "'Caveat', 'Indie Flower', 'Patrick Hand', cursive", fontWeight: 800 }}>
+                  <h3 className="text-black font-black uppercase tracking-wider text-xs md:text-sm mb-2 flex items-center gap-2" style={{ fontFamily: "'Caveat', 'Indie Flower', 'Patrick Hand', cursive", fontWeight: 800 }}>
                     <span className="w-3 h-3 bg-orange-500 rounded-full"></span>
                     AI/ML
                   </h3>
-                  <div className="text-gray-800 text-sm md:text-base font-normal leading-relaxed" style={{ fontFamily: "'Caveat', 'Indie Flower', 'Patrick Hand', cursive", fontWeight: 400 }}>
+                  <div className="text-gray-800 text-xs md:text-sm font-normal leading-relaxed" style={{ fontFamily: "'Caveat', 'Indie Flower', 'Patrick Hand', cursive", fontWeight: 400 }}>
                     Machine Learning, Data Analysis, Deep Learning, Generative AI, AI Agents
                   </div>
                 </div>
