@@ -96,6 +96,7 @@ const uploadToAzure = async (buffer, guideId, titleId, filename, fileType) => {
 };
 
 // ============ GUIDE ROUTES ============
+// Version: 2.0 - Fixed MongoDB connection check
 
 // Create new guide
 router.post('/guides', async (req, res) => {
