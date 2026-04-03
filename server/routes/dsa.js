@@ -269,14 +269,14 @@ router.post('/:dsaId/files/:fileId/canvas', upload.single('canvas'), async (req,
       return res.status(400).json({ message: 'No canvas file uploaded' });
     }
 
-    const canvasPath = `dsa/${dsaId}/canvas/${fileId}-canvas.png`;
+    const canvasPath = `dsa/${dsaId}/canvas/${fileId}-canvas.json`;
 
-    // Upload to Azure
+    // Upload to Azure as JSON
     const containerClient = blobServiceClient.getContainerClient(containerName);
     const blockBlobClient = containerClient.getBlockBlobClient(canvasPath);
     
     await blockBlobClient.uploadData(req.file.buffer, {
-      blobHTTPHeaders: { blobContentType: 'image/png' }
+      blobHTTPHeaders: { blobContentType: 'application/json' }
     });
 
     file.canvasAzurePath = canvasPath;
@@ -285,13 +285,15 @@ router.post('/:dsaId/files/:fileId/canvas', upload.single('canvas'), async (req,
     project.updatedAt = new Date();
     await project.save();
 
+    console.log('Canvas saved to Azure:', canvasPath);
+
     res.json({
       message: 'Canvas saved successfully',
       canvasUrl: blockBlobClient.url
     });
   } catch (error) {
     console.error('Save canvas error:', error);
-    res.status(500).json({ message: 'Server error' });
+    res.status(500).json({ message: 'Server error', error: error.message });
   }
 });
 

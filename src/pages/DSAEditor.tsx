@@ -27,10 +27,13 @@ export default function DSAEditor() {
   const [code, setCode] = useState('');
   const [language, setLanguage] = useState('cpp');
   const [showCanvas, setShowCanvas] = useState(false);
+  const [canvasData, setCanvasData] = useState<any>(null);
   const [saving, setSaving] = useState(false);
   const [running, setRunning] = useState(false);
   const [output, setOutput] = useState('');
   const [loading, setLoading] = useState(true);
+  const [isCodeFullscreen, setIsCodeFullscreen] = useState(false);
+  const [isCanvasFullscreen, setIsCanvasFullscreen] = useState(false);
   
   // Modal states
   const [showCreateModal, setShowCreateModal] = useState(false);
@@ -145,6 +148,22 @@ export default function DSAEditor() {
       setCode(content);
       setLanguage(file.language);
       setShowCanvas(false);
+      
+      // Load canvas data if exists
+      if (file.canvasAzureUrl) {
+        try {
+          const canvasResponse = await fetch(file.canvasAzureUrl);
+          if (canvasResponse.ok) {
+            const canvasJson = await canvasResponse.json();
+            setCanvasData(canvasJson);
+          }
+        } catch (err) {
+          console.log('No canvas data found for this file');
+          setCanvasData(null);
+        }
+      } else {
+        setCanvasData(null);
+      }
     } catch (err) {
       console.error('Error loading file:', err);
       alert('Failed to load file');
@@ -176,25 +195,42 @@ export default function DSAEditor() {
     if (!selectedFile || !excalidrawRef.current) return;
 
     try {
-      // Export as PNG
-      const canvas = document.createElement('canvas');
-      canvas.width = 1200;
-      canvas.height = 800;
-      const ctx = canvas.getContext('2d');
-      if (ctx) {
-        ctx.fillStyle = 'white';
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
-      }
-
-      canvas.toBlob(async (blob) => {
-        if (blob) {
-          await saveDSACanvas(dsaId!, selectedFile.fileId, blob);
-          alert('Canvas saved!');
+      setSaving(true);
+      
+      // Get the Excalidraw scene data
+      const elements = excalidrawRef.current.getSceneElements();
+      const appState = excalidrawRef.current.getAppState();
+      
+      const sceneData = {
+        elements,
+        appState: {
+          viewBackgroundColor: appState.viewBackgroundColor,
+          currentItemStrokeColor: appState.currentItemStrokeColor,
+          currentItemBackgroundColor: appState.currentItemBackgroundColor,
+          currentItemFillStyle: appState.currentItemFillStyle,
+          currentItemStrokeWidth: appState.currentItemStrokeWidth,
+          currentItemRoughness: appState.currentItemRoughness,
+          currentItemOpacity: appState.currentItemOpacity,
         }
-      });
+      };
+
+      // Convert to JSON blob
+      const jsonBlob = new Blob([JSON.stringify(sceneData)], { type: 'application/json' });
+      
+      // Save to Azure
+      const canvasUrl = await saveDSACanvas(dsaId!, selectedFile.fileId, jsonBlob);
+      
+      // Update local state
+      if (selectedFile) {
+        selectedFile.canvasAzureUrl = canvasUrl;
+      }
+      
+      alert('Canvas saved successfully!');
     } catch (err) {
       console.error('Error saving canvas:', err);
       alert('Failed to save canvas');
+    } finally {
+      setSaving(false);
     }
   };
 
@@ -315,6 +351,95 @@ export default function DSAEditor() {
 
   return (
     <div className="h-screen flex flex-col bg-gradient-to-br from-gray-50 to-gray-100">
+      {/* Fullscreen Code Modal */}
+      {isCodeFullscreen && selectedFile && (
+        <div className="fixed inset-0 bg-black z-[9999] flex flex-col">
+          <div className="flex items-center justify-between px-6 py-4 bg-gray-900 border-b-2 border-gray-700">
+            <div className="flex items-center gap-4">
+              <h2 className="text-white font-bold text-lg">{selectedFile.name}</h2>
+              <span className="text-gray-400 text-sm">• Fullscreen Mode</span>
+            </div>
+            <button
+              onClick={() => setIsCodeFullscreen(false)}
+              className="px-4 py-2 bg-red-500 hover:bg-red-600 text-white rounded-lg font-bold transition-all"
+            >
+              Exit Fullscreen
+            </button>
+          </div>
+          <div className="flex-1">
+            <Editor
+              height="100%"
+              language={language}
+              value={code}
+              onChange={(value) => setCode(value || '')}
+              theme="vs-dark"
+              options={{
+                minimap: { enabled: true },
+                fontSize: 16,
+                lineNumbers: 'on',
+                scrollBeyondLastLine: false,
+                automaticLayout: true,
+                fontFamily: "'Fira Code', 'Cascadia Code', 'Consolas', 'Monaco', monospace",
+                fontLigatures: true,
+                padding: { top: 20, bottom: 20 },
+                cursorBlinking: 'smooth',
+                cursorSmoothCaretAnimation: 'on',
+                smoothScrolling: true,
+                formatOnPaste: true,
+                formatOnType: true,
+                autoIndent: 'full',
+                tabSize: 2,
+                wordWrap: 'on',
+                bracketPairColorization: { enabled: true },
+                guides: {
+                  bracketPairs: true,
+                  indentation: true
+                }
+              }}
+            />
+          </div>
+        </div>
+      )}
+
+      {/* Fullscreen Canvas Modal */}
+      {isCanvasFullscreen && selectedFile && (
+        <div className="fixed inset-0 bg-white z-[9999] flex flex-col">
+          <div className="flex items-center justify-between px-6 py-4 bg-purple-500 border-b-4 border-black">
+            <div className="flex items-center gap-4">
+              <h2 className="text-white font-black text-lg">{selectedFile.name} - Canvas</h2>
+              <span className="text-purple-100 text-sm font-bold">• Fullscreen Mode</span>
+            </div>
+            <div className="flex gap-3">
+              <button
+                onClick={handleSaveCanvas}
+                disabled={saving}
+                className="px-5 py-2 bg-white text-black border-3 border-black rounded-lg font-black hover:bg-gray-100 transition-all shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] disabled:opacity-50"
+              >
+                {saving ? 'Saving...' : 'Save Canvas'}
+              </button>
+              <button
+                onClick={() => setIsCanvasFullscreen(false)}
+                className="px-5 py-2 bg-black text-white border-3 border-black rounded-lg font-black hover:bg-gray-800 transition-all shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]"
+              >
+                Exit Fullscreen
+              </button>
+            </div>
+          </div>
+          <div className="flex-1">
+            <Excalidraw
+              theme="light"
+              initialData={canvasData}
+              excalidrawAPI={(api) => {
+                excalidrawRef.current = api;
+              }}
+              onChange={(elements, appState) => {
+                setCanvasData({ elements, appState });
+              }}
+            />
+          </div>
+        </div>
+      )}
+
       {/* Create Modal */}
       {showCreateModal && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
@@ -404,7 +529,7 @@ export default function DSAEditor() {
               className="px-5 py-2 bg-green-400 hover:bg-green-500 border-3 border-black rounded-lg text-sm font-black flex items-center gap-2 disabled:opacity-50 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] transition-all"
             >
               <Save size={16} strokeWidth={2.5} />
-              {saving ? 'Saving...' : 'Save'}
+              {saving ? 'Saving...' : 'Save Code'}
             </button>
             
             <button
@@ -416,14 +541,22 @@ export default function DSAEditor() {
               {running ? 'Running...' : 'Run'}
             </button>
             
+            <div className="h-8 w-px bg-gray-300"></div>
+            
             <button
-              onClick={() => setShowCanvas(!showCanvas)}
+              onClick={() => {
+                setShowCanvas(!showCanvas);
+                if (!showCanvas && !canvasData) {
+                  // Initialize empty canvas
+                  setCanvasData({ elements: [], appState: {} });
+                }
+              }}
               className={`px-5 py-2 border-3 border-black rounded-lg text-sm font-black flex items-center gap-2 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] transition-all ${
                 showCanvas ? 'bg-purple-400 hover:bg-purple-500' : 'bg-gray-200 hover:bg-gray-300'
               }`}
             >
               <Palette size={16} strokeWidth={2.5} />
-              Canvas
+              {showCanvas ? 'Show Code' : 'Show Canvas'}
             </button>
           </div>
         )}
@@ -505,7 +638,7 @@ export default function DSAEditor() {
               {/* Editor or Canvas */}
               <div className="flex-1 flex">
                 {!showCanvas ? (
-                  <div className="flex-1 border-4 border-black m-4 rounded-xl overflow-hidden shadow-[8px_8px_0px_0px_rgba(0,0,0,0.1)]">
+                  <div className="flex-1 border-4 border-black m-4 rounded-xl overflow-hidden shadow-[8px_8px_0px_0px_rgba(0,0,0,0.1)] relative">
                     <Editor
                       height="100%"
                       language={language}
@@ -514,30 +647,85 @@ export default function DSAEditor() {
                       theme="vs-light"
                       options={{
                         minimap: { enabled: true },
-                        fontSize: 14,
+                        fontSize: 15,
                         lineNumbers: 'on',
                         scrollBeyondLastLine: false,
                         automaticLayout: true,
-                        fontFamily: "'Fira Code', 'Consolas', 'Monaco', monospace",
+                        fontFamily: "'Fira Code', 'Cascadia Code', 'Consolas', 'Monaco', monospace",
                         fontLigatures: true,
-                        padding: { top: 16, bottom: 16 }
+                        padding: { top: 16, bottom: 16 },
+                        cursorBlinking: 'smooth',
+                        cursorSmoothCaretAnimation: 'on',
+                        smoothScrolling: true,
+                        formatOnPaste: true,
+                        formatOnType: true,
+                        autoIndent: 'full',
+                        tabSize: 2,
+                        wordWrap: 'on',
+                        bracketPairColorization: { enabled: true },
+                        guides: {
+                          bracketPairs: true,
+                          indentation: true
+                        },
+                        suggest: {
+                          showKeywords: true,
+                          showSnippets: true
+                        }
                       }}
                     />
+                    <button
+                      onClick={() => setIsCodeFullscreen(!isCodeFullscreen)}
+                      className="absolute top-4 right-4 p-2 bg-white border-2 border-black rounded-lg hover:bg-gray-100 transition-all shadow-[2px_2px_0px_0px_rgba(0,0,0,0.3)]"
+                      title={isCodeFullscreen ? "Exit fullscreen" : "Fullscreen"}
+                    >
+                      {isCodeFullscreen ? (
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                          <path d="M8 3v3a2 2 0 0 1-2 2H3m18 0h-3a2 2 0 0 1-2-2V3m0 18v-3a2 2 0 0 1 2-2h3M3 16h3a2 2 0 0 1 2 2v3" />
+                        </svg>
+                      ) : (
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                          <path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3" />
+                        </svg>
+                      )}
+                    </button>
                   </div>
                 ) : (
                   <div className="flex-1 m-4 border-4 border-black rounded-xl overflow-hidden shadow-[8px_8px_0px_0px_rgba(0,0,0,0.1)] relative">
                     <Excalidraw
                       theme="light"
+                      initialData={canvasData}
                       excalidrawAPI={(api) => {
                         excalidrawRef.current = api;
                       }}
+                      onChange={(elements, appState) => {
+                        setCanvasData({ elements, appState });
+                      }}
                     />
-                    <button
-                      onClick={handleSaveCanvas}
-                      className="absolute bottom-6 right-6 px-6 py-3 bg-purple-400 text-black border-3 border-black rounded-xl font-black hover:bg-purple-500 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] transition-all"
-                    >
-                      Save Canvas
-                    </button>
+                    <div className="absolute bottom-6 right-6 flex gap-3">
+                      <button
+                        onClick={() => setIsCanvasFullscreen(!isCanvasFullscreen)}
+                        className="p-3 bg-white border-3 border-black rounded-xl hover:bg-gray-100 transition-all shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]"
+                        title={isCanvasFullscreen ? "Exit fullscreen" : "Fullscreen"}
+                      >
+                        {isCanvasFullscreen ? (
+                          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                            <path d="M8 3v3a2 2 0 0 1-2 2H3m18 0h-3a2 2 0 0 1-2-2V3m0 18v-3a2 2 0 0 1 2-2h3M3 16h3a2 2 0 0 1 2 2v3" />
+                          </svg>
+                        ) : (
+                          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                            <path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3" />
+                          </svg>
+                        )}
+                      </button>
+                      <button
+                        onClick={handleSaveCanvas}
+                        disabled={saving}
+                        className="px-6 py-3 bg-purple-400 text-black border-3 border-black rounded-xl font-black hover:bg-purple-500 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] transition-all disabled:opacity-50 flex items-center gap-2"
+                      >
+                        <Save size={20} strokeWidth={2.5} />
+                        {saving ? 'Saving...' : 'Save Canvas'}
+                      </button>
+                    </div>
                   </div>
                 )}
 
