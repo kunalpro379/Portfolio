@@ -273,7 +273,8 @@ export default function DSAEditor() {
             selectedFile.canvasAzureUrl = canvasUrl;
             console.log('Updated selectedFile.canvasAzureUrl:', selectedFile.canvasAzureUrl);
           }
-          setCanvasData(sceneData);
+          // DON'T call setCanvasData here - it will re-render and clear the canvas
+          // The canvas already has the data, we just saved it
         } catch (canvasError) {
           console.error('Error saving canvas:', canvasError);
           throw canvasError; // Re-throw to be caught by outer try-catch
@@ -554,7 +555,7 @@ export default function DSAEditor() {
           </div>
           <div className="flex-1">
             <Excalidraw
-              key={`canvas-fullscreen-${selectedFile.fileId}-${Date.now()}`}
+              key={`canvas-fullscreen-${selectedFile.fileId}`}
               theme="light"
               initialData={canvasData}
               excalidrawAPI={(api) => {
@@ -862,7 +863,7 @@ export default function DSAEditor() {
                 {selectedFile && canvasData && (
                   <div className={`flex-1 m-4 border-4 border-black rounded-xl overflow-hidden shadow-[8px_8px_0px_0px_rgba(0,0,0,0.1)] relative ${showCanvas ? 'block' : 'hidden'}`}>
                     <Excalidraw
-                      key={`canvas-${selectedFile.fileId}-${Date.now()}`}
+                      key={`canvas-${selectedFile.fileId}`}
                       theme="light"
                       initialData={canvasData}
                       excalidrawAPI={(api) => {
