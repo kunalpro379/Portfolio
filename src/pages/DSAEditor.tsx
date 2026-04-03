@@ -193,13 +193,19 @@ export default function DSAEditor() {
     
     setSaving(true);
     try {
-      // Save code
-      await updateDSAFile(dsaId!, selectedFile.fileId, code, language);
+      console.log('=== SAVING CODE + CANVAS ===');
+      console.log('File:', selectedFile.name, selectedFile.fileId);
       
-      // Save canvas if it exists and has content
+      // 1. Save code first
+      await updateDSAFile(dsaId!, selectedFile.fileId, code, language);
+      console.log('✓ Code saved');
+      
+      // 2. Save canvas if it exists and has content
       if (excalidrawRef.current) {
         const elements = excalidrawRef.current.getSceneElements();
         const appState = excalidrawRef.current.getAppState();
+        
+        console.log('Canvas elements count:', elements?.length || 0);
         
         const sceneData = {
           elements,
@@ -217,20 +223,24 @@ export default function DSAEditor() {
         // Convert to JSON blob
         const jsonBlob = new Blob([JSON.stringify(sceneData)], { type: 'application/json' });
         
-        // Save canvas to Azure
+        // Save canvas to Azure for THIS specific file
+        console.log('Saving canvas to Azure...');
         const canvasUrl = await saveDSACanvas(dsaId!, selectedFile.fileId, jsonBlob);
+        console.log('✓ Canvas saved to:', canvasUrl);
         
         // Update local state
         if (selectedFile) {
           selectedFile.canvasAzureUrl = canvasUrl;
         }
         setCanvasData(sceneData);
+      } else {
+        console.log('No canvas ref available, skipping canvas save');
       }
       
-      alert(`✓ Saved ${selectedFile.name} (Code + Canvas)`);
+      alert(`✓ Saved ${selectedFile.name}\n• Code saved\n• Canvas saved to Azure`);
     } catch (err) {
       console.error('Error saving:', err);
-      alert('Failed to save');
+      alert(`Failed to save: ${err instanceof Error ? err.message : 'Unknown error'}`);
     } finally {
       setSaving(false);
     }
@@ -240,54 +250,6 @@ export default function DSAEditor() {
     setRunning(true);
     setOutput('// Code execution not implemented yet\n// This would send code to a backend execution service');
     setTimeout(() => setRunning(false), 1000);
-  };
-
-  const handleSaveCanvas = async () => {
-    if (!selectedFile || !excalidrawRef.current) return;
-
-    try {
-      setSaving(true);
-      
-      // Get the Excalidraw scene data for THIS specific file
-      const elements = excalidrawRef.current.getSceneElements();
-      const appState = excalidrawRef.current.getAppState();
-      
-      const sceneData = {
-        elements,
-        appState: {
-          viewBackgroundColor: appState.viewBackgroundColor,
-          currentItemStrokeColor: appState.currentItemStrokeColor,
-          currentItemBackgroundColor: appState.currentItemBackgroundColor,
-          currentItemFillStyle: appState.currentItemFillStyle,
-          currentItemStrokeWidth: appState.currentItemStrokeWidth,
-          currentItemRoughness: appState.currentItemRoughness,
-          currentItemOpacity: appState.currentItemOpacity,
-        }
-      };
-
-      // Convert to JSON blob
-      const jsonBlob = new Blob([JSON.stringify(sceneData)], { type: 'application/json' });
-      
-      // Save to Azure - this will save to THIS file's canvas
-      console.log('Saving canvas for file:', selectedFile.name, selectedFile.fileId);
-      const canvasUrl = await saveDSACanvas(dsaId!, selectedFile.fileId, jsonBlob);
-      
-      // Update local state for THIS file
-      if (selectedFile) {
-        selectedFile.canvasAzureUrl = canvasUrl;
-      }
-      
-      // Update canvas data state
-      setCanvasData(sceneData);
-      
-      console.log('Canvas saved successfully for', selectedFile.name, 'at', canvasUrl);
-      alert(`Canvas saved for ${selectedFile.name}!`);
-    } catch (err) {
-      console.error('Error saving canvas:', err);
-      alert('Failed to save canvas');
-    } finally {
-      setSaving(false);
-    }
   };
 
   const handleCreateFolder = async () => {
