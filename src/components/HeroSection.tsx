@@ -136,23 +136,33 @@ export default function HeroSection() {
               <h1 className="hero-title text-8xl md:text-7xl lg:text-9xl font-black tracking-tighter leading-[0.8] mb-3 md:mb-6 lg:mb-8 select-none text-left" style={{
                 color: '#000',
                 textShadow: `
-                  3px 3px 0px rgba(0, 0, 0, 0.2),
-                  6px 6px 0px rgba(0, 0, 0, 0.15),
-                  9px 9px 0px rgba(0, 0, 0, 0.1),
-                  12px 12px 0px rgba(0, 0, 0, 0.05)
+                  2px 2px 0px #ff6b6b,
+                  4px 4px 0px #ee5a6f,
+                  6px 6px 0px #c44569,
+                  8px 8px 0px #a73d5f,
+                  10px 10px 0px #8b3654,
+                  12px 12px 0px #6f2e49,
+                  14px 14px 0px rgba(0, 0, 0, 0.3),
+                  16px 16px 0px rgba(0, 0, 0, 0.2),
+                  18px 18px 0px rgba(0, 0, 0, 0.1)
                 `
               }}>
                 KUNAL<br />
                 <span style={{
-                  background: 'linear-gradient(to bottom, #000 0%, rgba(0,0,0,0.4) 100%)',
+                  background: 'linear-gradient(to bottom, #000 0%, rgba(0,0,0,0.5) 100%)',
                   WebkitBackgroundClip: 'text',
                   WebkitTextFillColor: 'transparent',
                   backgroundClip: 'text',
                   textShadow: `
-                    3px 3px 0px rgba(0, 0, 0, 0.2),
-                    6px 6px 0px rgba(0, 0, 0, 0.15),
-                    9px 9px 0px rgba(0, 0, 0, 0.1),
-                    12px 12px 0px rgba(0, 0, 0, 0.05)
+                    2px 2px 0px #4ecdc4,
+                    4px 4px 0px #45b7af,
+                    6px 6px 0px #3da199,
+                    8px 8px 0px #358b84,
+                    10px 10px 0px #2d756f,
+                    12px 12px 0px #255f5a,
+                    14px 14px 0px rgba(0, 0, 0, 0.3),
+                    16px 16px 0px rgba(0, 0, 0, 0.2),
+                    18px 18px 0px rgba(0, 0, 0, 0.1)
                   `
                 }}>PATIL</span>
               </h1>
@@ -378,9 +388,9 @@ export default function HeroSection() {
                 I care deeply about <span className="font-black text-black bg-gradient-to-r from-cyan-300 via-cyan-400 to-cyan-300 px-3 py-1.5 rounded-xl shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] border-2 border-black transform rotate-1 inline-block" style={{ fontFamily: "'Kalam', 'Comic Sans MS', cursive", fontWeight: 800 }}>performance, clean architecture</span>, and fault tolerance — not just making things work, but making them last. Alongside backend and DevOps, I work extensively with <span className="font-black text-black bg-gradient-to-r from-purple-300 via-purple-400 to-purple-300 px-3 py-1.5 rounded-xl shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] border-2 border-black transform -rotate-1 inline-block" style={{ fontFamily: "'Kalam', 'Comic Sans MS', cursive", fontWeight: 800 }}>AI systems, LLMs</span>, generative models, and image generation workflows integrated into real applications.
               </p>
               
-              <div className="inline-block bg-gradient-to-r from-purple-300 via-purple-400 to-purple-300 border-3 border-black rounded-2xl px-6 py-3 shadow-[5px_5px_0px_0px_rgba(0,0,0,1)] transform -rotate-1 hover:rotate-0 transition-transform">
+              {/* <div className="inline-block bg-gradient-to-r from-purple-300 via-purple-400 to-purple-300 border-3 border-black rounded-2xl px-6 py-3 shadow-[5px_5px_0px_0px_rgba(0,0,0,1)] transform -rotate-1 hover:rotate-0 transition-transform">
                 <p className="text-lg md:text-xl font-black text-black uppercase tracking-wide" style={{ fontFamily: "'Kalam', 'Comic Sans MS', cursive", fontWeight: 800 }}> CURRENT FOCUS</p>
-              </div>
+              </div> */}
               
               <p className="font-bold text-gray-900" style={{ fontWeight: 700 }}>
                 My focus is on making AI <span className="font-black text-black bg-gradient-to-r from-blue-300 via-blue-400 to-blue-300 px-3 py-1.5 rounded-xl shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] border-2 border-black transform rotate-1 inline-block" style={{ fontFamily: "'Kalam', 'Comic Sans MS', cursive", fontWeight: 800 }}>production-ready</span>, not experimental. Currently, I'm exploring how <span className="font-black text-black bg-gradient-to-r from-orange-300 via-orange-400 to-orange-300 px-3 py-1.5 rounded-xl shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] border-2 border-black transform -rotate-1 inline-block" style={{ fontFamily: "'Kalam', 'Comic Sans MS', cursive", fontWeight: 800 }}>generative AI, agents</span>, and real-time infrastructure can come together to build practical, scalable, and high-impact systems.
