@@ -212,52 +212,86 @@ export default function DSAEditor() {
   };
 
   const handleSave = async (isAutoSave = false) => {
-    if (!selectedFile) return;
+    if (!selectedFile) {
+      console.error('No file selected');
+      return;
+    }
     
     setSaving(true);
     try {
       console.log(isAutoSave ? '🔄 Auto-saving...' : '=== MANUAL SAVE ===');
       console.log('File:', selectedFile.name, selectedFile.fileId);
+      console.log('Excalidraw ref exists:', !!excalidrawRef.current);
       
       // 1. Save code first
       await updateDSAFile(dsaId!, selectedFile.fileId, code, language);
       console.log('✓ Code saved');
       
-      // 2. Save canvas if it exists and has content
+      // 2. Save canvas - ALWAYS try to save, even if canvas view is hidden
+      // The ref should still exist even when showCanvas is false
       if (excalidrawRef.current) {
-        const elements = excalidrawRef.current.getSceneElements();
-        const appState = excalidrawRef.current.getAppState();
+        console.log('Getting canvas data from Excalidraw...');
+        console.log('showCanvas state:', showCanvas);
         
-        console.log('Canvas elements count:', elements?.length || 0);
-        
-        const sceneData = {
-          elements,
-          appState: {
-            viewBackgroundColor: appState.viewBackgroundColor,
-            currentItemStrokeColor: appState.currentItemStrokeColor,
-            currentItemBackgroundColor: appState.currentItemBackgroundColor,
-            currentItemFillStyle: appState.currentItemFillStyle,
-            currentItemStrokeWidth: appState.currentItemStrokeWidth,
-            currentItemRoughness: appState.currentItemRoughness,
-            currentItemOpacity: appState.currentItemOpacity,
+        try {
+          const elements = excalidrawRef.current.getSceneElements();
+          const appState = excalidrawRef.current.getAppState();
+          
+          console.log('Canvas elements:', elements);
+          console.log('Canvas elements count:', elements?.length || 0);
+          
+          if (!elements) {
+            console.warn('No elements returned from Excalidraw');
           }
-        };
+          
+          const sceneData = {
+            elements: elements || [],
+            appState: {
+              viewBackgroundColor: appState?.viewBackgroundColor || '#ffffff',
+              currentItemStrokeColor: appState?.currentItemStrokeColor || '#000000',
+              currentItemBackgroundColor: appState?.currentItemBackgroundColor || 'transparent',
+              currentItemFillStyle: appState?.currentItemFillStyle || 'hachure',
+              currentItemStrokeWidth: appState?.currentItemStrokeWidth || 1,
+              currentItemRoughness: appState?.currentItemRoughness || 1,
+              currentItemOpacity: appState?.currentItemOpacity || 100,
+            }
+          };
 
-        // Convert to JSON blob
-        const jsonBlob = new Blob([JSON.stringify(sceneData)], { type: 'application/json' });
+          console.log('Scene data prepared, elements:', sceneData.elements.length);
+
+          // Convert to JSON blob
+          const jsonBlob = new Blob([JSON.stringify(sceneData)], { type: 'application/json' });
+          console.log('Blob created, size:', jsonBlob.size, 'bytes');
+          
+          // Save canvas to Azure for THIS specific file
+          console.log('Calling saveDSACanvas API...');
+          const canvasUrl = await saveDSACanvas(dsaId!, selectedFile.fileId, jsonBlob);
+          console.log('✓ Canvas saved to Azure:', canvasUrl);
+          
+          // Update local state
+          if (selectedFile) {
+            selectedFile.canvasAzureUrl = canvasUrl;
+            console.log('Updated selectedFile.canvasAzureUrl:', selectedFile.canvasAzureUrl);
+          }
+          setCanvasData(sceneData);
+        } catch (canvasError) {
+          console.error('Error saving canvas:', canvasError);
+          throw canvasError; // Re-throw to be caught by outer try-catch
+        }
+      } else {
+        console.warn('⚠️ No canvas ref available - Excalidraw might not be mounted');
+        console.log('showCanvas:', showCanvas);
+        console.log('canvasData exists:', !!canvasData);
+        console.log('selectedFile:', selectedFile?.name);
         
-        // Save canvas to Azure for THIS specific file
-        console.log('Saving canvas to Azure...');
-        const canvasUrl = await saveDSACanvas(dsaId!, selectedFile.fileId, jsonBlob);
-        console.log('✓ Canvas saved to:', canvasUrl);
-        
-        // Update local state
-        if (selectedFile) {
+        // If we have canvasData but no ref, still try to save the existing data
+        if (canvasData && canvasData.elements) {
+          console.log('Attempting to save existing canvasData without ref...');
+          const jsonBlob = new Blob([JSON.stringify(canvasData)], { type: 'application/json' });
+          const canvasUrl = await saveDSACanvas(dsaId!, selectedFile.fileId, jsonBlob);
+          console.log('✓ Saved existing canvas data to Azure:', canvasUrl);
           selectedFile.canvasAzureUrl = canvasUrl;
         }
-        setCanvasData(sceneData);
-      } else {
-        console.log('No canvas ref available, skipping canvas save');
       }
       
       setLastSaved(new Date());
@@ -269,7 +303,9 @@ export default function DSAEditor() {
         console.log('✓ Auto-save completed at', new Date().toLocaleTimeString());
       }
     } catch (err) {
-      console.error('Error saving:', err);
+      console.error('=== SAVE ERROR ===');
+      console.error('Error:', err);
+      console.error('Stack:', err instanceof Error ? err.stack : 'No stack');
       // Only show error alert for manual saves
       if (!isAutoSave) {
         alert(`Failed to save: ${err instanceof Error ? err.message : 'Unknown error'}`);
