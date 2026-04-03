@@ -32,6 +32,7 @@ export default function DSAEditor() {
   const [running, setRunning] = useState(false);
   const [output, setOutput] = useState('');
   const [loading, setLoading] = useState(true);
+  const [loadingFile, setLoadingFile] = useState(false);
   const [isCodeFullscreen, setIsCodeFullscreen] = useState(false);
   const [isCanvasFullscreen, setIsCanvasFullscreen] = useState(false);
   
@@ -142,9 +143,12 @@ export default function DSAEditor() {
   };
 
   const handleFileClick = async (file: DSAFile) => {
+    // Instantly set selected file and show loading
+    setSelectedFile(file);
+    setLoadingFile(true);
+    
     try {
       const { content } = await fetchDSAFileContent(dsaId!, file.fileId);
-      setSelectedFile(file);
       setCode(content);
       
       // Map language to Monaco language ID
@@ -155,24 +159,32 @@ export default function DSAEditor() {
       setLanguage(monacoLanguage);
       setShowCanvas(false);
       
-      // Load canvas data if exists
+      // Load THIS FILE's canvas data if exists
       if (file.canvasAzureUrl) {
         try {
+          console.log('Loading canvas for file:', file.name, file.canvasAzureUrl);
           const canvasResponse = await fetch(file.canvasAzureUrl);
           if (canvasResponse.ok) {
             const canvasJson = await canvasResponse.json();
+            console.log('Canvas loaded successfully for', file.name);
             setCanvasData(canvasJson);
+          } else {
+            console.log('No canvas found, initializing empty canvas for', file.name);
+            setCanvasData({ elements: [], appState: {} });
           }
         } catch (err) {
-          console.log('No canvas data found for this file');
-          setCanvasData(null);
+          console.log('No canvas data found for this file, initializing empty canvas');
+          setCanvasData({ elements: [], appState: {} });
         }
       } else {
-        setCanvasData(null);
+        console.log('No canvas URL, initializing empty canvas for', file.name);
+        setCanvasData({ elements: [], appState: {} });
       }
     } catch (err) {
       console.error('Error loading file:', err);
       alert('Failed to load file');
+    } finally {
+      setLoadingFile(false);
     }
   };
 
@@ -181,8 +193,41 @@ export default function DSAEditor() {
     
     setSaving(true);
     try {
+      // Save code
       await updateDSAFile(dsaId!, selectedFile.fileId, code, language);
-      alert('Saved!');
+      
+      // Save canvas if it exists and has content
+      if (excalidrawRef.current) {
+        const elements = excalidrawRef.current.getSceneElements();
+        const appState = excalidrawRef.current.getAppState();
+        
+        const sceneData = {
+          elements,
+          appState: {
+            viewBackgroundColor: appState.viewBackgroundColor,
+            currentItemStrokeColor: appState.currentItemStrokeColor,
+            currentItemBackgroundColor: appState.currentItemBackgroundColor,
+            currentItemFillStyle: appState.currentItemFillStyle,
+            currentItemStrokeWidth: appState.currentItemStrokeWidth,
+            currentItemRoughness: appState.currentItemRoughness,
+            currentItemOpacity: appState.currentItemOpacity,
+          }
+        };
+
+        // Convert to JSON blob
+        const jsonBlob = new Blob([JSON.stringify(sceneData)], { type: 'application/json' });
+        
+        // Save canvas to Azure
+        const canvasUrl = await saveDSACanvas(dsaId!, selectedFile.fileId, jsonBlob);
+        
+        // Update local state
+        if (selectedFile) {
+          selectedFile.canvasAzureUrl = canvasUrl;
+        }
+        setCanvasData(sceneData);
+      }
+      
+      alert(`✓ Saved ${selectedFile.name} (Code + Canvas)`);
     } catch (err) {
       console.error('Error saving:', err);
       alert('Failed to save');
@@ -203,7 +248,7 @@ export default function DSAEditor() {
     try {
       setSaving(true);
       
-      // Get the Excalidraw scene data
+      // Get the Excalidraw scene data for THIS specific file
       const elements = excalidrawRef.current.getSceneElements();
       const appState = excalidrawRef.current.getAppState();
       
@@ -223,15 +268,20 @@ export default function DSAEditor() {
       // Convert to JSON blob
       const jsonBlob = new Blob([JSON.stringify(sceneData)], { type: 'application/json' });
       
-      // Save to Azure
+      // Save to Azure - this will save to THIS file's canvas
+      console.log('Saving canvas for file:', selectedFile.name, selectedFile.fileId);
       const canvasUrl = await saveDSACanvas(dsaId!, selectedFile.fileId, jsonBlob);
       
-      // Update local state
+      // Update local state for THIS file
       if (selectedFile) {
         selectedFile.canvasAzureUrl = canvasUrl;
       }
       
-      alert('Canvas saved successfully!');
+      // Update canvas data state
+      setCanvasData(sceneData);
+      
+      console.log('Canvas saved successfully for', selectedFile.name, 'at', canvasUrl);
+      alert(`Canvas saved for ${selectedFile.name}!`);
     } catch (err) {
       console.error('Error saving canvas:', err);
       alert('Failed to save canvas');
@@ -296,8 +346,10 @@ export default function DSAEditor() {
     return nodes.map(node => (
       <div key={node.id}>
         <div
-          className={`flex items-center gap-2 px-3 py-2 hover:bg-purple-50 cursor-pointer rounded-lg transition-all ${
-            selectedFile?.fileId === node.id ? 'bg-purple-100 border-2 border-purple-400 shadow-sm' : 'border-2 border-transparent'
+          className={`flex items-center gap-2 px-3 py-2 cursor-pointer rounded-lg transition-all ${
+            selectedFile?.fileId === node.id 
+              ? 'bg-purple-100 border-2 border-purple-400 shadow-sm' 
+              : 'border-2 border-transparent hover:bg-purple-50'
           }`}
           style={{ paddingLeft: `${depth * 16 + 12}px` }}
           onClick={() => {
@@ -320,6 +372,9 @@ export default function DSAEditor() {
             <File size={16} className="text-blue-600" strokeWidth={2.5} />
           )}
           <span className="text-sm text-gray-900 font-semibold flex-1">{node.name}</span>
+          {loadingFile && selectedFile?.fileId === node.id && (
+            <div className="animate-spin rounded-full h-4 w-4 border-2 border-purple-500 border-t-transparent"></div>
+          )}
         </div>
         {node.type === 'folder' && expandedFolders.has(node.path) && node.children && (
           <div>{renderTree(node.children, depth + 1)}</div>
@@ -417,11 +472,12 @@ export default function DSAEditor() {
             </div>
             <div className="flex gap-3">
               <button
-                onClick={handleSaveCanvas}
+                onClick={handleSave}
                 disabled={saving}
-                className="px-5 py-2 bg-white text-black border-3 border-black rounded-lg font-black hover:bg-gray-100 transition-all shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] disabled:opacity-50"
+                className="px-5 py-2 bg-white text-black border-3 border-black rounded-lg font-black hover:bg-gray-100 transition-all shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] disabled:opacity-50 flex items-center gap-2"
               >
-                {saving ? 'Saving...' : 'Save Canvas'}
+                <Save size={18} strokeWidth={2.5} />
+                {saving ? 'Saving...' : 'Save All'}
               </button>
               <button
                 onClick={() => setIsCanvasFullscreen(false)}
@@ -433,6 +489,7 @@ export default function DSAEditor() {
           </div>
           <div className="flex-1">
             <Excalidraw
+              key={`canvas-fullscreen-${selectedFile.fileId}`}
               theme="light"
               initialData={canvasData}
               excalidrawAPI={(api) => {
@@ -532,7 +589,7 @@ export default function DSAEditor() {
               className="px-5 py-2 bg-green-400 hover:bg-green-500 border-3 border-black rounded-lg text-sm font-black flex items-center gap-2 disabled:opacity-50 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] transition-all"
             >
               <Save size={16} strokeWidth={2.5} />
-              {saving ? 'Saving...' : 'Save Code'}
+              {saving ? 'Saving...' : 'Save All'}
             </button>
             
             <button
@@ -634,9 +691,22 @@ export default function DSAEditor() {
                     <div className="w-3 h-3 rounded-full bg-green-400 border border-green-600"></div>
                   </div>
                   <span className="text-sm font-bold text-black">{selectedFile.name}</span>
+                  {loadingFile && (
+                    <div className="animate-spin rounded-full h-4 w-4 border-2 border-purple-500 border-t-transparent"></div>
+                  )}
                 </div>
                 <span className="text-xs text-gray-600 font-medium">• Write code in main class only</span>
               </div>
+
+              {/* Loading Overlay */}
+              {loadingFile && (
+                <div className="absolute inset-0 bg-white/80 backdrop-blur-sm z-50 flex items-center justify-center">
+                  <div className="text-center">
+                    <div className="inline-block animate-spin rounded-full h-16 w-16 border-4 border-purple-500 border-t-transparent mb-4"></div>
+                    <p className="text-lg font-bold text-gray-800">Loading {selectedFile.name}...</p>
+                  </div>
+                </div>
+              )}
 
               {/* Editor or Canvas */}
               <div className="flex-1 flex relative">
@@ -711,39 +781,31 @@ export default function DSAEditor() {
 
                 {/* Canvas - Hidden when code is shown */}
                 {selectedFile && (
-                  <div className={`flex-1 m-4 border-4 border-black rounded-xl overflow-hidden shadow-[8px_8px_0px_0px_rgba(0,0,0,0.1)] ${showCanvas ? 'block' : 'hidden'}`}>
+                  <div className={`flex-1 m-4 border-4 border-black rounded-xl overflow-hidden shadow-[8px_8px_0px_0px_rgba(0,0,0,0.1)] relative ${showCanvas ? 'block' : 'hidden'}`}>
                     <Excalidraw
+                      key={`canvas-${selectedFile.fileId}`}
                       theme="light"
                       initialData={canvasData}
                       excalidrawAPI={(api) => {
                         excalidrawRef.current = api;
                       }}
                     />
-                    <div className="absolute bottom-6 right-6 flex gap-3">
-                      <button
-                        onClick={() => setIsCanvasFullscreen(!isCanvasFullscreen)}
-                        className="p-3 bg-white border-3 border-black rounded-xl hover:bg-gray-100 transition-all shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]"
-                        title={isCanvasFullscreen ? "Exit fullscreen" : "Fullscreen"}
-                      >
-                        {isCanvasFullscreen ? (
-                          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                            <path d="M8 3v3a2 2 0 0 1-2 2H3m18 0h-3a2 2 0 0 1-2-2V3m0 18v-3a2 2 0 0 1 2-2h3M3 16h3a2 2 0 0 1 2 2v3" />
-                          </svg>
-                        ) : (
-                          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                            <path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3" />
-                          </svg>
-                        )}
-                      </button>
-                      <button
-                        onClick={handleSaveCanvas}
-                        disabled={saving}
-                        className="px-6 py-3 bg-purple-400 text-black border-3 border-black rounded-xl font-black hover:bg-purple-500 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] transition-all disabled:opacity-50 flex items-center gap-2"
-                      >
-                        <Save size={20} strokeWidth={2.5} />
-                        {saving ? 'Saving...' : 'Save Canvas'}
-                      </button>
-                    </div>
+                    {/* Fullscreen Button */}
+                    <button
+                      onClick={() => setIsCanvasFullscreen(!isCanvasFullscreen)}
+                      className="absolute top-4 right-4 p-3 bg-white border-3 border-black rounded-xl hover:bg-gray-100 transition-all shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]"
+                      title={isCanvasFullscreen ? "Exit fullscreen" : "Fullscreen"}
+                    >
+                      {isCanvasFullscreen ? (
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                          <path d="M8 3v3a2 2 0 0 1-2 2H3m18 0h-3a2 2 0 0 1-2-2V3m0 18v-3a2 2 0 0 1 2-2h3M3 16h3a2 2 0 0 1 2 2v3" />
+                        </svg>
+                      ) : (
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                          <path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3" />
+                        </svg>
+                      )}
+                    </button>
                   </div>
                 )}
 

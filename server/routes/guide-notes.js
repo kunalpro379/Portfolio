@@ -56,36 +56,7 @@ function generateSlug(text) {
     .substring(0, 50);         // Limit length
 }
 
-// Helper function to get allowed origin for CORS
-const getAllowedOrigin = (origin) => {
-  if (!origin) return null;
-  if (CONFIG.CORS.ORIGINS.includes(origin)) {
-    return origin;
-  }
-  return null;
-};
-
-// Middleware to set CORS headers
-const setCorsHeaders = (req, res, next) => {
-  const origin = req.headers.origin;
-  const allowedOrigin = getAllowedOrigin(origin);
-  
-  if (allowedOrigin) {
-    res.header('Access-Control-Allow-Origin', allowedOrigin);
-    res.header('Access-Control-Allow-Credentials', 'true');
-  }
-  
-  res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
-  res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
-  next();
-};
-
-router.use(setCorsHeaders);
-
-// Handle OPTIONS requests for CORS
-router.options('*', (req, res) => {
-  res.sendStatus(200);
-});
+// CORS is handled globally in server config, no need for route-specific CORS
 
 // Health check endpoint
 router.get('/health', (req, res) => {
