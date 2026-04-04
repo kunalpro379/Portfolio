@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { ArrowLeft, Play, Palette, Plus, FolderPlus, File, Folder, ChevronRight, ChevronDown, Save, X } from 'lucide-react';
+import { ArrowLeft, Palette, Plus, FolderPlus, File, Folder, ChevronRight, ChevronDown, Save, X } from 'lucide-react';
 import { Excalidraw } from '@excalidraw/excalidraw';
 import Editor from '@monaco-editor/react';
 import LoadingSpinner from '@/components/LoadingSpinner';
@@ -31,8 +31,6 @@ export default function DSAEditor() {
   const [canvasData, setCanvasData] = useState<any>(null);
   const [saving, setSaving] = useState(false);
   const [lastSaved, setLastSaved] = useState<Date | null>(null);
-  const [running, setRunning] = useState(false);
-  const [output, setOutput] = useState('');
   const [loading, setLoading] = useState(true);
   const [loadingFile, setLoadingFile] = useState(false);
   const [isCodeFullscreen, setIsCodeFullscreen] = useState(false);
@@ -343,12 +341,6 @@ export default function DSAEditor() {
     }
   };
 
-  const handleRun = () => {
-    setRunning(true);
-    setOutput('// Code execution not implemented yet\n// This would send code to a backend execution service');
-    setTimeout(() => setRunning(false), 1000);
-  };
-
   const handleCreateFolder = async () => {
     setCreateType('folder');
     setCreateName('');
@@ -559,15 +551,16 @@ export default function DSAEditor() {
       {/* Fullscreen Canvas Modal */}
       {isCanvasFullscreen && selectedFile && canvasData && (
         <div className="fixed inset-0 bg-white z-[9999] flex flex-col">
-          <div className="flex items-center justify-between px-6 py-4 bg-purple-500 border-b-4 border-black">
+          <div className="flex items-center justify-between px-6 py-4 bg-gradient-to-r from-stone-800 to-stone-900 border-b-4 border-black shadow-lg">
             <div className="flex items-center gap-4">
-              <button
-                onClick={() => setIsCanvasFullscreen(false)}
-                className="px-5 py-2 bg-black text-white border-3 border-black rounded-lg font-black hover:bg-gray-800 transition-all shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]"
-              >
-                Exit Fullscreen
-              </button>
+              <h2 className="text-white font-black text-lg">{selectedFile.name} - Canvas</h2>
             </div>
+            <button
+              onClick={() => setIsCanvasFullscreen(false)}
+              className="px-5 py-2.5 bg-white text-stone-900 border-2 border-white rounded-lg font-black hover:bg-stone-100 transition-all shadow-[2px_2px_0px_0px_rgba(255,255,255,0.3)]"
+            >
+              Exit Fullscreen
+            </button>
           </div>
           <div className="flex-1">
             <Excalidraw
@@ -640,78 +633,50 @@ export default function DSAEditor() {
       )}
 
       {/* Header */}
-      <div className="flex items-center justify-between px-6 py-4 bg-white border-b-4 border-black shadow-lg">
-        <div className="flex items-center gap-4">
+      <div className="flex items-center justify-between px-6 py-3 bg-white border-b-2 border-stone-300 shadow-sm">
+        <div className="flex items-center gap-3">
           <button
             onClick={() => navigate('/learnings?tab=code')}
-            className="flex items-center gap-2 px-4 py-2 bg-gray-100 hover:bg-gray-200 border-2 border-black rounded-lg transition font-bold text-sm"
+            className="flex items-center gap-1.5 px-3 py-1.5 bg-stone-100 hover:bg-stone-200 border border-stone-300 rounded-lg transition text-xs font-semibold text-stone-700"
           >
-            <ArrowLeft size={18} strokeWidth={2.5} />
+            <ArrowLeft size={14} strokeWidth={2} />
             <span>Back</span>
           </button>
-          <h1 className="text-2xl font-black text-black">{project.name}</h1>
+          <h1 className="text-lg font-bold text-stone-900">{project.name}</h1>
         </div>
         
         {selectedFile && (
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2">
             {lastSaved && (
-              <span className="text-xs text-gray-600 font-medium">
-                Last saved: {lastSaved.toLocaleTimeString()}
+              <span className="text-[10px] text-stone-500 font-medium">
+                {lastSaved.toLocaleTimeString()}
               </span>
             )}
-            
-            {/* Debug: Show canvas URL */}
-            {selectedFile.canvasAzureUrl && (
-              <span className="text-xs text-blue-600 font-medium" title={selectedFile.canvasAzureUrl}>
-                ✓ Canvas saved
-              </span>
-            )}
-            
-            <select
-              value={language}
-              onChange={(e) => setLanguage(e.target.value)}
-              className="px-4 py-2 bg-white border-3 border-black rounded-lg text-sm font-bold text-black"
-            >
-              <option value="cpp">C++</option>
-              <option value="java">Java</option>
-              <option value="python">Python</option>
-              <option value="javascript">JavaScript</option>
-            </select>
             
             <button
               onClick={() => handleSave(false)}
               disabled={saving}
-              className="px-5 py-2 bg-green-400 hover:bg-green-500 border-3 border-black rounded-lg text-sm font-black flex items-center gap-2 disabled:opacity-50 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] transition-all"
+              className="px-3 py-1.5 bg-stone-900 hover:bg-stone-800 text-white border border-stone-900 rounded-md text-xs font-semibold flex items-center gap-1.5 disabled:opacity-50 transition-all"
             >
-              <Save size={16} strokeWidth={2.5} />
-              {saving ? 'Saving...' : 'Save All'}
+              <Save size={13} strokeWidth={2} />
+              {saving ? 'Saving...' : 'Save'}
             </button>
             
-            <button
-              onClick={handleRun}
-              disabled={running}
-              className="px-5 py-2 bg-blue-400 hover:bg-blue-500 border-3 border-black rounded-lg text-sm font-black flex items-center gap-2 disabled:opacity-50 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] transition-all"
-            >
-              <Play size={16} strokeWidth={2.5} />
-              {running ? 'Running...' : 'Run'}
-            </button>
-            
-            <div className="h-8 w-px bg-gray-300"></div>
+            <div className="h-5 w-px bg-stone-300"></div>
             
             <button
               onClick={() => {
                 setShowCanvas(!showCanvas);
                 if (!showCanvas && !canvasData) {
-                  // Initialize empty canvas
                   setCanvasData({ elements: [], appState: {} });
                 }
               }}
-              className={`px-5 py-2 border-3 border-black rounded-lg text-sm font-black flex items-center gap-2 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] transition-all ${
-                showCanvas ? 'bg-purple-400 hover:bg-purple-500' : 'bg-gray-200 hover:bg-gray-300'
+              className={`p-1.5 border border-stone-300 rounded-md transition-all ${
+                showCanvas ? 'bg-amber-100 hover:bg-amber-200 text-amber-900' : 'bg-stone-100 hover:bg-stone-200 text-stone-700'
               }`}
+              title={showCanvas ? 'Show Code' : 'Show Canvas'}
             >
-              <Palette size={16} strokeWidth={2.5} />
-              {showCanvas ? 'Show Code' : 'Show Canvas'}
+              <Palette size={16} strokeWidth={2} />
             </button>
           </div>
         )}
@@ -893,11 +858,15 @@ export default function DSAEditor() {
                         excalidrawRef.current = api;
                       }}
                     />
-                    {/* Fullscreen Button */}
+                    {/* Fullscreen Button - Fixed positioning with high z-index */}
                     <button
-                      onClick={() => setIsCanvasFullscreen(!isCanvasFullscreen)}
-                      className="absolute top-4 right-4 p-3 bg-white border-3 border-black rounded-xl hover:bg-gray-100 transition-all shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setIsCanvasFullscreen(!isCanvasFullscreen);
+                      }}
+                      className="fixed top-24 right-8 p-3 bg-white border-3 border-black rounded-xl hover:bg-gray-100 transition-all shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] z-[9999]"
                       title={isCanvasFullscreen ? "Exit fullscreen" : "Fullscreen"}
+                      style={{ zIndex: 99999 }}
                     >
                       {isCanvasFullscreen ? (
                         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
@@ -909,14 +878,6 @@ export default function DSAEditor() {
                         </svg>
                       )}
                     </button>
-                  </div>
-                )}
-
-                {/* Output Panel (when running) */}
-                {output && (
-                  <div className="w-96 bg-gray-900 border-l-4 border-black p-6 overflow-auto">
-                    <div className="text-sm font-black text-gray-400 mb-3 uppercase tracking-wider">Output</div>
-                    <pre className="text-sm text-green-400 font-mono leading-relaxed">{output}</pre>
                   </div>
                 )}
               </div>

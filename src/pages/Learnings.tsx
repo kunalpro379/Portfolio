@@ -972,11 +972,38 @@ export default function LearningsPage() {
 
       {/* Mobile Menu Dropdown */}
       {mobileMenuOpen && (
-        <div className="md:hidden fixed inset-0 z-[250] bg-black/50 backdrop-blur-sm" onClick={() => setMobileMenuOpen(false)}>
+        <div 
+          className="md:hidden fixed inset-0 z-[250] bg-black/50 backdrop-blur-sm animate-fadeIn" 
+          onClick={() => setMobileMenuOpen(false)}
+        >
           <div 
-            className="absolute top-20 right-4 left-4 bg-white border-4 border-black rounded-2xl shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] overflow-hidden"
+            className="absolute top-20 right-4 left-4 bg-white border-4 border-black rounded-2xl shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] overflow-hidden animate-slideDown"
             onClick={(e) => e.stopPropagation()}
+            style={{
+              animation: 'slideDown 0.3s ease-out forwards'
+            }}
           >
+            <style>{`
+              @keyframes slideDown {
+                from {
+                  opacity: 0;
+                  transform: translateY(-20px);
+                }
+                to {
+                  opacity: 1;
+                  transform: translateY(0);
+                }
+              }
+              
+              @keyframes fadeIn {
+                from {
+                  opacity: 0;
+                }
+                to {
+                  opacity: 1;
+                }
+              }
+            `}</style>
             <div className="p-4 space-y-2">
               {/* Navigation Buttons */}
               <button
