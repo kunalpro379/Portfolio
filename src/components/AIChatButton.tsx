@@ -236,37 +236,24 @@ const AIChatButton: React.FC = () => {
         onClick={() => setIsOpen(true)}
         className={`ai-chat-button-fixed group ${
           isOpen ? 'hidden' : 'flex'
-        } items-center gap-1.5 sm:gap-3 bg-white text-black px-2.5 py-2 sm:px-6 sm:py-4 rounded-2xl shadow-2xl hover:shadow-3xl transition-all duration-500 transform hover:scale-105 hover:-translate-y-2 border-3 sm:border-4 border-black relative overflow-hidden`}
+        } items-center gap-1.5 sm:gap-2 bg-white text-black px-2 py-1.5 sm:px-4 sm:py-2.5 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 border-2 border-black relative overflow-hidden`}
         style={{
-          borderRadius: '20px 25px 20px 25px',
-          boxShadow: '4px 4px 0px 0px rgba(0,0,0,1), 0 0 30px rgba(0,0,0,0.1)',
+          borderRadius: '12px 15px 12px 15px',
+          boxShadow: '3px 3px 0px 0px rgba(0,0,0,1)',
         }}
         aria-label="Ask about Kunal"
       >
-        {/* Animated background pattern - removed dots */}
-        <div className="absolute inset-0 opacity-5">
-        </div>
-        
         {/* Main content */}
-        <div className="relative flex items-center gap-1.5 sm:gap-3">
+        <div className="relative flex items-center gap-1.5 sm:gap-2">
           <div className="relative">
-            <div className="w-6 h-6 sm:w-12 sm:h-12 rounded-full flex items-center justify-center p-1">
-              <img src="/gemini.png" alt="Gemini AI" className="w-full h-full object-contain animate-spin" style={{ animationDuration: '3s' }} />
+            <div className="w-5 h-5 sm:w-8 sm:h-8 rounded-full flex items-center justify-center p-0.5">
+              <img src="/gemini.png" alt="Gemini AI" className="w-full h-full object-contain" />
             </div>
           </div>
-          <span className="text-xs sm:text-base font-black tracking-wide text-black relative">
+          <span className="text-[10px] sm:text-sm font-bold tracking-wide text-black relative">
             Ask about me
-            <div className="absolute -bottom-1 left-0 w-full h-0.5 bg-black transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300"></div>
           </span>
         </div>
-        
-        {/* Hover effect lines */}
-        <div className="absolute top-0 left-0 w-full h-0.5 bg-black transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300"></div>
-        <div className="absolute bottom-0 right-0 w-full h-0.5 bg-black transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300"></div>
-        
-        {/* Hover effect lines */}
-        <div className="absolute top-0 left-0 w-full h-0.5 bg-white transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300"></div>
-        <div className="absolute bottom-0 right-0 w-full h-0.5 bg-white transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300"></div>
       </button>
 
       {/* Chat Modal - Mobile Optimized */}
@@ -295,7 +282,7 @@ const AIChatButton: React.FC = () => {
               <div className="flex items-center gap-2 sm:gap-3 relative">
                 <div className="relative">
                   <div className="w-10 h-10 sm:w-14 sm:h-14 rounded-full flex items-center justify-center p-2">
-                    <img src="/gemini.png" alt="Gemini AI" className="w-full h-full object-contain animate-spin" style={{ animationDuration: '4s' }} />
+                    <img src="/gemini.png" alt="Gemini AI" className="w-full h-full object-contain" />
                   </div>
                   <div className="absolute -bottom-1 -right-1 w-3 h-3 bg-white border-2 border-black rounded-full flex items-center justify-center">
                     <div className="w-1 h-1 bg-green-500 rounded-full animate-pulse"></div>
@@ -330,7 +317,7 @@ const AIChatButton: React.FC = () => {
                 >
                   {message.type === 'ai' && (
                     <div className="w-8 h-8 sm:w-12 sm:h-12 rounded-full flex items-center justify-center flex-shrink-0 mt-1 relative p-1">
-                      <img src="/gemini.png" alt="Gemini AI" className="w-full h-full object-contain animate-spin" style={{ animationDuration: '5s' }} />
+                      <img src="/gemini.png" alt="Gemini AI" className="w-full h-full object-contain" />
                       <div className="absolute -top-1 -right-1 w-2 h-2 bg-white border border-black rounded-full flex items-center justify-center">
                         <div className="w-0.5 h-0.5 bg-black rounded-full"></div>
                       </div>
@@ -384,7 +371,7 @@ const AIChatButton: React.FC = () => {
               {isLoading && (
                 <div className="flex gap-3 justify-start">
                   <div className="w-8 h-8 sm:w-12 sm:h-12 rounded-full flex items-center justify-center relative p-1">
-                    <img src="/gemini.png" alt="Gemini AI" className="w-full h-full object-contain animate-spin" style={{ animationDuration: '2s' }} />
+                    <img src="/gemini.png" alt="Gemini AI" className="w-full h-full object-contain" />
                   </div>
                   <div className="bg-white p-3 rounded-2xl border-2 border-gray-200 relative"
                     style={{
@@ -440,7 +427,7 @@ const AIChatButton: React.FC = () => {
               </div>
               
               <p className="text-xs text-gray-500 mt-2 sm:mt-3 text-center flex items-center justify-center gap-2 relative">
-                <img src="/gemini.png" alt="Gemini AI" className="w-3 h-3 sm:w-5 sm:h-5 object-contain animate-spin" style={{ animationDuration: '6s' }} />
+                <img src="/gemini.png" alt="Gemini AI" className="w-3 h-3 sm:w-5 sm:h-5 object-contain" />
                 <span>Powered by AI</span>
                 <div className="w-1 h-1 bg-gray-400 rounded-full"></div>
                 <span className="hidden sm:inline">Information based on Kunal's portfolio</span>

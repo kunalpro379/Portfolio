@@ -501,19 +501,7 @@ export default function DSAEditor() {
       {/* Fullscreen Code Modal */}
       {isCodeFullscreen && selectedFile && (
         <div className="fixed inset-0 bg-black z-[9999] flex flex-col">
-          <div className="flex items-center justify-between px-6 py-4 bg-gray-900 border-b-2 border-gray-700">
-            <div className="flex items-center gap-4">
-              <h2 className="text-white font-bold text-lg">{selectedFile.name}</h2>
-              <span className="text-gray-400 text-sm">• Fullscreen Mode</span>
-            </div>
-            <button
-              onClick={() => setIsCodeFullscreen(false)}
-              className="px-4 py-2 bg-red-500 hover:bg-red-600 text-white rounded-lg font-bold transition-all"
-            >
-              Exit Fullscreen
-            </button>
-          </div>
-          <div className="flex-1">
+          <div className="flex-1 relative">
             <Editor
               height="100%"
               language={language}
@@ -544,6 +532,13 @@ export default function DSAEditor() {
                 }
               }}
             />
+            {/* Exit Fullscreen Button - Inside editor at top-right */}
+            <button
+              onClick={() => setIsCodeFullscreen(false)}
+              className="absolute top-4 right-4 px-3 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg font-semibold transition-all shadow-lg z-[99999] text-sm"
+            >
+              Exit Fullscreen
+            </button>
           </div>
         </div>
       )}
@@ -551,18 +546,7 @@ export default function DSAEditor() {
       {/* Fullscreen Canvas Modal */}
       {isCanvasFullscreen && selectedFile && canvasData && (
         <div className="fixed inset-0 bg-white z-[9999] flex flex-col">
-          <div className="flex items-center justify-between px-6 py-4 bg-gradient-to-r from-stone-800 to-stone-900 border-b-4 border-black shadow-lg">
-            <div className="flex items-center gap-4">
-              <h2 className="text-white font-black text-lg">{selectedFile.name} - Canvas</h2>
-            </div>
-            <button
-              onClick={() => setIsCanvasFullscreen(false)}
-              className="px-5 py-2.5 bg-white text-stone-900 border-2 border-white rounded-lg font-black hover:bg-stone-100 transition-all shadow-[2px_2px_0px_0px_rgba(255,255,255,0.3)]"
-            >
-              Exit Fullscreen
-            </button>
-          </div>
-          <div className="flex-1">
+          <div className="flex-1 relative">
             <Excalidraw
               key={`canvas-fullscreen-${selectedFile.fileId}`}
               theme="light"
@@ -570,7 +554,26 @@ export default function DSAEditor() {
               excalidrawAPI={(api) => {
                 excalidrawRef.current = api;
               }}
+              UIOptions={{
+                canvasActions: {
+                  changeViewBackgroundColor: true,
+                  clearCanvas: true,
+                  export: { saveFileToDisk: true },
+                  loadScene: true,
+                  saveToActiveFile: true,
+                  toggleTheme: false,
+                },
+              }}
+              zenModeEnabled={false}
+              gridModeEnabled={false}
             />
+            {/* Exit Fullscreen Button - Inside canvas at top-right */}
+            <button
+              onClick={() => setIsCanvasFullscreen(false)}
+              className="absolute top-4 right-4 px-3 py-2 bg-stone-900 text-white border-2 border-stone-900 rounded-lg font-semibold hover:bg-stone-800 transition-all shadow-lg z-[99999] text-sm"
+            >
+              Exit Fullscreen
+            </button>
           </div>
         </div>
       )}
@@ -651,6 +654,31 @@ export default function DSAEditor() {
               <span className="text-[10px] text-stone-500 font-medium">
                 {lastSaved.toLocaleTimeString()}
               </span>
+            )}
+            
+            {/* Fullscreen button for code/canvas */}
+            {!showCanvas && (
+              <button
+                onClick={() => setIsCodeFullscreen(!isCodeFullscreen)}
+                className="p-1.5 border border-stone-300 rounded-md hover:bg-stone-100 transition-all text-stone-700"
+                title="Fullscreen Code"
+              >
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3" />
+                </svg>
+              </button>
+            )}
+            
+            {showCanvas && (
+              <button
+                onClick={() => setIsCanvasFullscreen(!isCanvasFullscreen)}
+                className="p-1.5 border border-stone-300 rounded-md hover:bg-stone-100 transition-all text-stone-700"
+                title="Fullscreen Canvas"
+              >
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3" />
+                </svg>
+              </button>
             )}
             
             <button
@@ -857,27 +885,19 @@ export default function DSAEditor() {
                       excalidrawAPI={(api) => {
                         excalidrawRef.current = api;
                       }}
-                    />
-                    {/* Fullscreen Button - Fixed positioning with high z-index */}
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        setIsCanvasFullscreen(!isCanvasFullscreen);
+                      UIOptions={{
+                        canvasActions: {
+                          changeViewBackgroundColor: true,
+                          clearCanvas: true,
+                          export: { saveFileToDisk: true },
+                          loadScene: true,
+                          saveToActiveFile: true,
+                          toggleTheme: false,
+                        },
                       }}
-                      className="fixed top-24 right-8 p-3 bg-white border-3 border-black rounded-xl hover:bg-gray-100 transition-all shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] z-[9999]"
-                      title={isCanvasFullscreen ? "Exit fullscreen" : "Fullscreen"}
-                      style={{ zIndex: 99999 }}
-                    >
-                      {isCanvasFullscreen ? (
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                          <path d="M8 3v3a2 2 0 0 1-2 2H3m18 0h-3a2 2 0 0 1-2-2V3m0 18v-3a2 2 0 0 1 2-2h3M3 16h3a2 2 0 0 1 2 2v3" />
-                        </svg>
-                      ) : (
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                          <path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3" />
-                        </svg>
-                      )}
-                    </button>
+                      zenModeEnabled={false}
+                      gridModeEnabled={false}
+                    />
                   </div>
                 )}
               </div>
