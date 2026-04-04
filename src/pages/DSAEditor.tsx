@@ -55,7 +55,7 @@ export default function DSAEditor() {
     const autoSaveInterval = setInterval(() => {
       console.log('🔄 Auto-saving...');
       handleSave(true); // Pass true to indicate auto-save (no alert)
-    }, 10 * 60 * 1000); // 10 minutes
+    }, 30 * 1000); // 30 seconds
 
     return () => clearInterval(autoSaveInterval);
   }, [selectedFile, code, canvasData]);

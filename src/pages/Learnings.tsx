@@ -1588,22 +1588,22 @@ export default function LearningsPage() {
                         onClick={() => {
                           handleNavigate(`/learnings/dsa/${project.dsaId}`);
                         }}
-                        className="group relative bg-white border-3 border-black rounded-xl p-4 transition-all duration-300 cursor-pointer shadow-[0_8px_0_0_rgba(0,0,0,0.2)] hover:shadow-[0_12px_0_0_rgba(0,0,0,0.3)] hover:-translate-y-1 flex items-center gap-3"
+                        className="group relative bg-gradient-to-br from-stone-50 to-amber-50/30 border-2 border-stone-800 rounded-xl p-4 transition-all duration-300 cursor-pointer shadow-[0_4px_0_0_rgba(120,53,15,0.3)] hover:shadow-[0_6px_0_0_rgba(120,53,15,0.4)] hover:-translate-y-0.5 flex items-center gap-3"
                       >
                         {/* Icon */}
-                        <div className="flex-shrink-0 w-9 h-9 bg-purple-100 border-2 border-black rounded-lg flex items-center justify-center group-hover:scale-105 transition-transform">
-                          <Code2 size={16} strokeWidth={2.5} className="text-purple-600" />
+                        <div className="flex-shrink-0 w-10 h-10 bg-gradient-to-br from-amber-100 to-stone-100 border-2 border-stone-700 rounded-lg flex items-center justify-center group-hover:scale-105 transition-transform shadow-sm">
+                          <Code2 size={18} strokeWidth={2.5} className="text-stone-800" />
                         </div>
 
                         {/* Content */}
                         <div className="flex-1 min-w-0">
-                          <h3 className="text-sm font-semibold text-black transition-colors line-clamp-1 mb-1">
+                          <h3 className="text-sm font-bold text-stone-900 transition-colors line-clamp-1 mb-1">
                             {project.name}
                           </h3>
                           <div className="flex items-center gap-2 text-[10px]">
-                            <span className="text-gray-700 font-medium">DSA Practice</span>
+                            <span className="text-stone-600 font-medium">DSA Practice</span>
                             {project.files && project.files.length > 0 && (
-                              <span className="px-2 py-0.5 bg-purple-100 text-purple-700 border-2 border-black rounded-full font-bold text-[9px]">
+                              <span className="px-2 py-0.5 bg-amber-100 text-amber-900 border border-amber-800 rounded-full font-bold text-[9px] shadow-sm">
                                 {project.files.length} {project.files.length === 1 ? 'file' : 'files'}
                               </span>
                             )}
@@ -1611,8 +1611,8 @@ export default function LearningsPage() {
                         </div>
 
                         {/* Arrow - Always at Right End */}
-                        <div className="flex-shrink-0 opacity-70 group-hover:opacity-100 transition-all">
-                          <ChevronRight size={18} strokeWidth={2.5} className="text-black" />
+                        <div className="flex-shrink-0 opacity-60 group-hover:opacity-100 group-hover:translate-x-0.5 transition-all">
+                          <ChevronRight size={20} strokeWidth={2.5} className="text-stone-800" />
                         </div>
                       </div>
                       );
