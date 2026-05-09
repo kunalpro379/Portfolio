@@ -6,6 +6,14 @@ const diarySchema = new mongoose.Schema({
     required: true,
     unique: true
   },
+  leftContent: {
+    type: String,
+    default: ''
+  },
+  rightContent: {
+    type: String,
+    default: ''
+  },
   content: {
     type: String,
     default: ''
