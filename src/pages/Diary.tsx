@@ -239,6 +239,12 @@ export default function DiaryPage() {
       ? 'right-page-flip right-page-flip-prev'
       : 'right-page-flip';
 
+  const leftPageFlipClass = slideDirection === 'next'
+    ? 'left-page-flip left-page-flip-next'
+    : slideDirection === 'prev'
+      ? 'left-page-flip left-page-flip-prev'
+      : 'left-page-flip';
+
   const activeFontSize = activeSide === 'left' ? leftFontSize : rightFontSize;
 
   return (
@@ -269,6 +275,15 @@ export default function DiaryPage() {
           will-change: transform;
         }
 
+        .left-page-flip {
+          transform-origin: right center;
+          transform-style: preserve-3d;
+          backface-visibility: hidden;
+          position: relative;
+          overflow: hidden;
+          will-change: transform;
+        }
+
         .right-page-flip::before {
           content: '';
           position: absolute;
@@ -281,30 +296,68 @@ export default function DiaryPage() {
           opacity: 0.8;
         }
 
+        .left-page-flip::after {
+          content: '';
+          position: absolute;
+          right: -10px;
+          top: 0;
+          bottom: 0;
+          width: 18px;
+          pointer-events: none;
+          background: linear-gradient(to left, rgba(0,0,0,0.28), rgba(0,0,0,0.08), transparent);
+          opacity: 0.8;
+        }
+
         @keyframes flipNext {
           0% { transform: translateX(0) rotateY(0deg) scale(1); }
-          30% { transform: translateX(-12px) rotateY(-55deg) scale(0.99); }
-          55% { transform: translateX(-16px) rotateY(-110deg) scale(0.975); }
-          75% { transform: translateX(-10px) rotateY(-155deg) scale(0.99); }
+          25% { transform: translateX(-8px) rotateY(-45deg) scale(0.995); }
+          50% { transform: translateX(-12px) rotateY(-90deg) scale(0.985); }
+          75% { transform: translateX(-8px) rotateY(-135deg) scale(0.995); }
           100% { transform: translateX(0) rotateY(-180deg) scale(1); }
         }
 
         @keyframes flipPrev {
           0% { transform: translateX(0) rotateY(-180deg) scale(1); }
-          30% { transform: translateX(-10px) rotateY(-155deg) scale(0.99); }
-          55% { transform: translateX(-16px) rotateY(-110deg) scale(0.975); }
-          75% { transform: translateX(-12px) rotateY(-55deg) scale(0.99); }
+          25% { transform: translateX(-8px) rotateY(-135deg) scale(0.995); }
+          50% { transform: translateX(-12px) rotateY(-90deg) scale(0.985); }
+          75% { transform: translateX(-8px) rotateY(-45deg) scale(0.995); }
+          100% { transform: translateX(0) rotateY(0deg) scale(1); }
+        }
+
+        @keyframes flipOutNext {
+          0% { transform: translateX(0) rotateY(0deg) scale(1); }
+          25% { transform: translateX(8px) rotateY(45deg) scale(0.995); }
+          50% { transform: translateX(12px) rotateY(90deg) scale(0.985); }
+          75% { transform: translateX(8px) rotateY(135deg) scale(0.995); }
+          100% { transform: translateX(0) rotateY(180deg) scale(1); }
+        }
+
+        @keyframes flipOutPrev {
+          0% { transform: translateX(0) rotateY(180deg) scale(1); }
+          25% { transform: translateX(8px) rotateY(135deg) scale(0.995); }
+          50% { transform: translateX(12px) rotateY(90deg) scale(0.985); }
+          75% { transform: translateX(8px) rotateY(45deg) scale(0.995); }
           100% { transform: translateX(0) rotateY(0deg) scale(1); }
         }
 
         .right-page-flip-next {
-          animation: flipNext 620ms cubic-bezier(0.22, 1, 0.36, 1);
+          animation: flipNext 700ms cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
           box-shadow: -26px 16px 34px rgba(0, 0, 0, 0.24);
         }
 
         .right-page-flip-prev {
-          animation: flipPrev 620ms cubic-bezier(0.22, 1, 0.36, 1);
+          animation: flipPrev 700ms cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
           box-shadow: -26px 16px 34px rgba(0, 0, 0, 0.24);
+        }
+
+        .left-page-flip-next {
+          animation: flipOutNext 700ms cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+          box-shadow: 10px 8px 22px rgba(0, 0, 0, 0.24);
+        }
+
+        .left-page-flip-prev {
+          animation: flipOutPrev 700ms cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+          box-shadow: 10px 8px 22px rgba(0, 0, 0, 0.24);
         }
 
         .toolbar-btn {
@@ -327,13 +380,27 @@ export default function DiaryPage() {
         .editor-area {
           white-space: pre-wrap;
           word-break: break-word;
-          overflow: hidden;
-          scrollbar-width: none;
-          -ms-overflow-style: none;
+          overflow-y: auto;
+          overflow-x: hidden;
+          scrollbar-width: thin;
+          scrollbar-color: rgba(0, 0, 0, 0.2) rgba(0, 0, 0, 0.05);
         }
 
         .editor-area::-webkit-scrollbar {
-          display: none;
+          width: 8px;
+        }
+
+        .editor-area::-webkit-scrollbar-track {
+          background: rgba(0, 0, 0, 0.05);
+        }
+
+        .editor-area::-webkit-scrollbar-thumb {
+          background: rgba(0, 0, 0, 0.2);
+          border-radius: 4px;
+        }
+
+        .editor-area::-webkit-scrollbar-thumb:hover {
+          background: rgba(0, 0, 0, 0.3);
         }
 
         .editor-area hr {
@@ -434,7 +501,7 @@ export default function DiaryPage() {
       <div className="w-full max-w-[1240px]" style={{ height: '560px' }}>
         <div className="book-container w-full h-full flex gap-0 overflow-hidden rounded-lg">
           <div
-            className="editor-box page-lines flex-1 h-full border-[3px] border-[#8a5a44] rounded-l-xl px-3 py-3 md:px-4 md:py-4 bg-[#f6ead6]"
+            className={`editor-box page-lines flex-1 h-full border-[3px] border-[#8a5a44] rounded-l-xl px-3 py-3 md:px-4 md:py-4 bg-[#f6ead6] ${leftPageFlipClass}`}
             onMouseDown={() => setActiveSide('left')}
             style={{ boxShadow: '-10px 8px 22px rgba(0,0,0,0.18)' }}
           >
@@ -457,7 +524,7 @@ export default function DiaryPage() {
           </div>
 
           <div
-            className={`editor-box page-lines flex-1 h-full border-[3px] border-[#4f6b88] rounded-r-xl px-3 py-3 md:px-4 md:py-4 overflow-y-auto bg-[#eef5fb] ${rightPageFlipClass}`}
+            className={`editor-box page-lines flex-1 h-full border-[3px] border-[#4f6b88] rounded-r-xl px-3 py-3 md:px-4 md:py-4 bg-[#eef5fb] ${rightPageFlipClass}`}
             onMouseDown={() => setActiveSide('right')}
             style={{ boxShadow: '10px 8px 22px rgba(0,0,0,0.18)' }}
           >
