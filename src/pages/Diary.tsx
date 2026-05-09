@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
-import { Bold, ChevronLeft, ChevronRight, Download, Italic, Trash2 } from 'lucide-react';
+import { Bold, ChevronLeft, ChevronRight, Italic, Trash2 } from 'lucide-react';
 import { API_BASE_URL, API_ENDPOINTS } from '@/config/api';
 
 function formatDate(date: Date) {
@@ -420,13 +420,6 @@ export default function DiaryPage() {
               <option value={22}>22</option>
             </select>
           </label>
-          <button
-            onClick={downloadCurrent}
-            className="toolbar-btn px-3 md:px-4 py-2 bg-white border-2 border-black rounded-lg font-bold text-xs md:text-sm shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]"
-          >
-            <Download className="w-4 h-4 inline-block mr-1" strokeWidth={2.5} />
-            Download
-          </button>
           <button
             onClick={clearCurrentPage}
             className="toolbar-btn h-11 w-11 flex items-center justify-center bg-red-100 border-2 border-red-500 text-red-700 rounded-lg font-bold text-xs md:text-sm shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]"
