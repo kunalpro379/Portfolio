@@ -28,10 +28,14 @@ type DiaryEntry = {
 
 type EditorSide = 'left' | 'right';
 
+function sanitizeHtml(html: string) {
+  return html
+    .replace(/<div><br><\/div>/g, '<div>\u00a0</div>')
+    .replace(/<p><br><\/p>/g, '<p>\u00a0</p>');
+}
+
 export default function DiaryPage() {
   const [date, setDate] = useState(formatDate(new Date()));
-  const [leftContent, setLeftContent] = useState('');
-  const [rightContent, setRightContent] = useState('');
   const [leftFontSize, setLeftFontSize] = useState(16);
   const [rightFontSize, setRightFontSize] = useState(16);
   const [saving, setSaving] = useState(false);
@@ -45,12 +49,22 @@ export default function DiaryPage() {
   const rightEditorRef = useRef<HTMLDivElement | null>(null);
   const leftSelectionRef = useRef<Range | null>(null);
   const rightSelectionRef = useRef<Range | null>(null);
+  const leftContentRef = useRef('');
+  const rightContentRef = useRef('');
 
   const pageTitle = useMemo(() => date, [date]);
 
   useEffect(() => {
     loadEntry(date);
   }, [date]);
+
+  useEffect(() => {
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    return () => {
+      document.body.style.overflow = previousOverflow;
+    };
+  }, []);
 
   async function loadEntry(dateText: string) {
     try {
@@ -61,12 +75,24 @@ export default function DiaryPage() {
       const data = await response.json();
       const entry: DiaryEntry | null = data.entry;
 
-      setLeftContent(entry?.leftContent ?? '');
-      setRightContent(entry?.rightContent ?? '');
+      const nextLeftContent = entry?.leftContent ?? '';
+      const nextRightContent = entry?.rightContent ?? '';
+
+      leftContentRef.current = nextLeftContent;
+      rightContentRef.current = nextRightContent;
+
+      if (leftEditorRef.current) {
+        leftEditorRef.current.innerHTML = nextLeftContent;
+      }
+      if (rightEditorRef.current) {
+        rightEditorRef.current.innerHTML = nextRightContent;
+      }
     } catch (error) {
       console.error('Load diary entry failed:', error);
-      setLeftContent('');
-      setRightContent('');
+      leftContentRef.current = '';
+      rightContentRef.current = '';
+      if (leftEditorRef.current) leftEditorRef.current.innerHTML = '';
+      if (rightEditorRef.current) rightEditorRef.current.innerHTML = '';
     } finally {
       setLoadingDate(false);
     }
@@ -125,12 +151,12 @@ export default function DiaryPage() {
   function updateContentFromEditor(side: EditorSide) {
     const editor = side === 'left' ? leftEditorRef.current : rightEditorRef.current;
     if (!editor) return;
-    const html = editor.innerHTML;
+    const html = sanitizeHtml(editor.innerHTML);
     if (side === 'left') {
-      setLeftContent(html);
+      leftContentRef.current = html;
       scheduleSave('left', html);
     } else {
-      setRightContent(html);
+      rightContentRef.current = html;
       scheduleSave('right', html);
     }
   }
@@ -169,7 +195,7 @@ export default function DiaryPage() {
   }
 
   function insertBullet() {
-    execCommand('insertHTML', '<div>• </div>');
+    execCommand('insertHTML', '<div>•&nbsp;</div>');
   }
 
   function insertLine() {
@@ -213,6 +239,8 @@ export default function DiaryPage() {
       ? 'right-page-flip right-page-flip-prev'
       : 'right-page-flip';
 
+  const activeFontSize = activeSide === 'left' ? leftFontSize : rightFontSize;
+
   return (
     <div className="w-full flex flex-col items-center px-2 md:px-3 lg:px-4 pt-1 pb-4 relative z-[10]">
       <style>{`
@@ -238,6 +266,7 @@ export default function DiaryPage() {
           backface-visibility: hidden;
           position: relative;
           overflow: hidden;
+          will-change: transform;
         }
 
         .right-page-flip::before {
@@ -254,17 +283,17 @@ export default function DiaryPage() {
 
         @keyframes flipNext {
           0% { transform: translateX(0) rotateY(0deg) scale(1); }
-          35% { transform: translateX(-26px) rotateY(-18deg) scale(0.985); }
-          60% { transform: translateX(-16px) rotateY(-34deg) scale(0.975); }
-          82% { transform: translateX(-6px) rotateY(-12deg) scale(0.992); }
-          100% { transform: translateX(0) rotateY(0deg) scale(1); }
+          30% { transform: translateX(-12px) rotateY(-55deg) scale(0.99); }
+          55% { transform: translateX(-16px) rotateY(-110deg) scale(0.975); }
+          75% { transform: translateX(-10px) rotateY(-155deg) scale(0.99); }
+          100% { transform: translateX(0) rotateY(-180deg) scale(1); }
         }
 
         @keyframes flipPrev {
-          0% { transform: translateX(0) rotateY(0deg) scale(1); }
-          35% { transform: translateX(26px) rotateY(18deg) scale(0.985); }
-          60% { transform: translateX(16px) rotateY(34deg) scale(0.975); }
-          82% { transform: translateX(6px) rotateY(12deg) scale(0.992); }
+          0% { transform: translateX(0) rotateY(-180deg) scale(1); }
+          30% { transform: translateX(-10px) rotateY(-155deg) scale(0.99); }
+          55% { transform: translateX(-16px) rotateY(-110deg) scale(0.975); }
+          75% { transform: translateX(-12px) rotateY(-55deg) scale(0.99); }
           100% { transform: translateX(0) rotateY(0deg) scale(1); }
         }
 
@@ -288,6 +317,7 @@ export default function DiaryPage() {
 
         .editor-box {
           box-shadow: inset 0 0 0 1px rgba(0,0,0,0.05);
+          overflow: hidden;
         }
 
         .editor-area:focus {
@@ -297,6 +327,13 @@ export default function DiaryPage() {
         .editor-area {
           white-space: pre-wrap;
           word-break: break-word;
+          overflow: hidden;
+          scrollbar-width: none;
+          -ms-overflow-style: none;
+        }
+
+        .editor-area::-webkit-scrollbar {
+          display: none;
         }
 
         .editor-area hr {
@@ -307,7 +344,7 @@ export default function DiaryPage() {
       `}</style>
 
       {/* Single control row */}
-      <div className="w-full max-w-[1240px] flex flex-wrap items-center justify-between gap-2 mb-2 md:mb-2.5">
+      <div className="w-full max-w-[1240px] flex flex-wrap items-center justify-between gap-2 mb-1.5 md:mb-2">
         <div className="flex items-center gap-2 shrink-0">
           <button
             onClick={() => goToDate('prev')}
@@ -404,7 +441,7 @@ export default function DiaryPage() {
       <div className="w-full max-w-[1240px]" style={{ height: '560px' }}>
         <div className="book-container w-full h-full flex gap-0 overflow-hidden rounded-lg">
           <div
-            className="editor-box page-lines flex-1 h-full border-[3px] border-[#8a5a44] rounded-l-xl px-3 py-3 md:px-4 md:py-4 overflow-y-auto bg-[#f6ead6]"
+            className="editor-box page-lines flex-1 h-full border-[3px] border-[#8a5a44] rounded-l-xl px-3 py-3 md:px-4 md:py-4 bg-[#f6ead6]"
             onMouseDown={() => setActiveSide('left')}
             style={{ boxShadow: '-10px 8px 22px rgba(0,0,0,0.18)' }}
           >
@@ -417,13 +454,12 @@ export default function DiaryPage() {
               ref={leftEditorRef}
               contentEditable
               suppressContentEditableWarning
-              className="editor-area w-full h-[474px] overflow-y-auto bg-transparent text-black diary-mono leading-7 pr-1"
+              className="editor-area w-full h-[474px] bg-transparent text-black diary-mono leading-7 pr-1"
               style={{ fontSize: `${leftFontSize}px`, caretColor: '#111827' }}
               onFocus={() => setActiveSide('left')}
               onMouseUp={() => captureSelection('left')}
               onKeyUp={() => captureSelection('left')}
               onInput={() => handleEditorInput('left')}
-              dangerouslySetInnerHTML={{ __html: leftContent || '' }}
             />
           </div>
 
@@ -441,13 +477,12 @@ export default function DiaryPage() {
               ref={rightEditorRef}
               contentEditable
               suppressContentEditableWarning
-              className="editor-area w-full h-[474px] overflow-y-auto bg-transparent text-black diary-mono leading-7 pr-1"
+              className="editor-area w-full h-[474px] bg-transparent text-black diary-mono leading-7 pr-1"
               style={{ fontSize: `${rightFontSize}px`, caretColor: '#111827' }}
               onFocus={() => setActiveSide('right')}
               onMouseUp={() => captureSelection('right')}
               onKeyUp={() => captureSelection('right')}
               onInput={() => handleEditorInput('right')}
-              dangerouslySetInnerHTML={{ __html: rightContent || '' }}
             />
           </div>
         </div>
