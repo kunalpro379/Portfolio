@@ -133,39 +133,16 @@ export default function HeroSection() {
                   Crafting Future Tech
                 </span>
               </motion.div>
-              <h1 className="hero-title text-8xl md:text-7xl lg:text-9xl font-black tracking-tighter leading-[0.8] mb-3 md:mb-6 lg:mb-8 select-none text-left" style={{
-                color: '#000',
-                textShadow: `
-                  2px 2px 0px #fbbf24,
-                  4px 4px 0px #f59e0b,
-                  6px 6px 0px #d97706,
-                  8px 8px 0px #b45309,
-                  10px 10px 0px #92400e,
-                  12px 12px 0px #78350f,
-                  14px 14px 0px rgba(0, 0, 0, 0.3),
-                  16px 16px 0px rgba(0, 0, 0, 0.2),
-                  18px 18px 0px rgba(0, 0, 0, 0.1)
-                `
-              }}>
-                KUNAL<br />
-                <span style={{
-                  background: 'linear-gradient(to bottom, #000 0%, rgba(0,0,0,0.5) 100%)',
-                  WebkitBackgroundClip: 'text',
-                  WebkitTextFillColor: 'transparent',
-                  backgroundClip: 'text',
-                  textShadow: `
-                    2px 2px 0px #a78bfa,
-                    4px 4px 0px #8b5cf6,
-                    6px 6px 0px #7c3aed,
-                    8px 8px 0px #6d28d9,
-                    10px 10px 0px #5b21b6,
-                    12px 12px 0px #4c1d95,
-                    14px 14px 0px rgba(0, 0, 0, 0.3),
-                    16px 16px 0px rgba(0, 0, 0, 0.2),
-                    18px 18px 0px rgba(0, 0, 0, 0.1)
-                  `
-                }}>PATIL</span>
-              </h1>
+              <motion.img 
+                src="/Kunalpatil.png" 
+                alt="Kunal Patil"
+                loading="lazy"
+                decoding="async"
+                width={2000}
+                height={600}
+                className="hero-title mb-3 md:mb-6 lg:mb-8 select-none text-left w-full"
+                {...fadeIn}
+              />
               <p className="max-w-xl text-black font-medium text-xs md:text-lg tracking-wide uppercase text-left mb-3 md:mb-0 whitespace-nowrap">
                 I build scalable backends, automate the cloud,
               </p>
