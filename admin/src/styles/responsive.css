@@ -1,3 +1,16 @@
+/* Global smooth scrolling */
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  scroll-behavior: smooth;
+}
+
+* {
+  scroll-behavior: smooth;
+}
+
 /* Admin Panel Mobile Responsive Utilities */
 
 /* Hide scrollbar but keep functionality */

@@ -1,3 +1,16 @@
+/* Global smooth scrolling */
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  scroll-behavior: smooth;
+}
+
+* {
+  scroll-behavior: smooth;
+}
+
 /* Comprehensive Responsive Fixes for All Screen Sizes */
 
 /* ===== TABLET RESPONSIVE FIXES (768px - 1024px) ===== */

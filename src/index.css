@@ -14,6 +14,19 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Global smooth scrolling everywhere */
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  scroll-behavior: smooth;
+}
+
+* {
+  scroll-behavior: smooth;
+}
+
 
 /* Preload Kalam font with font-display: optional for better performance */
 @font-face {
