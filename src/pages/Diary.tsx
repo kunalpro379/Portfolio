@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef } from 'react';
-import { ChevronLeft, ChevronRight, Pen, Trash2, Download } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Pen, Trash2, Download, Bold, Italic, Copy } from 'lucide-react';
 import { API_BASE_URL, API_ENDPOINTS } from '@/config/api';
 
 function formatDate(d: Date) {
@@ -12,10 +12,12 @@ export default function DiaryPage() {
   const [saving, setSaving] = useState(false);
   const [isFlipping, setIsFlipping] = useState(false);
   const [toolbarVisible, setToolbarVisible] = useState(true);
+  const [fontSize, setFontSize] = useState(16);
   const saveTimeout = useRef<number | null>(null);
   const bookRef = useRef<HTMLDivElement | null>(null);
   const leftPageRef = useRef<HTMLDivElement | null>(null);
   const rightPageRef = useRef<HTMLDivElement | null>(null);
+  const textareaRef = useRef<HTMLTextAreaElement | null>(null);
 
   useEffect(() => {
     loadEntry(date);
@@ -96,6 +98,25 @@ export default function DiaryPage() {
     }
   }
 
+  function copyToClipboard() {
+    navigator.clipboard.writeText(content);
+  }
+
+  function insertText(before: string, after: string = '') {
+    if (!textareaRef.current) return;
+    const textarea = textareaRef.current;
+    const start = textarea.selectionStart;
+    const end = textarea.selectionEnd;
+    const selected = content.substring(start, end);
+    const newContent = content.substring(0, start) + before + selected + after + content.substring(end);
+    setContent(newContent);
+    scheduleSave(newContent);
+    setTimeout(() => {
+      textarea.focus();
+      textarea.setSelectionRange(start + before.length, start + before.length + selected.length);
+    }, 0);
+  }
+
   function downloadAsText() {
     const element = document.createElement('a');
     const file = new Blob([`${date}\n\n${content}`], { type: 'text/plain' });
@@ -112,7 +133,7 @@ export default function DiaryPage() {
         @import url('https://fonts.googleapis.com/css2?family=Caveat:wght@400;700&display=swap');
         
         .diary-font { font-family: 'Caveat', cursive; }
-        .handwritten { font-family: 'Caveat', cursive; font-size: 18px; }
+        .handwritten { font-family: 'Caveat', cursive; font-size: 16px; }
         
         .page-paper {
           background-image: 
@@ -197,11 +218,11 @@ export default function DiaryPage() {
         {/* Right Tools */}
         <div className="flex items-center gap-2">
           <button
-            onClick={() => setToolbarVisible(!toolbarVisible)}
+            onClick={copyToClipboard}
             className="toolbar-btn p-2 md:p-2.5 bg-white border-2 border-black rounded-lg hover:bg-gray-100 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]"
-            title="Toggle tools"
+            title="Copy to clipboard"
           >
-            <Pen className="w-4 h-4 md:w-5 md:h-5 text-gray-700" strokeWidth={2.5} />
+            <Copy className="w-4 h-4 md:w-5 md:h-5 text-gray-700" strokeWidth={2.5} />
           </button>
           <button
             onClick={downloadAsText}
@@ -219,6 +240,61 @@ export default function DiaryPage() {
           </button>
         </div>
       </div>
+
+      {/* Text Editor Toolbar */}
+      {toolbarVisible && (
+        <div className="w-full max-w-5xl mb-3 flex flex-wrap items-center gap-2 md:gap-3 bg-white border-2 border-black rounded-lg p-3 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
+          <label className="flex items-center gap-2 font-bold text-xs md:text-sm text-gray-700">
+            Size:
+            <select
+              value={fontSize}
+              onChange={(e) => setFontSize(Number(e.target.value))}
+              className="px-2 py-1 border border-black rounded text-xs font-bold"
+            >
+              <option value={12}>12px</option>
+              <option value={14}>14px</option>
+              <option value={16}>16px (Default)</option>
+              <option value={18}>18px</option>
+              <option value={20}>20px</option>
+              <option value={24}>24px</option>
+            </select>
+          </label>
+
+          <div className="border-l border-gray-300 h-6 mx-1" />
+
+          <button
+            onClick={() => insertText('**', '**')}
+            title="Bold"
+            className="toolbar-btn p-2 bg-gray-100 border border-black rounded hover:bg-gray-200"
+          >
+            <Bold className="w-4 h-4 text-gray-700" strokeWidth={2.5} />
+          </button>
+          <button
+            onClick={() => insertText('_', '_')}
+            title="Italic"
+            className="toolbar-btn p-2 bg-gray-100 border border-black rounded hover:bg-gray-200"
+          >
+            <Italic className="w-4 h-4 text-gray-700" strokeWidth={2.5} />
+          </button>
+
+          <div className="border-l border-gray-300 h-6 mx-1" />
+
+          <button
+            onClick={() => insertText('• ')}
+            title="Bullet point"
+            className="toolbar-btn px-2 py-1 bg-gray-100 border border-black rounded text-xs font-bold hover:bg-gray-200"
+          >
+            Bullet
+          </button>
+          <button
+            onClick={() => insertText('---\n')}
+            title="Divider"
+            className="toolbar-btn px-2 py-1 bg-gray-100 border border-black rounded text-xs font-bold hover:bg-gray-200"
+          >
+            Line
+          </button>
+        </div>
+      )}
 
       {/* Book Container - Fixed Height */}
       <div className="book-container w-full max-w-5xl" style={{ height: '520px' }}>
@@ -239,7 +315,7 @@ export default function DiaryPage() {
             <div className="mb-4 text-amber-900">
               <span className="text-xl md:text-2xl font-bold diary-font">{date}</span>
             </div>
-            <div className="text-gray-700 whitespace-pre-wrap break-words handwritten pr-2">
+            <div className="text-black whitespace-pre-wrap break-words handwritten pr-2" style={{ fontSize: `${fontSize}px` }}>
               {content || ''}
             </div>
           </div>
@@ -257,16 +333,18 @@ export default function DiaryPage() {
             </div>
             
             <textarea
+              ref={textareaRef}
               value={content}
               onChange={(e) => {
                 setContent(e.target.value);
                 scheduleSave(e.target.value);
               }}
               placeholder="Write your thoughts here..."
-              className="flex-1 resize-none bg-transparent focus:outline-none text-gray-800 handwritten placeholder-gray-400 pr-2"
+              className="flex-1 resize-none bg-transparent focus:outline-none text-black handwritten placeholder-gray-500 pr-2"
               style={{
                 fontFamily: "'Caveat', cursive",
                 lineHeight: '2.5',
+                fontSize: `${fontSize}px`,
               }}
             />
             
