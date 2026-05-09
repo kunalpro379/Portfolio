@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
-import { Bold, ChevronLeft, ChevronRight, Copy, Download, Italic, Trash2 } from 'lucide-react';
+import { Bold, ChevronLeft, ChevronRight, Download, Italic, Trash2 } from 'lucide-react';
 import { API_BASE_URL, API_ENDPOINTS } from '@/config/api';
 
 function formatDate(date: Date) {
@@ -35,7 +35,6 @@ export default function DiaryPage() {
   const [leftFontSize, setLeftFontSize] = useState(16);
   const [rightFontSize, setRightFontSize] = useState(16);
   const [saving, setSaving] = useState(false);
-  const [toolbarVisible, setToolbarVisible] = useState(true);
   const [slideDirection, setSlideDirection] = useState<'next' | 'prev' | null>(null);
   const [loadingDate, setLoadingDate] = useState(false);
   const [activeSide, setActiveSide] = useState<EditorSide>('right');
@@ -177,13 +176,6 @@ export default function DiaryPage() {
     execCommand('insertHTML', '<hr />');
   }
 
-  function copyCurrent() {
-    const text = activeSide === 'left'
-      ? (leftEditorRef.current?.innerText || '')
-      : (rightEditorRef.current?.innerText || '');
-    navigator.clipboard.writeText(text);
-  }
-
   function downloadCurrent() {
     const leftText = leftEditorRef.current?.innerText || '';
     const rightText = rightEditorRef.current?.innerText || '';
@@ -236,35 +228,54 @@ export default function DiaryPage() {
           background-position: 0 12px;
         }
 
-        .diary-page {
-          transform: translateX(0) rotateY(0deg);
-          transition: transform 320ms ease, box-shadow 320ms ease;
-          will-change: transform;
+        .book-container {
+          perspective: 1800px;
         }
 
         .right-page-flip {
           transform-origin: left center;
           transform-style: preserve-3d;
+          backface-visibility: hidden;
+          position: relative;
+          overflow: hidden;
+        }
+
+        .right-page-flip::before {
+          content: '';
+          position: absolute;
+          left: -10px;
+          top: 0;
+          bottom: 0;
+          width: 18px;
+          pointer-events: none;
+          background: linear-gradient(to right, rgba(0,0,0,0.28), rgba(0,0,0,0.08), transparent);
+          opacity: 0.8;
         }
 
         @keyframes flipNext {
-          0% { transform: translateX(0) rotateY(0deg); }
-          55% { transform: translateX(-18px) rotateY(-10deg); }
-          100% { transform: translateX(0) rotateY(0deg); }
+          0% { transform: translateX(0) rotateY(0deg) scale(1); }
+          35% { transform: translateX(-26px) rotateY(-18deg) scale(0.985); }
+          60% { transform: translateX(-16px) rotateY(-34deg) scale(0.975); }
+          82% { transform: translateX(-6px) rotateY(-12deg) scale(0.992); }
+          100% { transform: translateX(0) rotateY(0deg) scale(1); }
         }
 
         @keyframes flipPrev {
-          0% { transform: translateX(0) rotateY(0deg); }
-          55% { transform: translateX(18px) rotateY(10deg); }
-          100% { transform: translateX(0) rotateY(0deg); }
+          0% { transform: translateX(0) rotateY(0deg) scale(1); }
+          35% { transform: translateX(26px) rotateY(18deg) scale(0.985); }
+          60% { transform: translateX(16px) rotateY(34deg) scale(0.975); }
+          82% { transform: translateX(6px) rotateY(12deg) scale(0.992); }
+          100% { transform: translateX(0) rotateY(0deg) scale(1); }
         }
 
         .right-page-flip-next {
-          animation: flipNext 420ms cubic-bezier(0.22, 1, 0.36, 1);
+          animation: flipNext 620ms cubic-bezier(0.22, 1, 0.36, 1);
+          box-shadow: -26px 16px 34px rgba(0, 0, 0, 0.24);
         }
 
         .right-page-flip-prev {
-          animation: flipPrev 420ms cubic-bezier(0.22, 1, 0.36, 1);
+          animation: flipPrev 620ms cubic-bezier(0.22, 1, 0.36, 1);
+          box-shadow: -26px 16px 34px rgba(0, 0, 0, 0.24);
         }
 
         .toolbar-btn {
@@ -297,22 +308,22 @@ export default function DiaryPage() {
 
       {/* Single control row */}
       <div className="w-full max-w-[1240px] flex flex-wrap items-center justify-between gap-2 mb-2 md:mb-2.5">
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 shrink-0">
           <button
             onClick={() => goToDate('prev')}
-            className="toolbar-btn px-3 py-2 bg-white border-2 border-black rounded-lg font-bold text-sm shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]"
+            className="toolbar-btn h-11 w-11 flex items-center justify-center bg-white border-2 border-black rounded-lg font-bold text-sm shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]"
           >
             <ChevronLeft className="w-4 h-4" strokeWidth={2.5} />
           </button>
           <button
             onClick={() => goToDate('next')}
-            className="toolbar-btn px-3 py-2 bg-white border-2 border-black rounded-lg font-bold text-sm shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]"
+            className="toolbar-btn h-11 w-11 flex items-center justify-center bg-white border-2 border-black rounded-lg font-bold text-sm shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]"
           >
             <ChevronRight className="w-4 h-4" strokeWidth={2.5} />
           </button>
         </div>
 
-        <div className="flex items-center gap-2 md:gap-3">
+        <div className="flex items-center gap-2 md:gap-3 shrink-0">
           <span className="text-lg md:text-2xl font-black text-gray-900 diary-mono">{pageTitle}</span>
           <input
             type="date"
@@ -373,14 +384,6 @@ export default function DiaryPage() {
             </select>
           </label>
           <button
-            onMouseDown={(e) => { e.preventDefault(); preserveSelection(activeSide); }}
-            onClick={copyCurrent}
-            className="toolbar-btn px-2.5 py-2 bg-gray-100 border border-black rounded-md text-xs font-bold diary-mono shrink-0"
-          >
-            <Copy className="w-4 h-4 inline-block mr-1" strokeWidth={2.5} />
-            Copy
-          </button>
-          <button
             onClick={downloadCurrent}
             className="toolbar-btn px-3 md:px-4 py-2 bg-white border-2 border-black rounded-lg font-bold text-xs md:text-sm shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]"
           >
@@ -389,16 +392,10 @@ export default function DiaryPage() {
           </button>
           <button
             onClick={clearCurrentPage}
-            className="toolbar-btn px-3 md:px-4 py-2 bg-red-100 border-2 border-red-500 text-red-700 rounded-lg font-bold text-xs md:text-sm shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]"
+            className="toolbar-btn h-11 w-11 flex items-center justify-center bg-red-100 border-2 border-red-500 text-red-700 rounded-lg font-bold text-xs md:text-sm shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]"
+            title="Delete"
           >
-            <Trash2 className="w-4 h-4 inline-block mr-1" strokeWidth={2.5} />
-            Delete
-          </button>
-          <button
-            onClick={() => setToolbarVisible((value) => !value)}
-            className="toolbar-btn px-2.5 py-2 bg-white border-2 border-black rounded-lg text-xs font-bold shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] diary-mono shrink-0"
-          >
-            {toolbarVisible ? 'Hide Tools' : 'Show Tools'}
+            <Trash2 className="w-4 h-4" strokeWidth={2.5} />
           </button>
         </div>
       </div>
