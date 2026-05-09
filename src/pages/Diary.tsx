@@ -310,53 +310,61 @@ export default function DiaryPage() {
 
         @keyframes flipNext {
           0% { transform: translateX(0) rotateY(0deg) scale(1); }
-          25% { transform: translateX(-8px) rotateY(-45deg) scale(0.995); }
-          50% { transform: translateX(-12px) rotateY(-90deg) scale(0.985); }
-          75% { transform: translateX(-8px) rotateY(-135deg) scale(0.995); }
+          15% { transform: translateX(-6px) rotateY(-30deg) scale(0.997); }
+          30% { transform: translateX(-10px) rotateY(-60deg) scale(0.993); }
+          45% { transform: translateX(-14px) rotateY(-90deg) scale(0.99); }
+          60% { transform: translateX(-10px) rotateY(-120deg) scale(0.993); }
+          75% { transform: translateX(-6px) rotateY(-150deg) scale(0.997); }
           100% { transform: translateX(0) rotateY(-180deg) scale(1); }
         }
 
         @keyframes flipPrev {
           0% { transform: translateX(0) rotateY(-180deg) scale(1); }
-          25% { transform: translateX(-8px) rotateY(-135deg) scale(0.995); }
-          50% { transform: translateX(-12px) rotateY(-90deg) scale(0.985); }
-          75% { transform: translateX(-8px) rotateY(-45deg) scale(0.995); }
+          15% { transform: translateX(-6px) rotateY(-150deg) scale(0.997); }
+          30% { transform: translateX(-10px) rotateY(-120deg) scale(0.993); }
+          45% { transform: translateX(-14px) rotateY(-90deg) scale(0.99); }
+          60% { transform: translateX(-10px) rotateY(-60deg) scale(0.993); }
+          75% { transform: translateX(-6px) rotateY(-30deg) scale(0.997); }
           100% { transform: translateX(0) rotateY(0deg) scale(1); }
         }
 
         @keyframes flipOutNext {
           0% { transform: translateX(0) rotateY(0deg) scale(1); }
-          25% { transform: translateX(8px) rotateY(45deg) scale(0.995); }
-          50% { transform: translateX(12px) rotateY(90deg) scale(0.985); }
-          75% { transform: translateX(8px) rotateY(135deg) scale(0.995); }
+          15% { transform: translateX(6px) rotateY(30deg) scale(0.997); }
+          30% { transform: translateX(10px) rotateY(60deg) scale(0.993); }
+          45% { transform: translateX(14px) rotateY(90deg) scale(0.99); }
+          60% { transform: translateX(10px) rotateY(120deg) scale(0.993); }
+          75% { transform: translateX(6px) rotateY(150deg) scale(0.997); }
           100% { transform: translateX(0) rotateY(180deg) scale(1); }
         }
 
         @keyframes flipOutPrev {
           0% { transform: translateX(0) rotateY(180deg) scale(1); }
-          25% { transform: translateX(8px) rotateY(135deg) scale(0.995); }
-          50% { transform: translateX(12px) rotateY(90deg) scale(0.985); }
-          75% { transform: translateX(8px) rotateY(45deg) scale(0.995); }
+          15% { transform: translateX(6px) rotateY(150deg) scale(0.997); }
+          30% { transform: translateX(10px) rotateY(120deg) scale(0.993); }
+          45% { transform: translateX(14px) rotateY(90deg) scale(0.99); }
+          60% { transform: translateX(10px) rotateY(60deg) scale(0.993); }
+          75% { transform: translateX(6px) rotateY(30deg) scale(0.997); }
           100% { transform: translateX(0) rotateY(0deg) scale(1); }
         }
 
         .right-page-flip-next {
-          animation: flipNext 700ms cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+          animation: flipNext 900ms cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
           box-shadow: -26px 16px 34px rgba(0, 0, 0, 0.24);
         }
 
         .right-page-flip-prev {
-          animation: flipPrev 700ms cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+          animation: flipPrev 900ms cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
           box-shadow: -26px 16px 34px rgba(0, 0, 0, 0.24);
         }
 
         .left-page-flip-next {
-          animation: flipOutNext 700ms cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+          animation: flipOutNext 900ms cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
           box-shadow: 10px 8px 22px rgba(0, 0, 0, 0.24);
         }
 
         .left-page-flip-prev {
-          animation: flipOutPrev 700ms cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+          animation: flipOutPrev 900ms cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
           box-shadow: 10px 8px 22px rgba(0, 0, 0, 0.24);
         }
 
@@ -383,11 +391,11 @@ export default function DiaryPage() {
           overflow-y: auto;
           overflow-x: hidden;
           scrollbar-width: thin;
-          scrollbar-color: rgba(0, 0, 0, 0.2) rgba(0, 0, 0, 0.05);
+          scrollbar-color: #3b82f6 rgba(0, 0, 0, 0.05);
         }
 
         .editor-area::-webkit-scrollbar {
-          width: 8px;
+          width: 6px;
         }
 
         .editor-area::-webkit-scrollbar-track {
@@ -395,12 +403,12 @@ export default function DiaryPage() {
         }
 
         .editor-area::-webkit-scrollbar-thumb {
-          background: rgba(0, 0, 0, 0.2);
-          border-radius: 4px;
+          background: #3b82f6;
+          border-radius: 3px;
         }
 
         .editor-area::-webkit-scrollbar-thumb:hover {
-          background: rgba(0, 0, 0, 0.3);
+          background: #2563eb;
         }
 
         .editor-area hr {
