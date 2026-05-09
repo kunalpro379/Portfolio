@@ -1,4 +1,5 @@
 import React, { useEffect, useState, useRef } from 'react';
+import { ChevronLeft, ChevronRight, Pen, Trash2, Download } from 'lucide-react';
 import { API_BASE_URL, API_ENDPOINTS } from '@/config/api';
 
 function formatDate(d: Date) {
@@ -8,17 +9,16 @@ function formatDate(d: Date) {
 export default function DiaryPage() {
   const [date, setDate] = useState<string>(formatDate(new Date()));
   const [content, setContent] = useState('');
-  const [prevContent, setPrevContent] = useState('');
   const [saving, setSaving] = useState(false);
+  const [isFlipping, setIsFlipping] = useState(false);
+  const [toolbarVisible, setToolbarVisible] = useState(true);
   const saveTimeout = useRef<number | null>(null);
-  const flipRef = useRef<HTMLDivElement | null>(null);
+  const bookRef = useRef<HTMLDivElement | null>(null);
+  const leftPageRef = useRef<HTMLDivElement | null>(null);
+  const rightPageRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
     loadEntry(date);
-    // load previous day's preview
-    const prev = new Date(date + 'T00:00:00');
-    prev.setDate(prev.getDate() - 1);
-    loadPrevEntry(formatDate(prev));
   }, [date]);
 
   async function loadEntry(d: string) {
@@ -35,39 +35,27 @@ export default function DiaryPage() {
     }
   }
 
-  async function loadPrevEntry(d: string) {
-    try {
-      const res = await fetch(`${API_BASE_URL}${API_ENDPOINTS.diary}/${d}`);
-      if (!res.ok) {
-        setPrevContent('');
-        return;
-      }
-      const data = await res.json();
-      setPrevContent(data.entry?.content || '');
-    } catch (err) {
-      console.error(err);
-    }
-  }
-
   function changeDate(offset: number) {
+    if (isFlipping) return;
+    setIsFlipping(true);
     const cur = new Date(date + 'T00:00:00');
     cur.setDate(cur.getDate() + offset);
-    setDate(formatDate(cur));
-    triggerFlip();
-  }
-
-  function triggerFlip() {
-    if (!flipRef.current) return;
-    flipRef.current.classList.remove('flip');
-    // trigger reflow
-    // @ts-ignore
-    void flipRef.current.offsetWidth;
-    flipRef.current.classList.add('flip');
+    
+    if (bookRef.current) {
+      bookRef.current.style.animation = offset > 0 ? 'flipForward 0.8s ease-in-out' : 'flipBackward 0.8s ease-in-out';
+    }
+    
+    setTimeout(() => {
+      setDate(formatDate(cur));
+      if (bookRef.current) {
+        bookRef.current.style.animation = 'none';
+      }
+      setIsFlipping(false);
+    }, 400);
   }
 
   function scheduleSave(text: string) {
     if (saveTimeout.current) window.clearTimeout(saveTimeout.current);
-    // autosave after 1.5s of inactivity
     // @ts-ignore
     saveTimeout.current = window.setTimeout(() => saveEntry(text), 1500);
   }
@@ -88,50 +76,210 @@ export default function DiaryPage() {
     }
   }
 
+  function clearContent() {
+    if (window.confirm('Are you sure? This will clear the entry for today.')) {
+      setContent('');
+      saveEntry('');
+    }
+  }
+
+  function downloadAsText() {
+    const element = document.createElement('a');
+    const file = new Blob([`${date}\n\n${content}`], { type: 'text/plain' });
+    element.href = URL.createObjectURL(file);
+    element.download = `diary_${date}.txt`;
+    document.body.appendChild(element);
+    element.click();
+    document.body.removeChild(element);
+  }
+
   return (
-    <div className="w-full max-w-4xl mx-auto">
-      <div className="flex items-center justify-between mb-4">
+    <div className="w-full h-full flex flex-col items-center justify-center bg-gradient-to-br from-amber-50 via-orange-50 to-yellow-50 p-4 md:p-8">
+      <style>{`
+        @import url('https://fonts.googleapis.com/css2?family=Caveat:wght@400;700&display=swap');
+        
+        .diary-font { font-family: 'Caveat', cursive; }
+        .handwritten { font-family: 'Caveat', cursive; font-size: 18px; }
+        
+        .page-paper {
+          background-image: 
+            linear-gradient(to bottom, transparent 24px, #ddd 24px, #ddd 25px, transparent 25px);
+          background-size: 100% 25px;
+          background-position: 0 10px;
+        }
+        
+        .page-shadow {
+          box-shadow: -8px 8px 16px rgba(0,0,0,0.15), inset -1px -1px 2px rgba(0,0,0,0.05);
+        }
+        
+        .book-spine {
+          background: linear-gradient(to right, #8b7355, #a0826d);
+          box-shadow: inset 2px 0 8px rgba(0,0,0,0.3);
+        }
+        
+        @keyframes flipForward {
+          0% { transform: rotateY(0deg) rotateX(0deg); }
+          50% { transform: rotateY(90deg) rotateX(5deg) scale(0.98); }
+          100% { transform: rotateY(0deg) rotateX(0deg); }
+        }
+        
+        @keyframes flipBackward {
+          0% { transform: rotateY(0deg) rotateX(0deg); }
+          50% { transform: rotateY(-90deg) rotateX(-5deg) scale(0.98); }
+          100% { transform: rotateY(0deg) rotateX(0deg); }
+        }
+        
+        .book-container {
+          perspective: 1200px;
+          transform-style: preserve-3d;
+        }
+        
+        .book {
+          transform-style: preserve-3d;
+          transition: all 0.3s ease;
+        }
+        
+        textarea::placeholder {
+          font-family: 'Caveat', cursive;
+          color: #9ca3af;
+          font-size: 18px;
+        }
+        
+        .toolbar-btn {
+          transition: all 0.2s ease;
+        }
+        
+        .toolbar-btn:hover {
+          transform: translateY(-2px);
+          box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+      `}</style>
+
+      {/* Top Toolbar */}
+      <div className="w-full max-w-5xl mb-4 flex flex-col md:flex-row items-center justify-between gap-3 md:gap-4">
+        {/* Left Navigation */}
         <div className="flex items-center gap-2">
-          <button onClick={() => changeDate(-1)} className="px-3 py-2 bg-white border-2 border-black rounded">Previous</button>
-          <button onClick={() => changeDate(1)} className="px-3 py-2 bg-white border-2 border-black rounded">Next</button>
+          <button
+            onClick={() => changeDate(-1)}
+            disabled={isFlipping}
+            className="toolbar-btn flex items-center gap-1 px-3 md:px-4 py-2 bg-white border-2 border-black rounded-lg font-bold text-sm md:text-base hover:bg-gray-100 disabled:opacity-50 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]"
+          >
+            <ChevronLeft className="w-4 h-4 md:w-5 md:h-5" strokeWidth={2.5} />
+            <span className="hidden xs:inline">Previous</span>
+          </button>
+          <button
+            onClick={() => changeDate(1)}
+            disabled={isFlipping}
+            className="toolbar-btn flex items-center gap-1 px-3 md:px-4 py-2 bg-white border-2 border-black rounded-lg font-bold text-sm md:text-base hover:bg-gray-100 disabled:opacity-50 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]"
+          >
+            <span className="hidden xs:inline">Next</span>
+            <ChevronRight className="w-4 h-4 md:w-5 md:h-5" strokeWidth={2.5} />
+          </button>
         </div>
-        <div className="flex items-center gap-3">
-          <span className="font-bold">{date}</span>
+
+        {/* Center Date Display */}
+        <div className="flex items-center gap-2 md:gap-3">
+          <span className="text-lg md:text-2xl font-black text-gray-800">{date}</span>
           <input
             type="date"
             value={date}
             onChange={(e) => setDate(e.target.value)}
-            className="px-2 py-1 border-2 border-black rounded bg-white"
+            className="px-2 md:px-3 py-2 border-2 border-black rounded-lg bg-white font-bold text-xs md:text-sm shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]"
           />
         </div>
+
+        {/* Right Tools */}
+        <div className="flex items-center gap-2">
+          <button
+            onClick={() => setToolbarVisible(!toolbarVisible)}
+            className="toolbar-btn p-2 md:p-2.5 bg-white border-2 border-black rounded-lg hover:bg-gray-100 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]"
+            title="Toggle tools"
+          >
+            <Pen className="w-4 h-4 md:w-5 md:h-5 text-gray-700" strokeWidth={2.5} />
+          </button>
+          <button
+            onClick={downloadAsText}
+            className="toolbar-btn p-2 md:p-2.5 bg-white border-2 border-black rounded-lg hover:bg-gray-100 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]"
+            title="Download entry"
+          >
+            <Download className="w-4 h-4 md:w-5 md:h-5 text-gray-700" strokeWidth={2.5} />
+          </button>
+          <button
+            onClick={clearContent}
+            className="toolbar-btn p-2 md:p-2.5 bg-red-100 border-2 border-red-400 rounded-lg hover:bg-red-200 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]"
+            title="Clear entry"
+          >
+            <Trash2 className="w-4 h-4 md:w-5 md:h-5 text-red-600" strokeWidth={2.5} />
+          </button>
+        </div>
       </div>
 
-      <div className="book-container relative perspective-1000">
-        <div ref={flipRef} className="book flex w-full shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] transition-transform duration-700 transform-style-preserve-3d">
-          <div className="page left bg-[#fbf7f0] border-2 border-black p-4 w-1/2 min-h-[320px] overflow-auto">
-            <div className="text-xs text-gray-600 font-bold mb-2">Previous ({new Date(new Date(date + 'T00:00:00').getTime() - 86400000).toISOString().slice(0,10)})</div>
-            <div className="whitespace-pre-wrap text-sm text-gray-800">{prevContent || 'No entry'}</div>
+      {/* Book Container */}
+      <div className="book-container w-full max-w-5xl">
+        <div
+          ref={bookRef}
+          className="book flex gap-0 md:gap-2 w-full rounded-lg overflow-hidden"
+          style={{ minHeight: '600px' }}
+        >
+          {/* Left Page - Read-only Mirror */}
+          <div
+            ref={leftPageRef}
+            className="page-shadow page-paper flex-1 bg-amber-50 border-4 border-amber-900 p-6 md:p-8 overflow-y-auto scroll-smooth"
+            style={{
+              fontFamily: "'Caveat', cursive",
+              lineHeight: '2.5',
+              boxShadow: '-12px 8px 24px rgba(0,0,0,0.2), inset 1px 1px 0 rgba(255,255,255,0.5)',
+            }}
+          >
+            <div className="mb-4 text-amber-900">
+              <span className="text-xl md:text-2xl font-bold diary-font">{date}</span>
+            </div>
+            <div className="text-gray-700 whitespace-pre-wrap break-words handwritten">
+              {content || ''}
+            </div>
           </div>
 
-          <div className="page right bg-white border-2 border-black p-4 w-1/2 min-h-[320px]">
-            <div className="text-xs text-gray-600 font-bold mb-2">Entry</div>
+          {/* Right Page - Editable */}
+          <div
+            ref={rightPageRef}
+            className="page-shadow page-paper flex-1 bg-white border-4 border-amber-900 p-6 md:p-8 overflow-y-auto scroll-smooth flex flex-col relative"
+            style={{
+              boxShadow: '12px 8px 24px rgba(0,0,0,0.2), inset -1px -1px 0 rgba(0,0,0,0.03)',
+            }}
+          >
+            <div className="mb-4 text-amber-900">
+              <span className="text-xl md:text-2xl font-bold diary-font">{date}</span>
+            </div>
+            
             <textarea
               value={content}
-              onChange={(e) => { setContent(e.target.value); scheduleSave(e.target.value); }}
-              placeholder="Write your diary here..."
-              className="w-full h-[260px] resize-none bg-transparent focus:outline-none text-sm leading-relaxed"
+              onChange={(e) => {
+                setContent(e.target.value);
+                scheduleSave(e.target.value);
+              }}
+              placeholder="Write your thoughts here..."
+              className="flex-1 resize-none bg-transparent focus:outline-none text-gray-800 handwritten placeholder-gray-400"
+              style={{
+                fontFamily: "'Caveat', cursive",
+                lineHeight: '2.5',
+              }}
             />
-            <div className="mt-2 text-right text-[11px] text-gray-500">{saving ? 'Saving…' : 'Saved'}</div>
+            
+            <div className="mt-auto pt-4 flex items-center justify-between text-xs md:text-sm text-gray-500 font-bold">
+              <div className="flex items-center gap-2">
+                <div className={`w-2 h-2 rounded-full ${saving ? 'bg-yellow-500 animate-pulse' : 'bg-green-500'}`} />
+                <span>{saving ? 'Saving…' : 'Saved'}</span>
+              </div>
+              <span className="text-gray-400">{content.length} characters</span>
+            </div>
           </div>
         </div>
       </div>
 
-      <style>{`
-        .book-container { perspective: 1400px; }
-        .book { display: flex; transform-origin: left center; }
-        .book.flip { transform: rotateY(-8deg); }
-        .page { box-sizing: border-box; }
-      `}</style>
+      {/* Bottom Info */}
+      <div className="mt-6 text-center text-xs md:text-sm text-gray-600 font-bold">
+        <p>📖 Professional Diary • Entries saved automatically</p>
+      </div>
     </div>
   );
 }
