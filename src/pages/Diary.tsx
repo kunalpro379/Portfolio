@@ -41,17 +41,30 @@ export default function DiaryPage() {
     const cur = new Date(date + 'T00:00:00');
     cur.setDate(cur.getDate() + offset);
     
-    if (bookRef.current) {
-      bookRef.current.style.animation = offset > 0 ? 'flipForward 0.8s ease-in-out' : 'flipBackward 0.8s ease-in-out';
-    }
-    
-    setTimeout(() => {
+    if (rightPageRef.current) {
+      const duration = 0.6;
+      const keyframes = offset > 0 
+        ? `@keyframes pageFlip { 0% { transform: translateX(0) rotateY(0deg); } 50% { transform: translateX(-50%) rotateY(-25deg); } 100% { transform: translateX(0) rotateY(0deg); } }`
+        : `@keyframes pageFlip { 0% { transform: translateX(0) rotateY(0deg); } 50% { transform: translateX(50%) rotateY(25deg); } 100% { transform: translateX(0) rotateY(0deg); } }`;
+      
+      const style = document.createElement('style');
+      style.textContent = keyframes;
+      document.head.appendChild(style);
+      
+      rightPageRef.current.style.animation = `pageFlip ${duration}s ease-in-out`;
+      
+      setTimeout(() => {
+        setDate(formatDate(cur));
+        if (rightPageRef.current) {
+          rightPageRef.current.style.animation = 'none';
+        }
+        setIsFlipping(false);
+        document.head.removeChild(style);
+      }, duration * 1000 / 2);
+    } else {
       setDate(formatDate(cur));
-      if (bookRef.current) {
-        bookRef.current.style.animation = 'none';
-      }
       setIsFlipping(false);
-    }, 400);
+    }
   }
 
   function scheduleSave(text: string) {
@@ -94,7 +107,7 @@ export default function DiaryPage() {
   }
 
   return (
-    <div className="w-full h-full flex flex-col items-center justify-center bg-gradient-to-br from-amber-50 via-orange-50 to-yellow-50 p-4 md:p-8">
+    <div className="w-full flex flex-col items-center justify-center p-4 md:p-8 relative z-[10]">
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Caveat:wght@400;700&display=swap');
         
@@ -103,40 +116,33 @@ export default function DiaryPage() {
         
         .page-paper {
           background-image: 
-            linear-gradient(to bottom, transparent 24px, #ddd 24px, #ddd 25px, transparent 25px);
+            linear-gradient(to bottom, transparent 24px, #ccc 24px, #ccc 25px, transparent 25px);
           background-size: 100% 25px;
           background-position: 0 10px;
         }
         
         .page-shadow {
-          box-shadow: -8px 8px 16px rgba(0,0,0,0.15), inset -1px -1px 2px rgba(0,0,0,0.05);
+          box-shadow: -8px 8px 20px rgba(0,0,0,0.25), inset -1px -1px 3px rgba(0,0,0,0.08);
         }
         
-        .book-spine {
-          background: linear-gradient(to right, #8b7355, #a0826d);
-          box-shadow: inset 2px 0 8px rgba(0,0,0,0.3);
+        @keyframes bookFlipRight {
+          0% { transform: translateX(0) rotateY(0deg); }
+          100% { transform: translateX(-100%) rotateY(-15deg); }
         }
         
-        @keyframes flipForward {
-          0% { transform: rotateY(0deg) rotateX(0deg); }
-          50% { transform: rotateY(90deg) rotateX(5deg) scale(0.98); }
-          100% { transform: rotateY(0deg) rotateX(0deg); }
-        }
-        
-        @keyframes flipBackward {
-          0% { transform: rotateY(0deg) rotateX(0deg); }
-          50% { transform: rotateY(-90deg) rotateX(-5deg) scale(0.98); }
-          100% { transform: rotateY(0deg) rotateX(0deg); }
+        @keyframes bookFlipLeft {
+          0% { transform: translateX(-100%) rotateY(-15deg); }
+          100% { transform: translateX(0) rotateY(0deg); }
         }
         
         .book-container {
-          perspective: 1200px;
+          perspective: 1500px;
           transform-style: preserve-3d;
         }
         
-        .book {
-          transform-style: preserve-3d;
-          transition: all 0.3s ease;
+        .right-page-flip {
+          transform-origin: left center;
+          animation-fill-mode: forwards;
         }
         
         textarea::placeholder {
@@ -179,7 +185,7 @@ export default function DiaryPage() {
 
         {/* Center Date Display */}
         <div className="flex items-center gap-2 md:gap-3">
-          <span className="text-lg md:text-2xl font-black text-gray-800">{date}</span>
+          <span className="text-lg md:text-2xl font-black text-gray-900">{date}</span>
           <input
             type="date"
             value={date}
@@ -214,12 +220,11 @@ export default function DiaryPage() {
         </div>
       </div>
 
-      {/* Book Container */}
-      <div className="book-container w-full max-w-5xl">
+      {/* Book Container - Fixed Height */}
+      <div className="book-container w-full max-w-5xl" style={{ height: '520px' }}>
         <div
           ref={bookRef}
-          className="book flex gap-0 md:gap-2 w-full rounded-lg overflow-hidden"
-          style={{ minHeight: '600px' }}
+          className="flex gap-0 md:gap-3 w-full h-full rounded-lg overflow-hidden"
         >
           {/* Left Page - Read-only Mirror */}
           <div
@@ -234,7 +239,7 @@ export default function DiaryPage() {
             <div className="mb-4 text-amber-900">
               <span className="text-xl md:text-2xl font-bold diary-font">{date}</span>
             </div>
-            <div className="text-gray-700 whitespace-pre-wrap break-words handwritten">
+            <div className="text-gray-700 whitespace-pre-wrap break-words handwritten pr-2">
               {content || ''}
             </div>
           </div>
@@ -258,27 +263,22 @@ export default function DiaryPage() {
                 scheduleSave(e.target.value);
               }}
               placeholder="Write your thoughts here..."
-              className="flex-1 resize-none bg-transparent focus:outline-none text-gray-800 handwritten placeholder-gray-400"
+              className="flex-1 resize-none bg-transparent focus:outline-none text-gray-800 handwritten placeholder-gray-400 pr-2"
               style={{
                 fontFamily: "'Caveat', cursive",
                 lineHeight: '2.5',
               }}
             />
             
-            <div className="mt-auto pt-4 flex items-center justify-between text-xs md:text-sm text-gray-500 font-bold">
+            <div className="mt-4 pt-4 border-t border-gray-200 flex items-center justify-between text-xs md:text-sm text-gray-500 font-bold">
               <div className="flex items-center gap-2">
                 <div className={`w-2 h-2 rounded-full ${saving ? 'bg-yellow-500 animate-pulse' : 'bg-green-500'}`} />
-                <span>{saving ? 'Saving…' : 'Saved'}</span>
+                <span>{saving ? 'Saving...' : 'Saved'}</span>
               </div>
-              <span className="text-gray-400">{content.length} characters</span>
+              <span className="text-gray-400">{content.length} chars</span>
             </div>
           </div>
         </div>
-      </div>
-
-      {/* Bottom Info */}
-      <div className="mt-6 text-center text-xs md:text-sm text-gray-600 font-bold">
-        <p>📖 Professional Diary • Entries saved automatically</p>
       </div>
     </div>
   );
