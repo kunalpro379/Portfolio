@@ -26,6 +26,8 @@ type DiaryEntry = {
   rightContent: string;
 };
 
+type EditorSide = 'left' | 'right';
+
 export default function DiaryPage() {
   const [date, setDate] = useState(formatDate(new Date()));
   const [leftContent, setLeftContent] = useState('');
@@ -36,12 +38,14 @@ export default function DiaryPage() {
   const [toolbarVisible, setToolbarVisible] = useState(true);
   const [slideDirection, setSlideDirection] = useState<'next' | 'prev' | null>(null);
   const [loadingDate, setLoadingDate] = useState(false);
+  const [activeSide, setActiveSide] = useState<EditorSide>('right');
 
   const leftSaveTimeout = useRef<number | null>(null);
   const rightSaveTimeout = useRef<number | null>(null);
-  const leftEditorRef = useRef<HTMLTextAreaElement | null>(null);
-  const rightEditorRef = useRef<HTMLTextAreaElement | null>(null);
-  const activeEditorRef = useRef<'left' | 'right'>('right');
+  const leftEditorRef = useRef<HTMLDivElement | null>(null);
+  const rightEditorRef = useRef<HTMLDivElement | null>(null);
+  const leftSelectionRef = useRef<Range | null>(null);
+  const rightSelectionRef = useRef<Range | null>(null);
 
   const pageTitle = useMemo(() => date, [date]);
 
@@ -86,14 +90,12 @@ export default function DiaryPage() {
     }
   }
 
-  function scheduleLeftSave(value: string) {
-    if (leftSaveTimeout.current) window.clearTimeout(leftSaveTimeout.current);
-    leftSaveTimeout.current = window.setTimeout(() => saveEntry({ leftContent: value }), 800);
-  }
-
-  function scheduleRightSave(value: string) {
-    if (rightSaveTimeout.current) window.clearTimeout(rightSaveTimeout.current);
-    rightSaveTimeout.current = window.setTimeout(() => saveEntry({ rightContent: value }), 800);
+  function scheduleSave(side: EditorSide, value: string) {
+    const timeoutRef = side === 'left' ? leftSaveTimeout : rightSaveTimeout;
+    if (timeoutRef.current) window.clearTimeout(timeoutRef.current);
+    timeoutRef.current = window.setTimeout(() => {
+      saveEntry(side === 'left' ? { leftContent: value } : { rightContent: value });
+    }, 800);
   }
 
   function animateSlide(direction: 'next' | 'prev', nextDateText: string) {
@@ -113,35 +115,79 @@ export default function DiaryPage() {
     setDate(value);
   }
 
-  function insertAtCursor(editor: 'left' | 'right', before: string, after = '') {
-    const textarea = editor === 'left' ? leftEditorRef.current : rightEditorRef.current;
-    if (!textarea) return;
+  function getActiveEditor() {
+    return activeSide === 'left' ? leftEditorRef.current : rightEditorRef.current;
+  }
 
-    const currentValue = editor === 'left' ? leftContent : rightContent;
-    const setValue = editor === 'left' ? setLeftContent : setRightContent;
-    const save = editor === 'left' ? scheduleLeftSave : scheduleRightSave;
+  function getSelectionStore() {
+    return activeSide === 'left' ? leftSelectionRef : rightSelectionRef;
+  }
 
-    const start = textarea.selectionStart;
-    const end = textarea.selectionEnd;
-    const selected = currentValue.slice(start, end);
-    const nextValue = currentValue.slice(0, start) + before + selected + after + currentValue.slice(end);
+  function updateContentFromEditor(side: EditorSide) {
+    const editor = side === 'left' ? leftEditorRef.current : rightEditorRef.current;
+    if (!editor) return;
+    const html = editor.innerHTML;
+    if (side === 'left') {
+      setLeftContent(html);
+      scheduleSave('left', html);
+    } else {
+      setRightContent(html);
+      scheduleSave('right', html);
+    }
+  }
 
-    setValue(nextValue);
-    save(nextValue);
+  function captureSelection(side: EditorSide) {
+    const selection = window.getSelection();
+    if (!selection || selection.rangeCount === 0) return;
+    const range = selection.getRangeAt(0);
+    const editor = side === 'left' ? leftEditorRef.current : rightEditorRef.current;
+    if (!editor || !editor.contains(range.commonAncestorContainer)) return;
+    getSelectionStore().current = range;
+  }
 
-    window.setTimeout(() => {
-      textarea.focus();
-      textarea.setSelectionRange(start + before.length, start + before.length + selected.length);
-    }, 0);
+  function preserveSelection(side: EditorSide) {
+    setActiveSide(side);
+    captureSelection(side);
+  }
+
+  function restoreSelection(side: EditorSide) {
+    const storedRange = side === 'left' ? leftSelectionRef.current : rightSelectionRef.current;
+    if (!storedRange) return;
+    const selection = window.getSelection();
+    if (!selection) return;
+    selection.removeAllRanges();
+    selection.addRange(storedRange);
+  }
+
+  function execCommand(command: string, value?: string) {
+    const editor = getActiveEditor();
+    if (!editor) return;
+
+    editor.focus();
+    restoreSelection(activeSide);
+    document.execCommand(command, false, value);
+    updateContentFromEditor(activeSide);
+  }
+
+  function insertBullet() {
+    execCommand('insertHTML', '<div>• </div>');
+  }
+
+  function insertLine() {
+    execCommand('insertHTML', '<hr />');
   }
 
   function copyCurrent() {
-    const text = activeEditorRef.current === 'left' ? leftContent : rightContent;
+    const text = activeSide === 'left'
+      ? (leftEditorRef.current?.innerText || '')
+      : (rightEditorRef.current?.innerText || '');
     navigator.clipboard.writeText(text);
   }
 
   function downloadCurrent() {
-    const payload = `Date: ${date}\n\nLeft Page\n${leftContent}\n\nRight Page\n${rightContent}`;
+    const leftText = leftEditorRef.current?.innerText || '';
+    const rightText = rightEditorRef.current?.innerText || '';
+    const payload = `Date: ${date}\n\nLeft Page\n${leftText}\n\nRight Page\n${rightText}`;
     const blob = new Blob([payload], { type: 'text/plain' });
     const link = document.createElement('a');
     link.href = URL.createObjectURL(blob);
@@ -152,30 +198,31 @@ export default function DiaryPage() {
   }
 
   function clearCurrentPage() {
-    const editor = activeEditorRef.current;
-    const confirmMessage = editor === 'left'
+    const editor = activeSide === 'left' ? leftEditorRef.current : rightEditorRef.current;
+    const confirmMessage = activeSide === 'left'
       ? 'Clear the left page for this date?'
       : 'Clear the right page for this date?';
 
     if (!window.confirm(confirmMessage)) return;
 
-    if (editor === 'left') {
-      setLeftContent('');
-      saveEntry({ leftContent: '' });
-    } else {
-      setRightContent('');
-      saveEntry({ rightContent: '' });
+    if (editor) {
+      editor.innerHTML = '';
+      updateContentFromEditor(activeSide);
     }
   }
 
-  const slideClass = slideDirection === 'next'
-    ? 'diary-page slide-next'
+  function handleEditorInput(side: EditorSide) {
+    updateContentFromEditor(side);
+  }
+
+  const rightPageFlipClass = slideDirection === 'next'
+    ? 'right-page-flip right-page-flip-next'
     : slideDirection === 'prev'
-      ? 'diary-page slide-prev'
-      : 'diary-page';
+      ? 'right-page-flip right-page-flip-prev'
+      : 'right-page-flip';
 
   return (
-    <div className="w-full flex flex-col items-center px-3 md:px-4 lg:px-6 pt-1 pb-4 relative z-[10]">
+    <div className="w-full flex flex-col items-center px-2 md:px-3 lg:px-4 pt-1 pb-4 relative z-[10]">
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&display=swap');
 
@@ -191,18 +238,33 @@ export default function DiaryPage() {
 
         .diary-page {
           transform: translateX(0) rotateY(0deg);
-          transition: transform 260ms ease, box-shadow 260ms ease;
+          transition: transform 320ms ease, box-shadow 320ms ease;
           will-change: transform;
         }
 
-        .diary-page.slide-next {
-          transform: translateX(-24px) rotateY(-6deg);
-          box-shadow: -18px 10px 26px rgba(0, 0, 0, 0.2);
+        .right-page-flip {
+          transform-origin: left center;
+          transform-style: preserve-3d;
         }
 
-        .diary-page.slide-prev {
-          transform: translateX(24px) rotateY(6deg);
-          box-shadow: -18px 10px 26px rgba(0, 0, 0, 0.2);
+        @keyframes flipNext {
+          0% { transform: translateX(0) rotateY(0deg); }
+          55% { transform: translateX(-18px) rotateY(-10deg); }
+          100% { transform: translateX(0) rotateY(0deg); }
+        }
+
+        @keyframes flipPrev {
+          0% { transform: translateX(0) rotateY(0deg); }
+          55% { transform: translateX(18px) rotateY(10deg); }
+          100% { transform: translateX(0) rotateY(0deg); }
+        }
+
+        .right-page-flip-next {
+          animation: flipNext 420ms cubic-bezier(0.22, 1, 0.36, 1);
+        }
+
+        .right-page-flip-prev {
+          animation: flipPrev 420ms cubic-bezier(0.22, 1, 0.36, 1);
         }
 
         .toolbar-btn {
@@ -217,13 +279,24 @@ export default function DiaryPage() {
           box-shadow: inset 0 0 0 1px rgba(0,0,0,0.05);
         }
 
-        textarea::placeholder {
-          color: rgba(31, 41, 55, 0.45);
+        .editor-area:focus {
+          outline: none;
+        }
+
+        .editor-area {
+          white-space: pre-wrap;
+          word-break: break-word;
+        }
+
+        .editor-area hr {
+          border: 0;
+          border-top: 1px solid rgba(0, 0, 0, 0.25);
+          margin: 10px 0;
         }
       `}</style>
 
-      {/* Top row */}
-      <div className="w-full max-w-[1240px] flex items-center justify-between gap-2 mb-2 md:mb-3">
+      {/* Single control row */}
+      <div className="w-full max-w-[1240px] flex flex-wrap items-center justify-between gap-2 mb-2 md:mb-2.5">
         <div className="flex items-center gap-2">
           <button
             onClick={() => goToDate('prev')}
@@ -249,7 +322,64 @@ export default function DiaryPage() {
           />
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex flex-nowrap items-center justify-end gap-2 overflow-x-auto max-w-full pb-1 md:pb-0">
+          <button
+            onMouseDown={(e) => { e.preventDefault(); preserveSelection(activeSide); }}
+            onClick={() => execCommand('bold')}
+            className="toolbar-btn px-2.5 py-2 bg-gray-100 border border-black rounded-md text-xs font-bold diary-mono shrink-0"
+          >
+            <Bold className="w-4 h-4 inline-block mr-1" strokeWidth={2.5} />
+            Bold
+          </button>
+          <button
+            onMouseDown={(e) => { e.preventDefault(); preserveSelection(activeSide); }}
+            onClick={() => execCommand('italic')}
+            className="toolbar-btn px-2.5 py-2 bg-gray-100 border border-black rounded-md text-xs font-bold diary-mono shrink-0"
+          >
+            <Italic className="w-4 h-4 inline-block mr-1" strokeWidth={2.5} />
+            Italic
+          </button>
+          <button
+            onMouseDown={(e) => { e.preventDefault(); preserveSelection(activeSide); }}
+            onClick={insertBullet}
+            className="toolbar-btn px-2.5 py-2 bg-gray-100 border border-black rounded-md text-xs font-bold diary-mono shrink-0"
+          >
+            Bullet
+          </button>
+          <button
+            onMouseDown={(e) => { e.preventDefault(); preserveSelection(activeSide); }}
+            onClick={insertLine}
+            className="toolbar-btn px-2.5 py-2 bg-gray-100 border border-black rounded-md text-xs font-bold diary-mono shrink-0"
+          >
+            Line
+          </button>
+          <label className="flex items-center gap-2 text-xs font-bold text-gray-700 diary-mono px-1 shrink-0">
+            Size
+            <select
+              value={activeSide === 'left' ? leftFontSize : rightFontSize}
+              onChange={(e) => {
+                const value = Number(e.target.value);
+                if (activeSide === 'left') setLeftFontSize(value);
+                else setRightFontSize(value);
+              }}
+              className="px-2 py-1 bg-white border border-black rounded-md text-xs font-bold diary-mono"
+            >
+              <option value={12}>12</option>
+              <option value={14}>14</option>
+              <option value={16}>16</option>
+              <option value={18}>18</option>
+              <option value={20}>20</option>
+              <option value={22}>22</option>
+            </select>
+          </label>
+          <button
+            onMouseDown={(e) => { e.preventDefault(); preserveSelection(activeSide); }}
+            onClick={copyCurrent}
+            className="toolbar-btn px-2.5 py-2 bg-gray-100 border border-black rounded-md text-xs font-bold diary-mono shrink-0"
+          >
+            <Copy className="w-4 h-4 inline-block mr-1" strokeWidth={2.5} />
+            Copy
+          </button>
           <button
             onClick={downloadCurrent}
             className="toolbar-btn px-3 md:px-4 py-2 bg-white border-2 border-black rounded-lg font-bold text-xs md:text-sm shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]"
@@ -264,141 +394,63 @@ export default function DiaryPage() {
             <Trash2 className="w-4 h-4 inline-block mr-1" strokeWidth={2.5} />
             Delete
           </button>
+          <button
+            onClick={() => setToolbarVisible((value) => !value)}
+            className="toolbar-btn px-2.5 py-2 bg-white border-2 border-black rounded-lg text-xs font-bold shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] diary-mono shrink-0"
+          >
+            {toolbarVisible ? 'Hide Tools' : 'Show Tools'}
+          </button>
         </div>
       </div>
-
-      {/* Editor toolbar */}
-      {toolbarVisible && (
-        <div className="w-full max-w-[1240px] mb-2 flex flex-wrap items-center gap-2 bg-white border-2 border-black rounded-lg px-3 py-2 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
-          <button
-            onClick={() => insertAtCursor(activeEditorRef.current, '**', '**')}
-            className="toolbar-btn px-3 py-2 bg-gray-100 border border-black rounded-md text-xs font-bold diary-mono"
-          >
-            <Bold className="w-4 h-4 inline-block mr-1" strokeWidth={2.5} />
-            Bold
-          </button>
-          <button
-            onClick={() => insertAtCursor(activeEditorRef.current, '_', '_')}
-            className="toolbar-btn px-3 py-2 bg-gray-100 border border-black rounded-md text-xs font-bold diary-mono"
-          >
-            <Italic className="w-4 h-4 inline-block mr-1" strokeWidth={2.5} />
-            Italic
-          </button>
-          <button
-            onClick={() => insertAtCursor(activeEditorRef.current, '• ')}
-            className="toolbar-btn px-3 py-2 bg-gray-100 border border-black rounded-md text-xs font-bold diary-mono"
-          >
-            Bullet
-          </button>
-          <button
-            onClick={() => insertAtCursor(activeEditorRef.current, '---\n')}
-            className="toolbar-btn px-3 py-2 bg-gray-100 border border-black rounded-md text-xs font-bold diary-mono"
-          >
-            Line
-          </button>
-
-          <div className="h-7 w-px bg-gray-300 mx-1" />
-
-          <label className="flex items-center gap-2 text-xs font-bold text-gray-700 diary-mono">
-            Size
-            <select
-              value={activeEditorRef.current === 'left' ? leftFontSize : rightFontSize}
-              onChange={(e) => {
-                const value = Number(e.target.value);
-                if (activeEditorRef.current === 'left') {
-                  setLeftFontSize(value);
-                } else {
-                  setRightFontSize(value);
-                }
-              }}
-              className="px-2 py-1 bg-white border border-black rounded-md text-xs font-bold diary-mono"
-            >
-              <option value={12}>12</option>
-              <option value={14}>14</option>
-              <option value={16}>16</option>
-              <option value={18}>18</option>
-              <option value={20}>20</option>
-              <option value={22}>22</option>
-            </select>
-          </label>
-
-          <button
-            onClick={copyCurrent}
-            className="toolbar-btn px-3 py-2 bg-gray-100 border border-black rounded-md text-xs font-bold diary-mono"
-          >
-            <Copy className="w-4 h-4 inline-block mr-1" strokeWidth={2.5} />
-            Copy
-          </button>
-          <button
-            onClick={() => setToolbarVisible(false)}
-            className="toolbar-btn px-3 py-2 bg-gray-100 border border-black rounded-md text-xs font-bold diary-mono ml-auto"
-          >
-            Hide Tools
-          </button>
-        </div>
-      )}
-
-      {!toolbarVisible && (
-        <div className="w-full max-w-[1240px] mb-2 flex justify-end">
-          <button
-            onClick={() => setToolbarVisible(true)}
-            className="toolbar-btn px-3 py-2 bg-white border-2 border-black rounded-lg text-xs font-bold shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] diary-mono"
-          >
-            Show Tools
-          </button>
-        </div>
-      )}
 
       {/* Book */}
       <div className="w-full max-w-[1240px]" style={{ height: '560px' }}>
         <div className="book-container w-full h-full flex gap-0 overflow-hidden rounded-lg">
           <div
-            className={`editor-box page-lines flex-1 h-full border-[3px] border-[#8a5a44] rounded-l-xl px-4 py-4 md:px-5 md:py-5 overflow-y-auto bg-[#f6ead6] ${slideClass}`}
-            onMouseDown={() => { activeEditorRef.current = 'left'; }}
+            className="editor-box page-lines flex-1 h-full border-[3px] border-[#8a5a44] rounded-l-xl px-3 py-3 md:px-4 md:py-4 overflow-y-auto bg-[#f6ead6]"
+            onMouseDown={() => setActiveSide('left')}
             style={{ boxShadow: '-10px 8px 22px rgba(0,0,0,0.18)' }}
           >
-            <div className="mb-4 flex items-center justify-between">
+            <div className="mb-3 flex items-center justify-between">
               <div className="diary-mono font-bold text-[#7a4b2b]">Left Page</div>
               <div className="diary-mono text-xs text-[#7a4b2b]">{loadingDate ? 'Loading...' : 'Ready'}</div>
             </div>
 
-            <textarea
+            <div
               ref={leftEditorRef}
-              value={leftContent}
-              onFocus={() => { activeEditorRef.current = 'left'; }}
-              onChange={(e) => {
-                setLeftContent(e.target.value);
-                scheduleLeftSave(e.target.value);
-              }}
-              placeholder="Left page notes..."
-              spellCheck={false}
-              className="w-full h-[470px] resize-none bg-transparent focus:outline-none text-black diary-mono leading-7 overflow-y-auto"
+              contentEditable
+              suppressContentEditableWarning
+              className="editor-area w-full h-[474px] overflow-y-auto bg-transparent text-black diary-mono leading-7 pr-1"
               style={{ fontSize: `${leftFontSize}px`, caretColor: '#111827' }}
+              onFocus={() => setActiveSide('left')}
+              onMouseUp={() => captureSelection('left')}
+              onKeyUp={() => captureSelection('left')}
+              onInput={() => handleEditorInput('left')}
+              dangerouslySetInnerHTML={{ __html: leftContent || '' }}
             />
           </div>
 
           <div
-            className={`editor-box page-lines flex-1 h-full border-[3px] border-[#4f6b88] rounded-r-xl px-4 py-4 md:px-5 md:py-5 overflow-y-auto bg-[#eef5fb] ${slideClass}`}
-            onMouseDown={() => { activeEditorRef.current = 'right'; }}
+            className={`editor-box page-lines flex-1 h-full border-[3px] border-[#4f6b88] rounded-r-xl px-3 py-3 md:px-4 md:py-4 overflow-y-auto bg-[#eef5fb] ${rightPageFlipClass}`}
+            onMouseDown={() => setActiveSide('right')}
             style={{ boxShadow: '10px 8px 22px rgba(0,0,0,0.18)' }}
           >
-            <div className="mb-4 flex items-center justify-between">
+            <div className="mb-3 flex items-center justify-between">
               <div className="diary-mono font-bold text-[#2e4964]">Right Page</div>
               <div className="diary-mono text-xs text-[#2e4964]">{saving ? 'Saving...' : 'Saved'}</div>
             </div>
 
-            <textarea
+            <div
               ref={rightEditorRef}
-              value={rightContent}
-              onFocus={() => { activeEditorRef.current = 'right'; }}
-              onChange={(e) => {
-                setRightContent(e.target.value);
-                scheduleRightSave(e.target.value);
-              }}
-              placeholder="Right page notes..."
-              spellCheck={false}
-              className="w-full h-[470px] resize-none bg-transparent focus:outline-none text-black diary-mono leading-7 overflow-y-auto"
+              contentEditable
+              suppressContentEditableWarning
+              className="editor-area w-full h-[474px] overflow-y-auto bg-transparent text-black diary-mono leading-7 pr-1"
               style={{ fontSize: `${rightFontSize}px`, caretColor: '#111827' }}
+              onFocus={() => setActiveSide('right')}
+              onMouseUp={() => captureSelection('right')}
+              onKeyUp={() => captureSelection('right')}
+              onInput={() => handleEditorInput('right')}
+              dangerouslySetInnerHTML={{ __html: rightContent || '' }}
             />
           </div>
         </div>
