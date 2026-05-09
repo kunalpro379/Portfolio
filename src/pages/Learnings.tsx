@@ -788,13 +788,15 @@ export default function LearningsPage() {
                   className={`px-2 sm:px-3 py-2 sm:py-2.5 rounded-lg font-bold text-[10px] sm:text-xs transition-all border-2 border-black ${activeTab === 'diary'
                       ? 'bg-red-400 text-white shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transform -translate-y-0.5'
                       : 'bg-white hover:bg-red-50 hover:shadow-[1px_1px_0px_0px_rgba(0,0,0,1)]'
-                    }`
+                    }`}
                   style={{
                     borderRadius: '12px 15px 13px 14px',
                   }}
                 >
                   Diary
                 </button>
+                <button
+                  onClick={() => changeTab('documentation')}
                   className={`px-3 lg:px-6 py-2 lg:py-2.5 rounded-xl font-bold text-xs lg:text-sm transition-all border-r border-gray-300 ${
                     activeTab === 'documentation'
                       ? 'bg-blue-400 text-white shadow-[2px_2px_0px_0px_rgba(0,0,0,0.3)]'
