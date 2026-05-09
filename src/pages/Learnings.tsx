@@ -6,6 +6,7 @@ import ExcalidrawCanvas from "@/components/ExcalidrawCanvas";
 import LoadingSpinner from "@/components/LoadingSpinner";
 import NotesTabContent from "@/components/NotesTabContent";
 import GtaMumbaiMap from "@/components/GtaMumbaiMap";
+import DiaryPage from "@/pages/Diary";
 
 interface ProjectData {
   size?: "big" | "small" | "large" | "medium"
@@ -84,7 +85,7 @@ export default function LearningsPage() {
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
   const tabFromUrl = searchParams.get('tab') || 'blogs';
-  const [activeTab, setActiveTab] = useState<'guide' | 'files' | 'todo' | 'dsa' | 'documentation' | 'blogs' | 'projects' | 'diagrams' | 'code'>(tabFromUrl as any);
+  const [activeTab, setActiveTab] = useState<'guide' | 'files' | 'diary' | 'dsa' | 'documentation' | 'blogs' | 'projects' | 'diagrams' | 'code'>(tabFromUrl as any);
 
   // State for API data
   const [projects, setProjects] = useState<ProjectData[]>([]);
@@ -209,9 +210,9 @@ export default function LearningsPage() {
             break;
 
           case 'guide':
-          case 'todo':
-            // These tabs don't need API calls, handled by NotesTabContent
-            break;
+          case 'diary':
+              // These tabs don't need API calls; diary component fetches its own data
+              break;
 
           case 'documentation':
             const docsRes = await fetch(`${API_BASE_URL}${API_ENDPOINTS.documentation}`);
@@ -281,7 +282,7 @@ export default function LearningsPage() {
     }, 300);
   };
 
-  const changeTab = (tab: 'guide' | 'files' | 'todo' | 'documentation' | 'blogs' | 'projects' | 'diagrams' | 'code') => {
+  const changeTab = (tab: 'guide' | 'files' | 'diary' | 'documentation' | 'blogs' | 'projects' | 'diagrams' | 'code') => {
     setSearchParams({ tab });
     setActiveTab(tab);
   };
@@ -783,17 +784,17 @@ export default function LearningsPage() {
               {/* Professional Navbar for Desktop */}
               <nav className="flex items-center gap-0.5 lg:gap-1 bg-white border-3 border-black rounded-2xl p-1 lg:p-1.5 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
                 <button
-                  onClick={() => changeTab('blogs')}
-                  className={`px-3 lg:px-6 py-2 lg:py-2.5 rounded-xl font-bold text-xs lg:text-sm transition-all border-r border-gray-300 ${
-                    activeTab === 'blogs'
-                      ? 'bg-pink-400 text-white shadow-[2px_2px_0px_0px_rgba(0,0,0,0.3)]'
-                      : 'text-gray-700 hover:bg-gray-100'
-                  }`}
+                  onClick={() => changeTab('diary')}
+                  className={`px-2 sm:px-3 py-2 sm:py-2.5 rounded-lg font-bold text-[10px] sm:text-xs transition-all border-2 border-black ${activeTab === 'diary'
+                      ? 'bg-red-400 text-white shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transform -translate-y-0.5'
+                      : 'bg-white hover:bg-red-50 hover:shadow-[1px_1px_0px_0px_rgba(0,0,0,1)]'
+                    }`
+                  style={{
+                    borderRadius: '12px 15px 13px 14px',
+                  }}
                 >
-                  Blogs
+                  Diary
                 </button>
-                <button
-                  onClick={() => changeTab('documentation')}
                   className={`px-3 lg:px-6 py-2 lg:py-2.5 rounded-xl font-bold text-xs lg:text-sm transition-all border-r border-gray-300 ${
                     activeTab === 'documentation'
                       ? 'bg-blue-400 text-white shadow-[2px_2px_0px_0px_rgba(0,0,0,0.3)]'
@@ -823,14 +824,14 @@ export default function LearningsPage() {
                   Files
                 </button>
                 <button
-                  onClick={() => changeTab('todo')}
+                  onClick={() => changeTab('diary')}
                   className={`px-3 lg:px-6 py-2 lg:py-2.5 rounded-xl font-bold text-xs lg:text-sm transition-all border-r border-gray-300 ${
-                    activeTab === 'todo'
+                    activeTab === 'diary'
                       ? 'bg-red-400 text-white shadow-[2px_2px_0px_0px_rgba(0,0,0,0.3)]'
                       : 'text-gray-700 hover:bg-gray-100'
                   }`}
                 >
-                  Tasks
+                  Diary
                 </button>
                 <button
                   onClick={() => changeTab('code')}
@@ -918,8 +919,8 @@ export default function LearningsPage() {
               Files
             </button>
             <button
-              onClick={() => changeTab('todo')}
-              className={`px-2 sm:px-3 py-2 sm:py-2.5 rounded-lg font-bold text-[10px] sm:text-xs transition-all border-2 border-black ${activeTab === 'todo'
+              onClick={() => changeTab('diary')}
+              className={`px-2 sm:px-3 py-2 sm:py-2.5 rounded-lg font-bold text-[10px] sm:text-xs transition-all border-2 border-black ${activeTab === 'diary'
                   ? 'bg-red-400 text-white shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transform -translate-y-0.5'
                   : 'bg-white hover:bg-red-50 hover:shadow-[1px_1px_0px_0px_rgba(0,0,0,1)]'
                 }`}
@@ -927,7 +928,7 @@ export default function LearningsPage() {
                 borderRadius: '12px 15px 13px 14px',
               }}
             >
-              Tasks
+              Diary
             </button>
             <button
               onClick={() => changeTab('code')}
@@ -1074,15 +1075,15 @@ export default function LearningsPage() {
 
               <button
                 onClick={() => {
-                  changeTab('todo');
+                  changeTab('diary');
                   setMobileMenuOpen(false);
                 }}
                 className={`w-full flex items-center gap-3 px-4 py-3 border-3 border-black rounded-xl font-bold text-sm transition-all shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] ${
-                  activeTab === 'todo' ? 'bg-red-400 text-white' : 'bg-white hover:bg-red-50'
+                  activeTab === 'diary' ? 'bg-red-400 text-white' : 'bg-white hover:bg-red-50'
                 }`}
               >
                 <ListTodo className="w-5 h-5" strokeWidth={2.5} />
-                <span>Tasks</span>
+                <span>Diary</span>
               </button>
 
               <button
@@ -1175,9 +1176,9 @@ export default function LearningsPage() {
                 <NotesTabContent notes={notes} activeSubTab="notes" />
               )}
 
-              {/* TODO TAB */}
-              {activeTab === 'todo' && (
-                <NotesTabContent notes={notes} activeSubTab="todo" />
+              {/* DIARY TAB */}
+              {activeTab === 'diary' && (
+                <DiaryPage />
               )}
 
               {/* DOCUMENTATION TAB */}

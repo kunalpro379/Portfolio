@@ -34,6 +34,7 @@ export const API_ENDPOINTS = {
   notes: '/api/notes',
   code: '/api/code',
   todos: '/api/todos',
+  diary: '/api/diary',
   diagrams: '/api/diagrams',
   auth: '/api/auth',
   views: '/api/views',

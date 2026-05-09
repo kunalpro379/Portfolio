@@ -24,6 +24,7 @@ async function loadRoutes() {
     const { default: codeRoutes } = await import('./routes/code.js');
     const { default: projectsRoutes } = await import('./routes/projects.js');
     const { default: todosRoutes } = await import('./routes/todos.js');
+    const { default: diaryRoutes } = await import('./routes/diary.js');
     const { default: blogsRoutes } = await import('./routes/blogs.js');
     const { default: documentationRoutes } = await import('./routes/documentation.js');
     const { default: dsaRoutes } = await import('./routes/dsa.js');
@@ -35,6 +36,7 @@ async function loadRoutes() {
     app.use('/api/code', codeRoutes);
     app.use('/api/projects', projectsRoutes);
     app.use('/api/todos', todosRoutes);
+    app.use('/api/diary', diaryRoutes);
     app.use('/api/blogs', blogsRoutes);
     app.use('/api/documentation', documentationRoutes);
     app.use('/api/dsa', dsaRoutes);
