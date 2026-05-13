@@ -1,7 +1,10 @@
 import { useState, useEffect, useRef } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { ArrowLeft, FileText, Pen, Folder, Menu, Download, X, Maximize2, Minimize2 } from 'lucide-react';
-import MDEditor from '@uiw/react-md-editor';
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
+import remarkMath from 'remark-math';
+import rehypeKatex from 'rehype-katex';
 import { Excalidraw } from '@excalidraw/excalidraw';
 import { API_ENDPOINTS, API_BASE_URL } from '../config/api';
 import PageShimmer from '@/components/PageShimmer';
@@ -168,6 +171,29 @@ export default function DocumentationDetail() {
         });
         return processedContent;
     })();
+
+    const markdownComponents = {
+        h1: ({ children, ...props }: any) => <h1 className="text-4xl font-bold text-slate-900 mb-4 mt-10 leading-tight" {...props}>{children}</h1>,
+        h2: ({ children, ...props }: any) => <h2 className="text-3xl font-semibold text-slate-900 mb-3 mt-8 leading-snug" {...props}>{children}</h2>,
+        h3: ({ children, ...props }: any) => <h3 className="text-2xl font-semibold text-slate-900 mb-2 mt-6" {...props}>{children}</h3>,
+        p: ({ children, ...props }: any) => <p className="text-slate-800 mb-5 leading-8 text-[1.05rem]" {...props}>{children}</p>,
+        ul: ({ children, ...props }: any) => <ul className="list-disc list-inside mb-5 space-y-2 text-slate-800" {...props}>{children}</ul>,
+        ol: ({ children, ...props }: any) => <ol className="list-decimal list-inside mb-5 space-y-2 text-slate-800" {...props}>{children}</ol>,
+        li: ({ children, ...props }: any) => <li className="text-slate-800 leading-7" {...props}>{children}</li>,
+        code: ({ inline, children, ...props }: any) =>
+            inline ? (
+                <code className="px-2 py-1 bg-slate-100 border border-slate-300 rounded text-[0.95rem] font-mono" {...props}>{children}</code>
+            ) : (
+                <code className="block p-4 bg-slate-950 text-slate-100 rounded-xl border border-slate-700 overflow-x-auto font-mono text-sm" {...props}>{children}</code>
+            ),
+        pre: ({ children, ...props }: any) => <pre className="mb-6 rounded-xl overflow-hidden" {...props}>{children}</pre>,
+        a: ({ href, children, ...props }: any) => (
+            <a href={href} className="text-blue-700 underline underline-offset-2 hover:text-blue-900" target="_blank" rel="noopener noreferrer" {...props}>{children}</a>
+        ),
+        img: ({ src, alt, ...props }: any) => (
+            <img src={src} alt={alt} className="max-w-3xl w-full rounded-xl border-2 border-slate-300 my-6" {...props} />
+        ),
+    };
 
     if (loading) {
         return <PageShimmer />;
@@ -472,11 +498,14 @@ export default function DocumentationDetail() {
                                         ) : (
                                             <>
                                                 {activeTab === 'markdown' && (
-                                                    <div className="w-full h-full overflow-auto p-6 bg-white" data-color-mode="light">
-                                                        <MDEditor.Markdown
-                                                            source={previewContent}
-                                                            style={{ padding: '20px', background: 'white' }}
-                                                        />
+                                                    <div className="reader-markdown w-full h-full overflow-auto p-6 bg-white" data-color-mode="light">
+                                                        <ReactMarkdown
+                                                            remarkPlugins={[remarkGfm, remarkMath]}
+                                                            rehypePlugins={[rehypeKatex]}
+                                                            components={markdownComponents}
+                                                        >
+                                                            {previewContent}
+                                                        </ReactMarkdown>
                                                     </div>
                                                 )}
 

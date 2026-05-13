@@ -161,6 +161,43 @@ body {
   --sidebar-ring: oklch(0.556 0 0);
 }
 
+.reader-markdown {
+  font-family: "Charter", "Iowan Old Style", "Palatino Linotype", "Book Antiqua", Georgia, serif;
+  color: #1e293b;
+  line-height: 1.85;
+  letter-spacing: 0.01em;
+}
+
+.reader-markdown .katex-display {
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding: 0.35rem 0.1rem;
+}
+
+.reader-markdown .katex {
+  font-size: 1.05em;
+}
+
+.reader-markdown table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1.2rem 0;
+}
+
+.reader-markdown th,
+.reader-markdown td {
+  border: 1px solid #cbd5e1;
+  padding: 0.65rem 0.8rem;
+  text-align: left;
+}
+
+.reader-markdown blockquote {
+  border-left: 4px solid #94a3b8;
+  padding-left: 1rem;
+  color: #334155;
+  margin: 1.2rem 0;
+}
+
 @layer base {
   body {
     color: oklch(var(--foreground));

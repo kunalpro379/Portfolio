@@ -3,6 +3,8 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { ArrowLeft, Calendar, ExternalLink, FileText, Link as LinkIcon, Tag, Menu, X } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
+import remarkMath from 'remark-math';
+import rehypeKatex from 'rehype-katex';
 import { API_ENDPOINTS, API_BASE_URL } from '../config/api';
 import PageShimmer from '../components/PageShimmer';
 
@@ -104,29 +106,29 @@ export default function BlogDetail() {
     h1: ({ children, ...props }: any) => {
       const index = headings.findIndex(h => h.text === children);
       const id = index >= 0 ? headings[index].id : '';
-      return <h1 id={id} className="text-3xl font-black text-black mb-4 mt-8" {...props}>{children}</h1>;
+      return <h1 id={id} className="text-4xl font-bold text-slate-900 mb-4 mt-10 leading-tight" {...props}>{children}</h1>;
     },
     h2: ({ children, ...props }: any) => {
       const index = headings.findIndex(h => h.text === children);
       const id = index >= 0 ? headings[index].id : '';
-      return <h2 id={id} className="text-2xl font-black text-black mb-3 mt-6" {...props}>{children}</h2>;
+      return <h2 id={id} className="text-3xl font-semibold text-slate-900 mb-3 mt-8 leading-snug" {...props}>{children}</h2>;
     },
     h3: ({ children, ...props }: any) => {
       const index = headings.findIndex(h => h.text === children);
       const id = index >= 0 ? headings[index].id : '';
-      return <h3 id={id} className="text-xl font-black text-black mb-2 mt-4" {...props}>{children}</h3>;
+      return <h3 id={id} className="text-2xl font-semibold text-slate-900 mb-2 mt-6" {...props}>{children}</h3>;
     },
-    p: ({ children, ...props }: any) => <p className="text-gray-800 mb-4 leading-relaxed font-medium" {...props}>{children}</p>,
-    ul: ({ children, ...props }: any) => <ul className="list-disc list-inside mb-4 space-y-2" {...props}>{children}</ul>,
-    ol: ({ children, ...props }: any) => <ol className="list-decimal list-inside mb-4 space-y-2" {...props}>{children}</ol>,
-    li: ({ children, ...props }: any) => <li className="text-gray-800 font-medium" {...props}>{children}</li>,
+    p: ({ children, ...props }: any) => <p className="text-slate-800 mb-5 leading-8 text-[1.05rem]" {...props}>{children}</p>,
+    ul: ({ children, ...props }: any) => <ul className="list-disc list-inside mb-5 space-y-2 text-slate-800" {...props}>{children}</ul>,
+    ol: ({ children, ...props }: any) => <ol className="list-decimal list-inside mb-5 space-y-2 text-slate-800" {...props}>{children}</ol>,
+    li: ({ children, ...props }: any) => <li className="text-slate-800 leading-7" {...props}>{children}</li>,
     code: ({ inline, children, ...props }: any) => 
       inline ? (
-        <code className="px-2 py-1 bg-gray-100 border-2 border-black rounded text-sm font-mono" {...props}>{children}</code>
+        <code className="px-2 py-1 bg-slate-100 border border-slate-300 rounded text-[0.95rem] font-mono" {...props}>{children}</code>
       ) : (
-        <code className="block p-4 bg-gray-900 text-white rounded-xl border-3 border-black overflow-x-auto font-mono text-sm" {...props}>{children}</code>
+        <code className="block p-4 bg-slate-950 text-slate-100 rounded-xl border border-slate-700 overflow-x-auto font-mono text-sm" {...props}>{children}</code>
       ),
-    pre: ({ children, ...props }: any) => <pre className="mb-4 rounded-xl overflow-hidden border-3 border-black" {...props}>{children}</pre>,
+    pre: ({ children, ...props }: any) => <pre className="mb-6 rounded-xl overflow-hidden" {...props}>{children}</pre>,
     img: ({ src, alt, ...props }: any) => (
       <img src={src} alt={alt} className="max-w-2xl w-full rounded-xl border-4 border-black my-6 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]" {...props} />
     ),
@@ -325,7 +327,7 @@ export default function BlogDetail() {
             <div className="border-t-4 border-black mb-6 md:hidden"></div>
 
             {/* Content */}
-            <article className="bg-white rounded-2xl p-4 md:p-8 border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+            <article className="reader-markdown bg-white rounded-2xl p-4 md:p-8 border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
               {contentLoading ? (
                 <div className="flex items-center justify-center py-12">
                   <div className="text-center">
@@ -335,7 +337,8 @@ export default function BlogDetail() {
                 </div>
               ) : blog.content ? (
                 <ReactMarkdown 
-                  remarkPlugins={[remarkGfm]}
+                  remarkPlugins={[remarkGfm, remarkMath]}
+                  rehypePlugins={[rehypeKatex]}
                   components={components}
                 >
                   {blog.content}
