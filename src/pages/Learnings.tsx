@@ -784,6 +784,16 @@ export default function LearningsPage() {
               {/* Professional Navbar for Desktop */}
               <nav className="flex items-center gap-0.5 lg:gap-1 bg-white border-3 border-black rounded-2xl p-1 lg:p-1.5 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
                 <button
+                  onClick={() => changeTab('blogs')}
+                  className={`px-3 lg:px-6 py-2 lg:py-2.5 rounded-xl font-bold text-xs lg:text-sm transition-all border-r border-gray-300 ${
+                    activeTab === 'blogs'
+                      ? 'bg-pink-400 text-white shadow-[2px_2px_0px_0px_rgba(0,0,0,0.3)]'
+                      : 'text-gray-700 hover:bg-gray-100'
+                  }`}
+                >
+                  Blogs
+                </button>
+                <button
                   onClick={() => changeTab('documentation')}
                   className={`px-3 lg:px-6 py-2 lg:py-2.5 rounded-xl font-bold text-xs lg:text-sm transition-all border-r border-gray-300 ${
                     activeTab === 'documentation'
