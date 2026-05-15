@@ -223,17 +223,56 @@ export default function DiaryPage() {
 
       const fileName = `diary_${dates[0]}_to_${dates[dates.length - 1]}.pdf`;
 
-      // Make the export element visible on-screen while html2canvas/html2pdf captures it.
-      const prevLeft = exportElement.style.left;
-      const prevTop = exportElement.style.top;
-      const prevPointer = exportElement.style.pointerEvents;
-      const prevVisibility = exportElement.style.visibility;
+      // Build a standalone export container and inject the diary HTML directly.
+      const temp = document.createElement('div');
+      temp.id = 'diary-pdf-export-temp';
+      temp.style.position = 'absolute';
+      temp.style.left = '50%';
+      temp.style.top = '60px';
+      temp.style.transform = 'translateX(-50%)';
+      temp.style.zIndex = '99999';
+      temp.style.width = '1240px';
+      temp.style.background = '#f6ead6';
+      temp.style.padding = '0';
+      temp.style.pointerEvents = 'auto';
+
+      // Inline styles and font import to ensure html2canvas picks them up
+      const style = `
+        @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&display=swap');
+        .diary-mono { font-family: 'JetBrains Mono', monospace; }
+        .page-lines { background-image: linear-gradient(to bottom, transparent 29px, rgba(120, 120, 120, 0.18) 29px, rgba(120, 120, 120, 0.18) 30px, transparent 30px); background-size: 100% 30px; background-position: 0 12px; }
+        .editor-box { box-shadow: inset 0 0 0 1px rgba(0,0,0,0.05); overflow: hidden; }
+        .editor-area { white-space: pre-wrap; word-break: break-word; overflow: hidden; }
+      `;
+
+      let inner = `<div class="diary-export-root" style="width:1240px;background:#f6ead6;padding:0;margin:0;"><style>${style}</style>`;
+
+      for (const entry of entries) {
+        inner += `
+          <section class="diary-entry" style="width:1240px;break-after:page;min-height:660px;padding:8px;box-sizing:border-box;">
+            <div style="display:flex;justify-content:space-between;align-items:center;padding:8px;font-family:'JetBrains Mono',monospace;">
+              <div style="font-weight:800">Diary Export</div>
+              <div style="font-weight:700">${entry.date}</div>
+            </div>
+            <div style="display:flex;gap:0;overflow:hidden;">
+              <div style="flex:1;border:3px solid #8a5a44;border-right:1px solid rgba(0,0,0,0.08);border-radius:12px;padding:12px;background:#f6ead6;box-sizing:border-box;">
+                <div style="font-weight:700;color:#7a4b2b;font-family:'JetBrains Mono',monospace;margin-bottom:8px">Left Page</div>
+                <div style="height:474px;overflow:hidden;font-size:${leftFontSize}px;line-height:1.4;font-family:'JetBrains Mono',monospace;">${sanitizeHtml(entry.leftContent)}</div>
+              </div>
+              <div style="flex:1;border:3px solid #4f6b88;border-left:1px solid rgba(0,0,0,0.08);border-radius:12px;padding:12px;background:#eef5fb;box-sizing:border-box;margin-left:8px;">
+                <div style="font-weight:700;color:#2e4964;font-family:'JetBrains Mono',monospace;margin-bottom:8px">Right Page</div>
+                <div style="height:474px;overflow:hidden;font-size:${rightFontSize}px;line-height:1.4;font-family:'JetBrains Mono',monospace;">${sanitizeHtml(entry.rightContent)}</div>
+              </div>
+            </div>
+          </section>`;
+      }
+
+      inner += '</div>';
+      temp.innerHTML = inner;
+      document.body.appendChild(temp);
 
       try {
-        exportElement.style.left = '0';
-        exportElement.style.top = '0';
-        exportElement.style.pointerEvents = 'auto';
-        exportElement.style.visibility = 'visible';
+        await document.fonts?.ready;
 
         await html2pdf()
           .set({
@@ -252,13 +291,11 @@ export default function DiaryPage() {
             },
             pagebreak: { mode: ['css', 'legacy'] }
           })
-          .from(exportElement)
+          .from(temp)
           .save();
       } finally {
-        exportElement.style.left = prevLeft;
-        exportElement.style.top = prevTop;
-        exportElement.style.pointerEvents = prevPointer;
-        exportElement.style.visibility = prevVisibility;
+        // clean up temporary node
+        if (temp && temp.parentNode) temp.parentNode.removeChild(temp);
       }
 
       setIsExportModalOpen(false);
