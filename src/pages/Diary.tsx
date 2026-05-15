@@ -223,25 +223,43 @@ export default function DiaryPage() {
 
       const fileName = `diary_${dates[0]}_to_${dates[dates.length - 1]}.pdf`;
 
-      await html2pdf()
-        .set({
-          margin: 0,
-          filename: fileName,
-          image: { type: 'jpeg', quality: 1 },
-          html2canvas: {
-            scale: 2,
-            useCORS: true,
-            backgroundColor: '#f6ead6'
-          },
-          jsPDF: {
-            unit: 'px',
-            format: [1240, 660],
-            orientation: 'landscape'
-          },
-          pagebreak: { mode: ['css', 'legacy'] }
-        })
-        .from(exportElement)
-        .save();
+      // Make the export element visible on-screen while html2canvas/html2pdf captures it.
+      const prevLeft = exportElement.style.left;
+      const prevTop = exportElement.style.top;
+      const prevPointer = exportElement.style.pointerEvents;
+      const prevVisibility = exportElement.style.visibility;
+
+      try {
+        exportElement.style.left = '0';
+        exportElement.style.top = '0';
+        exportElement.style.pointerEvents = 'auto';
+        exportElement.style.visibility = 'visible';
+
+        await html2pdf()
+          .set({
+            margin: 0,
+            filename: fileName,
+            image: { type: 'jpeg', quality: 1 },
+            html2canvas: {
+              scale: 2,
+              useCORS: true,
+              backgroundColor: '#f6ead6'
+            },
+            jsPDF: {
+              unit: 'px',
+              format: [1240, 660],
+              orientation: 'landscape'
+            },
+            pagebreak: { mode: ['css', 'legacy'] }
+          })
+          .from(exportElement)
+          .save();
+      } finally {
+        exportElement.style.left = prevLeft;
+        exportElement.style.top = prevTop;
+        exportElement.style.pointerEvents = prevPointer;
+        exportElement.style.visibility = prevVisibility;
+      }
 
       setIsExportModalOpen(false);
     } catch (error) {
