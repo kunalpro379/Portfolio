@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
-import { Bold, ChevronLeft, ChevronRight, Italic, Trash2 } from 'lucide-react';
+import { Bold, Calendar, ChevronLeft, ChevronRight, Download, Italic, Trash2, X } from 'lucide-react';
+import { flushSync } from 'react-dom';
 import { API_BASE_URL, API_ENDPOINTS } from '@/config/api';
 
 function formatDate(date: Date) {
@@ -28,6 +29,8 @@ type DiaryEntry = {
 
 type EditorSide = 'left' | 'right';
 
+type DiaryExportEntry = DiaryEntry;
+
 function sanitizeHtml(html: string) {
   return html
     .replace(/<div><br><\/div>/g, '<div>\u00a0</div>')
@@ -42,11 +45,18 @@ export default function DiaryPage() {
   const [slideDirection, setSlideDirection] = useState<'next' | 'prev' | null>(null);
   const [loadingDate, setLoadingDate] = useState(false);
   const [activeSide, setActiveSide] = useState<EditorSide>('right');
+  const [isExportModalOpen, setIsExportModalOpen] = useState(false);
+  const [exportStartDate, setExportStartDate] = useState(date);
+  const [exportEndDate, setExportEndDate] = useState(date);
+  const [exportError, setExportError] = useState('');
+  const [exportingPdf, setExportingPdf] = useState(false);
+  const [exportEntries, setExportEntries] = useState<DiaryExportEntry[]>([]);
 
   const leftSaveTimeout = useRef<number | null>(null);
   const rightSaveTimeout = useRef<number | null>(null);
   const leftEditorRef = useRef<HTMLDivElement | null>(null);
   const rightEditorRef = useRef<HTMLDivElement | null>(null);
+  const exportSheetRef = useRef<HTMLDivElement | null>(null);
   const leftSelectionRef = useRef<Range | null>(null);
   const rightSelectionRef = useRef<Range | null>(null);
   const leftContentRef = useRef('');
@@ -140,6 +150,111 @@ export default function DiaryPage() {
     setDate(value);
   }
 
+  function openExportModal() {
+    setExportError('');
+    setExportStartDate(date);
+    setExportEndDate(date);
+    setIsExportModalOpen(true);
+  }
+
+  function closeExportModal() {
+    if (exportingPdf) return;
+    setIsExportModalOpen(false);
+    setExportError('');
+  }
+
+  function getDateRange(startDate: string, endDate: string) {
+    const orderedStart = startDate <= endDate ? startDate : endDate;
+    const orderedEnd = startDate <= endDate ? endDate : startDate;
+    const dates: string[] = [];
+    let current = orderedStart;
+
+    while (current <= orderedEnd) {
+      dates.push(current);
+      current = addDays(current, 1);
+    }
+
+    return dates;
+  }
+
+  async function fetchDiaryEntry(dateText: string): Promise<DiaryExportEntry> {
+    const response = await fetch(`${API_BASE_URL}${API_ENDPOINTS.diary}/${dateText}`);
+    if (!response.ok) {
+      throw new Error(`Failed to load diary entry for ${dateText}`);
+    }
+
+    const data = await response.json();
+    const entry: DiaryEntry | null = data.entry;
+
+    return {
+      date: dateText,
+      leftContent: entry?.leftContent ?? '',
+      rightContent: entry?.rightContent ?? ''
+    };
+  }
+
+  async function downloadPdfForRange() {
+    if (!exportStartDate || !exportEndDate) {
+      setExportError('Please select both start and end dates.');
+      return;
+    }
+
+    setExportError('');
+    setExportingPdf(true);
+
+    try {
+      const dates = getDateRange(exportStartDate, exportEndDate);
+      const entries = await Promise.all(dates.map((dateText) => fetchDiaryEntry(dateText)));
+
+      flushSync(() => {
+        setExportEntries(entries);
+      });
+
+      await document.fonts?.ready;
+      await new Promise((resolve) => window.requestAnimationFrame(() => resolve(null)));
+
+      const pdfModule = await import('html2pdf.js');
+      const html2pdf = pdfModule.default ?? pdfModule;
+      const exportElement = exportSheetRef.current;
+
+      if (!exportElement) {
+        throw new Error('Export preview is not ready.');
+      }
+
+      const fileName = `diary_${dates[0]}_to_${dates[dates.length - 1]}.pdf`;
+
+      await html2pdf()
+        .set({
+          margin: 0,
+          filename: fileName,
+          image: { type: 'jpeg', quality: 1 },
+          html2canvas: {
+            scale: 2,
+            useCORS: true,
+            backgroundColor: '#f6ead6'
+          },
+          jsPDF: {
+            unit: 'px',
+            format: [1240, 660],
+            orientation: 'landscape'
+          },
+          pagebreak: { mode: ['css', 'legacy'] }
+        })
+        .from(exportElement)
+        .save();
+
+      setIsExportModalOpen(false);
+    } catch (error) {
+      console.error('PDF export failed:', error);
+      setExportError('Failed to create the PDF. Please try again.');
+    } finally {
+      flushSync(() => {
+        setExportEntries([]);
+      });
+      setExportingPdf(false);
+    }
+  }
+
   function getActiveEditor() {
     return activeSide === 'left' ? leftEditorRef.current : rightEditorRef.current;
   }
@@ -200,19 +315,6 @@ export default function DiaryPage() {
 
   function insertLine() {
     execCommand('insertHTML', '<hr />');
-  }
-
-  function downloadCurrent() {
-    const leftText = leftEditorRef.current?.innerText || '';
-    const rightText = rightEditorRef.current?.innerText || '';
-    const payload = `Date: ${date}\n\nLeft Page\n${leftText}\n\nRight Page\n${rightText}`;
-    const blob = new Blob([payload], { type: 'text/plain' });
-    const link = document.createElement('a');
-    link.href = URL.createObjectURL(blob);
-    link.download = `diary_${date}.txt`;
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
   }
 
   function clearCurrentPage() {
@@ -496,6 +598,13 @@ export default function DiaryPage() {
             </select>
           </label>
           <button
+            onClick={openExportModal}
+            className="toolbar-btn h-11 w-11 flex items-center justify-center bg-emerald-100 border-2 border-emerald-600 text-emerald-700 rounded-lg font-bold text-xs md:text-sm shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]"
+            title="Download PDF"
+          >
+            <Download className="w-4 h-4" strokeWidth={2.5} />
+          </button>
+          <button
             onClick={clearCurrentPage}
             className="toolbar-btn h-11 w-11 flex items-center justify-center bg-red-100 border-2 border-red-500 text-red-700 rounded-lg font-bold text-xs md:text-sm shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]"
             title="Delete"
@@ -504,6 +613,88 @@ export default function DiaryPage() {
           </button>
         </div>
       </div>
+
+      {isExportModalOpen && (
+        <div className="fixed inset-0 z-[80] flex items-center justify-center bg-black/60 backdrop-blur-sm px-4">
+          <div className="w-full max-w-md rounded-2xl border-2 border-black bg-[#fffaf1] shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] overflow-hidden diary-mono">
+            <div className="flex items-center justify-between border-b-2 border-black bg-[#f6ead6] px-4 py-3">
+              <div>
+                <div className="text-base font-black text-gray-900">Download Diary PDF</div>
+                <div className="text-xs font-bold text-gray-600">Pick a start and end date for the export</div>
+              </div>
+              <button
+                type="button"
+                onClick={closeExportModal}
+                className="h-9 w-9 flex items-center justify-center rounded-lg border border-black bg-white text-gray-900"
+                disabled={exportingPdf}
+              >
+                <X className="h-4 w-4" strokeWidth={2.5} />
+              </button>
+            </div>
+
+            <div className="space-y-4 px-4 py-4">
+              <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                <label className="space-y-1 text-xs font-bold text-gray-700">
+                  <span className="flex items-center gap-2">
+                    <Calendar className="h-4 w-4" strokeWidth={2.5} />
+                    Start Date
+                  </span>
+                  <input
+                    type="date"
+                    value={exportStartDate}
+                    onChange={(e) => setExportStartDate(e.target.value)}
+                    className="w-full rounded-lg border-2 border-black bg-white px-3 py-2 text-sm font-bold text-gray-900"
+                    disabled={exportingPdf}
+                  />
+                </label>
+
+                <label className="space-y-1 text-xs font-bold text-gray-700">
+                  <span className="flex items-center gap-2">
+                    <Calendar className="h-4 w-4" strokeWidth={2.5} />
+                    End Date
+                  </span>
+                  <input
+                    type="date"
+                    value={exportEndDate}
+                    onChange={(e) => setExportEndDate(e.target.value)}
+                    className="w-full rounded-lg border-2 border-black bg-white px-3 py-2 text-sm font-bold text-gray-900"
+                    disabled={exportingPdf}
+                  />
+                </label>
+              </div>
+
+              <div className="rounded-xl border border-dashed border-black/30 bg-white/80 px-3 py-2 text-xs font-bold text-gray-600">
+                The PDF will keep the notebook look, JetBrains Mono font, and include the date on every spread.
+              </div>
+
+              {exportError && (
+                <div className="rounded-xl border border-red-400 bg-red-50 px-3 py-2 text-xs font-bold text-red-700">
+                  {exportError}
+                </div>
+              )}
+            </div>
+
+            <div className="flex gap-3 border-t-2 border-black bg-[#f6ead6] px-4 py-3">
+              <button
+                type="button"
+                onClick={closeExportModal}
+                className="flex-1 rounded-lg border-2 border-black bg-white px-4 py-2.5 text-sm font-black text-gray-900 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]"
+                disabled={exportingPdf}
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                onClick={downloadPdfForRange}
+                className="flex-1 rounded-lg border-2 border-emerald-700 bg-emerald-500 px-4 py-2.5 text-sm font-black text-white shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] disabled:cursor-not-allowed disabled:opacity-60"
+                disabled={exportingPdf}
+              >
+                {exportingPdf ? 'Preparing PDF...' : 'Download'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Book */}
       <div className="w-full max-w-[1240px]" style={{ height: '560px' }}>
@@ -555,6 +746,57 @@ export default function DiaryPage() {
           </div>
         </div>
       </div>
+
+      {exportEntries.length > 0 && (
+        <div ref={exportSheetRef} className="fixed left-[-20000px] top-0 pointer-events-none" aria-hidden="true">
+          <div className="flex flex-col bg-[#f6ead6]" style={{ width: '1240px' }}>
+            {exportEntries.map((entry) => (
+              <section
+                key={entry.date}
+                className="w-[1240px] px-2 py-2"
+                style={{ breakAfter: 'page', minHeight: '660px' }}
+              >
+                <div className="mb-2 flex items-center justify-between px-2 diary-mono">
+                  <div className="text-base font-black text-gray-900">Diary Export</div>
+                  <div className="text-sm font-bold text-gray-700">{entry.date}</div>
+                </div>
+
+                <div className="book-container flex h-[560px] w-full gap-0 overflow-hidden rounded-lg">
+                  <div
+                    className="editor-box page-lines flex-1 h-full border-[3px] border-[#8a5a44] rounded-l-xl px-3 py-3 md:px-4 md:py-4 bg-[#f6ead6]"
+                    style={{ boxShadow: '-10px 8px 22px rgba(0,0,0,0.18)' }}
+                  >
+                    <div className="mb-3 flex items-center justify-between">
+                      <div className="diary-mono font-bold text-[#7a4b2b]">Left Page</div>
+                      <div className="diary-mono text-xs text-[#7a4b2b]">{entry.date}</div>
+                    </div>
+                    <div
+                      className="editor-area w-full h-[474px] bg-transparent text-black diary-mono leading-7 pr-1"
+                      style={{ fontSize: `${leftFontSize}px`, caretColor: '#111827' }}
+                      dangerouslySetInnerHTML={{ __html: sanitizeHtml(entry.leftContent) }}
+                    />
+                  </div>
+
+                  <div
+                    className="editor-box page-lines flex-1 h-full border-[3px] border-[#4f6b88] rounded-r-xl px-3 py-3 md:px-4 md:py-4 bg-[#eef5fb]"
+                    style={{ boxShadow: '10px 8px 22px rgba(0,0,0,0.18)' }}
+                  >
+                    <div className="mb-3 flex items-center justify-between">
+                      <div className="diary-mono font-bold text-[#2e4964]">Right Page</div>
+                      <div className="diary-mono text-xs text-[#2e4964]">{entry.date}</div>
+                    </div>
+                    <div
+                      className="editor-area w-full h-[474px] bg-transparent text-black diary-mono leading-7 pr-1"
+                      style={{ fontSize: `${rightFontSize}px`, caretColor: '#111827' }}
+                      dangerouslySetInnerHTML={{ __html: sanitizeHtml(entry.rightContent) }}
+                    />
+                  </div>
+                </div>
+              </section>
+            ))}
+          </div>
+        </div>
+      )}
     </div>
   );
 }

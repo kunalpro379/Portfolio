@@ -31,18 +31,18 @@ Over time, it learns behavior that maximizes reward.
 
 ### Mathematical Step
 
-At time step t:
+At time step $t$:
 
-- State: S_t
-- Action: A_t
-- Reward: R_(t+1)
-- Next state: S_(t+1)
+- State: $S_t$
+- Action: $A_t$
+- Reward: $R_{t+1}$
+- Next state: $S_{t+1}$
 
 Transition sequence:
 
-```text
-S_t -> A_t -> (R_(t+1), S_(t+1))
-```
+$$
+S_t \rightarrow A_t \rightarrow (R_{t+1}, S_{t+1})
+$$
 
 ---
 
@@ -54,16 +54,16 @@ The agent does not know the correct behavior initially. It improves by repeated 
 
 Policy:
 
-```text
-π(a | s)
-```
+$$
+\pi(a \mid s)
+$$
 
 where:
 
-- π: policy
-- π(a | s): probability of taking action a in state s
+- $\pi$: policy
+- $\pi(a \mid s)$: probability of taking action $a$ in state $s$
 
-Goal: find the optimal policy π*.
+Goal: find the optimal policy $\pi^*$.
 
 ### B. Delayed Reward
 
@@ -71,31 +71,34 @@ An action may affect rewards much later (for example, strategic sacrifices in ch
 
 Cumulative reward (return):
 
-```text
-Gₜ = R₍t+1₎ + γR₍t+2₎ + γ²R₍t+3₎ + ...
-```
+$$
+G_t = R_{t+1} + \gamma R_{t+2} + \gamma^2 R_{t+3} + \cdots
+$$
 
 Compact form:
 
-```text
-Gₜ = Σ(k=0 to ∞) [ γᵏ · R₍t+k+1₎ ]
-```
+$$
+G_t = \sum_{k=0}^{\infty} \gamma^k R_{t+k+1}
+$$
 
 Discount factor:
 
-```text
-0 ≤ γ ≤ 1
-```
+$$
+0 \le \gamma \le 1
+$$
 
-- If γ = 0, only immediate reward matters.
-- If γ is close to 1, future rewards matter strongly.
+- If $\gamma = 0$, only immediate reward matters.
+- If $\gamma$ is close to 1, future rewards matter strongly.
 
 Example:
 
-```text
-R₁ = 5, R₂ = 10, γ = 0.9
-G₀ = 5 + 0.9×10 = 14
-```
+$$
+R_1 = 5,\quad R_2 = 10,\quad \gamma = 0.9
+$$
+
+$$
+G_0 = 5 + 0.9 \times 10 = 14
+$$
 
 ### C. Sequential Decision Making
 
@@ -103,9 +106,9 @@ Current actions influence future states.
 
 Transition probability:
 
-```text
-P(S₍t+1₎ | Sₜ, Aₜ)
-```
+$$
+P(S_{t+1} \mid S_t, A_t)
+$$
 
 ### D. Exploration vs Exploitation
 
@@ -114,10 +117,10 @@ P(S₍t+1₎ | Sₜ, Aₜ)
 
 Epsilon-greedy strategy:
 
-- With probability ε: choose random action (explore).
-- With probability (1 − ε): choose best known action (exploit).
+- With probability $\epsilon$: choose random action (explore).
+- With probability $1 - \epsilon$: choose best known action (exploit).
 
-Example: if ε = 0.1, then 10% exploration and 90% exploitation.
+Example: if $\epsilon = 0.1$, then 10% exploration and 90% exploitation.
 
 ### E. No Labeled Data
 
@@ -127,9 +130,9 @@ RL relies on reward signals, not ground-truth labels.
 
 The objective is to maximize expected return:
 
-```text
-maximize 𝔼[Gₜ]
-```
+$$
+\max \mathbb{E}[G_t]
+$$
 
 ---
 
@@ -160,36 +163,36 @@ Everything outside the agent.
 
 Environment dynamics:
 
-```text
-P(s', r | s, a)
-```
+$$
+P(s', r \mid s, a)
+$$
 
-This is the probability of reaching next state s' and receiving reward r, given current state s and action a.
+This is the probability of reaching next state $s'$ and receiving reward $r$, given current state $s$ and action $a$.
 
 ### 3) State
 
 Current situation representation:
 
-```text
-s in S
-```
+$$
+s \in S
+$$
 
-where S is the state space.
+where $S$ is the state space.
 
 ### 4) Action
 
 Available decisions:
 
-```text
-a in A
-```
+$$
+a \in A
+$$
 
 ### 5) Reward
 
-Scalar feedback signal, commonly denoted R_t.
+Scalar feedback signal, commonly denoted $R_t$.
 
-- Positive reward: +10
-- Penalty: -5
+- Positive reward: $+10$
+- Penalty: $-5$
 
 ### 6) Policy
 
@@ -197,15 +200,15 @@ Behavior mapping from states to actions.
 
 Stochastic policy:
 
-```text
-π(a | s) = P(Aₜ = a | Sₜ = s)
-```
+$$
+\pi(a \mid s) = P(A_t = a \mid S_t = s)
+$$
 
 Deterministic policy:
 
-```text
-a = π(s)
-```
+$$
+a = \pi(s)
+$$
 
 ### 7) Value Function
 
@@ -213,29 +216,29 @@ Measures expected long-term usefulness.
 
 State-value function:
 
-```text
-V^π(s) = 𝔼_π[ Gₜ | Sₜ = s ]
-```
+$$
+V^{\pi}(s) = \mathbb{E}_{\pi}[G_t \mid S_t = s]
+$$
 
 Action-value (Q) function:
 
-```text
-Q^π(s, a) = 𝔼_π[ Gₜ | Sₜ = s, Aₜ = a ]
-```
+$$
+Q^{\pi}(s, a) = \mathbb{E}_{\pi}[G_t \mid S_t = s, A_t = a]
+$$
 
 Bellman expectation equation:
 
-```text
-V^π(s) = Σₐ π(a|s) · Σ_(s',r) P(s',r|s,a) · [ r + γV^π(s') ]
-```
+$$
+V^{\pi}(s) = \sum_a \pi(a\mid s) \sum_{s',r} P(s',r\mid s,a) \left[r + \gamma V^{\pi}(s')\right]
+$$
 
 ### 8) Model of Environment
 
 A model predicts transitions and rewards:
 
-```text
-P(s', r | s, a)
-```
+$$
+P(s', r \mid s, a)
+$$
 
 This leads to two major families:
 
@@ -255,7 +258,7 @@ Common classifications:
 
 ### Type 1: Positive and Negative Reinforcement
 
-Positive reinforcement: good action leads to added reward (R_t > 0), encouraging repetition.
+Positive reinforcement: good action leads to added reward ($R_t > 0$), encouraging repetition.
 
 Negative reinforcement: a bad condition is removed after correct behavior.
 
@@ -265,9 +268,9 @@ Important: negative reinforcement is not punishment. Punishment applies negative
 
 Agent has (or learns) environment dynamics, often using:
 
-```text
-P(s' | s, a)
-```
+$$
+P(s' \mid s, a)
+$$
 
 Pros:
 
@@ -293,34 +296,34 @@ Examples:
 
 Q-learning update:
 
-```text
-Q(s,a) ← Q(s,a) + α · [ r + γ · max_(a') Q(s',a') − Q(s,a) ]
-```
+$$
+Q(s,a) \leftarrow Q(s,a) + \alpha \left[r + \gamma \max_{a'}Q(s',a') - Q(s,a)\right]
+$$
 
 where:
 
-- α: learning rate
-- γ: discount factor
+- $\alpha$: learning rate
+- $\gamma$: discount factor
 
 #### B) Policy-Based Methods
 
 Directly optimize policy parameters:
 
-```text
-πθ(a | s)
-```
+$$
+\pi_\theta(a \mid s)
+$$
 
 Objective:
 
-```text
-J(θ) = 𝔼[Gₜ]
-```
+$$
+J(\theta) = \mathbb{E}[G_t]
+$$
 
 Gradient update:
 
-```text
-θ ← θ + α · ∇θ J(θ)
-```
+$$
+\theta \leftarrow \theta + \alpha \nabla_\theta J(\theta)
+$$
 
 ### Type 4: Actor-Critic Methods
 
@@ -338,17 +341,17 @@ On-policy methods learn from actions produced by the current policy.
 
 Example: SARSA
 
-```text
-Q(s,a) ← Q(s,a) + α · [ r + γQ(s',a') − Q(s,a) ]
-```
+$$
+Q(s,a) \leftarrow Q(s,a) + \alpha \left[r + \gamma Q(s',a') - Q(s,a)\right]
+$$
 
 Off-policy methods can learn from behavior different from the target policy.
 
 Example: Q-learning, using:
 
-```text
-maxₐ Q(s', a)
-```
+$$
+\max_a Q(s', a)
+$$
 
 ---
 
@@ -358,17 +361,17 @@ Reward is the core learning signal.
 
 Reward function:
 
-```text
+$$
 R(s, a, s')
-```
+$$
 
-It maps (state, action, next state) -> reward.
+It maps $(state, action, next\ state) \rightarrow reward$.
 
 Global objective:
 
-```text
-maximize 𝔼[ Σ(t=0 to ∞) γᵗ · R₍t+1₎ ]
-```
+$$
+\max \mathbb{E}\left[\sum_{t=0}^{\infty} \gamma^t R_{t+1}\right]
+$$
 
 ### Sparse Rewards
 
@@ -392,25 +395,25 @@ Agent exploits loopholes in reward design instead of solving the intended task.
 
 RL is commonly formalized as an MDP:
 
-```text
-(S, A, P, R, γ)
-```
+$$
+(S, A, P, R, \gamma)
+$$
 
 where:
 
-- S: states
-- A: actions
-- P: transition probabilities
-- R: reward function
-- γ: discount factor
+- $S$: states
+- $A$: actions
+- $P$: transition probabilities
+- $R$: reward function
+- $\gamma$: discount factor
 
 ### Markov Property
 
 Future depends only on current state (not full history):
 
-```text
-P(S₍t+1₎ | Sₜ)
-```
+$$
+P(S_{t+1} \mid S_t)
+$$
 
 ---
 
@@ -443,30 +446,30 @@ Agent observes state
 
 ### Return
 
-```text
-Gₜ = Σ(k=0 to ∞) [ γᵏ · R₍t+k+1₎ ]
-```
+$$
+G_t = \sum_{k=0}^{\infty} \gamma^k R_{t+k+1}
+$$
 
 ### State Value
 
-```text
-V^π(s) = 𝔼_π[ Gₜ | Sₜ = s ]
-```
+$$
+V^{\pi}(s) = \mathbb{E}_{\pi}[G_t \mid S_t = s]
+$$
 
 ### Q-Value
 
-```text
-Q^π(s,a) = 𝔼_π[ Gₜ | Sₜ = s, Aₜ = a ]
-```
+$$
+Q^{\pi}(s,a) = \mathbb{E}_{\pi}[G_t \mid S_t = s, A_t = a]
+$$
 
 ### Bellman Optimality
 
-```text
-V*(s) = maxₐ Σ_(s',r) P(s',r|s,a) · [ r + γV*(s') ]
-```
+$$
+V^*(s) = \max_a \sum_{s',r} P(s',r\mid s,a) \left[r + \gamma V^*(s')\right]
+$$
 
 ### Q-Learning Update
 
-```text
-Q(s,a) ← Q(s,a) + α · [ r + γmax_(a') Q(s',a') − Q(s,a) ]
-```
+$$
+Q(s,a) \leftarrow Q(s,a) + \alpha \left[r + \gamma \max_{a'}Q(s',a') - Q(s,a)\right]
+$$
