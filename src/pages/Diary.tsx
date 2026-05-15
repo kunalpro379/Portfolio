@@ -223,79 +223,100 @@ export default function DiaryPage() {
 
       const fileName = `diary_${dates[0]}_to_${dates[dates.length - 1]}.pdf`;
 
-      // Build a standalone export container and inject the diary HTML directly.
-      const temp = document.createElement('div');
-      temp.id = 'diary-pdf-export-temp';
-      temp.style.position = 'absolute';
-      temp.style.left = '50%';
-      temp.style.top = '60px';
-      temp.style.transform = 'translateX(-50%)';
-      temp.style.zIndex = '99999';
-      temp.style.width = '1240px';
-      temp.style.background = '#f6ead6';
-      temp.style.padding = '0';
-      temp.style.pointerEvents = 'auto';
-
-      // Inline styles and font import to ensure html2canvas picks them up
-      const style = `
-        @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&display=swap');
-        .diary-mono { font-family: 'JetBrains Mono', monospace; }
-        .page-lines { background-image: linear-gradient(to bottom, transparent 29px, rgba(120, 120, 120, 0.18) 29px, rgba(120, 120, 120, 0.18) 30px, transparent 30px); background-size: 100% 30px; background-position: 0 12px; }
-        .editor-box { box-shadow: inset 0 0 0 1px rgba(0,0,0,0.05); overflow: hidden; }
-        .editor-area { white-space: pre-wrap; word-break: break-word; overflow: hidden; }
-      `;
-
-      let inner = `<div class="diary-export-root" style="width:1240px;background:#f6ead6;padding:0;margin:0;"><style>${style}</style>`;
-
-      for (const entry of entries) {
-        inner += `
-          <section class="diary-entry" style="width:1240px;break-after:page;min-height:660px;padding:8px;box-sizing:border-box;">
-            <div style="display:flex;justify-content:space-between;align-items:center;padding:8px;font-family:'JetBrains Mono',monospace;">
-              <div style="font-weight:800">Diary Export</div>
-              <div style="font-weight:700">${entry.date}</div>
-            </div>
-            <div style="display:flex;gap:0;overflow:hidden;">
-              <div style="flex:1;border:3px solid #8a5a44;border-right:1px solid rgba(0,0,0,0.08);border-radius:12px;padding:12px;background:#f6ead6;box-sizing:border-box;">
-                <div style="font-weight:700;color:#7a4b2b;font-family:'JetBrains Mono',monospace;margin-bottom:8px">Left Page</div>
-                <div style="height:474px;overflow:hidden;font-size:${leftFontSize}px;line-height:1.4;font-family:'JetBrains Mono',monospace;">${sanitizeHtml(entry.leftContent)}</div>
-              </div>
-              <div style="flex:1;border:3px solid #4f6b88;border-left:1px solid rgba(0,0,0,0.08);border-radius:12px;padding:12px;background:#eef5fb;box-sizing:border-box;margin-left:8px;">
-                <div style="font-weight:700;color:#2e4964;font-family:'JetBrains Mono',monospace;margin-bottom:8px">Right Page</div>
-                <div style="height:474px;overflow:hidden;font-size:${rightFontSize}px;line-height:1.4;font-family:'JetBrains Mono',monospace;">${sanitizeHtml(entry.rightContent)}</div>
-              </div>
-            </div>
-          </section>`;
-      }
-
-      inner += '</div>';
-      temp.innerHTML = inner;
-      document.body.appendChild(temp);
-
+      // Fallback: generate PDF directly using jsPDF (monospace Courier) with two-column layout.
       try {
-        await document.fonts?.ready;
+        const jspdfModule = await import('jspdf');
+        const { jsPDF } = jspdfModule;
 
-        await html2pdf()
-          .set({
-            margin: 0,
-            filename: fileName,
-            image: { type: 'jpeg', quality: 1 },
-            html2canvas: {
-              scale: 2,
-              useCORS: true,
-              backgroundColor: '#f6ead6'
-            },
-            jsPDF: {
-              unit: 'px',
-              format: [1240, 660],
-              orientation: 'landscape'
-            },
-            pagebreak: { mode: ['css', 'legacy'] }
-          })
-          .from(temp)
-          .save();
-      } finally {
-        // clean up temporary node
-        if (temp && temp.parentNode) temp.parentNode.removeChild(temp);
+        const doc = new jsPDF({ unit: 'px', format: [1240, 660], orientation: 'landscape' });
+        doc.setFont('Courier');
+
+        const pageWidth = 1240;
+        const pageHeight = 660;
+        const margin = 20;
+        const colGap = 16;
+        const colWidth = (pageWidth - margin * 2 - colGap) / 2;
+
+        function htmlToText(html: string) {
+          return html
+            .replace(/<br\s*\/?>/gi, '\n')
+            .replace(/<li>/gi, '• ')
+            .replace(/<\/li>/gi, '\n')
+            .replace(/<[^>]+>/g, '')
+            .replace(/&nbsp;/g, ' ')
+            .trim();
+        }
+
+        for (const entry of entries) {
+          const leftText = htmlToText(sanitizeHtml(entry.leftContent || '')) || '';
+          const rightText = htmlToText(sanitizeHtml(entry.rightContent || '')) || '';
+
+          const fontSize = 14; // reasonable default
+          const lineHeight = Math.round(fontSize * 1.25);
+          doc.setFontSize(fontSize);
+
+          const leftLinesAll = doc.splitTextToSize(leftText, colWidth - 8);
+          const rightLinesAll = doc.splitTextToSize(rightText, colWidth - 8);
+
+          const linesPerPage = Math.floor((pageHeight - 60) / lineHeight);
+
+          let idx = 0;
+          const maxLines = Math.max(leftLinesAll.length, rightLinesAll.length);
+
+          while (idx < maxLines) {
+            // header
+            doc.setFontSize(16);
+            doc.setFont('Courier', 'normal');
+            doc.text('Diary Export', margin + 4, 28);
+            doc.text(entry.date, pageWidth - margin - 80, 28);
+            doc.setFontSize(fontSize);
+
+            const leftSlice = leftLinesAll.slice(idx, idx + linesPerPage);
+            const rightSlice = rightLinesAll.slice(idx, idx + linesPerPage);
+
+            // draw left column
+            const leftX = margin;
+            let y = 48;
+            doc.setFont('Courier', 'bold');
+            doc.text('Left Page', leftX + 4, y);
+            doc.setFont('Courier', 'normal');
+            y += 8;
+
+            for (const line of leftSlice) {
+              y += lineHeight;
+              doc.text(String(line), leftX + 4, y, { maxWidth: colWidth - 8 });
+            }
+
+            // draw right column
+            const rightX = margin + colWidth + colGap;
+            y = 48;
+            doc.setFont('Courier', 'bold');
+            doc.text('Right Page', rightX + 4, y);
+            doc.setFont('Courier', 'normal');
+            y += 8;
+            for (const line of rightSlice) {
+              y += lineHeight;
+              doc.text(String(line), rightX + 4, y, { maxWidth: colWidth - 8 });
+            }
+
+            idx += linesPerPage;
+            if (idx < maxLines) doc.addPage();
+          }
+
+          // after each entry, add a new page for the next entry (unless last slice already advanced)
+          doc.addPage();
+        }
+
+        // remove potential trailing blank page
+        const totalPages = doc.getNumberOfPages();
+        // if last page is blank (no content), remove it
+        // naive check: if totalPages > 1, delete last page
+        if (totalPages > 1) doc.deletePage(totalPages);
+
+        doc.save(fileName);
+      } catch (err) {
+        console.error('jsPDF export failed:', err);
+        throw err;
       }
 
       setIsExportModalOpen(false);
