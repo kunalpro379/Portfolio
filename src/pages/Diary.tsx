@@ -437,7 +437,7 @@ export default function DiaryPage() {
   const activeFontSize = activeSide === 'left' ? leftFontSize : rightFontSize;
 
   return (
-    <div className="w-full flex flex-col items-center px-2 md:px-3 lg:px-4 pt-0 pb-2 relative z-[10]" style={{ maxHeight: 'calc(100vh - 96px)', overflow: 'hidden' }}>
+    <div className="w-full flex flex-col items-start px-2 md:px-3 lg:px-4 pt-0 pb-0 relative z-[10]" style={{ height: '100vh', overflow: 'hidden' }}>
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&display=swap');
 
@@ -591,15 +591,14 @@ export default function DiaryPage() {
         }
 
         /* Responsive adjustments */
-        .diary-container { height: 720px; }
+        .diary-container { height: auto; flex: 1; }
 
         @media (max-width: 1024px) {
-          .diary-container { height: 62vh; }
+          .diary-container { height: auto; }
         }
 
         @media (max-width: 640px) {
           .editor-card { padding: 12px; }
-          .diary-container { height: calc(100vh - 120px); }
           .toolbar-btn { padding: 8px 10px; }
           .editor-area { font-size: 15px !important; line-height: 1.5; }
         }
@@ -642,7 +641,7 @@ export default function DiaryPage() {
       `}</style>
 
       {/* Single compact toolbar row */}
-      <div className="w-full max-w-[1240px] flex items-center justify-between gap-2 mb-1.5 md:mb-2">
+      <div className="w-full max-w-[1240px] flex items-center justify-between gap-2 -mt-2" style={{paddingTop: 6}}>
         <div className="flex items-center gap-2 shrink-0">
           <button
             onClick={() => goToDate('prev')}
@@ -831,8 +830,8 @@ export default function DiaryPage() {
       )}
 
       {/* Single blurred editor with Left/Right tabs */}
-      <div className="w-full max-w-[1400px] diary-container">
-        <div className="w-full h-full flex flex-col gap-3">
+      <div className="w-full max-w-[1400px] diary-container overflow-hidden flex-1">
+        <div className="w-full h-full flex flex-col gap-0">
           <div className={`editor-card flex-1 p-6 ${activeSide === 'left' ? 'editor-card-left' : 'editor-card-right'}`}>
             <div className="h-full overflow-auto">
               <div
