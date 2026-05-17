@@ -671,7 +671,29 @@ export default function DiaryPage() {
           </button>
         </div>
 
-        <div className="absolute left-1/2 transform -translate-x-1/2 flex items-center justify-center z-10">
+        {/* Mobile: center in flow so it doesn't overlap controls */}
+        <div className="flex-1 flex items-center justify-center md:hidden">
+          <div className="flex items-center gap-3 px-2">
+            <span className="text-base font-black text-white diary-mono truncate">{pageTitle}</span>
+            <input
+              ref={dateInputRef}
+              type="date"
+              value={date}
+              onChange={(e) => syncDateInput(e.target.value)}
+              className="sr-only"
+            />
+            <button
+              onClick={() => dateInputRef.current?.click()}
+              className="px-3 py-1 bg-white text-black rounded-md font-bold diary-mono shadow-sm"
+              title="Pick date"
+            >
+              {date}
+            </button>
+          </div>
+        </div>
+
+        {/* Desktop: absolute centered block so date stays perfectly centered */}
+        <div className="hidden md:flex absolute left-1/2 transform -translate-x-1/2 items-center justify-center z-10">
           <div className="flex items-center gap-3 max-w-[640px] px-2">
             <span className="text-base md:text-lg font-black text-white diary-mono">{pageTitle}</span>
             <input
