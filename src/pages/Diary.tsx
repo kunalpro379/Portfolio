@@ -446,9 +446,9 @@ export default function DiaryPage() {
         }
 
         .page-lines {
-          /* kept for legacy spreads but not used in single-card layout */
-          background-image: linear-gradient(to bottom, transparent 29px, rgba(120, 120, 120, 0.06) 29px, rgba(120, 120, 120, 0.06) 30px, transparent 30px);
-          background-size: 100% 30px;
+          /* darker ruled lines for readability */
+          background-image: linear-gradient(to bottom, transparent 28px, rgba(0,0,0,0.12) 28px, rgba(0,0,0,0.12) 29px, transparent 29px);
+          background-size: 100% 29px;
           background-position: 0 12px;
         }
 
@@ -582,12 +582,12 @@ export default function DiaryPage() {
 
         .editor-card-left {
           background-color: rgba(249, 246, 231, 0.65);
-          background-image: repeating-linear-gradient(to bottom, rgba(0,0,0,0.03) 0px, rgba(0,0,0,0.03) 1px, transparent 1px, transparent 30px);
+          background-image: repeating-linear-gradient(to bottom, rgba(0,0,0,0.12) 0px, rgba(0,0,0,0.12) 1px, transparent 1px, transparent 28px);
         }
 
         .editor-card-right {
           background-color: rgba(235, 246, 255, 0.65);
-          background-image: repeating-linear-gradient(to bottom, rgba(0,0,0,0.03) 0px, rgba(0,0,0,0.03) 1px, transparent 1px, transparent 30px);
+          background-image: repeating-linear-gradient(to bottom, rgba(0,0,0,0.12) 0px, rgba(0,0,0,0.12) 1px, transparent 1px, transparent 28px);
         }
 
         /* Responsive adjustments */
@@ -640,8 +640,8 @@ export default function DiaryPage() {
         }
       `}</style>
 
-      {/* Single compact toolbar row */}
-      <div className="w-full max-w-[1240px] flex items-center justify-between gap-2 -mt-2 bg-black text-white rounded-md px-4 py-2" style={{paddingTop: 6}}>
+      {/* Single compact toolbar row (full-width strip) */}
+      <div className="w-full flex items-center justify-between gap-2 -mt-2 bg-black text-white rounded-none px-6 py-3" style={{paddingTop: 6}}>
         <div className="flex items-center gap-2 shrink-0">
           <button
             onClick={() => goToDate('prev')}
