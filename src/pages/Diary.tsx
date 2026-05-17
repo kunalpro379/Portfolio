@@ -641,43 +641,43 @@ export default function DiaryPage() {
       `}</style>
 
       {/* Single compact toolbar row */}
-      <div className="w-full max-w-[1240px] flex items-center justify-between gap-2 -mt-2" style={{paddingTop: 6}}>
+      <div className="w-full max-w-[1240px] flex items-center justify-between gap-2 -mt-2 bg-black text-white rounded-md px-4 py-2" style={{paddingTop: 6}}>
         <div className="flex items-center gap-2 shrink-0">
           <button
             onClick={() => goToDate('prev')}
-            className="toolbar-btn h-9 w-9 flex items-center justify-center bg-transparent border border-gray-300 rounded-md text-gray-700 hover:bg-white/60"
+            className="toolbar-btn h-9 w-9 flex items-center justify-center bg-transparent border border-white/20 rounded-md text-white hover:bg-white/10"
           >
             <ChevronLeft className="w-4 h-4" strokeWidth={2} />
           </button>
           <button
             onClick={() => goToDate('next')}
-            className="toolbar-btn h-9 w-9 flex items-center justify-center bg-transparent border border-gray-300 rounded-md text-gray-700 hover:bg-white/60"
+            className="toolbar-btn h-9 w-9 flex items-center justify-center bg-transparent border border-white/20 rounded-md text-white hover:bg-white/10"
           >
             <ChevronRight className="w-4 h-4" strokeWidth={2} />
           </button>
 
           <button
             onClick={() => setActiveSide('left')}
-            className={`px-3 py-1.5 ml-1 rounded-md font-bold diary-mono transition ${activeSide === 'left' ? 'bg-black text-white border border-transparent' : 'bg-transparent text-gray-800 border border-gray-300'}`}
+            className={`px-3 py-1.5 ml-1 rounded-md font-bold diary-mono transition ${activeSide === 'left' ? 'bg-white text-black border border-white' : 'bg-transparent text-white border border-white/20 hover:bg-white/10'}`}
           >
             Left
           </button>
           <button
             onClick={() => setActiveSide('right')}
-            className={`px-3 py-1.5 rounded-md font-bold diary-mono transition ${activeSide === 'right' ? 'bg-black text-white border border-transparent' : 'bg-transparent text-gray-800 border border-gray-300'}`}
+            className={`px-3 py-1.5 rounded-md font-bold diary-mono transition ${activeSide === 'right' ? 'bg-white text-black border border-white' : 'bg-transparent text-white border border-white/20 hover:bg-white/10'}`}
           >
             Right
           </button>
         </div>
 
         <div className="flex items-center gap-3 md:gap-6">
-          <div className="flex items-center gap-2">
-            <span className="text-base md:text-lg font-black text-gray-900 diary-mono">{pageTitle}</span>
+            <div className="flex items-center gap-2">
+            <span className="text-base md:text-lg font-black text-white diary-mono">{pageTitle}</span>
             <input
               type="date"
               value={date}
               onChange={(e) => syncDateInput(e.target.value)}
-              className="px-2 py-1 bg-transparent border border-gray-300 rounded-md text-xs diary-mono"
+              className="px-2 py-1 bg-transparent border border-white/20 rounded-md text-xs diary-mono text-white"
             />
           </div>
 
@@ -685,7 +685,7 @@ export default function DiaryPage() {
             <button
               onMouseDown={(e) => { e.preventDefault(); preserveSelection(activeSide); }}
               onClick={() => execCommand('bold')}
-              className="toolbar-btn px-2 py-1 bg-transparent border border-gray-300 rounded-md text-xs font-medium diary-mono hover:bg-white/60"
+              className="toolbar-btn px-2 py-1 bg-transparent border border-white/20 rounded-md text-xs font-medium diary-mono text-white hover:bg-white/10 active:scale-95"
             >
               <Bold className="w-3.5 h-3.5 inline-block mr-1" strokeWidth={2} />
               B
@@ -693,7 +693,7 @@ export default function DiaryPage() {
             <button
               onMouseDown={(e) => { e.preventDefault(); preserveSelection(activeSide); }}
               onClick={() => execCommand('italic')}
-              className="toolbar-btn px-2 py-1 bg-transparent border border-gray-300 rounded-md text-xs font-medium diary-mono hover:bg-white/60"
+              className="toolbar-btn px-2 py-1 bg-transparent border border-white/20 rounded-md text-xs font-medium diary-mono text-white hover:bg-white/10 active:scale-95"
             >
               <Italic className="w-3.5 h-3.5 inline-block mr-1" strokeWidth={2} />
               I
@@ -701,14 +701,14 @@ export default function DiaryPage() {
             <button
               onMouseDown={(e) => { e.preventDefault(); preserveSelection(activeSide); }}
               onClick={insertBullet}
-              className="toolbar-btn px-2 py-1 bg-transparent border border-gray-300 rounded-md text-xs font-medium diary-mono hover:bg-white/60"
+              className="toolbar-btn px-2 py-1 bg-transparent border border-white/20 rounded-md text-xs font-medium diary-mono text-white hover:bg-white/10 active:scale-95"
             >
               •
             </button>
             <button
               onMouseDown={(e) => { e.preventDefault(); preserveSelection(activeSide); }}
               onClick={insertLine}
-              className="toolbar-btn px-2 py-1 bg-transparent border border-gray-300 rounded-md text-xs font-medium diary-mono hover:bg-white/60"
+              className="toolbar-btn px-2 py-1 bg-transparent border border-white/20 rounded-md text-xs font-medium diary-mono text-white hover:bg-white/10 active:scale-95"
             >
               —
             </button>
@@ -719,7 +719,7 @@ export default function DiaryPage() {
                 if (activeSide === 'left') setLeftFontSize(value);
                 else setRightFontSize(value);
               }}
-              className="px-2 py-1 bg-transparent border border-gray-300 rounded-md text-xs diary-mono"
+              className="px-2 py-1 bg-transparent border border-white/20 rounded-md text-xs diary-mono text-white"
             >
               <option value={12}>12</option>
               <option value={14}>14</option>
@@ -730,19 +730,19 @@ export default function DiaryPage() {
             </select>
             <button
               onClick={openExportModal}
-              className="toolbar-btn h-9 w-9 flex items-center justify-center bg-transparent border border-emerald-400 text-emerald-700 rounded-md text-xs hover:bg-emerald-50"
+              className="toolbar-btn h-9 w-9 flex items-center justify-center bg-transparent border border-emerald-400 text-white rounded-md text-xs hover:bg-white/8 active:scale-95"
               title="Download PDF"
             >
               <Download className="w-4 h-4" strokeWidth={2} />
             </button>
             <button
               onClick={clearCurrentPage}
-              className="toolbar-btn h-9 w-9 flex items-center justify-center bg-transparent border border-red-300 text-red-700 rounded-md text-xs hover:bg-red-50"
+              className="toolbar-btn h-9 w-9 flex items-center justify-center bg-transparent border border-red-400 text-white rounded-md text-xs hover:bg-white/8 active:scale-95"
               title="Delete"
             >
               <Trash2 className="w-4 h-4" strokeWidth={2} />
             </button>
-            <div className="ml-3 text-sm diary-mono text-gray-600">{loadingDate ? 'Loading...' : saving ? 'Saving...' : 'Saved'}</div>
+            <div className="ml-3 text-sm diary-mono text-white/70">{loadingDate ? 'Loading...' : saving ? 'Saving...' : 'Saved'}</div>
           </div>
         </div>
       </div>

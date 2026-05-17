@@ -721,20 +721,7 @@ export default function LearningsPage() {
       {/* Background Texture Pattern on Top */}
       <div className="fixed inset-0 z-[2] opacity-20 mix-blend-multiply" style={{ backgroundImage: 'url(/page7.png)', backgroundRepeat: 'repeat', filter: 'grayscale(100%) brightness(0)' }} />
       
-      {/* Desktop-only MAP vertical strip */}
-      <button
-        onClick={() => setShowMap(!showMap)}
-        className="hidden lg:flex fixed left-0 top-1/3 z-[300] h-36 w-12 items-center justify-center bg-gradient-to-b from-red-600 via-red-500 to-red-700 text-white font-black text-xs tracking-[0.12em] transition-all hover:w-14 active:scale-95 rounded-r-md"
-        style={{
-          writingMode: 'vertical-rl',
-          textOrientation: 'upright',
-          boxShadow: '3px 3px 0px 0px rgba(0,0,0,1), inset -2px -2px 6px rgba(0,0,0,0.28), inset 2px 2px 6px rgba(255,255,255,0.22)',
-          border: '2px solid black',
-          textShadow: '1px 1px 2px rgba(0,0,0,0.8)'
-        }}
-      >
-        MAP
-      </button>
+      {/* Desktop MAP strip removed for cleaner diary UI */}
       
       {/* Fixed Header */}
       <div className="fixed top-0 left-0 right-0 bg-white/20 backdrop-blur-3xl border-b-4 border-black py-2 sm:py-3 md:py-4 px-3 sm:px-4 md:px-6 z-[200] shadow-lg flex-shrink-0" style={{ backdropFilter: 'blur(80px) saturate(200%)' }}>
