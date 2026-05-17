@@ -437,7 +437,7 @@ export default function DiaryPage() {
   const activeFontSize = activeSide === 'left' ? leftFontSize : rightFontSize;
 
   return (
-    <div className="w-full flex flex-col items-center px-2 md:px-3 lg:px-4 pt-1 pb-4 relative z-[10]">
+    <div className="w-full flex flex-col items-center px-2 md:px-3 lg:px-4 pt-0 pb-2 relative z-[10]" style={{ maxHeight: 'calc(100vh - 96px)', overflow: 'hidden' }}>
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&display=swap');
 
@@ -599,7 +599,7 @@ export default function DiaryPage() {
 
         @media (max-width: 640px) {
           .editor-card { padding: 12px; }
-          .diary-container { height: calc(100vh - 140px); }
+          .diary-container { height: calc(100vh - 120px); }
           .toolbar-btn { padding: 8px 10px; }
           .editor-area { font-size: 15px !important; line-height: 1.5; }
         }
@@ -743,6 +743,7 @@ export default function DiaryPage() {
             >
               <Trash2 className="w-4 h-4" strokeWidth={2} />
             </button>
+            <div className="ml-3 text-sm diary-mono text-gray-600">{loadingDate ? 'Loading...' : saving ? 'Saving...' : 'Saved'}</div>
           </div>
         </div>
       </div>
@@ -830,29 +831,8 @@ export default function DiaryPage() {
       )}
 
       {/* Single blurred editor with Left/Right tabs */}
-      <div className="w-full max-w-[1400px] diary-container" >
+      <div className="w-full max-w-[1400px] diary-container">
         <div className="w-full h-full flex flex-col gap-3">
-          <div className="flex items-center gap-3">
-            <div className="flex items-center gap-2">
-              <button
-                onClick={() => setActiveSide('left')}
-                className={`px-3 py-2 rounded-lg font-bold diary-mono transition ${activeSide === 'left' ? 'bg-gray-900 text-white' : 'bg-white text-gray-900 border border-black'}`}
-              >
-                Left
-              </button>
-              <button
-                onClick={() => setActiveSide('right')}
-                className={`px-3 py-2 rounded-lg font-bold diary-mono transition ${activeSide === 'right' ? 'bg-gray-900 text-white' : 'bg-white text-gray-900 border border-black'}`}
-              >
-                Right
-              </button>
-            </div>
-
-            <div className="flex-1" />
-
-            <div className="text-sm diary-mono text-gray-600">{loadingDate ? 'Loading...' : saving ? 'Saving...' : 'Saved'}</div>
-          </div>
-
           <div className={`editor-card flex-1 p-6 ${activeSide === 'left' ? 'editor-card-left' : 'editor-card-right'}`}>
             <div className="h-full overflow-auto">
               <div
