@@ -220,20 +220,7 @@ const Home = memo(function Home() {
       {/* Background Texture Pattern on Top */}
       <div className="fixed inset-0 -z-[8] opacity-20 mix-blend-multiply" style={{ backgroundImage: 'url(/page7.png)', backgroundRepeat: 'repeat', filter: 'grayscale(100%) brightness(0)' }} />
 
-      {/* Desktop-only MAP vertical strip */}
-      <button
-        onClick={() => setShowMap(!showMap)}
-        className="hidden lg:flex fixed left-0 top-1/3 z-[300] h-36 w-12 items-center justify-center bg-gradient-to-b from-slate-800 via-slate-900 to-black text-white font-black text-xs tracking-[0.12em] transition-all hover:w-14 active:scale-95 rounded-r-md"
-        style={{
-          writingMode: 'vertical-rl',
-          textOrientation: 'upright',
-          boxShadow: '3px 3px 0px 0px rgba(0,0,0,1), inset -2px -2px 6px rgba(0,0,0,0.5), inset 2px 2px 6px rgba(255,255,255,0.1)',
-          border: '2px solid rgba(148, 163, 184, 0.3)',
-          textShadow: '1px 1px 2px rgba(0,0,0,0.8)'
-        }}
-      >
-        MAP
-      </button>
+      {/* MAP button removed for cleaner diary view */}
 
       {/* Fixed Navigation Bar */}
       <Navbar scrollToSection={scrollToSection} />
