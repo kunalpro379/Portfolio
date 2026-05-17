@@ -76,6 +76,14 @@ export default function DiaryPage() {
     };
   }, []);
 
+  // When switching tabs, ensure the newly rendered editor receives its current content
+  useEffect(() => {
+    const editor = activeSide === 'left' ? leftEditorRef.current : rightEditorRef.current;
+    if (!editor) return;
+    const html = activeSide === 'left' ? leftContentRef.current : rightContentRef.current;
+    editor.innerHTML = html ?? '';
+  }, [activeSide]);
+
   async function loadEntry(dateText: string) {
     try {
       setLoadingDate(true);
@@ -435,7 +443,8 @@ export default function DiaryPage() {
         }
 
         .page-lines {
-          background-image: linear-gradient(to bottom, transparent 29px, rgba(120, 120, 120, 0.18) 29px, rgba(120, 120, 120, 0.18) 30px, transparent 30px);
+          /* kept for legacy spreads but not used in single-card layout */
+          background-image: linear-gradient(to bottom, transparent 29px, rgba(120, 120, 120, 0.06) 29px, rgba(120, 120, 120, 0.06) 30px, transparent 30px);
           background-size: 100% 30px;
           background-position: 0 12px;
         }
@@ -557,6 +566,29 @@ export default function DiaryPage() {
         .editor-box {
           box-shadow: inset 0 0 0 1px rgba(0,0,0,0.05);
           overflow: hidden;
+        }
+
+        .editor-card {
+          background: rgba(255,255,255,0.22);
+          border-radius: 12px;
+          border: 1px solid rgba(255,255,255,0.12);
+          box-shadow: 0 10px 30px rgba(16,24,40,0.12);
+          backdrop-filter: blur(8px);
+          overflow: hidden;
+        }
+
+        /* Responsive adjustments */
+        .diary-container { height: 720px; }
+
+        @media (max-width: 1024px) {
+          .diary-container { height: 62vh; }
+        }
+
+        @media (max-width: 640px) {
+          .editor-card { padding: 12px; }
+          .diary-container { height: calc(100vh - 140px); }
+          .toolbar-btn { padding: 8px 10px; }
+          .editor-area { font-size: 15px !important; line-height: 1.5; }
         }
 
         .editor-area:focus {
@@ -772,53 +804,44 @@ export default function DiaryPage() {
         </div>
       )}
 
-      {/* Book */}
-      <div className="w-full max-w-[1240px]" style={{ height: '560px' }}>
-        <div className="book-container w-full h-full flex gap-0 overflow-hidden rounded-lg">
-          <div
-            className={`editor-box page-lines flex-1 h-full border-[3px] border-[#8a5a44] rounded-l-xl px-3 py-3 md:px-4 md:py-4 bg-[#f6ead6] ${leftPageFlipClass}`}
-            onMouseDown={() => setActiveSide('left')}
-            style={{ boxShadow: '-10px 8px 22px rgba(0,0,0,0.18)' }}
-          >
-            <div className="mb-3 flex items-center justify-between">
-              <div className="diary-mono font-bold text-[#7a4b2b]">Left Page</div>
-              <div className="diary-mono text-xs text-[#7a4b2b]">{loadingDate ? 'Loading...' : 'Ready'}</div>
+      {/* Single blurred editor with Left/Right tabs */}
+      <div className="w-full max-w-[1400px] diary-container" >
+        <div className="w-full h-full flex flex-col gap-3">
+          <div className="flex items-center gap-3">
+            <div className="flex items-center gap-2">
+              <button
+                onClick={() => setActiveSide('left')}
+                className={`px-3 py-2 rounded-lg font-bold diary-mono transition ${activeSide === 'left' ? 'bg-gray-900 text-white' : 'bg-white text-gray-900 border border-black'}`}
+              >
+                Left
+              </button>
+              <button
+                onClick={() => setActiveSide('right')}
+                className={`px-3 py-2 rounded-lg font-bold diary-mono transition ${activeSide === 'right' ? 'bg-gray-900 text-white' : 'bg-white text-gray-900 border border-black'}`}
+              >
+                Right
+              </button>
             </div>
 
-            <div
-              ref={leftEditorRef}
-              contentEditable
-              suppressContentEditableWarning
-              className="editor-area w-full h-[474px] bg-transparent text-black diary-mono leading-7 pr-1"
-              style={{ fontSize: `${leftFontSize}px`, caretColor: '#111827' }}
-              onFocus={() => setActiveSide('left')}
-              onMouseUp={() => captureSelection('left')}
-              onKeyUp={() => captureSelection('left')}
-              onInput={() => handleEditorInput('left')}
-            />
+            <div className="flex-1" />
+
+            <div className="text-sm diary-mono text-gray-600">{loadingDate ? 'Loading...' : saving ? 'Saving...' : 'Saved'}</div>
           </div>
 
-          <div
-            className={`editor-box page-lines flex-1 h-full border-[3px] border-[#4f6b88] rounded-r-xl px-3 py-3 md:px-4 md:py-4 bg-[#eef5fb] ${rightPageFlipClass}`}
-            onMouseDown={() => setActiveSide('right')}
-            style={{ boxShadow: '10px 8px 22px rgba(0,0,0,0.18)' }}
-          >
-            <div className="mb-3 flex items-center justify-between">
-              <div className="diary-mono font-bold text-[#2e4964]">Right Page</div>
-              <div className="diary-mono text-xs text-[#2e4964]">{saving ? 'Saving...' : 'Saved'}</div>
+          <div className="editor-card flex-1 p-6">
+            <div className="h-full overflow-auto">
+              <div
+                ref={activeSide === 'left' ? leftEditorRef : rightEditorRef}
+                contentEditable
+                suppressContentEditableWarning
+                className="editor-area w-full h-full bg-transparent text-black diary-mono leading-7 pr-1"
+                style={{ fontSize: `${activeFontSize}px`, caretColor: '#111827', minHeight: '100%' }}
+                onFocus={() => setActiveSide(activeSide)}
+                onMouseUp={() => captureSelection(activeSide)}
+                onKeyUp={() => captureSelection(activeSide)}
+                onInput={() => handleEditorInput(activeSide)}
+              />
             </div>
-
-            <div
-              ref={rightEditorRef}
-              contentEditable
-              suppressContentEditableWarning
-              className="editor-area w-full h-[474px] bg-transparent text-black diary-mono leading-7 pr-1"
-              style={{ fontSize: `${rightFontSize}px`, caretColor: '#111827' }}
-              onFocus={() => setActiveSide('right')}
-              onMouseUp={() => captureSelection('right')}
-              onKeyUp={() => captureSelection('right')}
-              onInput={() => handleEditorInput('right')}
-            />
           </div>
         </div>
       </div>
