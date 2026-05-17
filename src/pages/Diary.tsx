@@ -56,6 +56,7 @@ export default function DiaryPage() {
   const rightSaveTimeout = useRef<number | null>(null);
   const leftEditorRef = useRef<HTMLDivElement | null>(null);
   const rightEditorRef = useRef<HTMLDivElement | null>(null);
+  const dateInputRef = useRef<HTMLInputElement | null>(null);
   const exportSheetRef = useRef<HTMLDivElement | null>(null);
   const leftSelectionRef = useRef<Range | null>(null);
   const rightSelectionRef = useRef<Range | null>(null);
@@ -641,7 +642,7 @@ export default function DiaryPage() {
       `}</style>
 
       {/* Single compact toolbar row (full-width strip) */}
-      <div className="w-full flex items-center justify-between gap-2 -mt-2 bg-black text-white rounded-none px-6 py-3" style={{paddingTop: 6}}>
+      <div className="w-full relative flex items-center justify-between gap-2 -mt-2 bg-black text-white rounded-none px-6 py-3" style={{paddingTop: 6}}>
         <div className="flex items-center gap-2 shrink-0">
           <button
             onClick={() => goToDate('prev')}
@@ -670,18 +671,27 @@ export default function DiaryPage() {
           </button>
         </div>
 
-        <div className="flex items-center gap-3 md:gap-6">
-            <div className="flex items-center gap-2">
+        <div className="absolute left-1/2 transform -translate-x-1/2 flex items-center justify-center z-10">
+          <div className="flex items-center gap-3 max-w-[640px] px-2">
             <span className="text-base md:text-lg font-black text-white diary-mono">{pageTitle}</span>
             <input
+              ref={dateInputRef}
               type="date"
               value={date}
               onChange={(e) => syncDateInput(e.target.value)}
-              className="px-2 py-1 bg-transparent border border-white/20 rounded-md text-xs diary-mono text-white"
+              className="sr-only"
             />
+            <button
+              onClick={() => dateInputRef.current?.click()}
+              className="px-3 py-1 bg-white text-black rounded-md font-bold diary-mono shadow-sm"
+              title="Pick date"
+            >
+              {date}
+            </button>
           </div>
+        </div>
 
-          <div className="flex items-center gap-2 flex-nowrap">
+        <div className="flex items-center gap-2 flex-nowrap shrink-0">
             <button
               onMouseDown={(e) => { e.preventDefault(); preserveSelection(activeSide); }}
               onClick={() => execCommand('bold')}
