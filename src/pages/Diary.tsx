@@ -52,6 +52,78 @@ export default function DiaryPage() {
   const [exportingPdf, setExportingPdf] = useState(false);
   const [exportEntries, setExportEntries] = useState<DiaryExportEntry[]>([]);
 
+  // --- Helper actions (restored) ---
+  function openExportModal() {
+    setExportStartDate(date);
+    setExportEndDate(date);
+    setExportError('');
+    setIsExportModalOpen(true);
+  }
+
+  function closeExportModal() {
+    setIsExportModalOpen(false);
+    setExportError('');
+    setExportEntries([]);
+  }
+
+  function syncDateInput(value: string) {
+    setDate(value);
+  }
+
+  async function loadEntry(dateText: string) {
+    setLoadingDate(true);
+    try {
+      const resp = await fetch(`${API_BASE_URL}${API_ENDPOINTS.diary}/${dateText}`);
+      if (!resp.ok) {
+        leftContentRef.current = '';
+        rightContentRef.current = '';
+      } else {
+        const data = await resp.json();
+        const entry: DiaryEntry | null = data.entry ?? null;
+        leftContentRef.current = entry?.leftContent ?? '';
+        rightContentRef.current = entry?.rightContent ?? '';
+      }
+
+      // reflect into editors if mounted
+      if (leftEditorRef.current) leftEditorRef.current.innerHTML = leftContentRef.current;
+      if (rightEditorRef.current) rightEditorRef.current.innerHTML = rightContentRef.current;
+    } catch (err) {
+      console.error('Failed to load diary entry', err);
+    } finally {
+      setLoadingDate(false);
+    }
+  }
+
+  async function saveEntry(side: EditorSide, html: string) {
+    try {
+      const payload: Partial<DiaryEntry> = { date } as any;
+      if (side === 'left') payload.leftContent = html;
+      else payload.rightContent = html;
+
+      await fetch(`${API_BASE_URL}${API_ENDPOINTS.diary}/${date}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
+    } catch (err) {
+      console.error('Failed to save diary entry', err);
+    }
+  }
+
+  function scheduleSave(side: EditorSide, html: string) {
+    if (side === 'left') {
+      if (leftSaveTimeout.current) window.clearTimeout(leftSaveTimeout.current);
+      leftSaveTimeout.current = window.setTimeout(() => {
+        saveEntry('left', html);
+      }, 800);
+    } else {
+      if (rightSaveTimeout.current) window.clearTimeout(rightSaveTimeout.current);
+      rightSaveTimeout.current = window.setTimeout(() => {
+        saveEntry('right', html);
+      }, 800);
+    }
+  }
+
   const leftSaveTimeout = useRef<number | null>(null);
   const rightSaveTimeout = useRef<number | null>(null);
   const leftEditorRef = useRef<HTMLDivElement | null>(null);
