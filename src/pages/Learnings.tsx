@@ -725,21 +725,101 @@ export default function LearningsPage() {
       {/* Fixed Header */}
       <div className="fixed top-0 left-0 right-0 bg-white/20 backdrop-blur-3xl border-b-4 border-black py-2 sm:py-3 md:py-4 px-3 sm:px-4 md:px-6 z-[200] shadow-lg flex-shrink-0" style={{ backdropFilter: 'blur(80px) saturate(200%)' }}>
         <div className="max-w-7xl mx-auto">
-          {/* Mobile Layout - Original */}
-          <div className="block md:hidden">
-            <div className="flex items-center justify-between mb-2 sm:mb-3">
+          {/* Mobile Layout - Two Rows */}
+          <div className="block md:hidden space-y-2 sm:space-y-3">
+            <div className="grid grid-cols-5 gap-1.5 sm:gap-2">
               <button
                 onClick={() => navigate('/')}
-                className="flex items-center gap-1.5 sm:gap-2 text-gray-600 hover:text-black font-bold text-xs sm:text-sm transition-all hover:gap-3"
+                className="col-span-1 flex items-center gap-1.5 justify-start text-gray-600 hover:text-black font-bold text-xs sm:text-sm transition-all"
               >
                 <ArrowLeft className="w-3.5 h-3.5 sm:w-4 sm:h-4" strokeWidth={2.5} />
-                <span className="hidden xs:inline">Back to Home</span>
-                <span className="xs:hidden">Back</span>
+                <span className="hidden xs:inline">Back</span>
+              </button>
+
+              <button
+                onClick={() => changeTab('blogs')}
+                className={`col-span-1 px-2 sm:px-3 py-2 sm:py-2.5 rounded-lg font-bold text-[10px] sm:text-xs transition-all border-2 border-black ${activeTab === 'blogs'
+                    ? 'bg-pink-400 text-white shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transform -translate-y-0.5'
+                    : 'bg-white hover:bg-pink-50 hover:shadow-[1px_1px_0px_0px_rgba(0,0,0,1)]'
+                  }`}
+                style={{ borderRadius: '12px 15px 13px 14px' }}
+              >
+                Blogs
+              </button>
+              <button
+                onClick={() => changeTab('documentation')}
+                className={`col-span-1 px-2 sm:px-3 py-2 sm:py-2.5 rounded-lg font-bold text-[10px] sm:text-xs transition-all border-2 border-black ${activeTab === 'documentation'
+                    ? 'bg-blue-400 text-white shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transform -translate-y-0.5'
+                    : 'bg-white hover:bg-blue-50 hover:shadow-[1px_1px_0px_0px_rgba(0,0,0,1)]'
+                  }`}
+                style={{ borderRadius: '14px 12px 15px 13px' }}
+              >
+                Docs
+              </button>
+              <button
+                onClick={() => changeTab('guide')}
+                className={`col-span-1 px-2 sm:px-3 py-2 sm:py-2.5 rounded-lg font-bold text-[10px] sm:text-xs transition-all border-2 border-black ${activeTab === 'guide'
+                    ? 'bg-yellow-400 text-white shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transform -translate-y-0.5'
+                    : 'bg-white hover:bg-yellow-50 hover:shadow-[1px_1px_0px_0px_rgba(0,0,0,1)]'
+                  }`}
+                style={{ borderRadius: '13px 14px 12px 15px' }}
+              >
+                Guide
+              </button>
+              <button
+                onClick={() => changeTab('files')}
+                className={`col-span-1 px-2 sm:px-3 py-2 sm:py-2.5 rounded-lg font-bold text-[10px] sm:text-xs transition-all border-2 border-black ${activeTab === 'files'
+                    ? 'bg-cyan-400 text-white shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transform -translate-y-0.5'
+                    : 'bg-white hover:bg-cyan-50 hover:shadow-[1px_1px_0px_0px_rgba(0,0,0,1)]'
+                  }`}
+                style={{ borderRadius: '15px 13px 14px 12px' }}
+              >
+                Files
               </button>
             </div>
 
-            <div className="mb-4">
-              {/* Removed heading and description */}
+            <div className="grid grid-cols-4 gap-1.5 sm:gap-2">
+              <button
+                onClick={() => changeTab('diary')}
+                className={`px-2 sm:px-3 py-2 sm:py-2.5 rounded-lg font-bold text-[10px] sm:text-xs transition-all border-2 border-black ${activeTab === 'diary'
+                    ? 'bg-red-400 text-white shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transform -translate-y-0.5'
+                    : 'bg-white hover:bg-red-50 hover:shadow-[1px_1px_0px_0px_rgba(0,0,0,1)]'
+                  }`}
+                style={{ borderRadius: '12px 15px 13px 14px' }}
+              >
+                Diary
+              </button>
+              <button
+                onClick={() => changeTab('code')}
+                className={`px-2 sm:px-3 py-2 sm:py-2.5 rounded-lg font-bold text-[10px] sm:text-xs transition-all border-2 border-black ${activeTab === 'code'
+                    ? 'bg-orange-400 text-white shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transform -translate-y-0.5'
+                    : 'bg-white hover:bg-orange-50 hover:shadow-[1px_1px_0px_0px_rgba(0,0,0,1)]'
+                  }`}
+                style={{ borderRadius: '15px 13px 14px 12px' }}
+              >
+                Code
+              </button>
+              <button
+                onClick={() => changeTab('diagrams')}
+                className={`px-2 sm:px-3 py-2 sm:py-2.5 rounded-lg font-bold text-[10px] sm:text-xs transition-all border-2 border-black ${activeTab === 'diagrams'
+                    ? 'bg-purple-400 text-white shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transform -translate-y-0.5'
+                    : 'bg-white hover:bg-purple-50 hover:shadow-[1px_1px_0px_0px_rgba(0,0,0,1)]'
+                  }`}
+                style={{ borderRadius: '15px 13px 14px 12px' }}
+              >
+                <span className="hidden xs:inline">Architectures</span>
+                <span className="xs:hidden">Arch</span>
+              </button>
+              <button
+                onClick={() => changeTab('projects')}
+                className={`px-0.5 sm:px-1 py-1 sm:py-1.5 rounded-lg font-bold text-[8px] xs:text-[9px] sm:text-[10px] transition-all border-2 border-black ${activeTab === 'projects'
+                    ? 'bg-green-400 text-white shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transform -translate-y-0.5'
+                    : 'bg-white hover:bg-green-50 hover:shadow-[1px_1px_0px_0px_rgba(0,0,0,1)]'
+                  }`}
+                style={{ borderRadius: '12px 15px 13px 14px' }}
+              >
+                Projects
+              </button>
             </div>
           </div>
 
@@ -845,106 +925,7 @@ export default function LearningsPage() {
             </div>
           </div>
 
-          {/* Tabs - Mobile only - 8 tabs in grid */}
-          <div className="grid grid-cols-4 gap-1.5 sm:gap-2 mt-3 sm:mt-4 md:hidden px-2">
-            <button
-              onClick={() => changeTab('blogs')}
-              className={`px-2 sm:px-3 py-2 sm:py-2.5 rounded-lg font-bold text-[10px] sm:text-xs transition-all border-2 border-black ${activeTab === 'blogs'
-                  ? 'bg-pink-400 text-white shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transform -translate-y-0.5'
-                  : 'bg-white hover:bg-pink-50 hover:shadow-[1px_1px_0px_0px_rgba(0,0,0,1)]'
-                }`}
-              style={{
-                borderRadius: '12px 15px 13px 14px',
-              }}
-            >
-              Blogs
-            </button>
-            <button
-              onClick={() => changeTab('documentation')}
-              className={`px-2 sm:px-3 py-2 sm:py-2.5 rounded-lg font-bold text-[10px] sm:text-xs transition-all border-2 border-black ${activeTab === 'documentation'
-                  ? 'bg-blue-400 text-white shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transform -translate-y-0.5'
-                  : 'bg-white hover:bg-blue-50 hover:shadow-[1px_1px_0px_0px_rgba(0,0,0,1)]'
-                }`}
-              style={{
-                borderRadius: '14px 12px 15px 13px',
-              }}
-            >
-              Docs
-            </button>
-            <button
-              onClick={() => changeTab('guide')}
-              className={`px-2 sm:px-3 py-2 sm:py-2.5 rounded-lg font-bold text-[10px] sm:text-xs transition-all border-2 border-black ${activeTab === 'guide'
-                  ? 'bg-yellow-400 text-white shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transform -translate-y-0.5'
-                  : 'bg-white hover:bg-yellow-50 hover:shadow-[1px_1px_0px_0px_rgba(0,0,0,1)]'
-                }`}
-              style={{
-                borderRadius: '13px 14px 12px 15px',
-              }}
-            >
-              Guide
-            </button>
-            <button
-              onClick={() => changeTab('files')}
-              className={`px-2 sm:px-3 py-2 sm:py-2.5 rounded-lg font-bold text-[10px] sm:text-xs transition-all border-2 border-black ${activeTab === 'files'
-                  ? 'bg-cyan-400 text-white shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transform -translate-y-0.5'
-                  : 'bg-white hover:bg-cyan-50 hover:shadow-[1px_1px_0px_0px_rgba(0,0,0,1)]'
-                }`}
-              style={{
-                borderRadius: '15px 13px 14px 12px',
-              }}
-            >
-              Files
-            </button>
-            <button
-              onClick={() => changeTab('diary')}
-              className={`px-2 sm:px-3 py-2 sm:py-2.5 rounded-lg font-bold text-[10px] sm:text-xs transition-all border-2 border-black ${activeTab === 'diary'
-                  ? 'bg-red-400 text-white shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transform -translate-y-0.5'
-                  : 'bg-white hover:bg-red-50 hover:shadow-[1px_1px_0px_0px_rgba(0,0,0,1)]'
-                }`}
-              style={{
-                borderRadius: '12px 15px 13px 14px',
-              }}
-            >
-              Diary
-            </button>
-            <button
-              onClick={() => changeTab('code')}
-              className={`px-2 sm:px-3 py-2 sm:py-2.5 rounded-lg font-bold text-[10px] sm:text-xs transition-all border-2 border-black ${activeTab === 'code'
-                  ? 'bg-orange-400 text-white shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transform -translate-y-0.5'
-                  : 'bg-white hover:bg-orange-50 hover:shadow-[1px_1px_0px_0px_rgba(0,0,0,1)]'
-                }`}
-              style={{
-                borderRadius: '15px 13px 14px 12px',
-              }}
-            >
-              Code
-            </button>
-            <button
-              onClick={() => changeTab('diagrams')}
-              className={`px-2 sm:px-3 py-2 sm:py-2.5 rounded-lg font-bold text-[10px] sm:text-xs transition-all border-2 border-black ${activeTab === 'diagrams'
-                  ? 'bg-purple-400 text-white shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transform -translate-y-0.5'
-                  : 'bg-white hover:bg-purple-50 hover:shadow-[1px_1px_0px_0px_rgba(0,0,0,1)]'
-                }`}
-              style={{
-                borderRadius: '15px 13px 14px 12px',
-              }}
-            >
-              <span className="hidden xs:inline">Architectures</span>
-              <span className="xs:hidden">Arch</span>
-            </button>
-            <button
-              onClick={() => changeTab('projects')}
-              className={`px-0.5 sm:px-1 py-1 sm:py-1.5 rounded-lg font-bold text-[8px] xs:text-[9px] sm:text-[10px] transition-all border-2 border-black ${activeTab === 'projects'
-                  ? 'bg-green-400 text-white shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transform -translate-y-0.5'
-                  : 'bg-white hover:bg-green-50 hover:shadow-[1px_1px_0px_0px_rgba(0,0,0,1)]'
-                }`}
-              style={{
-                borderRadius: '12px 15px 13px 14px',
-              }}
-            >
-              Projects
-            </button>
-          </div>
+          {/* Tabs moved into the two-row mobile layout above */}
         </div>
       </div>
 

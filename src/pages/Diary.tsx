@@ -640,8 +640,91 @@ export default function DiaryPage() {
         }
       `}</style>
 
-      {/* Single compact toolbar row (full-width strip) */}
-      <div className="w-full flex flex-col gap-3 bg-black text-white rounded-none px-3 sm:px-4 md:px-6 py-3 sm:py-3.5 -mt-2">
+      {/* Mobile toolbar matches the screenshot style */}
+      <div className="md:hidden w-full rounded-[22px] border-2 border-white/90 bg-black text-white px-3 py-3 shadow-[0_0_0_1px_rgba(255,255,255,0.15),0_10px_20px_rgba(0,0,0,0.25)]">
+        <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-hide">
+          <button
+            onClick={() => goToDate('prev')}
+            className="toolbar-btn h-14 w-14 flex items-center justify-center rounded-[12px] border-2 border-white bg-transparent text-white text-3xl leading-none shrink-0"
+          >
+            <ChevronLeft className="w-5 h-5" strokeWidth={2.5} />
+          </button>
+
+          <div className="flex min-w-0 flex-1 items-center gap-2">
+            <span className="whitespace-nowrap font-black diary-mono text-[18px] sm:text-[20px] text-white leading-none">{pageTitle}</span>
+            <button
+              type="button"
+              onClick={() => setActiveSide(activeSide === 'left' ? 'right' : 'left')}
+              className={`h-12 w-12 shrink-0 rounded-[8px] border-2 border-white ${activeSide === 'left' ? 'bg-[#8c8a31]' : 'bg-[#4f78b8]'}`}
+              aria-label="Toggle page side"
+            />
+          </div>
+
+          <button
+            onClick={() => goToDate('next')}
+            className="toolbar-btn h-14 w-14 flex items-center justify-center rounded-[12px] border-2 border-white bg-transparent text-white text-3xl leading-none shrink-0"
+          >
+            <ChevronRight className="w-5 h-5" strokeWidth={2.5} />
+          </button>
+        </div>
+
+        <div className="mt-2 grid grid-cols-6 gap-2">
+          <button
+            onMouseDown={(e) => { e.preventDefault(); preserveSelection(activeSide); }}
+            onClick={() => execCommand('bold')}
+            className="toolbar-btn h-14 rounded-[12px] border-2 border-white bg-transparent text-white font-black diary-mono text-lg leading-none active:scale-95"
+          >
+            B
+          </button>
+          <button
+            onMouseDown={(e) => { e.preventDefault(); preserveSelection(activeSide); }}
+            onClick={() => execCommand('italic')}
+            className="toolbar-btn h-14 rounded-[12px] border-2 border-white bg-transparent text-white font-black diary-mono text-lg leading-none active:scale-95"
+          >
+            I
+          </button>
+          <button
+            onMouseDown={(e) => { e.preventDefault(); preserveSelection(activeSide); }}
+            onClick={insertBullet}
+            className="toolbar-btn h-14 rounded-[12px] border-2 border-white bg-transparent text-white font-black diary-mono text-2xl leading-none active:scale-95"
+          >
+            •
+          </button>
+          <button
+            onMouseDown={(e) => { e.preventDefault(); preserveSelection(activeSide); }}
+            onClick={insertLine}
+            className="toolbar-btn h-14 rounded-[12px] border-2 border-white bg-transparent text-white font-black diary-mono text-2xl leading-none active:scale-95"
+          >
+            -
+          </button>
+          <select
+            value={activeSide === 'left' ? leftFontSize : rightFontSize}
+            onChange={(e) => {
+              const value = Number(e.target.value);
+              if (activeSide === 'left') setLeftFontSize(value);
+              else setRightFontSize(value);
+            }}
+            className="toolbar-btn h-14 rounded-[12px] border-2 border-white bg-transparent px-2 text-center font-black diary-mono text-lg text-white outline-none"
+          >
+            <option value={12}>12^</option>
+            <option value={14}>14^</option>
+            <option value={16}>16^</option>
+            <option value={18}>18^</option>
+            <option value={20}>20^</option>
+            <option value={22}>22^</option>
+          </select>
+          <button
+            onClick={clearCurrentPage}
+            className="toolbar-btn h-14 rounded-[12px] border-2 border-white bg-black text-white flex items-center justify-center active:scale-95"
+            title="Delete"
+          >
+            <Trash2 className="w-6 h-6" strokeWidth={2.5} />
+          </button>
+        </div>
+      </div>
+
+      {/* Desktop toolbar */}
+      <div className="hidden md:block w-full flex flex-col gap-3 bg-black text-white rounded-none px-3 sm:px-4 md:px-6 py-3 sm:py-3.5 -mt-2">
         <div className="flex flex-wrap items-center gap-2 shrink-0">
           <button
             onClick={() => goToDate('prev')}
