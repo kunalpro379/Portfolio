@@ -437,7 +437,7 @@ export default function DiaryPage() {
   const activeFontSize = activeSide === 'left' ? leftFontSize : rightFontSize;
 
   return (
-    <div className="w-full flex flex-col items-start px-2 md:px-3 lg:px-4 pt-0 pb-0 fixed left-0 right-0 bottom-0 top-[220px] md:top-[140px] lg:top-[120px] overflow-hidden" style={{ zIndex: 30 }}>
+    <div className="w-full flex flex-col items-start px-2 md:px-3 lg:px-4 pt-0 pb-0 fixed left-0 right-0 bottom-0 top-[188px] md:top-[140px] lg:top-[120px] overflow-hidden" style={{ zIndex: 30 }}>
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&display=swap');
 

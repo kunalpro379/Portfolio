@@ -949,7 +949,7 @@ export default function LearningsPage() {
       </div>
 
       {/* Scrollable Main Content */}
-      <main className="fixed left-0 right-0 bottom-0 top-[220px] xs:top-[230px] sm:top-[240px] md:top-[140px] lg:top-[120px] overflow-y-auto overscroll-contain bg-transparent px-2 sm:px-3 md:px-4 lg:px-6 pt-0 pb-2 z-[50]">
+      <main className="fixed left-0 right-0 bottom-0 top-[188px] xs:top-[196px] sm:top-[204px] md:top-[140px] lg:top-[120px] overflow-y-auto overscroll-contain bg-transparent px-2 sm:px-3 md:px-4 lg:px-6 pt-0 pb-2 z-[50]">
         <div className="max-w-7xl mx-auto pt-0">
           {/* Loading State */}
           {loading && (
