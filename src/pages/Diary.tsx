@@ -71,108 +71,106 @@ export default function DiaryPage() {
   useEffect(() => {
     const previousBodyOverflow = document.body.style.overflow;
     const previousHtmlOverflow = document.documentElement.style.overflow;
-    document.body.style.overflow = 'hidden';
-    document.documentElement.style.overflow = 'hidden';
-    return () => {
-      document.body.style.overflow = previousBodyOverflow;
-      document.documentElement.style.overflow = previousHtmlOverflow;
-    };
-  }, []);
+      {/* Desktop toolbar - compact soft style */}
+      <div className="hidden md:flex w-full items-center justify-between soft-card bg-white/95 text-gray-800 px-3 py-2 gap-2">
+        <div className="flex items-center gap-2">
+          <button
+            onClick={() => goToDate('prev')}
+            className="h-9 w-9 flex items-center justify-center rounded-md soft-btn text-gray-700"
+            aria-label="Previous date"
+          >
+            <ChevronLeft className="w-4 h-4" strokeWidth={2} />
+          </button>
+          <button
+            onClick={() => goToDate('next')}
+            className="h-9 w-9 flex items-center justify-center rounded-md soft-btn text-gray-700"
+            aria-label="Next date"
+          >
+            <ChevronRight className="w-4 h-4" strokeWidth={2} />
+          </button>
 
-  // When switching tabs, ensure the newly rendered editor receives its current content
-  useEffect(() => {
-    const editor = activeSide === 'left' ? leftEditorRef.current : rightEditorRef.current;
-    if (!editor) return;
-    const html = activeSide === 'left' ? leftContentRef.current : rightContentRef.current;
-    editor.innerHTML = html ?? '';
-  }, [activeSide]);
+          <button
+            onClick={() => setActiveSide('left')}
+            className={`px-3 py-1.5 ml-1 rounded-md font-bold diary-mono transition ${activeSide === 'left' ? 'bg-white text-gray-900 soft-btn' : 'bg-transparent text-gray-700 soft-btn'}`}
+          >
+            Left
+          </button>
+          <button
+            onClick={() => setActiveSide('right')}
+            className={`px-3 py-1.5 rounded-md font-bold diary-mono transition ${activeSide === 'right' ? 'bg-white text-gray-900 soft-btn' : 'bg-transparent text-gray-700 soft-btn'}`}
+          >
+            Right
+          </button>
+        </div>
 
-  async function loadEntry(dateText: string) {
-    try {
-      setLoadingDate(true);
-      const response = await fetch(`${API_BASE_URL}${API_ENDPOINTS.diary}/${dateText}`);
-      if (!response.ok) throw new Error('Failed to load diary entry');
+        <div className="flex items-center gap-2">
+          <span className="text-sm md:text-base font-bold diary-mono text-gray-800 mr-2">{pageTitle}</span>
+          <button onClick={openDatePicker} className="h-9 w-9 rounded-md bg-[#8fb0ff] flex items-center justify-center text-white" title="Pick date">
+            <Calendar className="w-4 h-4" strokeWidth={2} />
+          </button>
+          <input ref={dateInputRef} type="date" value={date} onChange={(e) => syncDateInput(e.target.value)} className="sr-only" />
 
-      const data = await response.json();
-      const entry: DiaryEntry | null = data.entry;
-
-      const nextLeftContent = entry?.leftContent ?? '';
-      const nextRightContent = entry?.rightContent ?? '';
-
-      leftContentRef.current = nextLeftContent;
-      rightContentRef.current = nextRightContent;
-
-      if (leftEditorRef.current) {
-        leftEditorRef.current.innerHTML = nextLeftContent;
-      }
-      if (rightEditorRef.current) {
-        rightEditorRef.current.innerHTML = nextRightContent;
-      }
-    } catch (error) {
-      console.error('Load diary entry failed:', error);
-      leftContentRef.current = '';
-      rightContentRef.current = '';
-      if (leftEditorRef.current) leftEditorRef.current.innerHTML = '';
-      if (rightEditorRef.current) rightEditorRef.current.innerHTML = '';
-    } finally {
-      setLoadingDate(false);
-    }
-  }
-
-  async function saveEntry(payload: Partial<DiaryEntry>) {
-    try {
-      setSaving(true);
-      const response = await fetch(`${API_BASE_URL}${API_ENDPOINTS.diary}/${date}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload)
-      });
-
-      if (!response.ok) throw new Error('Failed to save diary entry');
-    } catch (error) {
-      console.error('Save diary entry failed:', error);
-    } finally {
-      setSaving(false);
-    }
-  }
-
-  function scheduleSave(side: EditorSide, value: string) {
-    const timeoutRef = side === 'left' ? leftSaveTimeout : rightSaveTimeout;
-    if (timeoutRef.current) window.clearTimeout(timeoutRef.current);
-    timeoutRef.current = window.setTimeout(() => {
-      saveEntry(side === 'left' ? { leftContent: value } : { rightContent: value });
-    }, 800);
-  }
-
-  function animateSlide(direction: 'next' | 'prev', nextDateText: string) {
-    setSlideDirection(direction);
-    window.setTimeout(() => {
-      setDate(nextDateText);
-      window.setTimeout(() => setSlideDirection(null), 250);
-    }, 160);
-  }
-
-  function goToDate(direction: 'next' | 'prev') {
-    const offset = direction === 'next' ? 1 : -1;
-    animateSlide(direction, addDays(date, offset));
-  }
-
-  function syncDateInput(value: string) {
-    setDate(value);
-  }
-
-  function openExportModal() {
-    setExportError('');
-    setExportStartDate(date);
-    setExportEndDate(date);
-    setIsExportModalOpen(true);
-  }
-
-  function closeExportModal() {
-    if (exportingPdf) return;
-    setIsExportModalOpen(false);
-    setExportError('');
-  }
+          <div className="flex items-center gap-2 ml-4">
+            <button
+              onMouseDown={(e) => { e.preventDefault(); preserveSelection(activeSide); }}
+              onClick={() => execCommand('bold')}
+              className="px-2 py-1 rounded-md soft-btn text-gray-700 text-sm"
+            >
+              <Bold className="w-3.5 h-3.5 inline-block mr-1" strokeWidth={2} />
+              B
+            </button>
+            <button
+              onMouseDown={(e) => { e.preventDefault(); preserveSelection(activeSide); }}
+              onClick={() => execCommand('italic')}
+              className="px-2 py-1 rounded-md soft-btn text-gray-700 text-sm"
+            >
+              <Italic className="w-3.5 h-3.5 inline-block mr-1" strokeWidth={2} />
+              I
+            </button>
+            <button
+              onMouseDown={(e) => { e.preventDefault(); preserveSelection(activeSide); }}
+              onClick={insertBullet}
+              className="px-2 py-1 rounded-md soft-btn text-gray-700 text-sm"
+            >
+              •
+            </button>
+            <button
+              onMouseDown={(e) => { e.preventDefault(); preserveSelection(activeSide); }}
+              onClick={insertLine}
+              className="px-2 py-1 rounded-md soft-btn text-gray-700 text-sm"
+            >
+              —
+            </button>
+            <select
+              value={activeSide === 'left' ? leftFontSize : rightFontSize}
+              onChange={(e) => { const value = Number(e.target.value); if (activeSide === 'left') setLeftFontSize(value); else setRightFontSize(value); }}
+              className="px-2 py-1 rounded-md soft-btn text-sm text-gray-700"
+            >
+              <option value={12}>12</option>
+              <option value={14}>14</option>
+              <option value={16}>16</option>
+              <option value={18}>18</option>
+              <option value={20}>20</option>
+              <option value={22}>22</option>
+            </select>
+            <button
+              onClick={openExportModal}
+              className="h-9 w-9 rounded-md soft-btn text-gray-700 flex items-center justify-center"
+              title="Download PDF"
+            >
+              <Download className="w-4 h-4" strokeWidth={2} />
+            </button>
+            <button
+              onClick={clearCurrentPage}
+              className="h-9 w-9 rounded-md soft-btn text-red-600 flex items-center justify-center"
+              title="Delete"
+            >
+              <Trash2 className="w-4 h-4" strokeWidth={2} />
+            </button>
+            <div className="ml-3 text-xs diary-mono text-gray-600 whitespace-nowrap">{loadingDate ? 'Loading...' : saving ? 'Saving...' : 'Saved'}</div>
+          </div>
+        </div>
+      </div>
 
   function getDateRange(startDate: string, endDate: string) {
     const orderedStart = startDate <= endDate ? startDate : endDate;
@@ -436,8 +434,22 @@ export default function DiaryPage() {
 
   const activeFontSize = activeSide === 'left' ? leftFontSize : rightFontSize;
 
+  const dateInputRef = useRef<HTMLInputElement | null>(null);
+
+  const openDatePicker = () => {
+    const inp = dateInputRef.current;
+    if (!inp) return;
+    try {
+      // modern browsers
+      (inp as any).showPicker?.();
+      inp.focus();
+    } catch (e) {
+      inp.focus();
+    }
+  };
+
   return (
-    <div className="w-full flex flex-col items-start px-2 md:px-3 lg:px-4 pt-0 pb-0 fixed left-0 right-0 bottom-0 top-[188px] md:top-[140px] lg:top-[120px] overflow-hidden" style={{ zIndex: 30 }}>
+    <div className="w-full flex flex-col items-start px-2 md:px-3 lg:px-4 pt-0 pb-0 flex-1 overflow-hidden" style={{ zIndex: 30 }}>
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&display=swap');
 
@@ -640,62 +652,76 @@ export default function DiaryPage() {
         }
       `}</style>
 
-      {/* Mobile toolbar matches the screenshot style */}
-      <div className="md:hidden w-full rounded-[22px] border-2 border-white/90 bg-black text-white px-3 py-3 shadow-[0_0_0_1px_rgba(255,255,255,0.15),0_10px_20px_rgba(0,0,0,0.25)]">
-        <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-hide">
+      {/* Mobile toolbar - compact & connected to tabbar */}
+      <div className="md:hidden w-full soft-card bg-white/95 px-3 py-2">
+        <div className="flex items-center gap-2">
           <button
             onClick={() => goToDate('prev')}
-            className="toolbar-btn h-14 w-14 flex items-center justify-center rounded-[12px] border-2 border-white bg-transparent text-white text-3xl leading-none shrink-0"
+            className="h-10 w-10 flex items-center justify-center rounded-md soft-btn text-gray-700 shrink-0"
+            aria-label="Previous date"
           >
-            <ChevronLeft className="w-5 h-5" strokeWidth={2.5} />
+            <ChevronLeft className="w-4 h-4" strokeWidth={2} />
           </button>
 
-          <div className="flex min-w-0 flex-1 items-center gap-2">
-            <span className="whitespace-nowrap font-black diary-mono text-[18px] sm:text-[20px] text-white leading-none">{pageTitle}</span>
+          <div className="flex items-center gap-2 flex-1 min-w-0">
+            <span className="whitespace-nowrap font-bold diary-mono text-sm text-gray-800 truncate">{pageTitle}</span>
             <button
               type="button"
               onClick={() => setActiveSide(activeSide === 'left' ? 'right' : 'left')}
-              className={`h-12 w-12 shrink-0 rounded-[8px] border-2 border-white ${activeSide === 'left' ? 'bg-[#8c8a31]' : 'bg-[#4f78b8]'}`}
+              className={`h-9 w-9 shrink-0 rounded-md soft-btn flex items-center justify-center ${activeSide === 'left' ? 'bg-white text-gray-800' : 'bg-white text-gray-800'}`}
               aria-label="Toggle page side"
-            />
+            >
+              {activeSide === 'left' ? 'L' : 'R'}
+            </button>
           </div>
 
           <button
             onClick={() => goToDate('next')}
-            className="toolbar-btn h-14 w-14 flex items-center justify-center rounded-[12px] border-2 border-white bg-transparent text-white text-3xl leading-none shrink-0"
+            className="h-10 w-10 flex items-center justify-center rounded-md soft-btn text-gray-700 shrink-0"
+            aria-label="Next date"
           >
-            <ChevronRight className="w-5 h-5" strokeWidth={2.5} />
+            <ChevronRight className="w-4 h-4" strokeWidth={2} />
           </button>
+
+          <button
+            onClick={openDatePicker}
+            className="ml-2 h-9 w-9 flex items-center justify-center rounded-md bg-[#8fb0ff] text-white shrink-0"
+            aria-label="Open date picker"
+            title="Pick a date"
+          >
+            <Calendar className="w-4 h-4" strokeWidth={2} />
+          </button>
+          <input ref={dateInputRef} type="date" value={date} onChange={(e) => syncDateInput(e.target.value)} className="sr-only" />
         </div>
 
         <div className="mt-2 grid grid-cols-6 gap-2">
           <button
             onMouseDown={(e) => { e.preventDefault(); preserveSelection(activeSide); }}
             onClick={() => execCommand('bold')}
-            className="toolbar-btn h-14 rounded-[12px] border-2 border-white bg-transparent text-white font-black diary-mono text-lg leading-none active:scale-95"
+            className="h-10 rounded-md soft-btn text-gray-800 font-medium diary-mono text-sm"
           >
             B
           </button>
           <button
             onMouseDown={(e) => { e.preventDefault(); preserveSelection(activeSide); }}
             onClick={() => execCommand('italic')}
-            className="toolbar-btn h-14 rounded-[12px] border-2 border-white bg-transparent text-white font-black diary-mono text-lg leading-none active:scale-95"
+            className="h-10 rounded-md soft-btn text-gray-800 font-medium diary-mono text-sm"
           >
             I
           </button>
           <button
             onMouseDown={(e) => { e.preventDefault(); preserveSelection(activeSide); }}
             onClick={insertBullet}
-            className="toolbar-btn h-14 rounded-[12px] border-2 border-white bg-transparent text-white font-black diary-mono text-2xl leading-none active:scale-95"
+            className="h-10 rounded-md soft-btn text-gray-800 font-medium diary-mono text-lg"
           >
             •
           </button>
           <button
             onMouseDown={(e) => { e.preventDefault(); preserveSelection(activeSide); }}
             onClick={insertLine}
-            className="toolbar-btn h-14 rounded-[12px] border-2 border-white bg-transparent text-white font-black diary-mono text-2xl leading-none active:scale-95"
+            className="h-10 rounded-md soft-btn text-gray-800 font-medium diary-mono text-lg"
           >
-            -
+            —
           </button>
           <select
             value={activeSide === 'left' ? leftFontSize : rightFontSize}
@@ -704,21 +730,21 @@ export default function DiaryPage() {
               if (activeSide === 'left') setLeftFontSize(value);
               else setRightFontSize(value);
             }}
-            className="toolbar-btn h-14 rounded-[12px] border-2 border-white bg-transparent px-2 text-center font-black diary-mono text-lg text-white outline-none"
+            className="h-10 rounded-md soft-btn text-center font-medium diary-mono text-sm"
           >
-            <option value={12}>12^</option>
-            <option value={14}>14^</option>
-            <option value={16}>16^</option>
-            <option value={18}>18^</option>
-            <option value={20}>20^</option>
-            <option value={22}>22^</option>
+            <option value={12}>12</option>
+            <option value={14}>14</option>
+            <option value={16}>16</option>
+            <option value={18}>18</option>
+            <option value={20}>20</option>
+            <option value={22}>22</option>
           </select>
           <button
             onClick={clearCurrentPage}
-            className="toolbar-btn h-14 rounded-[12px] border-2 border-white bg-black text-white flex items-center justify-center active:scale-95"
+            className="h-10 rounded-md soft-btn text-red-600 flex items-center justify-center"
             title="Delete"
           >
-            <Trash2 className="w-6 h-6" strokeWidth={2.5} />
+            <Trash2 className="w-4 h-4" strokeWidth={2} />
           </button>
         </div>
       </div>

@@ -150,16 +150,16 @@ export default function AboutSection() {
 
       {/* Additional Text & Skills - Full Width Below */}
       <div className="w-full order-3 px-6 pb-10 max-w-7xl mx-auto">
-        <div className="space-y-5 text-base md:text-lg lg:text-xl leading-relaxed" style={{ fontFamily: "'Kalam', 'Comic Sans MS', 'Brush Script MT', cursive" }}>
-          <p className="font-black text-gray-900" style={{ fontWeight: 900, textShadow: '1px 1px 0px rgba(0,0,0,0.1)' }}>
-            I'm a <span className="font-black text-black bg-gradient-to-r from-amber-300 via-amber-400 to-amber-300 px-3 py-1.5 rounded-xl shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] border-2 border-black transform -rotate-1 inline-block" style={{ fontFamily: "'Kalam', 'Comic Sans MS', cursive", fontWeight: 800 }}>backend-focused engineer</span> who enjoys building systems that are reliable, scalable, and ready for real users. I spend most of my time designing <span className="font-black text-black bg-gradient-to-r from-pink-300 via-pink-400 to-pink-300 px-3 py-1.5 rounded-xl shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] border-2 border-black transform rotate-1 inline-block" style={{ fontFamily: "'Kalam', 'Comic Sans MS', cursive", fontWeight: 800 }}>APIs, real-time systems</span>, and cloud-native backends using <span className="font-black text-black bg-gradient-to-r from-green-300 via-green-400 to-green-300 px-3 py-1.5 rounded-xl shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] border-2 border-black transform -rotate-1 inline-block" style={{ fontFamily: "'Kalam', 'Comic Sans MS', cursive", fontWeight: 800 }}>Node.js and AWS</span>.
+          <div className="space-y-5 text-base md:text-lg lg:text-xl leading-relaxed" style={{ fontFamily: "'Kalam', 'Comic Sans MS', 'Brush Script MT', cursive" }}>
+          <p className="font-black text-gray-900" style={{ fontWeight: 900, textShadow: '1px 1px 0px rgba(0,0,0,0.04)' }}>
+            I'm a <span className="font-black text-black bg-gradient-to-r from-amber-300 via-amber-400 to-amber-300 px-3 py-1.5 rounded-xl shadow-sm border border-gray-200 transform -rotate-1 inline-block" style={{ fontFamily: "'Kalam', 'Comic Sans MS', cursive", fontWeight: 800 }}>backend-focused engineer</span> who enjoys building systems that are reliable, scalable, and ready for real users. I spend most of my time designing <span className="font-black text-black bg-gradient-to-r from-pink-300 via-pink-400 to-pink-300 px-3 py-1.5 rounded-xl shadow-sm border border-gray-200 transform rotate-1 inline-block" style={{ fontFamily: "'Kalam', 'Comic Sans MS', cursive", fontWeight: 800 }}>APIs, real-time systems</span>, and cloud-native backends using <span className="font-black text-black bg-gradient-to-r from-green-300 via-green-400 to-green-300 px-3 py-1.5 rounded-xl shadow-sm border border-gray-200 transform -rotate-1 inline-block" style={{ fontFamily: "'Kalam', 'Comic Sans MS', cursive", fontWeight: 800 }}>Node.js and AWS</span>.
           </p>
           
           <p className="font-black text-gray-900" style={{ fontWeight: 900, textShadow: '1px 1px 0px rgba(0,0,0,0.1)' }}>
             I care deeply about <span className="font-black text-black bg-gradient-to-r from-cyan-300 via-cyan-400 to-cyan-300 px-3 py-1.5 rounded-xl shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] border-2 border-black transform rotate-1 inline-block" style={{ fontFamily: "'Kalam', 'Comic Sans MS', cursive", fontWeight: 800 }}>performance, clean architecture</span>, and fault tolerance — not just making things work, but making them last. Alongside backend and DevOps, I work extensively with <span className="font-black text-black bg-gradient-to-r from-purple-300 via-purple-400 to-purple-300 px-3 py-1.5 rounded-xl shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] border-2 border-black transform -rotate-1 inline-block" style={{ fontFamily: "'Kalam', 'Comic Sans MS', cursive", fontWeight: 800 }}>AI systems, LLMs</span>, generative models, and image generation workflows integrated into real applications.
           </p>
           
-          <div className="inline-block bg-gradient-to-r from-purple-300 via-purple-400 to-purple-300 border-4 border-black rounded-3xl px-10 py-5 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] transform -rotate-2 hover:rotate-0 transition-transform">
+          <div className="inline-block bg-gradient-to-r from-purple-300 via-purple-400 to-purple-300 border-2 border-gray-200 rounded-3xl px-10 py-5 shadow-md transform -rotate-2 hover:rotate-0 transition-transform">
             <p className="text-2xl md:text-3xl font-black text-black uppercase tracking-wider" style={{ fontFamily: "'Kalam', 'Comic Sans MS', cursive", fontWeight: 900 }}> CURRENT FOCUS</p>
           </div>
           
@@ -169,8 +169,8 @@ export default function AboutSection() {
         </div>
 
        {/* Skills Table */}
-        <div className="mt-12 bg-white/60 backdrop-blur-sm border-4 border-black rounded-3xl overflow-hidden shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
-          <div className="grid grid-cols-1 divide-y-4 divide-black">
+          <div className="mt-12 bg-white/60 backdrop-blur-sm border border-gray-200 rounded-3xl overflow-hidden shadow-md">
+          <div className="grid grid-cols-1 divide-y divide-gray-100">
             <div className="p-6 md:p-8 bg-gradient-to-r from-purple-50 to-pink-50">
               <h3 className="text-black font-black uppercase tracking-wider text-sm md:text-base mb-3 flex items-center gap-2" style={{ fontFamily: "'Caveat', 'Indie Flower', 'Patrick Hand', cursive", fontWeight: 800 }}>
                 <span className="w-3 h-3 bg-purple-500 rounded-full"></span>

@@ -192,13 +192,15 @@ export default function BlogsSection() {
                   >
                     <Link to={`/learnings/blogs/${blog.blogId}`}>
                       <div
-                        className={`blog-card relative bg-white overflow-hidden border-[3px] border-black rounded-[20px] transition-all duration-300 h-full flex flex-col ${shadows[idx % 4]} ${hoverShadows[idx % 4]}`}
+                        className={`blog-card relative bg-white overflow-hidden transition-all duration-300 h-full flex flex-col ${shadows[idx % 4]} ${hoverShadows[idx % 4]}`}
                         style={{
-                          borderRadius: idx % 2 === 0 ? '20px 25px 20px 25px' : '25px 20px 25px 20px'
+                          borderRadius: idx % 2 === 0 ? '20px 25px 20px 25px' : '25px 20px 25px 20px',
+                          border: '1px solid rgba(0,0,0,0.08)',
+                          boxShadow: '0 8px 24px rgba(16,24,40,0.06)'
                         }}
                       >
-                        {blog.coverImage && (
-                          <div className="relative h-24 md:h-28 overflow-hidden bg-gray-50 flex-shrink-0 border-b-4 border-black">
+                          {blog.coverImage && (
+                          <div className="relative h-24 md:h-28 overflow-hidden bg-gray-50 flex-shrink-0" style={{ borderBottom: '1px solid rgba(0,0,0,0.06)' }}>
                             <img
                               src={blog.coverImage}
                               alt={blog.title}
@@ -211,8 +213,8 @@ export default function BlogsSection() {
                           </div>
                         )}
 
-                        <div className="p-2.5 md:p-3 space-y-1.5 md:space-y-2 flex-grow">
-                          <div className="inline-block px-2.5 py-0.5 bg-pink-100 border-2 border-black rounded-lg text-[9px] md:text-[10px] font-bold">
+                          <div className="p-2.5 md:p-3 space-y-1.5 md:space-y-2 flex-grow">
+                          <div className="inline-block px-2.5 py-0.5 bg-pink-100 border border-gray-200 rounded-lg text-[9px] md:text-[10px] font-semibold">
                             {blog.subject}
                           </div>
                           <h3 className="card-title text-xs md:text-sm font-black leading-tight text-black line-clamp-2">

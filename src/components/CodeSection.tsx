@@ -239,10 +239,10 @@ export default function CodeSection() {
 
   if (loading && activeTab === 'local' && currentPath) {
     return (
-      <div className="bg-white border-2 border-black rounded-xl p-6 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+      <div className="bg-white soft-card p-6">
         <div className="flex items-center justify-center py-12">
           <img src="/loading.gif" alt="Loading" className="w-10 h-10 object-contain" />
-          <span className="ml-3 font-bold text-black">Loading code files</span>
+          <span className="ml-3 font-medium text-gray-800">Loading code files</span>
         </div>
       </div>
     );
@@ -264,10 +264,10 @@ export default function CodeSection() {
       <div className="flex justify-center gap-2 mb-6">
         <button
           onClick={() => setActiveTab('local')}
-          className={`px-4 py-2 border-2 border-black rounded-lg font-bold text-sm transition ${
+          className={`px-4 py-2 rounded-lg font-bold text-sm transition ${
             activeTab === 'local'
-              ? 'bg-blue-200 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]'
-              : 'bg-white hover:bg-gray-50'
+              ? 'bg-blue-200 soft-btn'
+              : 'bg-white hover:bg-gray-50 soft-btn'
           }`}
         >
           <Code2 className="w-4 h-4 inline mr-2" strokeWidth={2.5} />
@@ -275,10 +275,10 @@ export default function CodeSection() {
         </button>
         <button
           onClick={() => setActiveTab('github')}
-          className={`px-4 py-2 border-2 border-black rounded-lg font-bold text-sm transition ${
+          className={`px-4 py-2 rounded-lg font-bold text-sm transition ${
             activeTab === 'github'
-              ? 'bg-blue-200 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]'
-              : 'bg-white hover:bg-gray-50'
+              ? 'bg-blue-200 soft-btn'
+              : 'bg-white hover:bg-gray-50 soft-btn'
           }`}
         >
           <Github className="w-4 h-4 inline mr-2" strokeWidth={2.5} />
@@ -291,7 +291,7 @@ export default function CodeSection() {
         <>
           {/* Breadcrumbs */}
           {currentPath && (
-            <div className="bg-white border-2 border-black rounded-xl p-4 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
+            <div className="bg-white soft-card p-4">
               <div className="flex items-center gap-2 flex-wrap">
                 <button
                   onClick={() => setCurrentPath('')}
@@ -319,7 +319,7 @@ export default function CodeSection() {
 
           {/* Folders */}
           {folders.length > 0 && (
-            <div className="bg-white border-2 border-black rounded-xl p-6 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+            <div className="bg-white soft-card p-6">
               <h3 className="text-xl font-black text-black mb-4 flex items-center gap-2">
                 <Folder className="w-6 h-6" strokeWidth={2.5} />
                 Folders
@@ -346,7 +346,7 @@ export default function CodeSection() {
 
           {/* Files */}
           {files.length > 0 && (
-            <div className="bg-white border-2 border-black rounded-xl p-6 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+            <div className="bg-white soft-card p-6">
               <h3 className="text-xl font-black text-black mb-4 flex items-center gap-2">
                 <Code2 className="w-6 h-6" strokeWidth={2.5} />
                 Code Files ({files.length})
@@ -355,7 +355,7 @@ export default function CodeSection() {
                 {files.map((file) => (
                   <div
                     key={file._id}
-                    className="flex items-center justify-between p-4 bg-white border-2 border-black rounded-lg shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[-1px] hover:translate-y-[-1px] transition"
+                    className="flex items-center justify-between p-4 bg-white border border-gray-200 rounded-lg soft-card transition"
                   >
                     <div className="flex items-center gap-3 flex-1 min-w-0">
                       <File className="w-5 h-5 text-black flex-shrink-0" strokeWidth={2.5} />
@@ -376,7 +376,7 @@ export default function CodeSection() {
                     </div>
                     <button
                       onClick={() => viewFile(file)}
-                      className="p-2 bg-blue-100 border-2 border-black rounded-lg hover:bg-blue-200 transition shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] active:translate-x-[1px] active:translate-y-[1px]"
+                      className="p-2 bg-blue-100 rounded-lg hover:bg-blue-200 transition soft-btn"
                       title="View code"
                     >
                       <ExternalLink className="w-4 h-4 text-black" strokeWidth={2.5} />
@@ -389,9 +389,9 @@ export default function CodeSection() {
 
           {/* Empty State */}
           {folders.length === 0 && files.length === 0 && !loading && (
-            <div className="bg-white border-2 border-black rounded-xl p-12 text-center shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+            <div className="bg-white soft-card p-12 text-center">
               <Code2 className="w-16 h-16 text-gray-400 mx-auto mb-4" strokeWidth={2} />
-              <h3 className="text-xl font-black text-black mb-2">No Code Files Yet</h3>
+              <h3 className="text-xl font-bold text-gray-900 mb-2">No Code Files Yet</h3>
               <p className="text-gray-600 font-medium">
                 {currentPath ? 'This folder is empty' : 'Start by creating some folders and uploading code files'}
               </p>

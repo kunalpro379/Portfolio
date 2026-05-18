@@ -339,6 +339,20 @@ body {
     transform: rotateY(180deg);
   }
   
+  /* Softer card utility for professional look */
+  .soft-card {
+    border: 1px solid rgba(0,0,0,0.08) !important;
+    box-shadow: 0 8px 24px rgba(16,24,40,0.06) !important;
+    border-radius: 12px !important;
+    background-clip: padding-box !important;
+  }
+
+  .soft-btn {
+    border: 1px solid rgba(0,0,0,0.06) !important;
+    box-shadow: 0 4px 10px rgba(16,24,40,0.04) !important;
+    border-radius: 10px !important;
+  }
+  
   /* Prevent layout shifts */
   img, video, iframe {
     max-width: 100%;
