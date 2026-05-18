@@ -71,106 +71,15 @@ export default function DiaryPage() {
   useEffect(() => {
     const previousBodyOverflow = document.body.style.overflow;
     const previousHtmlOverflow = document.documentElement.style.overflow;
-      {/* Desktop toolbar - compact soft style */}
-      <div className="hidden md:flex w-full items-center justify-between soft-card bg-white/95 text-gray-800 px-3 py-2 gap-2">
-        <div className="flex items-center gap-2">
-          <button
-            onClick={() => goToDate('prev')}
-            className="h-9 w-9 flex items-center justify-center rounded-md soft-btn text-gray-700"
-            aria-label="Previous date"
-          >
-            <ChevronLeft className="w-4 h-4" strokeWidth={2} />
-          </button>
-          <button
-            onClick={() => goToDate('next')}
-            className="h-9 w-9 flex items-center justify-center rounded-md soft-btn text-gray-700"
-            aria-label="Next date"
-          >
-            <ChevronRight className="w-4 h-4" strokeWidth={2} />
-          </button>
-
-          <button
-            onClick={() => setActiveSide('left')}
-            className={`px-3 py-1.5 ml-1 rounded-md font-bold diary-mono transition ${activeSide === 'left' ? 'bg-white text-gray-900 soft-btn' : 'bg-transparent text-gray-700 soft-btn'}`}
-          >
-            Left
-          </button>
-          <button
-            onClick={() => setActiveSide('right')}
-            className={`px-3 py-1.5 rounded-md font-bold diary-mono transition ${activeSide === 'right' ? 'bg-white text-gray-900 soft-btn' : 'bg-transparent text-gray-700 soft-btn'}`}
-          >
-            Right
-          </button>
-        </div>
-
-        <div className="flex items-center gap-2">
-          <span className="text-sm md:text-base font-bold diary-mono text-gray-800 mr-2">{pageTitle}</span>
-          <button onClick={openDatePicker} className="h-9 w-9 rounded-md bg-[#8fb0ff] flex items-center justify-center text-white" title="Pick date">
-            <Calendar className="w-4 h-4" strokeWidth={2} />
-          </button>
-          <input ref={dateInputRef} type="date" value={date} onChange={(e) => syncDateInput(e.target.value)} className="sr-only" />
-
-          <div className="flex items-center gap-2 ml-4">
-            <button
-              onMouseDown={(e) => { e.preventDefault(); preserveSelection(activeSide); }}
-              onClick={() => execCommand('bold')}
-              className="px-2 py-1 rounded-md soft-btn text-gray-700 text-sm"
-            >
-              <Bold className="w-3.5 h-3.5 inline-block mr-1" strokeWidth={2} />
-              B
-            </button>
-            <button
-              onMouseDown={(e) => { e.preventDefault(); preserveSelection(activeSide); }}
-              onClick={() => execCommand('italic')}
-              className="px-2 py-1 rounded-md soft-btn text-gray-700 text-sm"
-            >
-              <Italic className="w-3.5 h-3.5 inline-block mr-1" strokeWidth={2} />
-              I
-            </button>
-            <button
-              onMouseDown={(e) => { e.preventDefault(); preserveSelection(activeSide); }}
-              onClick={insertBullet}
-              className="px-2 py-1 rounded-md soft-btn text-gray-700 text-sm"
-            >
-              •
-            </button>
-            <button
-              onMouseDown={(e) => { e.preventDefault(); preserveSelection(activeSide); }}
-              onClick={insertLine}
-              className="px-2 py-1 rounded-md soft-btn text-gray-700 text-sm"
-            >
-              —
-            </button>
-            <select
-              value={activeSide === 'left' ? leftFontSize : rightFontSize}
-              onChange={(e) => { const value = Number(e.target.value); if (activeSide === 'left') setLeftFontSize(value); else setRightFontSize(value); }}
-              className="px-2 py-1 rounded-md soft-btn text-sm text-gray-700"
-            >
-              <option value={12}>12</option>
-              <option value={14}>14</option>
-              <option value={16}>16</option>
-              <option value={18}>18</option>
-              <option value={20}>20</option>
-              <option value={22}>22</option>
-            </select>
-            <button
-              onClick={openExportModal}
-              className="h-9 w-9 rounded-md soft-btn text-gray-700 flex items-center justify-center"
-              title="Download PDF"
-            >
-              <Download className="w-4 h-4" strokeWidth={2} />
-            </button>
-            <button
-              onClick={clearCurrentPage}
-              className="h-9 w-9 rounded-md soft-btn text-red-600 flex items-center justify-center"
-              title="Delete"
-            >
-              <Trash2 className="w-4 h-4" strokeWidth={2} />
-            </button>
-            <div className="ml-3 text-xs diary-mono text-gray-600 whitespace-nowrap">{loadingDate ? 'Loading...' : saving ? 'Saving...' : 'Saved'}</div>
-          </div>
-        </div>
-      </div>
+    if (isExportModalOpen) {
+      document.body.style.overflow = 'hidden';
+      document.documentElement.style.overflow = 'hidden';
+    }
+    return () => {
+      document.body.style.overflow = previousBodyOverflow;
+      document.documentElement.style.overflow = previousHtmlOverflow;
+    };
+  }, [isExportModalOpen]);
 
   function getDateRange(startDate: string, endDate: string) {
     const orderedStart = startDate <= endDate ? startDate : endDate;
