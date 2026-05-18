@@ -1,6 +1,6 @@
 import { Clock, Calendar, ArrowLeft, FolderOpen, FileText, BookOpen, Code, Code2, FileImage, Plus, Github, X, Home, LogOut, Eye, Edit, Trash2, ListTodo, ChevronRight } from "lucide-react";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef, useLayoutEffect } from "react";
 import { API_ENDPOINTS, API_BASE_URL } from "@/config/api";
 import ExcalidrawCanvas from "@/components/ExcalidrawCanvas";
 import LoadingSpinner from "@/components/LoadingSpinner";
@@ -528,6 +528,33 @@ export default function LearningsPage() {
     }
   };
 
+  const headerRef = useRef<HTMLDivElement | null>(null);
+  const [headerHeight, setHeaderHeight] = useState(0);
+
+  useLayoutEffect(() => {
+    const measure = () => {
+      if (headerRef.current) {
+        const h = Math.ceil(headerRef.current.getBoundingClientRect().height);
+        setHeaderHeight(h);
+      }
+    };
+
+    measure();
+    window.addEventListener('resize', measure);
+    let ro: ResizeObserver | null = null;
+    try {
+      ro = new ResizeObserver(measure);
+      if (headerRef.current) ro.observe(headerRef.current);
+    } catch (e) {
+      // ResizeObserver may not be available in older environments — fallback to resize event only
+    }
+
+    return () => {
+      window.removeEventListener('resize', measure);
+      if (ro) ro.disconnect();
+    };
+  }, []);
+
   const handleViewDiagram = async (canvasId: string) => {
     try {
       setIsLoadingDiagram(true);
@@ -723,7 +750,7 @@ export default function LearningsPage() {
       {/* Desktop MAP strip removed for cleaner diary UI */}
       
       {/* Fixed Header */}
-      <div className="fixed top-0 left-0 right-0 bg-white/20 backdrop-blur-3xl border-b-4 border-black py-2 sm:py-3 md:py-4 px-3 sm:px-4 md:px-6 z-[200] shadow-lg flex-shrink-0" style={{ backdropFilter: 'blur(80px) saturate(200%)' }}>
+      <div ref={headerRef} className="fixed top-0 left-0 right-0 bg-white/20 backdrop-blur-3xl border-b-4 border-black py-2 sm:py-3 md:py-4 px-3 sm:px-4 md:px-6 z-[200] shadow-lg flex-shrink-0" style={{ backdropFilter: 'blur(80px) saturate(200%)' }}>
         <div className="max-w-7xl mx-auto">
           {/* Mobile Layout - Two Rows */}
           <div className="block md:hidden space-y-2 sm:space-y-3">
@@ -937,7 +964,7 @@ export default function LearningsPage() {
       </div>
 
       {/* Scrollable Main Content */}
-      <main className="fixed left-0 right-0 bottom-0 top-[152px] xs:top-[160px] sm:top-[168px] md:top-[120px] lg:top-[100px] overflow-y-auto overscroll-contain bg-transparent px-2 sm:px-3 md:px-4 lg:px-6 pt-0 pb-2 z-[50]">
+      <main className="fixed left-0 right-0 bottom-0 overflow-y-auto overscroll-contain bg-transparent px-2 sm:px-3 md:px-4 lg:px-6 pt-0 pb-2 z-[50]" style={{ top: headerHeight ? `${headerHeight}px` : undefined }}>
         <div className="max-w-7xl mx-auto pt-0">
           {/* Loading State */}
           {loading && (
