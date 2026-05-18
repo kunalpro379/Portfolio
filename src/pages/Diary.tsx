@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { AlignCenter, AlignLeft, AlignRight, Bold, Calendar, ChevronLeft, ChevronRight, Download, Italic, Trash2, X } from 'lucide-react';
 import { flushSync } from 'react-dom';
 import { API_BASE_URL, API_ENDPOINTS } from '@/config/api';
@@ -42,7 +42,6 @@ export default function DiaryPage() {
   const [leftFontSize, setLeftFontSize] = useState(16);
   const [rightFontSize, setRightFontSize] = useState(16);
   const [saving, setSaving] = useState(false);
-  const [slideDirection, setSlideDirection] = useState<'next' | 'prev' | null>(null);
   const [loadingDate, setLoadingDate] = useState(false);
   const [activeSide, setActiveSide] = useState<EditorSide>('right');
   const [isExportModalOpen, setIsExportModalOpen] = useState(false);
@@ -96,6 +95,7 @@ export default function DiaryPage() {
 
   async function saveEntry(side: EditorSide, html: string) {
     try {
+      setSaving(true);
       const payload: Partial<DiaryEntry> = { date } as any;
       if (side === 'left') payload.leftContent = html;
       else payload.rightContent = html;
@@ -107,6 +107,8 @@ export default function DiaryPage() {
       });
     } catch (err) {
       console.error('Failed to save diary entry', err);
+    } finally {
+      setSaving(false);
     }
   }
 
@@ -135,6 +137,10 @@ export default function DiaryPage() {
   const rightContentRef = useRef('');
 
   const pageTitle = useMemo(() => date, [date]);
+
+  function goToDate(direction: 'prev' | 'next') {
+    setDate((currentDate) => addDays(currentDate, direction === 'prev' ? -1 : 1));
+  }
 
   useEffect(() => {
     loadEntry(date);
@@ -214,8 +220,6 @@ export default function DiaryPage() {
       await document.fonts?.ready;
       await new Promise((resolve) => window.requestAnimationFrame(() => resolve(null)));
 
-      const pdfModule = await import('html2pdf.js');
-      const html2pdf = pdfModule.default ?? pdfModule;
       const exportElement = exportSheetRef.current;
 
       if (!exportElement) {
@@ -421,18 +425,6 @@ export default function DiaryPage() {
   function handleEditorInput(side: EditorSide) {
     updateContentFromEditor(side);
   }
-
-  const rightPageFlipClass = slideDirection === 'next'
-    ? 'right-page-flip right-page-flip-next'
-    : slideDirection === 'prev'
-      ? 'right-page-flip right-page-flip-prev'
-      : 'right-page-flip';
-
-  const leftPageFlipClass = slideDirection === 'next'
-    ? 'left-page-flip left-page-flip-next'
-    : slideDirection === 'prev'
-      ? 'left-page-flip left-page-flip-prev'
-      : 'left-page-flip';
 
   const activeFontSize = activeSide === 'left' ? leftFontSize : rightFontSize;
 
@@ -669,11 +661,19 @@ export default function DiaryPage() {
             <span className="whitespace-nowrap font-bold diary-mono text-sm text-gray-800 truncate">{pageTitle}</span>
             <button
               type="button"
-              onClick={() => setActiveSide(activeSide === 'left' ? 'right' : 'left')}
-              className={`h-8 w-8 shrink-0 rounded-none border border-gray-200 flex items-center justify-center bg-white text-gray-800 ${activeSide === 'left' ? 'font-bold' : ''}`}
-              aria-label="Toggle page side"
+              onClick={() => setActiveSide('left')}
+              className={`h-8 w-8 shrink-0 rounded-none border border-gray-200 flex items-center justify-center bg-white text-gray-800 ${activeSide === 'left' ? 'font-bold bg-gray-100' : ''}`}
+              aria-label="Select left page"
             >
-              {activeSide === 'left' ? 'L' : 'R'}
+              L
+            </button>
+            <button
+              type="button"
+              onClick={() => setActiveSide('right')}
+              className={`h-8 w-8 shrink-0 rounded-none border border-gray-200 flex items-center justify-center bg-white text-gray-800 ${activeSide === 'right' ? 'font-bold bg-gray-100' : ''}`}
+              aria-label="Select right page"
+            >
+              R
             </button>
           </div>
 

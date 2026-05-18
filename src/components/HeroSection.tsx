@@ -358,11 +358,11 @@ export default function HeroSection() {
             {/* Hand-Drawn Bio Text */}
             <div className="space-y-5 text-base md:text-lg lg:text-xl leading-relaxed" style={{ fontFamily: "'Caveat', 'Indie Flower', 'Patrick Hand', 'Kalam', cursive" }}>
               <p className="font-bold text-gray-900" style={{ fontWeight: 700 }}>
-                I'm a <span className="font-black text-black bg-gradient-to-r from-amber-300 via-amber-400 to-amber-300 px-3 py-1.5 rounded-xl shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] border-2 border-black transform -rotate-1 inline-block" style={{ fontFamily: "'Kalam', 'Comic Sans MS', cursive", fontWeight: 800 }}>backend-focused engineer</span> who enjoys building systems that are reliable, scalable, and ready for real users. I spend most of my time designing <span className="font-black text-black bg-gradient-to-r from-rose-300 via-rose-400 to-rose-300 px-3 py-1.5 rounded-xl shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] border-2 border-black transform rotate-1 inline-block" style={{ fontFamily: "'Kalam', 'Comic Sans MS', cursive", fontWeight: 800 }}>APIs, real-time systems</span>, and cloud-native backends using <span className="font-black text-black bg-gradient-to-r from-emerald-300 via-emerald-400 to-emerald-300 px-3 py-1.5 rounded-xl shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] border-2 border-black transform rotate-1 inline-block" style={{ fontFamily: "'Kalam', 'Comic Sans MS', cursive", fontWeight: 800 }}>Node.js and AWS</span>.
+                I'm a <span className="font-black text-black bg-gradient-to-r from-amber-200 via-amber-300 to-amber-200 px-3 py-1.5 rounded-none shadow-[2px_2px_0px_0px_rgba(15,23,42,0.16)] border border-gray-300 transform -rotate-1 inline-block" style={{ fontFamily: "'Kalam', 'Comic Sans MS', cursive", fontWeight: 800 }}>backend-focused engineer</span> who builds reliable, scalable systems for real users. I spend most of my time designing <span className="font-black text-black bg-gradient-to-r from-rose-200 via-rose-300 to-rose-200 px-3 py-1.5 rounded-none shadow-[2px_2px_0px_0px_rgba(15,23,42,0.16)] border border-gray-300 transform rotate-1 inline-block" style={{ fontFamily: "'Kalam', 'Comic Sans MS', cursive", fontWeight: 800 }}>APIs and real-time systems</span>, with production backends built on <span className="font-black text-black bg-gradient-to-r from-emerald-200 via-emerald-300 to-emerald-200 px-3 py-1.5 rounded-none shadow-[2px_2px_0px_0px_rgba(15,23,42,0.16)] border border-gray-300 transform rotate-1 inline-block" style={{ fontFamily: "'Kalam', 'Comic Sans MS', cursive", fontWeight: 800 }}>Node.js and AWS</span>.
               </p>
               
               <p className="font-bold text-gray-900" style={{ fontWeight: 700 }}>
-                I care deeply about <span className="font-black text-black bg-gradient-to-r from-sky-300 via-sky-400 to-sky-300 px-3 py-1.5 rounded-xl shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] border-2 border-black transform rotate-1 inline-block" style={{ fontFamily: "'Kalam', 'Comic Sans MS', cursive", fontWeight: 800 }}>performance, clean architecture</span>, and fault tolerance — not just making things work, but making them last. Alongside backend and DevOps, I work extensively with <span className="font-black text-black bg-gradient-to-r from-violet-300 via-violet-400 to-violet-300 px-3 py-1.5 rounded-xl shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] border-2 border-black transform -rotate-1 inline-block" style={{ fontFamily: "'Kalam', 'Comic Sans MS', cursive", fontWeight: 800 }}>AI systems, LLMs</span>, generative models, and image generation workflows integrated into real applications.
+                I care deeply about <span className="font-black text-black bg-gradient-to-r from-sky-200 via-sky-300 to-sky-200 px-3 py-1.5 rounded-none shadow-[2px_2px_0px_0px_rgba(15,23,42,0.16)] border border-gray-300 transform rotate-1 inline-block" style={{ fontFamily: "'Kalam', 'Comic Sans MS', cursive", fontWeight: 800 }}>performance and clean architecture</span>, and I design for fault tolerance from the start. Alongside backend and DevOps, I also work with <span className="font-black text-black bg-gradient-to-r from-violet-200 via-violet-300 to-violet-200 px-3 py-1.5 rounded-none shadow-[2px_2px_0px_0px_rgba(15,23,42,0.16)] border border-gray-300 transform -rotate-1 inline-block" style={{ fontFamily: "'Kalam', 'Comic Sans MS', cursive", fontWeight: 800 }}>LLMs and generative AI</span>, including image generation workflows inside real applications.
               </p>
               
               {/* <div className="inline-block bg-gradient-to-r from-purple-300 via-purple-400 to-purple-300 border-3 border-black rounded-2xl px-6 py-3 shadow-[5px_5px_0px_0px_rgba(0,0,0,1)] transform -rotate-1 hover:rotate-0 transition-transform">
@@ -370,16 +370,16 @@ export default function HeroSection() {
               </div> */}
               
               <p className="font-bold text-gray-900" style={{ fontWeight: 700 }}>
-                My focus is on making AI <span className="font-black text-black bg-gradient-to-r from-indigo-300 via-indigo-400 to-indigo-300 px-3 py-1.5 rounded-xl shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] border-2 border-black transform rotate-1 inline-block" style={{ fontFamily: "'Kalam', 'Comic Sans MS', cursive", fontWeight: 800 }}>production-ready</span>, not experimental. Currently, I'm exploring how <span className="font-black text-black bg-gradient-to-r from-fuchsia-300 via-fuchsia-400 to-fuchsia-300 px-3 py-1.5 rounded-xl shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] border-2 border-black transform -rotate-1 inline-block" style={{ fontFamily: "'Kalam', 'Comic Sans MS', cursive", fontWeight: 800 }}>generative AI, agents</span>, and real-time infrastructure can come together to build practical, scalable, and high-impact systems.
+                My focus is on making AI <span className="font-black text-black bg-gradient-to-r from-indigo-200 via-indigo-300 to-indigo-200 px-3 py-1.5 rounded-none shadow-[2px_2px_0px_0px_rgba(15,23,42,0.16)] border border-gray-300 transform rotate-1 inline-block" style={{ fontFamily: "'Kalam', 'Comic Sans MS', cursive", fontWeight: 800 }}>production-ready</span>, not experimental. Right now I’m exploring how <span className="font-black text-black bg-gradient-to-r from-fuchsia-200 via-fuchsia-300 to-fuchsia-200 px-3 py-1.5 rounded-none shadow-[2px_2px_0px_0px_rgba(15,23,42,0.16)] border border-gray-300 transform -rotate-1 inline-block" style={{ fontFamily: "'Kalam', 'Comic Sans MS', cursive", fontWeight: 800 }}>generative AI, agents</span>, and real-time infrastructure can combine into practical, scalable systems.
               </p>
             </div>
 
             {/* Skills Table */}
-            <div className="mt-12 bg-white/60 backdrop-blur-sm border-4 border-black rounded-3xl overflow-hidden shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
-              <div className="grid grid-cols-1 divide-y-4 divide-black">
+            <div className="mt-12 bg-white/80 backdrop-blur-sm border border-gray-200 rounded-none overflow-hidden shadow-[0_12px_28px_rgba(15,23,42,0.06)]">
+              <div className="grid grid-cols-1 divide-y divide-gray-200">
                 <div className="p-6 md:p-8 bg-gradient-to-r from-purple-50 to-pink-50">
                   <h3 className="text-black font-black uppercase tracking-wider text-xs md:text-sm mb-2 flex items-center gap-2" style={{ fontFamily: "'Caveat', 'Indie Flower', 'Patrick Hand', cursive", fontWeight: 800 }}>
-                    <span className="w-3 h-3 bg-purple-500 rounded-full"></span>
+                    <span className="w-3 h-3 bg-purple-500 rounded-none"></span>
                     LANGUAGES
                   </h3>
                   <div className="text-gray-800 text-xs md:text-sm font-normal leading-relaxed" style={{ fontFamily: "'Caveat', 'Indie Flower', 'Patrick Hand', cursive", fontWeight: 400 }}>
@@ -388,16 +388,16 @@ export default function HeroSection() {
                 </div>
                 <div className="p-6 md:p-8 bg-gradient-to-r from-blue-50 to-cyan-50">
                   <h3 className="text-black font-black uppercase tracking-wider text-xs md:text-sm mb-2 flex items-center gap-2" style={{ fontFamily: "'Caveat', 'Indie Flower', 'Patrick Hand', cursive", fontWeight: 800 }}>
-                    <span className="w-3 h-3 bg-blue-500 rounded-full"></span>
+                    <span className="w-3 h-3 bg-blue-500 rounded-none"></span>
                     TECHNOLOGIES & TOOLS
                   </h3>
                   <div className="text-gray-800 text-xs md:text-sm font-normal leading-relaxed" style={{ fontFamily: "'Caveat', 'Indie Flower', 'Patrick Hand', cursive", fontWeight: 400 }}>
-                    AWS, Kubernetes, Docker, Kafka, Spring Boot, React.JS, Azure, GitHub Actions, Linux
+                    AWS, Kubernetes, Docker, Kafka, Spring Boot, React.js, Azure, GitHub Actions, Linux
                   </div>
                 </div>
                 <div className="p-6 md:p-8 bg-gradient-to-r from-green-50 to-emerald-50">
                   <h3 className="text-black font-black uppercase tracking-wider text-xs md:text-sm mb-2 flex items-center gap-2" style={{ fontFamily: "'Caveat', 'Indie Flower', 'Patrick Hand', cursive", fontWeight: 800 }}>
-                    <span className="w-3 h-3 bg-green-500 rounded-full"></span>
+                    <span className="w-3 h-3 bg-green-500 rounded-none"></span>
                     DATABASES
                   </h3>
                   <div className="text-gray-800 text-xs md:text-sm font-normal leading-relaxed" style={{ fontFamily: "'Caveat', 'Indie Flower', 'Patrick Hand', cursive", fontWeight: 400 }}>
@@ -406,7 +406,7 @@ export default function HeroSection() {
                 </div>
                 <div className="p-6 md:p-8 bg-gradient-to-r from-orange-50 to-red-50">
                   <h3 className="text-black font-black uppercase tracking-wider text-xs md:text-sm mb-2 flex items-center gap-2" style={{ fontFamily: "'Caveat', 'Indie Flower', 'Patrick Hand', cursive", fontWeight: 800 }}>
-                    <span className="w-3 h-3 bg-orange-500 rounded-full"></span>
+                    <span className="w-3 h-3 bg-orange-500 rounded-none"></span>
                     AI/ML
                   </h3>
                   <div className="text-gray-800 text-xs md:text-sm font-normal leading-relaxed" style={{ fontFamily: "'Caveat', 'Indie Flower', 'Patrick Hand', cursive", fontWeight: 400 }}>
