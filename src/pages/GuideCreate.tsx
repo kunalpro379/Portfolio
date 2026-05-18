@@ -34,32 +34,32 @@ export default function GuideCreate() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 p-6">
-      <div className="max-w-3xl mx-auto">
+    <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white p-4 md:p-6">
+      <div className="mx-auto max-w-3xl">
         <button
           onClick={() => navigate('/learnings?tab=notes')}
-          className="flex items-center gap-2 text-gray-600 hover:text-black font-bold text-sm transition-all mb-6"
+          className="mb-5 flex items-center gap-2 text-sm font-semibold text-gray-600 transition-colors hover:text-black"
         >
           <ArrowLeft className="w-5 h-5" strokeWidth={2.5} />
           Back to Guides
         </button>
 
-        <div className="bg-white border-4 border-black rounded-2xl p-8 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
-          <div className="flex items-center gap-4 mb-8">
-            <div className="p-4 bg-gradient-to-br from-yellow-400 to-yellow-600 border-4 border-black rounded-xl">
+        <div className="border border-gray-200 bg-white p-5 shadow-[0_12px_30px_rgba(15,23,42,0.06)] md:p-8">
+          <div className="mb-8 flex items-center gap-4">
+            <div className="border border-gray-200 bg-gradient-to-br from-amber-300 to-orange-400 p-3">
               <BookOpen size={32} strokeWidth={2.5} className="text-white" />
             </div>
             <div>
-              <h1 className="text-3xl font-black text-black" style={{ fontFamily: 'Comic Sans MS, cursive' }}>
+              <h1 className="text-3xl font-black tracking-tight text-black">
                 Create New Guide
               </h1>
-              <p className="text-gray-600 font-medium">Start organizing your documentation</p>
+              <p className="text-sm font-medium text-gray-600">Start organizing your documentation</p>
             </div>
           </div>
 
           <div className="space-y-6">
             <div>
-              <label className="block text-sm font-black mb-2 uppercase tracking-wider">
+              <label className="mb-2 block text-xs font-bold uppercase tracking-widest text-gray-700">
                 Guide Name <span className="text-red-500">*</span>
               </label>
               <input
@@ -67,12 +67,12 @@ export default function GuideCreate() {
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 placeholder="e.g., Complete TypeScript Guide"
-                className="w-full px-4 py-3 border-3 border-black rounded-lg font-bold text-lg focus:outline-none focus:ring-4 focus:ring-yellow-300"
+                className="w-full rounded-none border border-gray-200 px-4 py-3 text-base font-medium text-black focus:border-gray-400 focus:outline-none"
               />
             </div>
 
             <div>
-              <label className="block text-sm font-black mb-2 uppercase tracking-wider">
+              <label className="mb-2 block text-xs font-bold uppercase tracking-widest text-gray-700">
                 Topic <span className="text-red-500">*</span>
               </label>
               <input
@@ -80,12 +80,12 @@ export default function GuideCreate() {
                 value={topic}
                 onChange={(e) => setTopic(e.target.value)}
                 placeholder="e.g., TypeScript, React, Node.js"
-                className="w-full px-4 py-3 border-3 border-black rounded-lg font-bold focus:outline-none focus:ring-4 focus:ring-yellow-300"
+                className="w-full rounded-none border border-gray-200 px-4 py-3 text-base font-medium text-black focus:border-gray-400 focus:outline-none"
               />
             </div>
 
             <div>
-              <label className="block text-sm font-black mb-2 uppercase tracking-wider">
+              <label className="mb-2 block text-xs font-bold uppercase tracking-widest text-gray-700">
                 Description
               </label>
               <textarea
@@ -93,21 +93,21 @@ export default function GuideCreate() {
                 onChange={(e) => setDescription(e.target.value)}
                 placeholder="Brief description of this guide..."
                 rows={4}
-                className="w-full px-4 py-3 border-3 border-black rounded-lg font-medium focus:outline-none focus:ring-4 focus:ring-yellow-300 resize-none"
+                className="w-full rounded-none border border-gray-200 px-4 py-3 font-medium text-black focus:border-gray-400 focus:outline-none resize-none"
               />
             </div>
 
             <div className="flex gap-4 pt-4">
               <button
                 onClick={() => navigate('/learnings?tab=notes')}
-                className="flex-1 px-6 py-3 bg-gray-200 border-3 border-black rounded-lg font-bold hover:bg-gray-300 transition-all"
+                className="flex-1 rounded-none border border-gray-200 bg-white px-6 py-3 font-semibold text-black transition hover:bg-gray-50"
               >
                 Cancel
               </button>
               <button
                 onClick={handleSave}
                 disabled={saving}
-                className="flex-1 flex items-center justify-center gap-2 px-6 py-3 bg-black text-white border-3 border-black rounded-lg font-bold hover:bg-gray-800 transition-all disabled:opacity-50 shadow-[3px_3px_0px_0px_rgba(0,0,0,1)]"
+                className="flex flex-1 items-center justify-center gap-2 border border-black bg-black px-6 py-3 font-semibold text-white transition hover:bg-gray-900 disabled:opacity-50"
               >
                 <Save size={20} strokeWidth={2.5} />
                 {saving ? 'Creating...' : 'Create Guide'}

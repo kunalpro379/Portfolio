@@ -350,14 +350,14 @@ export default function NotesTabContent({ notes, activeSubTab: propActiveSubTab 
       {/* Guide Tab Content */}
       {activeSubTab === 'guide' && (
         <div>
-          <div className="flex items-center justify-between mb-6">
+            <div className="flex items-center justify-between mb-6">
             <div>
               <h3 className="text-2xl font-black text-black">Guides</h3>
               <p className="text-sm text-gray-600 font-medium">Organize your documentation with guides and titles</p>
             </div>
             <button
               onClick={handleCreateGuide}
-              className="flex items-center gap-2 px-4 py-3 bg-black text-white border-3 border-black rounded-xl font-bold hover:bg-gray-800 transition-all shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]"
+                className="flex items-center gap-2 px-4 py-3 bg-black text-white border border-black rounded-none font-semibold hover:bg-gray-800 transition-all shadow-[0_8px_18px_rgba(15,23,42,0.12)]"
             >
               <Plus size={20} strokeWidth={2.5} />
               <span className="hidden sm:inline">New Guide</span>
@@ -370,13 +370,13 @@ export default function NotesTabContent({ notes, activeSubTab: propActiveSubTab 
             </div>
           ) : guides.length === 0 ? (
             <div className="text-center py-16">
-              <div className="bg-gradient-to-br from-yellow-50 to-amber-50 border-3 border-black rounded-2xl p-10 inline-block shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]">
+              <div className="bg-gradient-to-br from-yellow-50 to-amber-50 border border-gray-200 rounded-none p-10 inline-block shadow-[0_12px_28px_rgba(15,23,42,0.06)]">
                 <BookOpen size={48} strokeWidth={2.5} className="mx-auto mb-3 text-yellow-600" />
                 <p className="text-black text-lg font-black mb-2">No guides yet</p>
                 <p className="text-gray-700 text-sm font-medium mb-4">Create your first guide to get started</p>
                 <button
                   onClick={handleCreateGuide}
-                  className="px-6 py-3 bg-black text-white border-3 border-black rounded-xl font-bold hover:bg-gray-800 transition-all shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] inline-flex items-center gap-2"
+                  className="px-6 py-3 bg-black text-white border border-black rounded-none font-semibold hover:bg-gray-800 transition-all shadow-[0_8px_18px_rgba(15,23,42,0.12)] inline-flex items-center gap-2"
                 >
                   <Plus size={20} strokeWidth={2.5} />
                   Create Guide
@@ -392,10 +392,8 @@ export default function NotesTabContent({ notes, activeSubTab: propActiveSubTab 
                   <div
                     key={guide.guideId}
                     onClick={() => handleViewGuide(guide)}
-                    className="relative aspect-[4/5] cursor-pointer group rounded-xl md:rounded-2xl border-[3px] border-black bg-white overflow-hidden hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all hover:-translate-y-1"
-                    style={{ 
-                      borderRadius: idx % 2 === 0 ? '16px 20px 16px 20px' : '20px 16px 20px 16px'
-                    }}
+                    className="relative aspect-[4/5] cursor-pointer group rounded-none md:rounded-2xl border border-gray-200 bg-white overflow-hidden hover:shadow-[0_12px_28px_rgba(15,23,42,0.08)] transition-all hover:-translate-y-1"
+                    style={{ borderRadius: idx % 2 === 0 ? 0 : 0 }}
                   >
                     {/* Delete Button */}
                     <button
@@ -403,13 +401,13 @@ export default function NotesTabContent({ notes, activeSubTab: propActiveSubTab 
                         e.stopPropagation();
                         handleDeleteGuide(guide.guideId);
                       }}
-                      className="absolute top-2 right-2 z-10 p-1.5 bg-red-500 text-white border-2 border-black rounded-lg hover:bg-red-600 transition-all opacity-0 group-hover:opacity-100"
+                      className="absolute top-2 right-2 z-10 p-1.5 bg-red-500 text-white border border-black rounded-none hover:bg-red-600 transition-all opacity-0 group-hover:opacity-100"
                     >
                       <Trash2 size={12} strokeWidth={2.5} />
                     </button>
 
                     {/* Header with Icon - 40% height - Lavender */}
-                    <div className="relative w-full h-[40%] bg-gradient-to-br from-purple-300 to-purple-400 border-b-[3px] border-black flex items-center justify-center">
+                    <div className="relative w-full h-[40%] bg-gradient-to-br from-purple-300 to-purple-400 border-b border-gray-200 flex items-center justify-center">
                       <BookOpen size={48} strokeWidth={2} className="text-white/90" />
                     </div>
                     
@@ -417,7 +415,7 @@ export default function NotesTabContent({ notes, activeSubTab: propActiveSubTab 
                     <div className="p-3 h-[60%] flex flex-col">
                       {/* Topic Badge */}
                       <div className="mb-1.5">
-                        <span className="px-2 py-0.5 bg-purple-100 border-2 border-black rounded text-[9px] font-black uppercase tracking-wider inline-block" style={{ borderRadius: '4px 6px 5px 7px' }}>
+                        <span className="px-2 py-0.5 bg-gray-100 border border-gray-200 rounded-none text-[9px] font-black uppercase tracking-wider inline-block">
                           {guide.topic}
                         </span>
                       </div>
@@ -438,7 +436,7 @@ export default function NotesTabContent({ notes, activeSubTab: propActiveSubTab 
                       <div className="mt-auto space-y-1.5">
                         <div className="flex items-center justify-between text-[9px] text-gray-600 font-bold">
                           <span>{new Date(guide.updatedAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</span>
-                          <span className="px-2 py-0.5 bg-blue-100 border-2 border-black rounded text-[9px] font-black">
+                          <span className="px-2 py-0.5 bg-gray-100 border border-gray-200 rounded-none text-[9px] font-black">
                             {titleCount} {titleCount === 1 ? 'title' : 'titles'}
                           </span>
                         </div>
@@ -462,8 +460,8 @@ export default function NotesTabContent({ notes, activeSubTab: propActiveSubTab 
 
           {notes.length === 0 ? (
             <div className="text-center py-20">
-              <div className="bg-gradient-to-br from-amber-50 to-stone-50 border-3 border-black rounded-2xl p-12 inline-block shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]">
-                <div className="w-16 h-16 bg-gradient-to-br from-amber-400 to-yellow-500 border-3 border-black rounded-xl flex items-center justify-center mx-auto mb-4">
+              <div className="bg-gradient-to-br from-amber-50 to-stone-50 border border-gray-200 rounded-none p-12 inline-block shadow-[0_12px_28px_rgba(15,23,42,0.06)]">
+                <div className="w-16 h-16 bg-gradient-to-br from-amber-400 to-yellow-500 border border-gray-200 rounded-none flex items-center justify-center mx-auto mb-4">
                   <FolderOpen size={32} strokeWidth={2.5} className="text-white" />
                 </div>
                 <p className="text-black text-lg font-black mb-2">No file folders yet</p>
@@ -473,6 +471,23 @@ export default function NotesTabContent({ notes, activeSubTab: propActiveSubTab 
           ) : (
             <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 md:gap-4">
               {notes.map((note, idx) => {
+                const cardAccentClasses = [
+                  'from-sky-500 to-cyan-600',
+                  'from-emerald-500 to-teal-600',
+                  'from-amber-500 to-orange-500',
+                  'from-violet-500 to-fuchsia-600',
+                  'from-rose-500 to-pink-500',
+                  'from-slate-600 to-slate-800'
+                ];
+                const cardBadgeClasses = [
+                  'bg-sky-50 text-sky-700',
+                  'bg-emerald-50 text-emerald-700',
+                  'bg-amber-50 text-amber-700',
+                  'bg-violet-50 text-violet-700',
+                  'bg-rose-50 text-rose-700',
+                  'bg-slate-100 text-slate-700'
+                ];
+                const accentIndex = idx % cardAccentClasses.length;
                 return (
                   <div
                     key={note.folderId}
@@ -481,27 +496,26 @@ export default function NotesTabContent({ notes, activeSubTab: propActiveSubTab 
                         navigate(`/learnings/notes/${note.folderId}`);
                       }
                     }}
-                    className="relative aspect-[4/3] cursor-pointer group rounded-xl md:rounded-2xl border-[3px] border-black bg-white overflow-hidden hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all hover:-translate-y-1"
-                    style={{ 
-                      borderRadius: idx % 2 === 0 ? '16px 20px 16px 20px' : '20px 16px 20px 16px'
-                    }}
+                    className="relative aspect-[4/3] cursor-pointer group rounded-none md:rounded-2xl border border-gray-200 bg-white overflow-hidden hover:shadow-[0_12px_28px_rgba(15,23,42,0.08)] transition-all hover:-translate-y-1"
+                    style={{ borderRadius: 0 }}
                   >
-                    {/* Header with Icon - 50% height - Pinkish Red */}
-                    <div className="relative w-full h-[50%] bg-gradient-to-br from-rose-500 to-pink-600 border-b-[3px] border-black flex items-center justify-center">
-                      <FolderOpen size={40} strokeWidth={2} className="text-white/90" />
+                    {/* Header with Icon - 50% height */}
+                    <div className={`relative w-full h-[50%] bg-gradient-to-br ${cardAccentClasses[accentIndex]} border-b border-gray-200 flex items-center justify-center`}>
+                      <div className="absolute inset-x-0 bottom-0 h-10 bg-white/10" />
+                      <FolderOpen size={38} strokeWidth={2} className="relative text-white/95" />
                     </div>
                     
                     {/* Content - 50% height */}
-                    <div className="p-3 h-[50%] flex flex-col justify-between">
+                    <div className="p-3 h-[50%] flex flex-col justify-between bg-white">
                       {/* Title */}
-                      <h3 className="text-xs md:text-sm font-black text-black line-clamp-2 leading-tight">
+                      <h3 className="text-xs md:text-sm font-semibold text-slate-900 line-clamp-2 leading-tight">
                         {note.name}
                       </h3>
                       
                       {/* Footer - Date */}
                       <div>
-                        <div className="flex items-center gap-1 text-[9px] text-gray-600 font-bold">
-                          <svg className="w-3 h-3 text-amber-700" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                        <div className="flex items-center gap-1 text-[9px] text-gray-600 font-semibold">
+                          <svg className="w-3 h-3 text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
                             <path strokeLinecap="round" strokeLinejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                           </svg>
                           <span>
@@ -511,6 +525,12 @@ export default function NotesTabContent({ notes, activeSubTab: propActiveSubTab 
                               year: 'numeric'
                             })}
                           </span>
+                        </div>
+                        <div className="mt-2 flex items-center justify-between gap-2">
+                          <span className={`inline-flex items-center px-2 py-0.5 text-[9px] font-semibold uppercase tracking-wider ${cardBadgeClasses[accentIndex]}`}>
+                            Files
+                          </span>
+                          <span className="text-[9px] font-semibold text-slate-400">Folder</span>
                         </div>
                       </div>
                     </div>

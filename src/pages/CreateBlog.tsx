@@ -25,10 +25,10 @@ const blogEndpoints = {
 };
 
 const sectionClass =
-  'rounded-2xl border border-black/20 bg-white/85 backdrop-blur-md shadow-[0_10px_30px_rgba(0,0,0,0.12)]';
+  'rounded-none border border-gray-200 bg-white/90 backdrop-blur-md shadow-[0_8px_24px_rgba(15,23,42,0.06)]';
 
 const inputClass =
-  'w-full rounded-xl border border-black/20 bg-white px-4 py-3 text-sm font-medium text-black placeholder:text-black/45 focus:border-black focus:outline-none';
+  'w-full rounded-none border border-gray-200 bg-white px-4 py-3 text-sm font-medium text-black placeholder:text-black/40 focus:border-gray-400 focus:outline-none';
 
 export default function CreateBlog() {
   const { blogId: routeBlogId } = useParams();
@@ -211,20 +211,20 @@ export default function CreateBlog() {
   };
 
   return (
-    <div className="relative z-10 h-[calc(100vh-1rem)] px-4 py-4 md:px-8 md:py-6">
+    <div className="relative z-10 h-[calc(100vh-1rem)] px-3 py-3 md:px-8 md:py-6">
       <div className="mx-auto flex h-full max-w-7xl flex-col gap-6">
-        <div className={`${sectionClass} p-5 md:p-6 shrink-0`}>
+        <div className={`${sectionClass} p-4 md:p-6 shrink-0`}>
           <div className="flex flex-col items-start justify-between gap-4 md:flex-row md:items-center">
             <div>
               <h1 className="text-2xl font-semibold tracking-tight text-black md:text-3xl">Create New Blog</h1>
-              <p className="mt-1 text-sm text-black/65">
+              <p className="mt-1 text-sm text-gray-600">
                 Blog ID: <span className="font-semibold text-black">{createdBlogId || 'Auto-generated on save'}</span>
               </p>
             </div>
             <div className="flex w-full gap-3 md:w-auto">
               <button
                 onClick={() => navigate('/learnings?tab=blogs')}
-                className="flex flex-1 items-center justify-center gap-2 rounded-xl border border-black/20 bg-white px-4 py-2.5 text-sm font-semibold text-black transition hover:bg-black/5 md:flex-none"
+                className="flex flex-1 items-center justify-center gap-2 rounded-none border border-gray-200 bg-white px-4 py-2.5 text-sm font-semibold text-black transition hover:bg-gray-50 md:flex-none"
               >
                 <X className="h-4 w-4" strokeWidth={2} />
                 Cancel
@@ -232,7 +232,7 @@ export default function CreateBlog() {
               <button
                 onClick={handleSave}
                 disabled={loading}
-                className="flex flex-1 items-center justify-center gap-2 rounded-xl border border-black bg-black px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-black/90 disabled:cursor-not-allowed disabled:opacity-60 md:flex-none"
+                className="flex flex-1 items-center justify-center gap-2 rounded-none border border-black bg-black px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-black/90 disabled:cursor-not-allowed disabled:opacity-60 md:flex-none"
               >
                 <Save className="h-4 w-4" strokeWidth={2} />
                 {loading ? 'Saving...' : 'Save Blog'}
@@ -247,20 +247,20 @@ export default function CreateBlog() {
               <div className="grid grid-cols-2 gap-2">
                 <button
                   onClick={() => setActiveTab('metadata')}
-                  className={`rounded-xl px-4 py-2.5 text-sm font-semibold transition ${
+                  className={`rounded-none px-4 py-2.5 text-sm font-semibold transition ${
                     activeTab === 'metadata'
                       ? 'bg-black text-white'
-                      : 'bg-white text-black hover:bg-black/5'
+                      : 'bg-white text-black hover:bg-gray-50'
                   }`}
                 >
                   METADATA
                 </button>
                 <button
                   onClick={() => setActiveTab('markdown')}
-                  className={`rounded-xl px-4 py-2.5 text-sm font-semibold transition ${
+                  className={`rounded-none px-4 py-2.5 text-sm font-semibold transition ${
                     activeTab === 'markdown'
                       ? 'bg-black text-white'
-                      : 'bg-white text-black hover:bg-black/5'
+                      : 'bg-white text-black hover:bg-gray-50'
                   }`}
                 >
                   MARKDOWN
@@ -270,7 +270,7 @@ export default function CreateBlog() {
 
             {activeTab === 'metadata' && (
               <>
-                <div className={`${sectionClass} p-5 md:p-6`}>
+                <div className={`${sectionClass} p-4 md:p-6`}>
                   <h2 className="text-lg font-semibold text-black md:text-xl">Basic Information</h2>
                   <div className="mt-5 space-y-4">
                     <div>
@@ -311,13 +311,13 @@ export default function CreateBlog() {
                   </div>
                 </div>
 
-                <div className={`${sectionClass} p-5 md:p-6`}>
+                <div className={`${sectionClass} p-4 md:p-6`}>
                   <div className="mb-5 flex flex-col items-start justify-between gap-3 sm:flex-row sm:items-center">
                     <h2 className="text-lg font-semibold text-black md:text-xl">Blog Links</h2>
-                    <button
-                      onClick={addBlogLink}
-                      className="inline-flex items-center gap-2 rounded-lg border border-black/25 bg-white px-3 py-2 text-sm font-semibold text-black transition hover:bg-black/5"
-                    >
+                      <button
+                        onClick={addBlogLink}
+                        className="inline-flex items-center gap-2 rounded-none border border-gray-200 bg-white px-3 py-2 text-sm font-semibold text-black transition hover:bg-gray-50"
+                      >
                       <LinkIcon className="h-4 w-4" strokeWidth={2} />
                       Add Link
                     </button>
@@ -343,7 +343,7 @@ export default function CreateBlog() {
                         {blogLinks.length > 1 && (
                           <button
                             onClick={() => removeBlogLink(index)}
-                            className="inline-flex items-center justify-center rounded-xl border border-black/20 bg-white px-3 py-2 text-black transition hover:bg-black/5"
+                            className="inline-flex items-center justify-center rounded-none border border-gray-200 bg-white px-3 py-2 text-black transition hover:bg-gray-50"
                           >
                             <Trash2 className="h-4 w-4" strokeWidth={2} />
                           </button>
@@ -356,7 +356,7 @@ export default function CreateBlog() {
             )}
 
             {activeTab === 'markdown' && (
-              <div className={`${sectionClass} p-5 md:p-6`}>
+              <div className={`${sectionClass} p-4 md:p-6`}>
                 <div className="flex items-center justify-between gap-3">
                   <div>
                     <h2 className="text-lg font-semibold text-black md:text-xl">Content Editor</h2>
@@ -365,13 +365,13 @@ export default function CreateBlog() {
                   <button
                     type="button"
                     onClick={() => setIsMarkdownFullscreen(true)}
-                    className="inline-flex items-center gap-2 rounded-lg border border-black/20 bg-white px-3 py-2 text-sm font-semibold text-black transition hover:bg-black/5"
+                    className="inline-flex items-center gap-2 rounded-none border border-gray-200 bg-white px-3 py-2 text-sm font-semibold text-black transition hover:bg-gray-50"
                   >
                     <Maximize2 className="h-4 w-4" />
                     Full Screen
                   </button>
                 </div>
-                <div className="mt-4 overflow-hidden rounded-xl border border-black/20 bg-white shadow-[inset_0_1px_4px_rgba(0,0,0,0.08)]">
+                  <div className="mt-4 overflow-hidden rounded-none border border-gray-200 bg-white shadow-[inset_0_1px_4px_rgba(0,0,0,0.05)]">
                   <div data-color-mode="light" className="bg-white">
                     <MDEditor
                       value={mdContent}
@@ -391,7 +391,7 @@ export default function CreateBlog() {
             <div className={`${sectionClass} p-5 md:p-6`}>
               <h2 className="text-lg font-semibold text-black md:text-xl">Cover Image</h2>
               <label className="mt-4 block">
-                <div className="w-full cursor-pointer rounded-xl border border-black/25 bg-white px-4 py-3 text-center text-sm font-semibold text-black transition hover:bg-black/5">
+                <div className="w-full cursor-pointer rounded-none border border-gray-200 bg-white px-4 py-3 text-center text-sm font-semibold text-black transition hover:bg-gray-50">
                   Choose Cover
                 </div>
                 <input
@@ -404,13 +404,13 @@ export default function CreateBlog() {
 
               {coverPreview && (
                 <div className="mt-4">
-                  <img src={coverPreview} alt="Cover" className="h-44 w-full rounded-xl border border-black/15 object-cover" />
+                  <img src={coverPreview} alt="Cover" className="h-44 w-full rounded-none border border-gray-200 object-cover" />
                   <button
                     onClick={() => {
                       setCoverImage(null);
                       setCoverPreview('');
                     }}
-                    className="mt-2 w-full rounded-lg border border-black/20 bg-white px-3 py-2 text-sm font-medium text-black transition hover:bg-black/5"
+                    className="mt-2 w-full rounded-none border border-gray-200 bg-white px-3 py-2 text-sm font-medium text-black transition hover:bg-gray-50"
                   >
                     Remove
                   </button>
@@ -418,12 +418,12 @@ export default function CreateBlog() {
               )}
             </div>
 
-            <div className={`${sectionClass} p-5 md:p-6`}>
+            <div className={`${sectionClass} p-4 md:p-6`}>
               <div className="mb-4 flex items-center justify-between">
                 <h2 className="text-lg font-semibold text-black md:text-xl">Assets</h2>
                 <button
                   onClick={addAsset}
-                  className="inline-flex items-center gap-2 rounded-lg border border-black/25 bg-white px-3 py-2 text-sm font-semibold text-black transition hover:bg-black/5"
+                  className="inline-flex items-center gap-2 rounded-none border border-gray-200 bg-white px-3 py-2 text-sm font-semibold text-black transition hover:bg-gray-50"
                 >
                   <Upload className="h-4 w-4" strokeWidth={2} />
                   Add
@@ -432,12 +432,12 @@ export default function CreateBlog() {
 
               <div className="max-h-[58vh] space-y-3 overflow-y-auto pr-1">
                 {assets.length === 0 ? (
-                  <p className="rounded-xl border border-dashed border-black/20 bg-white/70 py-8 text-center text-sm text-black/55">No assets yet</p>
+                  <p className="rounded-none border border-dashed border-gray-200 bg-white/80 py-8 text-center text-sm text-gray-500">No assets yet</p>
                 ) : (
                   assets.map((asset) => (
-                    <div key={asset.id} className="space-y-2 rounded-xl border border-black/15 bg-white p-3">
+                    <div key={asset.id} className="space-y-2 rounded-none border border-gray-200 bg-white p-3">
                       <label className="block">
-                        <div className="w-full cursor-pointer rounded-lg border border-black/20 bg-white px-3 py-2 text-center text-xs font-semibold text-black transition hover:bg-black/5">
+                        <div className="w-full cursor-pointer rounded-none border border-gray-200 bg-white px-3 py-2 text-center text-xs font-semibold text-black transition hover:bg-gray-50">
                           Choose File
                         </div>
                         <input
@@ -452,7 +452,7 @@ export default function CreateBlog() {
                         <img src={asset.preview} alt="Preview" className="h-24 w-full rounded-lg border border-black/10 object-cover" />
                       )}
 
-                      <input type="text" value={asset.filename} readOnly className={`${inputClass} bg-black/5`} placeholder="Filename" />
+                      <input type="text" value={asset.filename} readOnly className={`${inputClass} bg-gray-50`} placeholder="Filename" />
 
                       <input
                         type="text"
@@ -464,7 +464,7 @@ export default function CreateBlog() {
 
                       <button
                         onClick={() => removeAsset(asset.id)}
-                        className="inline-flex w-full items-center justify-center gap-1 rounded-lg border border-black/20 bg-white px-3 py-2 text-xs font-semibold text-black transition hover:bg-black/5"
+                        className="inline-flex w-full items-center justify-center gap-1 rounded-none border border-gray-200 bg-white px-3 py-2 text-xs font-semibold text-black transition hover:bg-gray-50"
                       >
                         <Trash2 className="h-3.5 w-3.5" strokeWidth={2} />
                         Remove

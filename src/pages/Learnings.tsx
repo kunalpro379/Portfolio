@@ -1167,14 +1167,12 @@ export default function LearningsPage() {
                         <div
                           key={blog.blogId}
                           onClick={() => handleNavigate(`/learnings/blogs/${blog.blogId}`)}
-                          className="relative aspect-[4/5] cursor-pointer group rounded-lg sm:rounded-xl md:rounded-2xl border-2 sm:border-[3px] border-black bg-white overflow-hidden hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all hover:-translate-y-1"
-                          style={{ 
-                            borderRadius: idx % 2 === 0 ? '16px 20px 16px 20px' : '20px 16px 20px 16px'
-                          }}
+                          className="relative aspect-[4/5] cursor-pointer group rounded-none sm:rounded-none md:rounded-2xl border border-gray-200 bg-white overflow-hidden hover:shadow-[0_12px_28px_rgba(15,23,42,0.08)] transition-all hover:-translate-y-1"
+                          style={{ borderRadius: 0 }}
                         >
                           {/* Cover Image */}
                           {blog.coverImage && (
-                            <div className="relative w-full h-[40%] overflow-hidden border-b-2 sm:border-b-[3px] border-black">
+                            <div className="relative w-full h-[40%] overflow-hidden border-b border-gray-200">
                               <img
                                 src={blog.coverImage}
                                 alt={blog.title}
@@ -1185,7 +1183,7 @@ export default function LearningsPage() {
                           )}
                           
                           {/* Content */}
-                          <div className="p-2 sm:p-3 h-[60%] flex flex-col">
+                          <div className="p-3 h-[60%] flex flex-col">
                             {/* Title */}
                             <h3 className="text-[10px] sm:text-xs md:text-sm font-black text-black mb-1 sm:mb-1.5 line-clamp-2 leading-tight">
                               {blog.title}
@@ -1199,7 +1197,7 @@ export default function LearningsPage() {
                             {/* Footer - Subject Badge and Date */}
                             <div className="mt-auto space-y-1 sm:space-y-1.5">
                               <div className="flex items-center gap-1 sm:gap-1.5">
-                                <span className="px-1.5 sm:px-2 py-0.5 bg-pink-100 border border-black sm:border-2 rounded text-[7px] sm:text-[9px] font-black uppercase tracking-wider" style={{ borderRadius: '4px 6px 5px 7px' }}>
+                                <span className="px-1.5 sm:px-2 py-0.5 bg-gray-100 border border-gray-200 rounded-none text-[7px] sm:text-[9px] font-black uppercase tracking-wider">
                                   {blog.subject}
                                 </span>
                               </div>
@@ -1249,7 +1247,7 @@ export default function LearningsPage() {
                       project.badges.some(badge => badge.toLowerCase().includes(projectSearch.toLowerCase()))
                     ).length === 0 ? (
                       <div className="col-span-full text-center py-12 sm:py-16">
-                        <div className="bg-gray-50/70 backdrop-blur-sm border-3 border-black rounded-2xl p-6 sm:p-8 md:p-10 inline-block shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]">
+                        <div className="bg-gray-50/70 backdrop-blur-sm border border-gray-200 rounded-none p-6 sm:p-8 md:p-10 inline-block shadow-[0_12px_28px_rgba(15,23,42,0.06)]">
                           <Code size={36} strokeWidth={2.5} className="sm:w-12 sm:h-12 mx-auto mb-3 text-green-500" />
                           <p className="text-gray-600 text-sm sm:text-base font-bold">
                             {projectSearch ? 'No projects found' : 'No projects yet'}

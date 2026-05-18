@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
-import { Bold, Calendar, ChevronLeft, ChevronRight, Download, Italic, Trash2, X } from 'lucide-react';
+import { AlignCenter, AlignLeft, AlignRight, Bold, Calendar, ChevronLeft, ChevronRight, Download, Italic, Trash2, X } from 'lucide-react';
 import { flushSync } from 'react-dom';
 import { API_BASE_URL, API_ENDPOINTS } from '@/config/api';
 
@@ -375,6 +375,16 @@ export default function DiaryPage() {
     updateContentFromEditor(activeSide);
   }
 
+  function setTextAlign(align: 'left' | 'center' | 'right') {
+    const editor = getActiveEditor();
+    if (!editor) return;
+
+    editor.focus();
+    restoreSelection(activeSide);
+    document.execCommand('justify' + align.charAt(0).toUpperCase() + align.slice(1), false);
+    updateContentFromEditor(activeSide);
+  }
+
   function insertBullet() {
     execCommand('insertHTML', '<div>•&nbsp;</div>');
   }
@@ -430,7 +440,7 @@ export default function DiaryPage() {
   };
 
   return (
-    <div className="w-full flex flex-col items-start px-2 md:px-3 lg:px-4 pt-0 pb-0 flex-1 overflow-hidden" style={{ zIndex: 30 }}>
+    <div className="w-full flex flex-col items-start px-2 md:px-3 lg:px-4 pt-0 pb-0 flex-1 min-h-0 overflow-hidden" style={{ zIndex: 30 }}>
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&display=swap');
 
@@ -566,7 +576,7 @@ export default function DiaryPage() {
 
         .editor-card {
           background: rgba(255,255,255,0.22);
-          border-radius: 12px;
+          border-radius: 0;
           border: 1px solid rgba(255,255,255,0.12);
           box-shadow: 0 10px 30px rgba(16,24,40,0.12);
           backdrop-filter: blur(8px);
@@ -584,7 +594,7 @@ export default function DiaryPage() {
         }
 
         /* Responsive adjustments */
-        .diary-container { height: auto; flex: 1; }
+        .diary-container { height: auto; flex: 1; min-height: 0; }
 
         @media (max-width: 1024px) {
           .diary-container { height: auto; }
@@ -634,8 +644,8 @@ export default function DiaryPage() {
       `}</style>
 
       {/* Mobile toolbar - compact & connected to tabbar */}
-      <div className="md:hidden w-full bg-white px-3 py-1 -mt-px rounded-none border-t border-gray-200">
-        <div className="flex items-center gap-2">
+      <div className="md:hidden w-full bg-white px-2 py-1 -mt-px rounded-none border-t border-gray-200">
+        <div className="flex w-full items-center gap-2">
           <button
             onClick={() => goToDate('prev')}
             className="h-8 w-8 flex items-center justify-center rounded-none border border-gray-200 text-gray-700 shrink-0 bg-white"
@@ -675,7 +685,7 @@ export default function DiaryPage() {
           <input ref={dateInputRef} type="date" value={date} onChange={(e) => syncDateInput(e.target.value)} className="sr-only" />
         </div>
 
-        <div className="mt-2 grid grid-cols-6 gap-2">
+        <div className="mt-2 grid w-full grid-cols-5 gap-2">
           <button
             onMouseDown={(e) => { e.preventDefault(); preserveSelection(activeSide); }}
             onClick={() => execCommand('bold')}
@@ -720,19 +730,33 @@ export default function DiaryPage() {
             <option value={20}>20</option>
             <option value={22}>22</option>
           </select>
-          <button
-            onClick={clearCurrentPage}
-            className="h-8 rounded-none border border-gray-200 bg-white text-red-600 flex items-center justify-center"
-            title="Delete"
-          >
-            <Trash2 className="w-4 h-4" strokeWidth={2} />
-          </button>
+          <div className="col-span-5 grid grid-cols-5 gap-2">
+            <button onClick={() => setTextAlign('left')} className="h-8 rounded-none border border-gray-200 bg-white text-gray-800 flex items-center justify-center" title="Align left">
+              <AlignLeft className="w-4 h-4" strokeWidth={2} />
+            </button>
+            <button onClick={() => setTextAlign('center')} className="h-8 rounded-none border border-gray-200 bg-white text-gray-800 flex items-center justify-center" title="Align center">
+              <AlignCenter className="w-4 h-4" strokeWidth={2} />
+            </button>
+            <button onClick={() => setTextAlign('right')} className="h-8 rounded-none border border-gray-200 bg-white text-gray-800 flex items-center justify-center" title="Align right">
+              <AlignRight className="w-4 h-4" strokeWidth={2} />
+            </button>
+            <button
+              onClick={clearCurrentPage}
+              className="h-8 rounded-none border border-gray-200 bg-white text-red-600 flex items-center justify-center"
+              title="Delete"
+            >
+              <Trash2 className="w-4 h-4" strokeWidth={2} />
+            </button>
+            <div className="h-8 rounded-none border border-gray-200 bg-white flex items-center justify-center text-[11px] font-medium text-gray-500 diary-mono">
+              {loadingDate ? 'Loading' : saving ? 'Saving' : 'Saved'}
+            </div>
+          </div>
         </div>
       </div>
 
       {/* Desktop toolbar */}
       <div className="hidden md:block w-full bg-white text-gray-800 rounded-none px-3 sm:px-4 md:px-6 py-1 -mt-px border-t border-gray-200">
-        <div className="flex flex-wrap items-center gap-2 shrink-0">
+        <div className="flex w-full flex-wrap items-center gap-2">
           <button
             onClick={() => goToDate('prev')}
             className="toolbar-btn h-8 w-8 flex items-center justify-center bg-white border border-gray-200 rounded-none text-gray-700 shrink-0"
@@ -748,7 +772,7 @@ export default function DiaryPage() {
 
           <button
             onClick={() => setActiveSide('left')}
-            className={`px-3 py-1 ml-1 rounded-none font-bold diary-mono transition shrink-0 border border-gray-200 ${activeSide === 'left' ? 'bg-black text-white' : 'bg-white text-gray-700'}`}
+            className={`px-3 py-1 rounded-none font-bold diary-mono transition shrink-0 border border-gray-200 ${activeSide === 'left' ? 'bg-black text-white' : 'bg-white text-gray-700'}`}
           >
             L
           </button>
@@ -758,20 +782,38 @@ export default function DiaryPage() {
           >
             R
           </button>
-        </div>
 
-        <div className="flex flex-wrap items-center justify-between gap-2 md:gap-4 mt-2">
-          <div className="flex flex-wrap items-center gap-2 min-w-0">
-            <span className="text-sm sm:text-base md:text-lg font-black text-gray-800 diary-mono whitespace-nowrap">{pageTitle}</span>
+          <div className="flex items-center gap-2 ml-auto flex-wrap justify-end">
+            <button
+              onClick={() => setTextAlign('left')}
+              className="toolbar-btn h-8 w-8 flex items-center justify-center bg-white border border-gray-200 text-gray-800 rounded-none shrink-0"
+              title="Align left"
+            >
+              <AlignLeft className="w-4 h-4" strokeWidth={2} />
+            </button>
+            <button
+              onClick={() => setTextAlign('center')}
+              className="toolbar-btn h-8 w-8 flex items-center justify-center bg-white border border-gray-200 text-gray-800 rounded-none shrink-0"
+              title="Align center"
+            >
+              <AlignCenter className="w-4 h-4" strokeWidth={2} />
+            </button>
+            <button
+              onClick={() => setTextAlign('right')}
+              className="toolbar-btn h-8 w-8 flex items-center justify-center bg-white border border-gray-200 text-gray-800 rounded-none shrink-0"
+              title="Align right"
+            >
+              <AlignRight className="w-4 h-4" strokeWidth={2} />
+            </button>
+
+            <span className="text-sm sm:text-base font-black text-gray-800 diary-mono whitespace-nowrap px-1">{pageTitle}</span>
             <input
               type="date"
               value={date}
               onChange={(e) => syncDateInput(e.target.value)}
-              className="px-2 py-1 rounded-none border border-gray-200 text-xs diary-mono text-gray-800 bg-white min-w-[132px]"
+              className="h-8 px-2 py-1 rounded-none border border-gray-200 text-xs diary-mono text-gray-800 bg-white min-w-[132px]"
             />
-          </div>
 
-          <div className="flex flex-wrap items-center gap-2 justify-start md:justify-end">
             <button
               onMouseDown={(e) => { e.preventDefault(); preserveSelection(activeSide); }}
               onClick={() => execCommand('bold')}
@@ -809,7 +851,7 @@ export default function DiaryPage() {
                 if (activeSide === 'left') setLeftFontSize(value);
                 else setRightFontSize(value);
               }}
-              className="px-2 py-1 rounded-none border border-gray-200 text-xs diary-mono text-gray-800 bg-white shrink-0 max-w-[92px]"
+              className="h-8 px-2 py-1 rounded-none border border-gray-200 text-xs diary-mono text-gray-800 bg-white shrink-0 max-w-[92px]"
             >
               <option value={12}>12</option>
               <option value={14}>14</option>
@@ -832,7 +874,7 @@ export default function DiaryPage() {
             >
               <Trash2 className="w-4 h-4" strokeWidth={2} />
             </button>
-            <div className="ml-0 md:ml-3 text-xs sm:text-sm diary-mono text-gray-500 whitespace-nowrap">{loadingDate ? 'Loading...' : saving ? 'Saving...' : 'Saved'}</div>
+            <div className="text-xs sm:text-sm diary-mono text-gray-500 whitespace-nowrap">{loadingDate ? 'Loading...' : saving ? 'Saving...' : 'Saved'}</div>
           </div>
         </div>
       </div>
@@ -920,16 +962,16 @@ export default function DiaryPage() {
       )}
 
       {/* Single blurred editor with Left/Right tabs */}
-      <div className="w-full max-w-[1400px] diary-container overflow-hidden flex-1 mx-auto">
-        <div className="w-full h-full flex flex-col gap-0">
-          <div className={`editor-card flex-1 p-4 ${activeSide === 'left' ? 'editor-card-left' : 'editor-card-right'}`} style={{ borderRadius: 0 }}>
-            <div className="h-full overflow-auto">
+      <div className="w-full max-w-[1400px] diary-container overflow-hidden flex-1 min-h-0 mx-auto">
+        <div className="w-full h-full min-h-0 flex flex-col gap-0">
+          <div className={`editor-card flex flex-col flex-1 min-h-0 p-4 ${activeSide === 'left' ? 'editor-card-left' : 'editor-card-right'}`} style={{ borderRadius: 0 }}>
+            <div className="flex-1 min-h-0 overflow-auto">
               <div
                 ref={activeSide === 'left' ? leftEditorRef : rightEditorRef}
                 contentEditable
                 suppressContentEditableWarning
-                className="editor-area w-full h-full bg-transparent text-black diary-mono leading-7 pr-1 max-w-none"
-                style={{ fontSize: `${activeFontSize}px`, caretColor: '#111827', minHeight: '100%' }}
+                className="editor-area w-full min-h-full bg-transparent text-black diary-mono leading-7 pr-1 max-w-none"
+                style={{ fontSize: `${activeFontSize}px`, caretColor: '#111827' }}
                 onFocus={() => setActiveSide(activeSide)}
                 onMouseUp={() => captureSelection(activeSide)}
                 onKeyUp={() => captureSelection(activeSide)}
