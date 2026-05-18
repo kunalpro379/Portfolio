@@ -153,6 +153,17 @@ export default function DiaryPage() {
     };
   }, [isExportModalOpen]);
 
+  useEffect(() => {
+    const previousBodyOverflow = document.body.style.overflow;
+    const previousHtmlOverflow = document.documentElement.style.overflow;
+    document.body.style.overflow = 'hidden';
+    document.documentElement.style.overflow = 'hidden';
+    return () => {
+      document.body.style.overflow = previousBodyOverflow;
+      document.documentElement.style.overflow = previousHtmlOverflow;
+    };
+  }, []);
+
   function getDateRange(startDate: string, endDate: string) {
     const orderedStart = startDate <= endDate ? startDate : endDate;
     const orderedEnd = startDate <= endDate ? endDate : startDate;
@@ -440,7 +451,7 @@ export default function DiaryPage() {
   };
 
   return (
-    <div className="w-full flex flex-col items-start px-2 md:px-3 lg:px-4 pt-0 pb-0 flex-1 min-h-0 overflow-hidden" style={{ zIndex: 30 }}>
+    <div className="w-full h-full flex flex-col items-start px-2 md:px-3 lg:px-4 pt-0 pb-0 flex-1 min-h-0 overflow-hidden" style={{ zIndex: 30 }}>
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&display=swap');
 
@@ -644,7 +655,7 @@ export default function DiaryPage() {
       `}</style>
 
       {/* Mobile toolbar - compact & connected to tabbar */}
-      <div className="md:hidden w-full bg-white px-2 py-1 -mt-px rounded-none border-t border-gray-200">
+      <div className="md:hidden w-full bg-white px-2 py-1 -mt-px rounded-none border-t border-gray-200 shrink-0">
         <div className="flex w-full items-center gap-2">
           <button
             onClick={() => goToDate('prev')}
@@ -755,7 +766,7 @@ export default function DiaryPage() {
       </div>
 
       {/* Desktop toolbar */}
-      <div className="hidden md:block w-full bg-white text-gray-800 rounded-none px-3 sm:px-4 md:px-6 py-1 -mt-px border-t border-gray-200">
+      <div className="hidden md:block w-full bg-white text-gray-800 rounded-none px-3 sm:px-4 md:px-6 py-1 -mt-px border-t border-gray-200 shrink-0">
         <div className="flex w-full flex-wrap items-center gap-2">
           <button
             onClick={() => goToDate('prev')}
@@ -965,12 +976,12 @@ export default function DiaryPage() {
       <div className="w-full max-w-[1400px] diary-container overflow-hidden flex-1 min-h-0 mx-auto">
         <div className="w-full h-full min-h-0 flex flex-col gap-0">
           <div className={`editor-card flex flex-col flex-1 min-h-0 p-4 ${activeSide === 'left' ? 'editor-card-left' : 'editor-card-right'}`} style={{ borderRadius: 0 }}>
-            <div className="flex-1 min-h-0 overflow-auto">
+            <div className="flex-1 min-h-0 overflow-hidden">
               <div
                 ref={activeSide === 'left' ? leftEditorRef : rightEditorRef}
                 contentEditable
                 suppressContentEditableWarning
-                className="editor-area w-full min-h-full bg-transparent text-black diary-mono leading-7 pr-1 max-w-none"
+                className="editor-area w-full h-full bg-transparent text-black diary-mono leading-7 pr-1 max-w-none"
                 style={{ fontSize: `${activeFontSize}px`, caretColor: '#111827' }}
                 onFocus={() => setActiveSide(activeSide)}
                 onMouseUp={() => captureSelection(activeSide)}

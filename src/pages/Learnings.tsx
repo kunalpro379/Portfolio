@@ -765,41 +765,41 @@ export default function LearningsPage() {
 
               <button
                 onClick={() => changeTab('blogs')}
-                className={`col-span-1 px-2 sm:px-3 py-2 sm:py-2.5 rounded-lg font-bold text-xs sm:text-sm transition-all border-2 border-black ${activeTab === 'blogs'
+                className={`col-span-1 px-2 sm:px-3 py-2 sm:py-2.5 rounded-none font-bold text-xs sm:text-sm transition-all border-2 border-black ${activeTab === 'blogs'
                     ? 'bg-pink-400 text-white shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transform -translate-y-0.5'
                     : 'bg-white hover:bg-pink-50 hover:shadow-[1px_1px_0px_0px_rgba(0,0,0,1)]'
                   }`}
-                style={{ borderRadius: '12px 15px 13px 14px' }}
+                style={{ borderRadius: 0 }}
               >
                 Blogs
               </button>
               <button
                 onClick={() => changeTab('documentation')}
-                className={`col-span-1 px-2 sm:px-3 py-2 sm:py-2.5 rounded-lg font-bold text-xs sm:text-sm transition-all border-2 border-black ${activeTab === 'documentation'
+                className={`col-span-1 px-2 sm:px-3 py-2 sm:py-2.5 rounded-none font-bold text-xs sm:text-sm transition-all border-2 border-black ${activeTab === 'documentation'
                     ? 'bg-blue-400 text-white shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transform -translate-y-0.5'
                     : 'bg-white hover:bg-blue-50 hover:shadow-[1px_1px_0px_0px_rgba(0,0,0,1)]'
                   }`}
-                style={{ borderRadius: '14px 12px 15px 13px' }}
+                style={{ borderRadius: 0 }}
               >
                 Docs
               </button>
               <button
                 onClick={() => changeTab('guide')}
-                className={`col-span-1 px-2 sm:px-3 py-2 sm:py-2.5 rounded-lg font-bold text-xs sm:text-sm transition-all border-2 border-black ${activeTab === 'guide'
+                className={`col-span-1 px-2 sm:px-3 py-2 sm:py-2.5 rounded-none font-bold text-xs sm:text-sm transition-all border-2 border-black ${activeTab === 'guide'
                     ? 'bg-yellow-400 text-white shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transform -translate-y-0.5'
                     : 'bg-white hover:bg-yellow-50 hover:shadow-[1px_1px_0px_0px_rgba(0,0,0,1)]'
                   }`}
-                style={{ borderRadius: '13px 14px 12px 15px' }}
+                style={{ borderRadius: 0 }}
               >
                 Guide
               </button>
               <button
                 onClick={() => changeTab('files')}
-                className={`col-span-1 px-2 sm:px-3 py-2 sm:py-2.5 rounded-lg font-bold text-xs sm:text-sm transition-all border-2 border-black ${activeTab === 'files'
+                className={`col-span-1 px-2 sm:px-3 py-2 sm:py-2.5 rounded-none font-bold text-xs sm:text-sm transition-all border-2 border-black ${activeTab === 'files'
                     ? 'bg-cyan-400 text-white shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transform -translate-y-0.5'
                     : 'bg-white hover:bg-cyan-50 hover:shadow-[1px_1px_0px_0px_rgba(0,0,0,1)]'
                   }`}
-                style={{ borderRadius: '15px 13px 14px 12px' }}
+                style={{ borderRadius: 0 }}
               >
                 Files
               </button>
@@ -808,49 +808,49 @@ export default function LearningsPage() {
             <div className="grid grid-cols-5 gap-1.5 sm:gap-2">
               <button
                 onClick={() => changeTab('diary')}
-                className={`px-2 sm:px-3 py-2 sm:py-2.5 rounded-lg font-bold text-xs sm:text-sm transition-all border-2 border-black ${activeTab === 'diary'
+                className={`px-2 sm:px-3 py-2 sm:py-2.5 rounded-none font-bold text-xs sm:text-sm transition-all border-2 border-black ${activeTab === 'diary'
                     ? 'bg-red-400 text-white shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transform -translate-y-0.5'
                     : 'bg-white hover:bg-red-50 hover:shadow-[1px_1px_0px_0px_rgba(0,0,0,1)]'
                   }`}
-                style={{ borderRadius: '12px 15px 13px 14px' }}
+                style={{ borderRadius: 0 }}
               >
                 Diary
               </button>
               <button
                 onClick={() => changeTab('code')}
-                className={`px-2 sm:px-3 py-2 sm:py-2.5 rounded-lg font-bold text-xs sm:text-sm transition-all border-2 border-black ${activeTab === 'code'
+                className={`px-2 sm:px-3 py-2 sm:py-2.5 rounded-none font-bold text-xs sm:text-sm transition-all border-2 border-black ${activeTab === 'code'
                     ? 'bg-orange-400 text-white shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transform -translate-y-0.5'
                     : 'bg-white hover:bg-orange-50 hover:shadow-[1px_1px_0px_0px_rgba(0,0,0,1)]'
                   }`}
-                style={{ borderRadius: '15px 13px 14px 12px' }}
+                style={{ borderRadius: 0 }}
               >
                 Code
               </button>
               <button
                 onClick={() => changeTab('diagrams')}
-                className={`px-2 sm:px-3 py-2 sm:py-2.5 rounded-lg font-bold text-xs sm:text-sm transition-all border-2 border-black ${activeTab === 'diagrams'
+                className={`px-2 sm:px-3 py-2 sm:py-2.5 rounded-none font-bold text-xs sm:text-sm transition-all border-2 border-black ${activeTab === 'diagrams'
                     ? 'bg-purple-400 text-white shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transform -translate-y-0.5'
                     : 'bg-white hover:bg-purple-50 hover:shadow-[1px_1px_0px_0px_rgba(0,0,0,1)]'
                   }`}
-                style={{ borderRadius: '15px 13px 14px 12px' }}
+                style={{ borderRadius: 0 }}
               >
                 <span className="hidden xs:inline">Architectures</span>
                 <span className="xs:hidden">Arch</span>
               </button>
               <button
                 onClick={() => changeTab('projects')}
-                className={`px-2 sm:px-3 py-2 sm:py-2.5 rounded-lg font-bold text-xs sm:text-sm transition-all border-2 border-black ${activeTab === 'projects'
+                className={`px-2 sm:px-3 py-2 sm:py-2.5 rounded-none font-bold text-xs sm:text-sm transition-all border-2 border-black ${activeTab === 'projects'
                     ? 'bg-green-400 text-white shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transform -translate-y-0.5'
                     : 'bg-white hover:bg-green-50 hover:shadow-[1px_1px_0px_0px_rgba(0,0,0,1)]'
                   }`}
-                style={{ borderRadius: '12px 15px 13px 14px' }}
+                style={{ borderRadius: 0 }}
               >
                 Projects
               </button>
               <button
                 onClick={() => navigate('/')}
-                className={`px-2 sm:px-3 py-2 sm:py-2.5 rounded-lg font-bold text-xs sm:text-sm transition-all border-2 border-black bg-white hover:bg-gray-100`}
-                style={{ borderRadius: '12px 15px 13px 14px' }}
+                className={`px-2 sm:px-3 py-2 sm:py-2.5 rounded-none font-bold text-xs sm:text-sm transition-all border-2 border-black bg-white hover:bg-gray-100`}
+                style={{ borderRadius: 0 }}
               >
                 Home
               </button>
@@ -964,8 +964,8 @@ export default function LearningsPage() {
       </div>
 
       {/* Scrollable Main Content */}
-      <main className="fixed left-0 right-0 bottom-0 overflow-y-auto overscroll-contain bg-transparent px-2 sm:px-3 md:px-4 lg:px-6 pt-0 pb-2 z-[50]" style={{ top: headerHeight ? `${headerHeight}px` : undefined }}>
-        <div className="max-w-7xl mx-auto pt-0">
+      <main className={`fixed left-0 right-0 bottom-0 bg-transparent px-2 sm:px-3 md:px-4 lg:px-6 pt-0 z-[50] ${activeTab === 'diary' ? 'overflow-hidden overscroll-none pb-0' : 'overflow-y-auto overscroll-contain pb-2'}`} style={{ top: headerHeight ? `${headerHeight}px` : undefined }}>
+        <div className={`max-w-7xl mx-auto pt-0 ${activeTab === 'diary' ? 'h-full' : ''}`}>
           {/* Loading State */}
           {loading && (
             <div className="fixed inset-0 flex items-center justify-center z-[100]">
@@ -997,7 +997,9 @@ export default function LearningsPage() {
 
               {/* DIARY TAB */}
               {activeTab === 'diary' && (
-                <DiaryPage />
+                <div className="h-full min-h-0">
+                  <DiaryPage />
+                </div>
               )}
 
               {/* DOCUMENTATION TAB */}
@@ -1027,7 +1029,7 @@ export default function LearningsPage() {
                       doc.tags?.some(tag => tag.toLowerCase().includes(docSearch.toLowerCase()))
                     ).length === 0 ? (
                       <div className="col-span-full text-center py-12 sm:py-16">
-                        <div className="bg-gray-50/70 backdrop-blur-sm border-3 border-black rounded-2xl p-6 sm:p-8 md:p-10 inline-block shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]">
+                        <div className="bg-gray-50/70 backdrop-blur-sm border border-gray-200 rounded-none p-6 sm:p-8 md:p-10 inline-block shadow-[0_12px_28px_rgba(15,23,42,0.06)]">
                           <BookOpen size={36} strokeWidth={2.5} className="sm:w-12 sm:h-12 mx-auto mb-3 text-blue-500" />
                           <p className="text-gray-600 text-sm sm:text-base font-bold">
                             {docSearch ? 'No documentation found' : 'No documentation yet'}
@@ -1045,14 +1047,12 @@ export default function LearningsPage() {
                         <div
                           key={doc.docId}
                           onClick={() => handleNavigate(`/learnings/documentation/${doc.docId}`)}
-                          className="relative aspect-[4/5] cursor-pointer group rounded-lg sm:rounded-xl md:rounded-2xl border-2 sm:border-[3px] border-black bg-white overflow-hidden hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all hover:-translate-y-1"
-                          style={{ 
-                            borderRadius: idx % 2 === 0 ? '16px 20px 16px 20px' : '20px 16px 20px 16px'
-                          }}
+                          className="relative aspect-[4/5] cursor-pointer group rounded-none sm:rounded-none md:rounded-2xl border border-gray-200 bg-white overflow-hidden hover:shadow-[0_12px_28px_rgba(15,23,42,0.08)] transition-all hover:-translate-y-1"
+                          style={{ borderRadius: 0 }}
                         >
                           {/* Header with Cover Image or Icon - 40% height */}
                           {doc.coverImage ? (
-                            <div className="relative w-full h-[40%] border-b-2 sm:border-b-[3px] border-black overflow-hidden">
+                            <div className="relative w-full h-[40%] border-b border-gray-200 overflow-hidden">
                               <img
                                 src={doc.coverImage}
                                 alt={doc.title}
@@ -1061,7 +1061,7 @@ export default function LearningsPage() {
                               />
                             </div>
                           ) : (
-                            <div className="relative w-full h-[40%] bg-gradient-to-br from-blue-500 to-blue-600 border-b-2 sm:border-b-[3px] border-black flex items-center justify-center">
+                            <div className="relative w-full h-[40%] bg-gradient-to-br from-blue-500 to-blue-600 border-b border-gray-200 flex items-center justify-center">
                               <FileText size={32} strokeWidth={2} className="sm:w-12 sm:h-12 text-white/90" />
                             </div>
                           )}
@@ -1083,11 +1083,11 @@ export default function LearningsPage() {
                             {/* Footer - Badges and Date */}
                             <div className="mt-auto space-y-1 sm:space-y-1.5">
                               <div className="flex items-center gap-1 sm:gap-1.5 flex-wrap">
-                                <span className="px-1.5 sm:px-2 py-0.5 bg-blue-100 border border-black sm:border-2 rounded text-[7px] sm:text-[9px] font-black uppercase tracking-wider" style={{ borderRadius: '4px 6px 5px 7px' }}>
+                                <span className="px-1.5 sm:px-2 py-0.5 bg-blue-100 border border-gray-200 rounded-none text-[7px] sm:text-[9px] font-black uppercase tracking-wider">
                                   {doc.subject}
                                 </span>
                                 {doc.isPublic && (
-                                  <span className="px-1.5 sm:px-2 py-0.5 bg-green-100 border border-black sm:border-2 rounded text-[7px] sm:text-[9px] font-black uppercase tracking-wider" style={{ borderRadius: '6px 4px 7px 5px' }}>
+                                  <span className="px-1.5 sm:px-2 py-0.5 bg-green-100 border border-gray-200 rounded-none text-[7px] sm:text-[9px] font-black uppercase tracking-wider">
                                     Public
                                   </span>
                                 )}
