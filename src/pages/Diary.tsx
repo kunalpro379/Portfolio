@@ -56,7 +56,6 @@ export default function DiaryPage() {
   const rightSaveTimeout = useRef<number | null>(null);
   const leftEditorRef = useRef<HTMLDivElement | null>(null);
   const rightEditorRef = useRef<HTMLDivElement | null>(null);
-  const dateInputRef = useRef<HTMLInputElement | null>(null);
   const exportSheetRef = useRef<HTMLDivElement | null>(null);
   const leftSelectionRef = useRef<Range | null>(null);
   const rightSelectionRef = useRef<Range | null>(null);
@@ -437,90 +436,8 @@ export default function DiaryPage() {
 
   const activeFontSize = activeSide === 'left' ? leftFontSize : rightFontSize;
 
-  const exportModal = isExportModalOpen ? (
-    <div className="fixed inset-0 z-[80] flex items-center justify-center bg-black/60 backdrop-blur-sm px-4">
-      <div className="w-full max-w-md rounded-2xl border-2 border-black bg-[#fffaf1] shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] overflow-hidden diary-mono">
-        <div className="flex items-center justify-between border-b-2 border-black bg-[#f6ead6] px-4 py-3">
-          <div>
-            <div className="text-base font-black text-gray-900">Download Diary PDF</div>
-            <div className="text-xs font-bold text-gray-600">Pick a start and end date for the export</div>
-          </div>
-          <button
-            type="button"
-            onClick={closeExportModal}
-            className="h-9 w-9 flex items-center justify-center rounded-lg border border-black bg-white text-gray-900"
-            disabled={exportingPdf}
-          >
-            <X className="h-4 w-4" strokeWidth={2.5} />
-          </button>
-        </div>
-
-        <div className="space-y-4 px-4 py-4">
-          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-            <label className="space-y-1 text-xs font-bold text-gray-700">
-              <span className="flex items-center gap-2">
-                <Calendar className="h-4 w-4" strokeWidth={2.5} />
-                Start Date
-              </span>
-              <input
-                type="date"
-                value={exportStartDate}
-                onChange={(e) => setExportStartDate(e.target.value)}
-                className="w-full rounded-lg border-2 border-black bg-white px-3 py-2 text-sm font-bold text-gray-900"
-                disabled={exportingPdf}
-              />
-            </label>
-
-            <label className="space-y-1 text-xs font-bold text-gray-700">
-              <span className="flex items-center gap-2">
-                <Calendar className="h-4 w-4" strokeWidth={2.5} />
-                End Date
-              </span>
-              <input
-                type="date"
-                value={exportEndDate}
-                onChange={(e) => setExportEndDate(e.target.value)}
-                className="w-full rounded-lg border-2 border-black bg-white px-3 py-2 text-sm font-bold text-gray-900"
-                disabled={exportingPdf}
-              />
-            </label>
-          </div>
-
-          <div className="rounded-xl border border-dashed border-black/30 bg-white/80 px-3 py-2 text-xs font-bold text-gray-600">
-            The PDF will keep the notebook look, JetBrains Mono font, and include the date on every spread.
-          </div>
-
-          {exportError && (
-            <div className="rounded-xl border border-red-400 bg-red-50 px-3 py-2 text-xs font-bold text-red-700">
-              {exportError}
-            </div>
-          )}
-        </div>
-
-        <div className="flex gap-3 border-t-2 border-black bg-[#f6ead6] px-4 py-3">
-          <button
-            type="button"
-            onClick={closeExportModal}
-            className="flex-1 rounded-lg border-2 border-black bg-white px-4 py-2.5 text-sm font-black text-gray-900 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]"
-            disabled={exportingPdf}
-          >
-            Cancel
-          </button>
-          <button
-            type="button"
-            onClick={downloadPdfForRange}
-            className="flex-1 rounded-lg border-2 border-emerald-700 bg-emerald-500 px-4 py-2.5 text-sm font-black text-white shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] disabled:cursor-not-allowed disabled:opacity-60"
-            disabled={exportingPdf}
-          >
-            {exportingPdf ? 'Preparing PDF...' : 'Download'}
-          </button>
-        </div>
-      </div>
-    </div>
-  ) : null;
-
   return (
-    <div className="w-full flex flex-col items-start px-2 md:px-3 lg:px-4 pt-0 pb-0" style={{ position: 'fixed', top: '96px', left: 0, right: 0, bottom: 0, overflow: 'hidden', zIndex: 30 }}>
+    <div className="w-full flex flex-col items-start px-2 md:px-3 lg:px-4 pt-0 pb-0 fixed left-0 right-0 bottom-0 top-[220px] md:top-[140px] lg:top-[120px] overflow-hidden" style={{ zIndex: 30 }}>
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&display=swap');
 
@@ -724,7 +641,7 @@ export default function DiaryPage() {
       `}</style>
 
       {/* Single compact toolbar row (full-width strip) */}
-      <div className="w-full relative flex items-center justify-between gap-2 -mt-2 bg-black text-white rounded-none px-6 py-3" style={{paddingTop: 6}}>
+      <div className="w-full flex items-center justify-between gap-2 -mt-2 bg-black text-white rounded-none px-6 py-3" style={{paddingTop: 6}}>
         <div className="flex items-center gap-2 shrink-0">
           <button
             onClick={() => goToDate('prev')}
@@ -753,49 +670,18 @@ export default function DiaryPage() {
           </button>
         </div>
 
-        {/* Mobile: center in flow so it doesn't overlap controls */}
-        <div className="flex-1 flex items-center justify-center md:hidden">
-          <div className="flex items-center gap-3 px-2">
-            <span className="text-base font-black text-white diary-mono truncate">{pageTitle}</span>
-            <input
-              ref={dateInputRef}
-              type="date"
-              value={date}
-              onChange={(e) => syncDateInput(e.target.value)}
-              className="sr-only"
-            />
-            <button
-              onClick={() => dateInputRef.current?.click()}
-              className="px-3 py-1 bg-white text-black rounded-md font-bold diary-mono shadow-sm"
-              title="Pick date"
-            >
-              {date}
-            </button>
-          </div>
-        </div>
-
-        {/* Desktop: absolute centered block so date stays perfectly centered */}
-        <div className="hidden md:flex absolute left-1/2 transform -translate-x-1/2 items-center justify-center z-10">
-          <div className="flex items-center gap-3 max-w-[640px] px-2">
+        <div className="flex items-center gap-3 md:gap-6">
+            <div className="flex items-center gap-2">
             <span className="text-base md:text-lg font-black text-white diary-mono">{pageTitle}</span>
             <input
-              ref={dateInputRef}
               type="date"
               value={date}
               onChange={(e) => syncDateInput(e.target.value)}
-              className="sr-only"
+              className="px-2 py-1 bg-transparent border border-white/20 rounded-md text-xs diary-mono text-white"
             />
-            <button
-              onClick={() => dateInputRef.current?.click()}
-              className="px-3 py-1 bg-white text-black rounded-md font-bold diary-mono shadow-sm"
-              title="Pick date"
-            >
-              {date}
-            </button>
           </div>
-        </div>
 
-        <div className="flex items-center gap-2 flex-nowrap shrink-0">
+          <div className="flex items-center gap-2 flex-nowrap">
             <button
               onMouseDown={(e) => { e.preventDefault(); preserveSelection(activeSide); }}
               onClick={() => execCommand('bold')}
@@ -861,7 +747,87 @@ export default function DiaryPage() {
         </div>
       </div>
 
-      {exportModal}
+      {isExportModalOpen && (
+        <div className="fixed inset-0 z-[80] flex items-center justify-center bg-black/60 backdrop-blur-sm px-4">
+          <div className="w-full max-w-md rounded-2xl border-2 border-black bg-[#fffaf1] shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] overflow-hidden diary-mono">
+            <div className="flex items-center justify-between border-b-2 border-black bg-[#f6ead6] px-4 py-3">
+              <div>
+                <div className="text-base font-black text-gray-900">Download Diary PDF</div>
+                <div className="text-xs font-bold text-gray-600">Pick a start and end date for the export</div>
+              </div>
+              <button
+                type="button"
+                onClick={closeExportModal}
+                className="h-9 w-9 flex items-center justify-center rounded-lg border border-black bg-white text-gray-900"
+                disabled={exportingPdf}
+              >
+                <X className="h-4 w-4" strokeWidth={2.5} />
+              </button>
+            </div>
+
+            <div className="space-y-4 px-4 py-4">
+              <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                <label className="space-y-1 text-xs font-bold text-gray-700">
+                  <span className="flex items-center gap-2">
+                    <Calendar className="h-4 w-4" strokeWidth={2.5} />
+                    Start Date
+                  </span>
+                  <input
+                    type="date"
+                    value={exportStartDate}
+                    onChange={(e) => setExportStartDate(e.target.value)}
+                    className="w-full rounded-lg border-2 border-black bg-white px-3 py-2 text-sm font-bold text-gray-900"
+                    disabled={exportingPdf}
+                  />
+                </label>
+
+                <label className="space-y-1 text-xs font-bold text-gray-700">
+                  <span className="flex items-center gap-2">
+                    <Calendar className="h-4 w-4" strokeWidth={2.5} />
+                    End Date
+                  </span>
+                  <input
+                    type="date"
+                    value={exportEndDate}
+                    onChange={(e) => setExportEndDate(e.target.value)}
+                    className="w-full rounded-lg border-2 border-black bg-white px-3 py-2 text-sm font-bold text-gray-900"
+                    disabled={exportingPdf}
+                  />
+                </label>
+              </div>
+
+              <div className="rounded-xl border border-dashed border-black/30 bg-white/80 px-3 py-2 text-xs font-bold text-gray-600">
+                The PDF will keep the notebook look, JetBrains Mono font, and include the date on every spread.
+              </div>
+
+              {exportError && (
+                <div className="rounded-xl border border-red-400 bg-red-50 px-3 py-2 text-xs font-bold text-red-700">
+                  {exportError}
+                </div>
+              )}
+            </div>
+
+            <div className="flex gap-3 border-t-2 border-black bg-[#f6ead6] px-4 py-3">
+              <button
+                type="button"
+                onClick={closeExportModal}
+                className="flex-1 rounded-lg border-2 border-black bg-white px-4 py-2.5 text-sm font-black text-gray-900 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]"
+                disabled={exportingPdf}
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                onClick={downloadPdfForRange}
+                className="flex-1 rounded-lg border-2 border-emerald-700 bg-emerald-500 px-4 py-2.5 text-sm font-black text-white shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] disabled:cursor-not-allowed disabled:opacity-60"
+                disabled={exportingPdf}
+              >
+                {exportingPdf ? 'Preparing PDF...' : 'Download'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Single blurred editor with Left/Right tabs */}
       <div className="w-full max-w-[1400px] diary-container overflow-hidden flex-1">

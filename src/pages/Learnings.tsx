@@ -1,4 +1,4 @@
-import { Clock, Calendar, ArrowLeft, FolderOpen, FileText, BookOpen, Code, Code2, FileImage, Plus, Github, Menu, X, Home, LogOut, Eye, Edit, Trash2, ListTodo, ChevronRight } from "lucide-react";
+import { Clock, Calendar, ArrowLeft, FolderOpen, FileText, BookOpen, Code, Code2, FileImage, Plus, Github, X, Home, LogOut, Eye, Edit, Trash2, ListTodo, ChevronRight } from "lucide-react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { API_ENDPOINTS, API_BASE_URL } from "@/config/api";
@@ -98,7 +98,6 @@ export default function LearningsPage() {
   const [dsaProjects, setDsaProjects] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [navigating, setNavigating] = useState(false);
   
   // Search states
@@ -737,15 +736,6 @@ export default function LearningsPage() {
                 <span className="hidden xs:inline">Back to Home</span>
                 <span className="xs:hidden">Back</span>
               </button>
-              
-              {/* Mobile Menu Button */}
-              <button
-                onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-                className="p-2 bg-black text-white rounded-lg border-3 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] transition-all"
-                aria-label="Toggle menu"
-              >
-                {mobileMenuOpen ? <X className="w-5 h-5" strokeWidth={2.5} /> : <Menu className="w-5 h-5" strokeWidth={2.5} />}
-              </button>
             </div>
 
             <div className="mb-4">
@@ -958,181 +948,8 @@ export default function LearningsPage() {
         </div>
       </div>
 
-      {/* Mobile Menu Dropdown */}
-      {mobileMenuOpen && (
-        <div 
-          className="md:hidden fixed inset-0 z-[250] bg-black/50 backdrop-blur-sm animate-fadeIn" 
-          onClick={() => setMobileMenuOpen(false)}
-        >
-          <div 
-            className="absolute top-20 right-4 left-4 bg-white border-4 border-black rounded-2xl shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] overflow-hidden animate-slideDown"
-            onClick={(e) => e.stopPropagation()}
-            style={{
-              animation: 'slideDown 0.3s ease-out forwards'
-            }}
-          >
-            <style>{`
-              @keyframes slideDown {
-                from {
-                  opacity: 0;
-                  transform: translateY(-20px);
-                }
-                to {
-                  opacity: 1;
-                  transform: translateY(0);
-                }
-              }
-              
-              @keyframes fadeIn {
-                from {
-                  opacity: 0;
-                }
-                to {
-                  opacity: 1;
-                }
-              }
-            `}</style>
-            <div className="p-4 space-y-2">
-              {/* Navigation Buttons */}
-              <button
-                onClick={() => {
-                  navigate('/');
-                  setMobileMenuOpen(false);
-                }}
-                className="w-full flex items-center gap-3 px-4 py-3 bg-gray-100 hover:bg-gray-200 border-3 border-black rounded-xl font-bold text-sm transition-all shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:shadow-[3px_3px_0px_0px_rgba(0,0,0,1)]"
-              >
-                <Home className="w-5 h-5" strokeWidth={2.5} />
-                <span>Home</span>
-              </button>
-
-              <div className="h-px bg-gray-300 my-2"></div>
-
-              {/* Tab Buttons */}
-              <button
-                onClick={() => {
-                  changeTab('blogs');
-                  setMobileMenuOpen(false);
-                }}
-                className={`w-full flex items-center gap-3 px-4 py-3 border-3 border-black rounded-xl font-bold text-sm transition-all shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] ${
-                  activeTab === 'blogs' ? 'bg-pink-400 text-white' : 'bg-white hover:bg-pink-50'
-                }`}
-              >
-                <BookOpen className="w-5 h-5" strokeWidth={2.5} />
-                <span>Blogs</span>
-              </button>
-
-              <button
-                onClick={() => {
-                  changeTab('documentation');
-                  setMobileMenuOpen(false);
-                }}
-                className={`w-full flex items-center gap-3 px-4 py-3 border-3 border-black rounded-xl font-bold text-sm transition-all shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] ${
-                  activeTab === 'documentation' ? 'bg-blue-400 text-white' : 'bg-white hover:bg-blue-50'
-                }`}
-              >
-                <FileText className="w-5 h-5" strokeWidth={2.5} />
-                <span>Documentation</span>
-              </button>
-
-              <button
-                onClick={() => {
-                  changeTab('guide');
-                  setMobileMenuOpen(false);
-                }}
-                className={`w-full flex items-center gap-3 px-4 py-3 border-3 border-black rounded-xl font-bold text-sm transition-all shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] ${
-                  activeTab === 'guide' ? 'bg-yellow-400 text-white' : 'bg-white hover:bg-yellow-50'
-                }`}
-              >
-                <BookOpen className="w-5 h-5" strokeWidth={2.5} />
-                <span>Guide</span>
-              </button>
-
-              <button
-                onClick={() => {
-                  changeTab('files');
-                  setMobileMenuOpen(false);
-                }}
-                className={`w-full flex items-center gap-3 px-4 py-3 border-3 border-black rounded-xl font-bold text-sm transition-all shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] ${
-                  activeTab === 'files' ? 'bg-cyan-400 text-white' : 'bg-white hover:bg-cyan-50'
-                }`}
-              >
-                <FolderOpen className="w-5 h-5" strokeWidth={2.5} />
-                <span>Files</span>
-              </button>
-
-              <button
-                onClick={() => {
-                  changeTab('diary');
-                  setMobileMenuOpen(false);
-                }}
-                className={`w-full flex items-center gap-3 px-4 py-3 border-3 border-black rounded-xl font-bold text-sm transition-all shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] ${
-                  activeTab === 'diary' ? 'bg-red-400 text-white' : 'bg-white hover:bg-red-50'
-                }`}
-              >
-                <ListTodo className="w-5 h-5" strokeWidth={2.5} />
-                <span>Diary</span>
-              </button>
-
-              <button
-                onClick={() => {
-                  changeTab('code');
-                  setMobileMenuOpen(false);
-                }}
-                className={`w-full flex items-center gap-3 px-4 py-3 border-3 border-black rounded-xl font-bold text-sm transition-all shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] ${
-                  activeTab === 'code' ? 'bg-orange-400 text-white' : 'bg-white hover:bg-orange-50'
-                }`}
-              >
-                <Code className="w-5 h-5" strokeWidth={2.5} />
-                <span>Code</span>
-              </button>
-
-              <button
-                onClick={() => {
-                  changeTab('diagrams');
-                  setMobileMenuOpen(false);
-                }}
-                className={`w-full flex items-center gap-3 px-4 py-3 border-3 border-black rounded-xl font-bold text-sm transition-all shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] ${
-                  activeTab === 'diagrams' ? 'bg-purple-400 text-white' : 'bg-white hover:bg-purple-50'
-                }`}
-              >
-                <FileImage className="w-5 h-5" strokeWidth={2.5} />
-                <span>Architectures</span>
-              </button>
-
-              <button
-                onClick={() => {
-                  changeTab('projects');
-                  setMobileMenuOpen(false);
-                }}
-                className={`w-full flex items-center gap-3 px-4 py-3 border-3 border-black rounded-xl font-bold text-sm transition-all shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] ${
-                  activeTab === 'projects' ? 'bg-green-400 text-white' : 'bg-white hover:bg-green-50'
-                }`}
-              >
-                <Github className="w-5 h-5" strokeWidth={2.5} />
-                <span>Projects</span>
-              </button>
-
-              <div className="h-px bg-gray-300 my-2"></div>
-
-              {/* Logout Button */}
-              <button
-                onClick={() => {
-                  // Add logout logic here
-                  console.log('Logout clicked');
-                  setMobileMenuOpen(false);
-                }}
-                className="w-full flex items-center gap-3 px-4 py-3 bg-red-500 hover:bg-red-600 text-white border-3 border-black rounded-xl font-bold text-sm transition-all shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:shadow-[3px_3px_0px_0px_rgba(0,0,0,1)]"
-              >
-                <LogOut className="w-5 h-5" strokeWidth={2.5} />
-                <span>Logout</span>
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-
       {/* Scrollable Main Content */}
-      <main className="flex-1 overflow-y-auto bg-transparent p-2 sm:p-3 md:p-4 lg:p-6 relative z-[50] pt-[220px] xs:pt-[230px] sm:pt-[240px] md:pt-[140px] lg:pt-[120px]">
+      <main className="fixed left-0 right-0 bottom-0 top-[220px] xs:top-[230px] sm:top-[240px] md:top-[140px] lg:top-[120px] overflow-y-auto overscroll-contain bg-transparent p-2 sm:p-3 md:p-4 lg:p-6 z-[50]">
         <div className="max-w-7xl mx-auto pt-2 sm:pt-3 md:pt-4">
           {/* Loading State */}
           {loading && (
