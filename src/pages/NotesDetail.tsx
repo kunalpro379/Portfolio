@@ -123,11 +123,6 @@ export default function NotesDetail() {
     try {
       console.log('Loading file:', file.filename, file.fileId);
 
-      // Close sidebar on mobile after selecting file
-      if (!isInitialLoad) {
-        setSidebarOpen(false);
-      }
-
       // For PDFs and other non-text files, just set the file directly
       if (isPdfFile(file.filename) || isPptxFile(file.filename) || !isTextFile(file.filename)) {
         console.log('Setting non-text file directly');
@@ -248,12 +243,13 @@ export default function NotesDetail() {
       <div className="bg-white border-b-4 border-black p-4">
         <div className="flex items-center justify-between gap-3">
           <div className="flex items-center gap-3">
-            {/* Mobile Menu Toggle */}
+            {/* Sidebar Toggle */}
             <button
               onClick={() => setSidebarOpen(!sidebarOpen)}
-              className="md:hidden p-2 hover:bg-gray-100 rounded-lg border-2 border-black"
+              className="p-2 hover:bg-gray-100 rounded-lg border-2 border-black"
+              title={sidebarOpen ? 'Close files sidebar' : 'Open files sidebar'}
             >
-              {sidebarOpen ? <X size={20} strokeWidth={2.5} /> : <Menu size={20} strokeWidth={2.5} />}
+              {sidebarOpen ? <ChevronLeft size={20} strokeWidth={2.5} /> : <ChevronRight size={20} strokeWidth={2.5} />}
             </button>
             
             <button
@@ -321,24 +317,18 @@ export default function NotesDetail() {
         
         {/* Sidebar */}
         <div className={`
-          fixed md:relative inset-y-0 left-0 z-50
-          w-80 md:w-80 bg-white border-r-4 border-black
-          transform transition-transform duration-300 ease-in-out
-          ${sidebarOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}
+          fixed md:relative inset-y-0 left-0 z-50 md:z-auto
+          bg-white border-r-4 border-black overflow-hidden
+          transform transition-[width,transform] duration-300 ease-in-out
+          ${sidebarOpen ? 'w-80 md:w-80 translate-x-0' : 'w-0 md:w-0 -translate-x-full md:translate-x-0'}
           overflow-y-auto
         `}>
-          <div className="p-4">
+          <div className="w-80 p-4">
             <div className="flex items-center justify-between mb-3">
               <div className="flex items-center gap-2">
                 <FolderOpen className="w-4 h-4" strokeWidth={2.5} />
                 <h3 className="font-black text-sm uppercase">Files</h3>
               </div>
-              <button
-                onClick={() => setSidebarOpen(false)}
-                className="md:hidden p-1 hover:bg-gray-100 rounded"
-              >
-                <X size={16} strokeWidth={2.5} />
-              </button>
             </div>
             {renderFolderTree(rootFolder)}
           </div>

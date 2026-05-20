@@ -182,10 +182,7 @@ export default function TodoForm({ isOpen, onClose, onSubmit, initialData, mode 
                 className="w-full px-3 sm:px-4 py-2 sm:py-2.5 text-sm sm:text-base border-[3px] border-black bg-white focus:outline-none focus:shadow-[4px_4px_0px_0px_rgba(0,0,0,0.3)] transition-all font-medium"
                 style={{ borderRadius: '8px 10px 9px 11px' }}
                 required
-                    </form>
-                  </div>
-                </div>
-              );
+              />
               <label className="block text-xs sm:text-sm font-black text-black mb-2">
                 Description
               </label>
