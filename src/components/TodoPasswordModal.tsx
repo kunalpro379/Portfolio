@@ -57,40 +57,37 @@ export default function TodoPasswordModal({ isOpen, onClose, onSuccess, mode }: 
   };
 
   return (
-    <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-[100] p-4">
-      <div 
-        className="bg-white border border-gray-300 rounded-lg max-w-md w-full shadow-2xl"
-      >
-        <form onSubmit={handleSubmit}>
-          {/* Header */}
-          <div className="bg-gradient-to-r from-red-600 to-red-700 border-b border-red-800 p-5 flex items-center justify-between">
+    <div className="fixed inset-0 z-[100]">
+      <button
+        type="button"
+        aria-label="Close password drawer"
+        className="absolute inset-0 bg-slate-950/45 backdrop-blur-sm"
+        onClick={onClose}
+      />
+      <div className="absolute right-0 top-0 h-full w-full max-w-[460px] bg-white shadow-[-24px_0_60px_rgba(15,23,42,0.16)] border-l border-slate-200 flex flex-col">
+        <form onSubmit={handleSubmit} className="h-full flex flex-col">
+          <div className="border-b border-slate-200 px-5 py-4 flex items-start justify-between gap-3 bg-slate-50">
             <div className="flex items-center gap-3">
-              <div className="p-2 bg-white border border-gray-200 rounded-md">
-                <Lock size={20} strokeWidth={2} className="text-red-600" />
+              <div className="p-2 bg-slate-900 text-white rounded-lg">
+                <Lock size={18} strokeWidth={2} />
               </div>
               <div>
-                <h2 className="text-lg font-semibold text-white">
-                  {getTitle()}
-                </h2>
-                <p className="text-sm font-normal text-red-100">
-                  {getDescription()}
-                </p>
+                <h2 className="text-lg font-semibold text-slate-900">{getTitle()}</h2>
+                <p className="text-sm text-slate-500">{getDescription()}</p>
               </div>
             </div>
             <button
               type="button"
               onClick={onClose}
-              className="p-1.5 text-white hover:bg-red-700 rounded transition-all"
+              className="h-10 w-10 flex items-center justify-center rounded-lg border border-slate-200 text-slate-600 hover:bg-slate-100 hover:text-slate-900 transition-colors"
             >
               <X size={18} strokeWidth={2} />
             </button>
           </div>
 
-          {/* Body */}
-          <div className="p-5 space-y-5">
-            {/* Password Input */}
+          <div className="flex-1 overflow-y-auto p-5 space-y-5">
             <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-2">
+              <label className="block text-sm font-semibold text-slate-700 mb-2">
                 Password
               </label>
               <input
@@ -98,7 +95,7 @@ export default function TodoPasswordModal({ isOpen, onClose, onSuccess, mode }: 
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="Enter your password..."
-                className="w-full px-4 py-2.5 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition-all"
+                className="w-full px-4 py-3 border border-slate-200 bg-slate-50 text-slate-900 rounded-xl focus:outline-none focus:border-slate-400 focus:bg-white transition-colors"
                 autoFocus
                 required
               />
@@ -110,19 +107,18 @@ export default function TodoPasswordModal({ isOpen, onClose, onSuccess, mode }: 
               )}
             </div>
 
-            {/* Persistence Option */}
             <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-2">
+              <label className="block text-sm font-semibold text-slate-700 mb-2">
                 Remember Me
               </label>
               <div className="flex gap-3">
                 <button
                   type="button"
                   onClick={() => setPersistFor('day')}
-                  className={`flex-1 px-4 py-2.5 border rounded-md font-medium transition-all ${
+                  className={`flex-1 px-4 py-3 border rounded-xl font-medium transition-colors ${
                     persistFor === 'day'
-                      ? 'bg-red-600 text-white border-red-700'
-                      : 'bg-white border-gray-300 hover:bg-gray-50'
+                      ? 'bg-slate-900 text-white border-slate-900'
+                      : 'bg-white border-slate-200 hover:bg-slate-50 text-slate-700'
                   }`}
                 >
                   For 1 Day
@@ -130,26 +126,25 @@ export default function TodoPasswordModal({ isOpen, onClose, onSuccess, mode }: 
                 <button
                   type="button"
                   onClick={() => setPersistFor('always')}
-                  className={`flex-1 px-4 py-2.5 border rounded-md font-medium transition-all ${
+                  className={`flex-1 px-4 py-3 border rounded-xl font-medium transition-colors ${
                     persistFor === 'always'
-                      ? 'bg-red-600 text-white border-red-700'
-                      : 'bg-white border-gray-300 hover:bg-gray-50'
+                      ? 'bg-slate-900 text-white border-slate-900'
+                      : 'bg-white border-slate-200 hover:bg-slate-50 text-slate-700'
                   }`}
                 >
                   Always
                 </button>
               </div>
-              <p className="text-xs text-gray-500 font-normal mt-2">
+              <p className="text-xs text-slate-500 font-normal mt-2">
                 {persistFor === 'day'
                   ? 'Authentication will expire after 24 hours'
                   : 'You will stay authenticated until you clear browser data'}
               </p>
             </div>
 
-            {/* Security Notice */}
-            <div className="bg-yellow-50 border border-yellow-200 rounded-md p-3">
-              <p className="text-xs font-medium text-gray-700 flex items-start gap-2">
-                <AlertCircle size={14} strokeWidth={2} className="text-yellow-600 flex-shrink-0 mt-0.5" />
+            <div className="bg-slate-50 border border-slate-200 rounded-xl p-3">
+              <p className="text-xs font-medium text-slate-600 flex items-start gap-2">
+                <AlertCircle size={14} strokeWidth={2} className="text-slate-500 flex-shrink-0 mt-0.5" />
                 <span>
                   This is a private section. Only authorized users can access and modify todos.
                 </span>
@@ -157,18 +152,17 @@ export default function TodoPasswordModal({ isOpen, onClose, onSuccess, mode }: 
             </div>
           </div>
 
-          {/* Footer */}
-          <div className="border-t border-gray-200 p-5 bg-gray-50 flex gap-3">
+          <div className="border-t border-slate-200 p-5 bg-white flex gap-3">
             <button
               type="button"
               onClick={onClose}
-              className="flex-1 px-5 py-2.5 bg-white border border-gray-300 rounded-md font-medium hover:bg-gray-100 transition-all shadow-md"
+              className="flex-1 px-5 py-3 bg-white border border-slate-200 rounded-xl font-medium text-slate-700 hover:bg-slate-50 transition-colors"
             >
               Cancel
             </button>
             <button
               type="submit"
-              className="flex-1 px-5 py-2.5 bg-gradient-to-r from-red-600 to-red-700 text-white border border-red-800 rounded-md font-medium hover:from-red-700 hover:to-red-800 transition-all shadow-md hover:shadow-lg flex items-center justify-center gap-2"
+              className="flex-1 px-5 py-3 bg-slate-900 text-white border border-slate-900 rounded-xl font-medium hover:bg-slate-800 transition-colors flex items-center justify-center gap-2"
             >
               <Lock size={16} strokeWidth={2} />
               Unlock

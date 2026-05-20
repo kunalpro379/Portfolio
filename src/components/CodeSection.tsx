@@ -239,35 +239,45 @@ export default function CodeSection() {
 
   if (loading && activeTab === 'local' && currentPath) {
     return (
-      <div className="bg-white soft-card p-6">
+      <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
         <div className="flex items-center justify-center py-12">
           <img src="/loading.gif" alt="Loading" className="w-10 h-10 object-contain" />
-          <span className="ml-3 font-medium text-gray-800">Loading code files</span>
+          <span className="ml-3 font-medium text-slate-700">Loading code files</span>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 text-slate-900">
       {/* Header */}
-      <div className="text-center">
-        <h2 className="text-3xl lg:text-4xl font-black text-black mb-4" style={{ fontFamily: 'Comic Sans MS, cursive' }}>
-          Code Repository
-        </h2>
-        <p className="text-gray-600 font-medium max-w-2xl mx-auto">
-          Explore my code projects and snippets organized in a clean directory structure
-        </p>
+      <div className="rounded-2xl border border-slate-200 bg-white/90 px-5 py-5 shadow-sm backdrop-blur md:px-6">
+        <div className="flex flex-col gap-2 md:flex-row md:items-end md:justify-between">
+          <div>
+            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-400">My Files</p>
+            <h2 className="mt-2 text-2xl font-semibold tracking-tight text-slate-900 md:text-4xl">
+              Code Repository
+            </h2>
+            <p className="mt-2 max-w-2xl text-sm leading-6 text-slate-500 md:text-base">
+              Explore code folders, files, and GitHub repositories in a cleaner, more structured workspace.
+            </p>
+          </div>
+          <div className="flex flex-wrap items-center gap-2 text-xs font-semibold text-slate-500">
+            <span className="rounded-full border border-slate-200 bg-slate-50 px-3 py-1">Folders</span>
+            <span className="rounded-full border border-slate-200 bg-slate-50 px-3 py-1">Files</span>
+            <span className="rounded-full border border-slate-200 bg-slate-50 px-3 py-1">GitHub</span>
+          </div>
+        </div>
       </div>
 
       {/* Tab Navigation */}
-      <div className="flex justify-center gap-2 mb-6">
+      <div className="mb-6 flex justify-start gap-2 overflow-x-auto pb-1">
         <button
           onClick={() => setActiveTab('local')}
-          className={`px-4 py-2 rounded-lg font-bold text-sm transition ${
+          className={`rounded-xl border px-4 py-2 text-sm font-semibold transition-colors ${
             activeTab === 'local'
-              ? 'bg-blue-200 soft-btn'
-              : 'bg-white hover:bg-gray-50 soft-btn'
+              ? 'border-slate-900 bg-slate-900 text-white'
+              : 'border-slate-200 bg-white text-slate-700 hover:bg-slate-50'
           }`}
         >
           <Code2 className="w-4 h-4 inline mr-2" strokeWidth={2.5} />
@@ -275,10 +285,10 @@ export default function CodeSection() {
         </button>
         <button
           onClick={() => setActiveTab('github')}
-          className={`px-4 py-2 rounded-lg font-bold text-sm transition ${
+          className={`rounded-xl border px-4 py-2 text-sm font-semibold transition-colors ${
             activeTab === 'github'
-              ? 'bg-blue-200 soft-btn'
-              : 'bg-white hover:bg-gray-50 soft-btn'
+              ? 'border-slate-900 bg-slate-900 text-white'
+              : 'border-slate-200 bg-white text-slate-700 hover:bg-slate-50'
           }`}
         >
           <Github className="w-4 h-4 inline mr-2" strokeWidth={2.5} />
@@ -291,11 +301,11 @@ export default function CodeSection() {
         <>
           {/* Breadcrumbs */}
           {currentPath && (
-            <div className="bg-white soft-card p-4">
+            <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
               <div className="flex items-center gap-2 flex-wrap">
                 <button
                   onClick={() => setCurrentPath('')}
-                  className="px-3 py-1 bg-gray-100 border-2 border-black rounded-lg font-bold text-sm hover:bg-gray-200 transition"
+                  className="rounded-full border border-slate-200 bg-slate-100 px-3 py-1.5 text-sm font-semibold text-slate-700 transition-colors hover:bg-slate-200"
                 >
                   Root
                 </button>
@@ -307,7 +317,7 @@ export default function CodeSection() {
                         const path = getBreadcrumbs().slice(0, index + 1).join('/');
                         setCurrentPath(path);
                       }}
-                      className="px-3 py-1 bg-gray-100 border-2 border-black rounded-lg font-bold text-sm hover:bg-gray-200 transition"
+                      className="rounded-full border border-slate-200 bg-slate-100 px-3 py-1.5 text-sm font-semibold text-slate-700 transition-colors hover:bg-slate-200"
                     >
                       {part}
                     </button>
@@ -319,9 +329,9 @@ export default function CodeSection() {
 
           {/* Folders */}
           {folders.length > 0 && (
-            <div className="bg-white soft-card p-6">
-              <h3 className="text-xl font-black text-black mb-4 flex items-center gap-2">
-                <Folder className="w-6 h-6" strokeWidth={2.5} />
+            <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+              <h3 className="mb-4 flex items-center gap-2 text-lg font-semibold text-slate-900">
+                <Folder className="w-5 h-5 text-slate-500" strokeWidth={2.5} />
                 Folders
               </h3>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -329,12 +339,12 @@ export default function CodeSection() {
                   <button
                     key={folder._id}
                     onClick={() => setCurrentPath(folder.path)}
-                    className="flex items-center gap-3 p-4 bg-yellow-50 border-2 border-black rounded-lg hover:bg-yellow-100 transition shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[-1px] hover:translate-y-[-1px]"
+                    className="flex items-center gap-3 rounded-2xl border border-slate-200 bg-slate-50 p-4 text-left transition-colors hover:border-slate-300 hover:bg-white"
                   >
-                    <Folder className="w-8 h-8 text-black flex-shrink-0" strokeWidth={2.5} />
+                    <Folder className="w-8 h-8 flex-shrink-0 text-slate-600" strokeWidth={2.5} />
                     <div className="text-left flex-1 min-w-0">
-                      <h4 className="font-black text-black text-sm truncate">{folder.name}</h4>
-                      <p className="text-xs text-gray-600 font-medium">
+                      <h4 className="truncate text-sm font-semibold text-slate-900">{folder.name}</h4>
+                      <p className="text-xs font-medium text-slate-500">
                         {new Date(folder.createdAt).toLocaleDateString()}
                       </p>
                     </div>
@@ -346,29 +356,29 @@ export default function CodeSection() {
 
           {/* Files */}
           {files.length > 0 && (
-            <div className="bg-white soft-card p-6">
-              <h3 className="text-xl font-black text-black mb-4 flex items-center gap-2">
-                <Code2 className="w-6 h-6" strokeWidth={2.5} />
+            <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+              <h3 className="mb-4 flex items-center gap-2 text-lg font-semibold text-slate-900">
+                <Code2 className="w-5 h-5 text-slate-500" strokeWidth={2.5} />
                 Code Files ({files.length})
               </h3>
               <div className="space-y-3">
                 {files.map((file) => (
                   <div
                     key={file._id}
-                    className="flex items-center justify-between p-4 bg-white border border-gray-200 rounded-lg soft-card transition"
+                    className="flex items-center justify-between rounded-2xl border border-slate-200 bg-white p-4 transition-colors hover:border-slate-300 hover:bg-slate-50"
                   >
                     <div className="flex items-center gap-3 flex-1 min-w-0">
-                      <File className="w-5 h-5 text-black flex-shrink-0" strokeWidth={2.5} />
+                      <File className="w-5 h-5 flex-shrink-0 text-slate-600" strokeWidth={2.5} />
                       <div className="flex-1 min-w-0">
-                        <h4 className="font-bold text-black text-sm truncate">{file.filename}</h4>
+                        <h4 className="truncate text-sm font-semibold text-slate-900">{file.filename}</h4>
                         <div className="flex items-center gap-2 mt-1">
-                          <span className={`px-2 py-0.5 text-xs font-bold border-2 rounded ${getLanguageColor(file.language)}`}>
+                          <span className={`rounded-full border px-2 py-0.5 text-xs font-semibold ${getLanguageColor(file.language)}`}>
                             {file.language}
                           </span>
-                          <span className="text-xs text-gray-600 font-medium">
+                          <span className="text-xs font-medium text-slate-500">
                             {formatFileSize(file.size)}
                           </span>
-                          <span className="text-xs text-gray-600 font-medium">
+                          <span className="text-xs font-medium text-slate-500">
                             {new Date(file.updatedAt).toLocaleDateString()}
                           </span>
                         </div>
@@ -376,10 +386,10 @@ export default function CodeSection() {
                     </div>
                     <button
                       onClick={() => viewFile(file)}
-                      className="p-2 bg-blue-100 rounded-lg hover:bg-blue-200 transition soft-btn"
+                      className="rounded-xl border border-slate-200 bg-slate-50 p-2 text-slate-700 transition-colors hover:bg-slate-100"
                       title="View code"
                     >
-                      <ExternalLink className="w-4 h-4 text-black" strokeWidth={2.5} />
+                      <ExternalLink className="w-4 h-4" strokeWidth={2.5} />
                     </button>
                   </div>
                 ))}
@@ -389,10 +399,10 @@ export default function CodeSection() {
 
           {/* Empty State */}
           {folders.length === 0 && files.length === 0 && !loading && (
-            <div className="bg-white soft-card p-12 text-center">
-              <Code2 className="w-16 h-16 text-gray-400 mx-auto mb-4" strokeWidth={2} />
-              <h3 className="text-xl font-bold text-gray-900 mb-2">No Code Files Yet</h3>
-              <p className="text-gray-600 font-medium">
+            <div className="rounded-2xl border border-dashed border-slate-200 bg-white p-12 text-center shadow-sm">
+              <Code2 className="mx-auto mb-4 h-16 w-16 text-slate-300" strokeWidth={2} />
+              <h3 className="mb-2 text-xl font-semibold text-slate-900">No Code Files Yet</h3>
+              <p className="font-medium text-slate-500">
                 {currentPath ? 'This folder is empty' : 'Start by creating some folders and uploading code files'}
               </p>
             </div>
@@ -405,26 +415,26 @@ export default function CodeSection() {
             /* GitHub Repository Browser */
             <div className="space-y-4">
               {/* Repository Header */}
-              <div className="bg-white border-2 border-black rounded-xl p-4 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+              <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-3">
                     <button
                       onClick={() => setSelectedRepo(null)}
-                      className="p-2 bg-gray-100 border-2 border-black rounded-lg hover:bg-gray-200 transition"
+                      className="rounded-xl border border-slate-200 bg-slate-50 p-2 text-slate-700 transition-colors hover:bg-slate-100"
                     >
                       ←
                     </button>
                     <Github className="w-6 h-6" strokeWidth={2.5} />
                     <div>
-                      <h3 className="text-lg font-black text-black">{selectedRepo.fullName}</h3>
-                      <p className="text-sm text-gray-600 font-medium">{selectedRepo.description}</p>
+                      <h3 className="text-lg font-semibold text-slate-900">{selectedRepo.fullName}</h3>
+                      <p className="text-sm font-medium text-slate-500">{selectedRepo.description}</p>
                     </div>
                   </div>
                   <a
                     href={selectedRepo.url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="p-2 bg-blue-100 border-2 border-black rounded-lg hover:bg-blue-200 transition"
+                    className="rounded-xl border border-slate-200 bg-slate-50 p-2 text-slate-700 transition-colors hover:bg-slate-100"
                     title="Open on GitHub"
                   >
                     <ExternalLink className="w-4 h-4" strokeWidth={2.5} />
@@ -433,11 +443,11 @@ export default function CodeSection() {
               </div>
 
               {/* GitHub Breadcrumbs */}
-              <div className="bg-white border-2 border-black rounded-xl p-4 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
+              <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
                 <div className="flex items-center gap-2 flex-wrap">
                   <button
                     onClick={() => setGithubPath('')}
-                    className="px-3 py-1 bg-gray-100 border-2 border-black rounded-lg font-bold text-sm hover:bg-gray-200 transition"
+                    className="rounded-full border border-slate-200 bg-slate-100 px-3 py-1.5 text-sm font-semibold text-slate-700 transition-colors hover:bg-slate-200"
                   >
                     Root
                   </button>
@@ -460,39 +470,39 @@ export default function CodeSection() {
 
               {/* GitHub Content */}
               {githubLoading ? (
-                <div className="bg-white border-2 border-black rounded-xl p-8 text-center shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+                <div className="rounded-2xl border border-slate-200 bg-white p-8 text-center shadow-sm">
                   <img src="/loading.gif" alt="Loading" className="w-12 h-12 object-contain mx-auto mb-4" />
-                  <p className="font-bold text-black">Loading repository content</p>
+                  <p className="font-semibold text-slate-900">Loading repository content</p>
                 </div>
               ) : (
-                <div className="bg-white border-2 border-black rounded-xl p-6 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+                <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
                   {githubItems.length === 0 ? (
                     <div className="text-center py-8">
-                      <Folder className="w-12 h-12 text-gray-400 mx-auto mb-4" strokeWidth={2} />
-                      <p className="text-gray-600 font-medium">This folder is empty</p>
+                      <Folder className="mx-auto mb-4 h-12 w-12 text-slate-300" strokeWidth={2} />
+                      <p className="font-medium text-slate-500">This folder is empty</p>
                     </div>
                   ) : (
                     <div className="space-y-3">
                       {githubItems.map((item) => (
                         <div
                           key={item.path}
-                          className="flex items-center justify-between p-3 border-2 border-black rounded-lg hover:bg-gray-50 transition"
+                          className="flex items-center justify-between rounded-2xl border border-slate-200 bg-white p-3 transition-colors hover:border-slate-300 hover:bg-slate-50"
                         >
                           <div className="flex items-center gap-3 flex-1 min-w-0">
                             {item.type === 'dir' ? (
-                              <Folder className="w-5 h-5 text-blue-600 flex-shrink-0" strokeWidth={2.5} />
+                              <Folder className="w-5 h-5 flex-shrink-0 text-slate-600" strokeWidth={2.5} />
                             ) : (
-                              <File className="w-5 h-5 text-gray-600 flex-shrink-0" strokeWidth={2.5} />
+                              <File className="w-5 h-5 flex-shrink-0 text-slate-600" strokeWidth={2.5} />
                             )}
                             <div className="flex-1 min-w-0">
-                              <h4 className="font-bold text-black text-sm truncate">{item.name}</h4>
+                              <h4 className="truncate text-sm font-semibold text-slate-900">{item.name}</h4>
                               {item.type === 'file' && (
                                 <div className="flex items-center gap-2 mt-1">
-                                  <span className={`px-2 py-0.5 text-xs font-bold border-2 rounded ${getLanguageColor(getLanguageFromExtension(item.name))}`}>
+                                  <span className={`rounded-full border px-2 py-0.5 text-xs font-semibold ${getLanguageColor(getLanguageFromExtension(item.name))}`}>
                                     {getLanguageFromExtension(item.name)}
                                   </span>
                                   {item.size && (
-                                    <span className="text-xs text-gray-600 font-medium">
+                                    <span className="text-xs font-medium text-slate-500">
                                       {formatFileSize(item.size)}
                                     </span>
                                   )}
@@ -508,7 +518,7 @@ export default function CodeSection() {
                                 fetchGithubFile(item.path);
                               }
                             }}
-                            className="p-2 bg-blue-100 border-2 border-black rounded-lg hover:bg-blue-200 transition"
+                            className="rounded-xl border border-slate-200 bg-slate-50 p-2 text-slate-700 transition-colors hover:bg-slate-100"
                             title={item.type === 'dir' ? 'Open folder' : 'View file'}
                           >
                             {item.type === 'dir' ? (
@@ -530,43 +540,43 @@ export default function CodeSection() {
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
                   <Github className="w-6 h-6" strokeWidth={2.5} />
-                  <h3 className="text-xl font-black text-black">GitHub Repositories</h3>
+                  <h3 className="text-xl font-semibold text-slate-900">GitHub Repositories</h3>
                 </div>
               </div>
 
               {githubLoading ? (
-                <div className="bg-white border-2 border-black rounded-xl p-8 text-center shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+                <div className="rounded-2xl border border-slate-200 bg-white p-8 text-center shadow-sm">
                   <img src="/loading.gif" alt="Loading" className="w-10 h-10 object-contain mx-auto mb-4" />
-                  <p className="font-bold text-black">Loading repositories</p>
+                  <p className="font-semibold text-slate-900">Loading repositories</p>
                 </div>
               ) : githubRepos.length === 0 ? (
-                <div className="bg-white border-2 border-black rounded-xl p-8 text-center shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
-                  <Github className="w-12 h-12 text-gray-400 mx-auto mb-4" strokeWidth={2} />
-                  <h4 className="text-lg font-black text-black mb-2">No GitHub Repositories</h4>
-                  <p className="text-gray-600 font-medium">Repositories will be added by the admin</p>
+                <div className="rounded-2xl border border-slate-200 bg-white p-8 text-center shadow-sm">
+                  <Github className="mx-auto mb-4 h-12 w-12 text-slate-300" strokeWidth={2} />
+                  <h4 className="mb-2 text-lg font-semibold text-slate-900">No GitHub Repositories</h4>
+                  <p className="font-medium text-slate-500">Repositories will be added by the admin</p>
                 </div>
               ) : (
                 <div className="space-y-3">
                   {githubRepos.map((repo) => (
                     <div
                       key={repo._id}
-                      className="bg-white border-2 border-black rounded-xl p-4 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[-1px] hover:translate-y-[-1px] transition"
+                      className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm transition-colors hover:border-slate-300 hover:bg-slate-50"
                     >
                       <div className="flex items-center justify-between">
                         <div className="flex-1 min-w-0">
                           <div className="flex items-center gap-2 mb-2">
                             <Github className="w-5 h-5 flex-shrink-0" strokeWidth={2.5} />
-                            <h4 className="font-black text-black truncate">{repo.fullName}</h4>
+                            <h4 className="truncate font-semibold text-slate-900">{repo.fullName}</h4>
                             {repo.isPrivate && (
-                              <span className="px-2 py-0.5 bg-red-100 border border-red-300 rounded text-xs font-bold text-red-800">
+                              <span className="rounded-full border border-red-200 bg-red-50 px-2 py-0.5 text-xs font-semibold text-red-700">
                                 Private
                               </span>
                             )}
                           </div>
                           {repo.description && (
-                            <p className="text-sm text-gray-600 font-medium mb-2">{repo.description}</p>
+                            <p className="mb-2 text-sm font-medium text-slate-500">{repo.description}</p>
                           )}
-                          <div className="flex items-center gap-4 text-xs text-gray-500">
+                          <div className="flex items-center gap-4 text-xs text-slate-400">
                             <span>Branch: {repo.defaultBranch}</span>
                             <span>Added: {new Date(repo.createdAt).toLocaleDateString()}</span>
                           </div>
@@ -574,7 +584,7 @@ export default function CodeSection() {
                         <div className="flex items-center gap-2 ml-4">
                           <button
                             onClick={() => setSelectedRepo(repo)}
-                            className="p-2 bg-blue-100 border-2 border-black rounded-lg hover:bg-blue-200 transition"
+                            className="rounded-xl border border-slate-200 bg-slate-50 p-2 text-slate-700 transition-colors hover:bg-slate-100"
                             title="Browse Repository"
                           >
                             <Folder className="w-4 h-4" strokeWidth={2.5} />
@@ -583,7 +593,7 @@ export default function CodeSection() {
                             href={repo.url}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="p-2 bg-gray-100 border-2 border-black rounded-lg hover:bg-gray-200 transition"
+                            className="rounded-xl border border-slate-200 bg-slate-50 p-2 text-slate-700 transition-colors hover:bg-slate-100"
                             title="Open on GitHub"
                           >
                             <ExternalLink className="w-4 h-4" strokeWidth={2.5} />
@@ -602,31 +612,31 @@ export default function CodeSection() {
       {/* File Viewer Modal */}
       {selectedFile && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white border-2 border-black rounded-xl w-full max-w-4xl max-h-[80vh] flex flex-col shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
+          <div className="bg-white border border-slate-200 rounded-2xl w-full max-w-4xl max-h-[80vh] flex flex-col shadow-2xl overflow-hidden">
             {/* Header */}
-            <div className="flex items-center justify-between p-4 border-b-2 border-black">
+            <div className="flex items-center justify-between p-4 border-b border-slate-200">
               <div>
-                <h3 className="text-lg font-black text-black">{selectedFile.filename}</h3>
+                <h3 className="text-lg font-semibold text-slate-900">{selectedFile.filename}</h3>
                 <div className="flex items-center gap-2 mt-1">
-                  <span className={`px-2 py-0.5 text-xs font-bold border-2 rounded ${getLanguageColor(selectedFile.language)}`}>
+                  <span className={`rounded-full border px-2 py-0.5 text-xs font-semibold ${getLanguageColor(selectedFile.language)}`}>
                     {selectedFile.language}
                   </span>
-                  <span className="text-xs text-gray-600 font-medium">
+                  <span className="text-xs font-medium text-slate-500">
                     {formatFileSize(selectedFile.size)}
                   </span>
                 </div>
               </div>
               <button
                 onClick={() => setSelectedFile(null)}
-                className="p-2 bg-red-100 border-2 border-black rounded-lg hover:bg-red-200 transition"
+                className="rounded-xl border border-slate-200 bg-slate-50 p-2 text-slate-700 transition-colors hover:bg-slate-100"
               >
                 ✕
               </button>
             </div>
 
             {/* Code Content */}
-            <div className="flex-1 overflow-auto p-4">
-              <pre className="bg-gray-900 text-green-400 p-4 rounded-lg border-2 border-black text-sm font-mono overflow-auto">
+            <div className="flex-1 overflow-auto bg-slate-950 p-4">
+              <pre className="overflow-auto rounded-xl border border-slate-800 bg-slate-950 p-4 text-sm font-mono text-emerald-300">
                 <code>{selectedFile.content}</code>
               </pre>
             </div>
@@ -637,37 +647,37 @@ export default function CodeSection() {
       {/* GitHub File Viewer Modal */}
       {selectedGithubFile && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white border-2 border-black rounded-xl w-full max-w-6xl max-h-[90vh] flex flex-col shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
+          <div className="bg-white border border-slate-200 rounded-2xl w-full max-w-6xl max-h-[90vh] flex flex-col shadow-2xl overflow-hidden">
             {/* Header */}
-            <div className="flex items-center justify-between p-4 border-b-2 border-black">
+            <div className="flex items-center justify-between p-4 border-b border-slate-200">
               <div>
-                <h3 className="text-lg font-black text-black">{selectedGithubFile.name}</h3>
+                <h3 className="text-lg font-semibold text-slate-900">{selectedGithubFile.name}</h3>
                 <div className="flex items-center gap-2 mt-1">
-                  <span className={`px-2 py-0.5 text-xs font-bold border-2 rounded ${getLanguageColor(getLanguageFromExtension(selectedGithubFile.name))}`}>
+                  <span className={`rounded-full border px-2 py-0.5 text-xs font-semibold ${getLanguageColor(getLanguageFromExtension(selectedGithubFile.name))}`}>
                     {getLanguageFromExtension(selectedGithubFile.name)}
                   </span>
-                  <span className="text-xs text-gray-600 font-medium">
+                  <span className="text-xs font-medium text-slate-500">
                     {formatFileSize(selectedGithubFile.size)}
                   </span>
                 </div>
               </div>
               <button
                 onClick={() => setSelectedGithubFile(null)}
-                className="p-2 bg-red-100 border-2 border-black rounded-lg hover:bg-red-200 transition"
+                className="rounded-xl border border-slate-200 bg-slate-50 p-2 text-slate-700 transition-colors hover:bg-slate-100"
               >
                 ✕
               </button>
             </div>
 
             {/* File Content */}
-            <div className="flex-1 overflow-auto p-4">
+            <div className="flex-1 overflow-auto bg-slate-950 p-4">
               {githubLoading ? (
                 <div className="flex items-center justify-center py-12">
                   <img src="/loading.gif" alt="Loading" className="w-10 h-10 object-contain" />
-                  <span className="ml-3 font-bold text-black">Loading file content</span>
+                  <span className="ml-3 font-semibold text-slate-900">Loading file content</span>
                 </div>
               ) : (
-                <pre className="bg-gray-900 text-green-400 p-4 rounded-lg border-2 border-black text-sm font-mono overflow-auto whitespace-pre-wrap">
+                <pre className="overflow-auto whitespace-pre-wrap rounded-xl border border-slate-800 bg-slate-950 p-4 text-sm font-mono text-emerald-300">
                   <code>{selectedGithubFile.content}</code>
                 </pre>
               )}

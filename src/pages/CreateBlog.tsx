@@ -25,10 +25,10 @@ const blogEndpoints = {
 };
 
 const sectionClass =
-  'rounded-none border border-gray-200 bg-white/90 backdrop-blur-md shadow-[0_8px_24px_rgba(15,23,42,0.06)]';
+  'border border-slate-200 bg-white';
 
 const inputClass =
-  'w-full rounded-none border border-gray-200 bg-white px-4 py-3 text-sm font-medium text-black placeholder:text-black/40 focus:border-gray-400 focus:outline-none';
+  'w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm font-medium text-slate-900 placeholder:text-slate-400 focus:border-slate-400 focus:bg-white focus:outline-none transition-colors';
 
 export default function CreateBlog() {
   const { blogId: routeBlogId } = useParams();
@@ -211,20 +211,23 @@ export default function CreateBlog() {
   };
 
   return (
-    <div className="relative z-10 h-[calc(100vh-1rem)] px-3 py-3 md:px-8 md:py-6">
-      <div className="mx-auto flex h-full max-w-7xl flex-col gap-6">
-        <div className={`${sectionClass} p-4 md:p-6 shrink-0`}>
-          <div className="flex flex-col items-start justify-between gap-4 md:flex-row md:items-center">
+    <div className="relative z-10 h-screen overflow-hidden bg-[radial-gradient(circle_at_top,#f8fafc_0%,#eef2ff_45%,#f8fafc_100%)] text-slate-900">
+      <div className="absolute inset-0 opacity-50" style={{ backgroundImage: 'linear-gradient(rgba(148,163,184,0.08) 1px, transparent 1px), linear-gradient(90deg, rgba(148,163,184,0.08) 1px, transparent 1px)', backgroundSize: '28px 28px' }} />
+
+      <div className="relative z-10 flex h-full flex-col gap-3 px-3 py-3 md:px-6 md:py-5">
+        <header className="shrink-0 border border-slate-200 bg-white/90 px-4 py-4 shadow-sm backdrop-blur md:px-6">
+          <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
             <div>
-              <h1 className="text-2xl font-semibold tracking-tight text-black md:text-3xl">Create New Blog</h1>
-              <p className="mt-1 text-sm text-gray-600">
-                Blog ID: <span className="font-semibold text-black">{createdBlogId || 'Auto-generated on save'}</span>
+              <h1 className="text-2xl font-semibold tracking-tight text-slate-900 md:text-3xl">Create New Blog</h1>
+              <p className="mt-1 text-sm text-slate-500">
+                Blog ID: <span className="font-semibold text-slate-900">{createdBlogId || 'Auto-generated on save'}</span>
               </p>
             </div>
-            <div className="flex w-full gap-3 md:w-auto">
+
+            <div className="flex w-full gap-3 lg:w-auto">
               <button
                 onClick={() => navigate('/learnings?tab=blogs')}
-                className="flex flex-1 items-center justify-center gap-2 rounded-none border border-gray-200 bg-white px-4 py-2.5 text-sm font-semibold text-black transition hover:bg-gray-50 md:flex-none"
+                className="flex flex-1 items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-semibold text-slate-700 transition-colors hover:bg-slate-50 lg:flex-none"
               >
                 <X className="h-4 w-4" strokeWidth={2} />
                 Cancel
@@ -232,249 +235,253 @@ export default function CreateBlog() {
               <button
                 onClick={handleSave}
                 disabled={loading}
-                className="flex flex-1 items-center justify-center gap-2 rounded-none border border-black bg-black px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-black/90 disabled:cursor-not-allowed disabled:opacity-60 md:flex-none"
+                className="flex flex-1 items-center justify-center gap-2 rounded-xl border border-slate-900 bg-slate-900 px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-slate-800 disabled:cursor-not-allowed disabled:opacity-60 lg:flex-none"
               >
                 <Save className="h-4 w-4" strokeWidth={2} />
                 {loading ? 'Saving...' : 'Save Blog'}
               </button>
             </div>
           </div>
+        </header>
+
+        <div className="lg:hidden border border-slate-200 bg-white/90 p-1 shadow-sm backdrop-blur">
+          <div className="grid grid-cols-2 gap-1">
+            <button
+              type="button"
+              onClick={() => setActiveTab('metadata')}
+              className={`rounded-lg px-4 py-2.5 text-sm font-semibold transition-colors ${activeTab === 'metadata' ? 'bg-slate-900 text-white' : 'bg-white text-slate-700 hover:bg-slate-50'}`}
+            >
+              METADATA
+            </button>
+            <button
+              type="button"
+              onClick={() => setActiveTab('markdown')}
+              className={`rounded-lg px-4 py-2.5 text-sm font-semibold transition-colors ${activeTab === 'markdown' ? 'bg-slate-900 text-white' : 'bg-white text-slate-700 hover:bg-slate-50'}`}
+            >
+              MARKDOWN
+            </button>
+          </div>
         </div>
 
-        <div className="grid min-h-0 flex-1 grid-cols-1 gap-6 lg:grid-cols-12">
-          <div className="min-h-0 space-y-6 overflow-y-auto pr-1 lg:col-span-8">
-            <div className={`${sectionClass} p-2`}>
-              <div className="grid grid-cols-2 gap-2">
-                <button
-                  onClick={() => setActiveTab('metadata')}
-                  className={`rounded-none px-4 py-2.5 text-sm font-semibold transition ${
-                    activeTab === 'metadata'
-                      ? 'bg-black text-white'
-                      : 'bg-white text-black hover:bg-gray-50'
-                  }`}
-                >
-                  METADATA
-                </button>
-                <button
-                  onClick={() => setActiveTab('markdown')}
-                  className={`rounded-none px-4 py-2.5 text-sm font-semibold transition ${
-                    activeTab === 'markdown'
-                      ? 'bg-black text-white'
-                      : 'bg-white text-black hover:bg-gray-50'
-                  }`}
-                >
-                  MARKDOWN
-                </button>
-              </div>
-            </div>
-
-            {activeTab === 'metadata' && (
-              <>
-                <div className={`${sectionClass} p-4 md:p-6`}>
-                  <h2 className="text-lg font-semibold text-black md:text-xl">Basic Information</h2>
-                  <div className="mt-5 space-y-4">
-                    <div>
-                      <label className="mb-2 block text-xs font-semibold uppercase tracking-wide text-black/70">Title *</label>
-                      <input type="text" value={title} onChange={(e) => setTitle(e.target.value)} className={inputClass} placeholder="Enter blog title" />
-                    </div>
-
-                    <div>
-                      <label className="mb-2 block text-xs font-semibold uppercase tracking-wide text-black/70">Tagline</label>
-                      <input type="text" value={tagline} onChange={(e) => setTagline(e.target.value)} className={inputClass} placeholder="Short catchy tagline" />
-                    </div>
-
-                    <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-                      <div>
-                        <label className="mb-2 block text-xs font-semibold uppercase tracking-wide text-black/70">Subject</label>
-                        <input type="text" value={subject} onChange={(e) => setSubject(e.target.value)} className={inputClass} placeholder="e.g., DevOps, React" />
-                      </div>
-                      <div>
-                        <label className="mb-2 block text-xs font-semibold uppercase tracking-wide text-black/70">Date</label>
-                        <input type="date" value={datetime} onChange={(e) => setDatetime(e.target.value)} className={inputClass} />
-                      </div>
-                    </div>
-
-                    <div>
-                      <label className="mb-2 block text-xs font-semibold uppercase tracking-wide text-black/70">Short Description</label>
-                      <textarea value={shortDescription} onChange={(e) => setShortDescription(e.target.value)} rows={3} className={`${inputClass} resize-none`} placeholder="Brief description for preview" />
-                    </div>
-
-                    <div>
-                      <label className="mb-2 block text-xs font-semibold uppercase tracking-wide text-black/70">Tags</label>
-                      <input type="text" value={tags} onChange={(e) => setTags(e.target.value)} className={inputClass} placeholder="AWS, VPC, Networking (comma separated)" />
-                    </div>
-
-                    <div>
-                      <label className="mb-2 block text-xs font-semibold uppercase tracking-wide text-black/70">Footer</label>
-                      <input type="text" value={footer} onChange={(e) => setFooter(e.target.value)} className={inputClass} placeholder="Footer text" />
-                    </div>
-                  </div>
+        <div className="grid min-h-0 flex-1 gap-3 lg:grid-cols-[minmax(360px,420px)_minmax(0,1fr)]">
+          <aside className={`min-h-0 overflow-y-auto pr-1 ${activeTab === 'markdown' ? 'hidden lg:block' : ''}`}>
+            <div className="space-y-3">
+              <section className={`${sectionClass} p-5 md:p-6`}>
+                <div className="flex items-center justify-between gap-3 border-b border-slate-100 pb-3">
+                  <h2 className="text-lg font-semibold text-slate-900 md:text-xl">Basic Information</h2>
+                  <span className="text-[11px] font-semibold uppercase tracking-[0.2em] text-slate-400">Metadata</span>
                 </div>
 
-                <div className={`${sectionClass} p-4 md:p-6`}>
-                  <div className="mb-5 flex flex-col items-start justify-between gap-3 sm:flex-row sm:items-center">
-                    <h2 className="text-lg font-semibold text-black md:text-xl">Blog Links</h2>
-                      <button
-                        onClick={addBlogLink}
-                        className="inline-flex items-center gap-2 rounded-none border border-gray-200 bg-white px-3 py-2 text-sm font-semibold text-black transition hover:bg-gray-50"
-                      >
-                      <LinkIcon className="h-4 w-4" strokeWidth={2} />
-                      Add Link
-                    </button>
-                  </div>
-
-                  <div className="space-y-3">
-                    {blogLinks.map((link, index) => (
-                      <div key={index} className="grid grid-cols-1 gap-3 md:grid-cols-[1fr_1fr_auto]">
-                        <input
-                          type="text"
-                          value={link.platform}
-                          onChange={(e) => updateBlogLink(index, 'platform', e.target.value)}
-                          className={inputClass}
-                          placeholder="Platform (e.g., Medium, Dev.to)"
-                        />
-                        <input
-                          type="url"
-                          value={link.url}
-                          onChange={(e) => updateBlogLink(index, 'url', e.target.value)}
-                          className={inputClass}
-                          placeholder="URL"
-                        />
-                        {blogLinks.length > 1 && (
-                          <button
-                            onClick={() => removeBlogLink(index)}
-                            className="inline-flex items-center justify-center rounded-none border border-gray-200 bg-white px-3 py-2 text-black transition hover:bg-gray-50"
-                          >
-                            <Trash2 className="h-4 w-4" strokeWidth={2} />
-                          </button>
-                        )}
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </>
-            )}
-
-            {activeTab === 'markdown' && (
-              <div className={`${sectionClass} p-4 md:p-6`}>
-                <div className="flex items-center justify-between gap-3">
+                <div className="mt-5 space-y-4">
                   <div>
-                    <h2 className="text-lg font-semibold text-black md:text-xl">Content Editor</h2>
-                    <p className="mt-1 text-sm text-black/60">Write clean markdown with live preview.</p>
+                    <label className="mb-2 block text-xs font-semibold uppercase tracking-[0.16em] text-slate-500">Title *</label>
+                    <input type="text" value={title} onChange={(e) => setTitle(e.target.value)} className={inputClass} placeholder="Enter blog title" />
                   </div>
+
+                  <div>
+                    <label className="mb-2 block text-xs font-semibold uppercase tracking-[0.16em] text-slate-500">Tagline</label>
+                    <input type="text" value={tagline} onChange={(e) => setTagline(e.target.value)} className={inputClass} placeholder="Short catchy tagline" />
+                  </div>
+
+                  <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+                    <div>
+                      <label className="mb-2 block text-xs font-semibold uppercase tracking-[0.16em] text-slate-500">Subject</label>
+                      <input type="text" value={subject} onChange={(e) => setSubject(e.target.value)} className={inputClass} placeholder="e.g., DevOps, React" />
+                    </div>
+                    <div>
+                      <label className="mb-2 block text-xs font-semibold uppercase tracking-[0.16em] text-slate-500">Date</label>
+                      <input type="date" value={datetime} onChange={(e) => setDatetime(e.target.value)} className={inputClass} />
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="mb-2 block text-xs font-semibold uppercase tracking-[0.16em] text-slate-500">Short Description</label>
+                    <textarea value={shortDescription} onChange={(e) => setShortDescription(e.target.value)} rows={3} className={`${inputClass} resize-none`} placeholder="Brief description for preview" />
+                  </div>
+
+                  <div>
+                    <label className="mb-2 block text-xs font-semibold uppercase tracking-[0.16em] text-slate-500">Tags</label>
+                    <input type="text" value={tags} onChange={(e) => setTags(e.target.value)} className={inputClass} placeholder="AWS, VPC, Networking (comma separated)" />
+                  </div>
+
+                  <div>
+                    <label className="mb-2 block text-xs font-semibold uppercase tracking-[0.16em] text-slate-500">Footer</label>
+                    <input type="text" value={footer} onChange={(e) => setFooter(e.target.value)} className={inputClass} placeholder="Footer text" />
+                  </div>
+                </div>
+              </section>
+
+              <section className={`${sectionClass} p-5 md:p-6`}>
+                <div className="mb-5 flex items-center justify-between gap-3 border-b border-slate-100 pb-3">
+                  <h2 className="text-lg font-semibold text-slate-900 md:text-xl">Blog Links</h2>
                   <button
                     type="button"
-                    onClick={() => setIsMarkdownFullscreen(true)}
-                    className="inline-flex items-center gap-2 rounded-none border border-gray-200 bg-white px-3 py-2 text-sm font-semibold text-black transition hover:bg-gray-50"
+                    onClick={addBlogLink}
+                    className="inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm font-semibold text-slate-700 transition-colors hover:bg-slate-50"
                   >
-                    <Maximize2 className="h-4 w-4" />
-                    Full Screen
+                    <LinkIcon className="h-4 w-4" strokeWidth={2} />
+                    Add Link
                   </button>
                 </div>
-                  <div className="mt-4 overflow-hidden rounded-none border border-gray-200 bg-white shadow-[inset_0_1px_4px_rgba(0,0,0,0.05)]">
-                  <div data-color-mode="light" className="bg-white">
-                    <MDEditor
-                      value={mdContent}
-                      onChange={(val) => setMdContent(val || '')}
-                      height={620}
-                      preview="live"
-                      textareaProps={{ placeholder: 'Start writing your blog content here...' }}
-                    />
+
+                <div className="space-y-3">
+                  {blogLinks.map((link, index) => (
+                    <div key={index} className="grid grid-cols-1 gap-3 md:grid-cols-[1fr_1fr_auto]">
+                      <input
+                        type="text"
+                        value={link.platform}
+                        onChange={(e) => updateBlogLink(index, 'platform', e.target.value)}
+                        className={inputClass}
+                        placeholder="Platform (e.g., Medium, Dev.to)"
+                      />
+                      <input
+                        type="url"
+                        value={link.url}
+                        onChange={(e) => updateBlogLink(index, 'url', e.target.value)}
+                        className={inputClass}
+                        placeholder="URL"
+                      />
+                      {blogLinks.length > 1 && (
+                        <button
+                          type="button"
+                          onClick={() => removeBlogLink(index)}
+                          className="inline-flex items-center justify-center rounded-xl border border-slate-200 bg-white px-3 py-2 text-slate-700 transition-colors hover:bg-slate-50"
+                        >
+                          <Trash2 className="h-4 w-4" strokeWidth={2} />
+                        </button>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              </section>
+
+              <section className={`${sectionClass} p-5 md:p-6`}>
+                <div className="flex items-center justify-between gap-3 border-b border-slate-100 pb-3">
+                  <h2 className="text-lg font-semibold text-slate-900 md:text-xl">Cover Image</h2>
+                  <span className="text-[11px] font-semibold uppercase tracking-[0.2em] text-slate-400">Preview</span>
+                </div>
+                <label className="mt-4 block">
+                  <div className="w-full cursor-pointer rounded-xl border border-slate-200 bg-white px-4 py-3 text-center text-sm font-semibold text-slate-700 transition-colors hover:bg-slate-50">
+                    Choose Cover
                   </div>
-                </div>
-                <p className="mt-3 text-xs text-black/60">Tip: Reference assets using their asset name in markdown.</p>
-              </div>
-            )}
-          </div>
+                  <input
+                    type="file"
+                    onChange={(e) => e.target.files && handleCoverChange(e.target.files[0])}
+                    className="hidden"
+                    accept="image/*"
+                  />
+                </label>
 
-          <div className="min-h-0 space-y-6 overflow-y-auto pr-1 lg:col-span-4">
-            <div className={`${sectionClass} p-5 md:p-6`}>
-              <h2 className="text-lg font-semibold text-black md:text-xl">Cover Image</h2>
-              <label className="mt-4 block">
-                <div className="w-full cursor-pointer rounded-none border border-gray-200 bg-white px-4 py-3 text-center text-sm font-semibold text-black transition hover:bg-gray-50">
-                  Choose Cover
-                </div>
-                <input
-                  type="file"
-                  onChange={(e) => e.target.files && handleCoverChange(e.target.files[0])}
-                  className="hidden"
-                  accept="image/*"
-                />
-              </label>
+                {coverPreview && (
+                  <div className="mt-4">
+                    <img src={coverPreview} alt="Cover" className="h-44 w-full rounded-xl border border-slate-200 object-cover" />
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setCoverImage(null);
+                        setCoverPreview('');
+                      }}
+                      className="mt-2 w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm font-medium text-slate-700 transition-colors hover:bg-slate-50"
+                    >
+                      Remove
+                    </button>
+                  </div>
+                )}
+              </section>
 
-              {coverPreview && (
-                <div className="mt-4">
-                  <img src={coverPreview} alt="Cover" className="h-44 w-full rounded-none border border-gray-200 object-cover" />
+              <section className={`${sectionClass} p-5 md:p-6`}>
+                <div className="mb-4 flex items-center justify-between gap-3 border-b border-slate-100 pb-3">
+                  <h2 className="text-lg font-semibold text-slate-900 md:text-xl">Assets</h2>
                   <button
-                    onClick={() => {
-                      setCoverImage(null);
-                      setCoverPreview('');
-                    }}
-                    className="mt-2 w-full rounded-none border border-gray-200 bg-white px-3 py-2 text-sm font-medium text-black transition hover:bg-gray-50"
+                    type="button"
+                    onClick={addAsset}
+                    className="inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm font-semibold text-slate-700 transition-colors hover:bg-slate-50"
                   >
-                    Remove
+                    <Upload className="h-4 w-4" strokeWidth={2} />
+                    Add
                   </button>
                 </div>
-              )}
-            </div>
 
-            <div className={`${sectionClass} p-4 md:p-6`}>
-              <div className="mb-4 flex items-center justify-between">
-                <h2 className="text-lg font-semibold text-black md:text-xl">Assets</h2>
+                <div className="space-y-3">
+                  {assets.length === 0 ? (
+                    <p className="rounded-xl border border-dashed border-slate-200 bg-slate-50 py-8 text-center text-sm text-slate-500">No assets yet</p>
+                  ) : (
+                    assets.map((asset) => (
+                      <div key={asset.id} className="space-y-3 rounded-xl border border-slate-200 bg-white p-4">
+                        <label className="block">
+                          <div className="w-full cursor-pointer rounded-xl border border-slate-200 bg-white px-3 py-2 text-center text-xs font-semibold text-slate-700 transition-colors hover:bg-slate-50">
+                            Choose File
+                          </div>
+                          <input
+                            type="file"
+                            onChange={(e) => e.target.files && handleFileChange(asset.id, e.target.files[0])}
+                            className="hidden"
+                            accept="image/*"
+                          />
+                        </label>
+
+                        {asset.preview && (
+                          <img src={asset.preview} alt="Preview" className="h-28 w-full rounded-xl border border-slate-200 object-cover" />
+                        )}
+
+                        <input type="text" value={asset.filename} readOnly className={`${inputClass} bg-slate-100`} placeholder="Filename" />
+
+                        <input
+                          type="text"
+                          value={asset.assetName}
+                          onChange={(e) => updateAsset(asset.id, 'assetName', e.target.value)}
+                          className={inputClass}
+                          placeholder="Asset name (e.g., diagram-1)"
+                        />
+
+                        <button
+                          type="button"
+                          onClick={() => removeAsset(asset.id)}
+                          className="inline-flex w-full items-center justify-center gap-1 rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs font-semibold text-slate-700 transition-colors hover:bg-slate-50"
+                        >
+                          <Trash2 className="h-3.5 w-3.5" strokeWidth={2} />
+                          Remove
+                        </button>
+                      </div>
+                    ))
+                  )}
+                </div>
+              </section>
+            </div>
+          </aside>
+
+          <section className={`min-h-0 overflow-y-auto pr-1 ${activeTab === 'metadata' ? 'hidden lg:block' : ''}`}>
+            <div className={`${sectionClass} flex min-h-full flex-col p-5 md:p-6`}>
+              <div className="flex items-start justify-between gap-3 border-b border-slate-100 pb-3">
+                <div>
+                  <h2 className="text-lg font-semibold text-slate-900 md:text-xl">Content Editor</h2>
+                  <p className="mt-1 text-sm text-slate-500">Write clean markdown with live preview.</p>
+                </div>
                 <button
-                  onClick={addAsset}
-                  className="inline-flex items-center gap-2 rounded-none border border-gray-200 bg-white px-3 py-2 text-sm font-semibold text-black transition hover:bg-gray-50"
+                  type="button"
+                  onClick={() => setIsMarkdownFullscreen(true)}
+                  className="inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm font-semibold text-slate-700 transition-colors hover:bg-slate-50"
                 >
-                  <Upload className="h-4 w-4" strokeWidth={2} />
-                  Add
+                  <Maximize2 className="h-4 w-4" />
+                  Full Screen
                 </button>
               </div>
 
-              <div className="max-h-[58vh] space-y-3 overflow-y-auto pr-1">
-                {assets.length === 0 ? (
-                  <p className="rounded-none border border-dashed border-gray-200 bg-white/80 py-8 text-center text-sm text-gray-500">No assets yet</p>
-                ) : (
-                  assets.map((asset) => (
-                    <div key={asset.id} className="space-y-2 rounded-none border border-gray-200 bg-white p-3">
-                      <label className="block">
-                        <div className="w-full cursor-pointer rounded-none border border-gray-200 bg-white px-3 py-2 text-center text-xs font-semibold text-black transition hover:bg-gray-50">
-                          Choose File
-                        </div>
-                        <input
-                          type="file"
-                          onChange={(e) => e.target.files && handleFileChange(asset.id, e.target.files[0])}
-                          className="hidden"
-                          accept="image/*"
-                        />
-                      </label>
-
-                      {asset.preview && (
-                        <img src={asset.preview} alt="Preview" className="h-24 w-full rounded-lg border border-black/10 object-cover" />
-                      )}
-
-                      <input type="text" value={asset.filename} readOnly className={`${inputClass} bg-gray-50`} placeholder="Filename" />
-
-                      <input
-                        type="text"
-                        value={asset.assetName}
-                        onChange={(e) => updateAsset(asset.id, 'assetName', e.target.value)}
-                        className={inputClass}
-                        placeholder="Asset name (e.g., diagram-1)"
-                      />
-
-                      <button
-                        onClick={() => removeAsset(asset.id)}
-                        className="inline-flex w-full items-center justify-center gap-1 rounded-none border border-gray-200 bg-white px-3 py-2 text-xs font-semibold text-black transition hover:bg-gray-50"
-                      >
-                        <Trash2 className="h-3.5 w-3.5" strokeWidth={2} />
-                        Remove
-                      </button>
-                    </div>
-                  ))
-                )}
+              <div className="mt-4 flex min-h-0 flex-1 flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white">
+                <div data-color-mode="light" className="min-h-0 flex-1 bg-white">
+                  <MDEditor
+                    value={mdContent}
+                    onChange={(val) => setMdContent(val || '')}
+                    height={Math.max(680, window.innerHeight - 280)}
+                    preview="live"
+                    textareaProps={{ placeholder: 'Start writing your blog content here...' }}
+                  />
+                </div>
               </div>
+
+              <p className="mt-3 text-xs text-slate-500">Tip: Reference assets using their asset name in markdown.</p>
             </div>
-          </div>
+          </section>
         </div>
       </div>
 

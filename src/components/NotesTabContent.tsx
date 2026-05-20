@@ -679,84 +679,106 @@ export default function NotesTabContent({ notes, activeSubTab: propActiveSubTab 
         mode={todoFormMode}
       />
 
-      {/* Create Guide Modal */}
+      {/* Create Guide Drawer */}
       {showCreateGuideModal && (
-        <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-[500] p-4" onClick={() => setShowCreateGuideModal(false)}>
-          <div className="bg-white border border-gray-200 rounded-lg p-8 max-w-2xl w-full shadow-xl" onClick={(e) => e.stopPropagation()}>
-            <h2 className="text-2xl font-bold text-black mb-6">Create New Guide</h2>
-            
-            <form onSubmit={handleGuideFormSubmit} className="space-y-5">
+        <div className="fixed inset-0 z-[500]">
+          <button
+            type="button"
+            aria-label="Close create guide drawer"
+            className="absolute inset-0 bg-slate-950/45 backdrop-blur-sm"
+            onClick={() => setShowCreateGuideModal(false)}
+          />
+          <div className="absolute right-0 top-0 h-full w-full max-w-[620px] bg-white shadow-[-24px_0_60px_rgba(15,23,42,0.16)] border-l border-slate-200 flex flex-col">
+            <div className="flex items-start justify-between gap-4 border-b border-slate-200 px-6 py-5">
               <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-2">
-                  Guide Name <span className="text-red-500">*</span>
-                </label>
-                <input
-                  type="text"
-                  value={guideFormData.name}
-                  onChange={(e) => setGuideFormData({ ...guideFormData, name: e.target.value })}
-                  className="w-full px-4 py-2.5 border border-gray-300 rounded-md font-normal text-gray-900 focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent transition-all"
-                  placeholder="e.g., React Best Practices"
-                  required
-                  autoFocus
-                />
+                <p className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-500 mb-1">Guides</p>
+                <h2 className="text-2xl font-semibold tracking-tight text-slate-900">Create New Guide</h2>
+              </div>
+              <button
+                type="button"
+                onClick={() => setShowCreateGuideModal(false)}
+                className="h-10 w-10 flex items-center justify-center rounded-lg border border-slate-200 text-slate-600 hover:bg-slate-100 hover:text-slate-900 transition-colors"
+              >
+                <X size={18} strokeWidth={2.5} />
+              </button>
+            </div>
+
+            <form onSubmit={handleGuideFormSubmit} className="flex-1 min-h-0 flex flex-col">
+              <div className="flex-1 overflow-y-auto px-6 py-6 space-y-5">
+                <div>
+                  <label className="block text-xs font-semibold uppercase tracking-[0.16em] text-slate-500 mb-2">
+                    Guide Name <span className="text-red-500">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    value={guideFormData.name}
+                    onChange={(e) => setGuideFormData({ ...guideFormData, name: e.target.value })}
+                    className="w-full px-4 py-3 border border-slate-200 bg-slate-50 text-slate-900 rounded-xl font-medium focus:outline-none focus:border-slate-400 focus:bg-white transition-colors"
+                    placeholder="e.g., React Best Practices"
+                    required
+                    autoFocus
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-xs font-semibold uppercase tracking-[0.16em] text-slate-500 mb-2">
+                    Topic <span className="text-red-500">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    value={guideFormData.topic}
+                    onChange={(e) => setGuideFormData({ ...guideFormData, topic: e.target.value })}
+                    className="w-full px-4 py-3 border border-slate-200 bg-slate-50 text-slate-900 rounded-xl font-medium focus:outline-none focus:border-slate-400 focus:bg-white transition-colors"
+                    placeholder="e.g., Web Development"
+                    required
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-xs font-semibold uppercase tracking-[0.16em] text-slate-500 mb-2">
+                    Description
+                  </label>
+                  <textarea
+                    value={guideFormData.description}
+                    onChange={(e) => setGuideFormData({ ...guideFormData, description: e.target.value })}
+                    className="w-full px-4 py-3 border border-slate-200 bg-slate-50 text-slate-900 rounded-xl font-medium focus:outline-none focus:border-slate-400 focus:bg-white transition-colors resize-none min-h-[140px]"
+                    placeholder="Brief description of your guide..."
+                    rows={5}
+                  />
+                </div>
               </div>
 
-              <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-2">
-                  Topic <span className="text-red-500">*</span>
-                </label>
-                <input
-                  type="text"
-                  value={guideFormData.topic}
-                  onChange={(e) => setGuideFormData({ ...guideFormData, topic: e.target.value })}
-                  className="w-full px-4 py-2.5 border border-gray-300 rounded-md font-normal text-gray-900 focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent transition-all"
-                  placeholder="e.g., Web Development"
-                  required
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-2">
-                  Description
-                </label>
-                <textarea
-                  value={guideFormData.description}
-                  onChange={(e) => setGuideFormData({ ...guideFormData, description: e.target.value })}
-                  className="w-full px-4 py-2.5 border border-gray-300 rounded-md font-normal text-gray-900 focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent transition-all resize-none"
-                  placeholder="Brief description of your guide..."
-                  rows={4}
-                />
-              </div>
-
-              <div className="flex gap-3 pt-4">
-                <button
-                  type="button"
-                  onClick={() => {
-                    setShowCreateGuideModal(false);
-                    setGuideFormData({ name: '', topic: '', description: '' });
-                  }}
-                  disabled={creatingGuide}
-                  className="flex-1 px-6 py-2.5 bg-white border border-gray-300 rounded-md font-semibold text-gray-700 hover:bg-gray-50 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  disabled={creatingGuide}
-                  className="flex-1 px-6 py-2.5 bg-black border border-black rounded-md font-semibold text-white hover:bg-gray-900 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
-                >
-                  {creatingGuide ? (
-                    <>
-                      <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                      <span>Creating...</span>
-                    </>
-                  ) : (
-                    <>
-                      <Plus size={18} strokeWidth={2} />
-                      <span>Create Guide</span>
-                    </>
-                  )}
-                </button>
+              <div className="border-t border-slate-200 bg-white px-6 py-4">
+                <div className="flex gap-3">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setShowCreateGuideModal(false);
+                      setGuideFormData({ name: '', topic: '', description: '' });
+                    }}
+                    disabled={creatingGuide}
+                    className="flex-1 px-5 py-3 bg-white border border-slate-200 rounded-xl font-semibold text-slate-700 hover:bg-slate-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="submit"
+                    disabled={creatingGuide}
+                    className="flex-1 px-5 py-3 bg-slate-900 border border-slate-900 rounded-xl font-semibold text-white hover:bg-slate-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                  >
+                    {creatingGuide ? (
+                      <>
+                        <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                        <span>Creating...</span>
+                      </>
+                    ) : (
+                      <>
+                        <Plus size={18} strokeWidth={2} />
+                        <span>Create Guide</span>
+                      </>
+                    )}
+                  </button>
+                </div>
               </div>
             </form>
           </div>

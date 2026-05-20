@@ -222,13 +222,13 @@ export default function DocumentationDetail() {
                     }
                 }
             `}</style>
-            <div className="h-screen flex flex-col bg-gray-50">
+            <div className="h-screen flex flex-col bg-slate-100 text-slate-900">
                 {/* Header - Fixed on mobile */}
-                <div className={`bg-white border-b-4 border-black p-4 md:p-6 sticky top-0 z-50 lg:relative ${isFullscreen ? 'hidden' : ''}`}>
-                <div className="max-w-[1800px] mx-auto flex items-center justify-between">
+                <div className={`bg-white/95 backdrop-blur border-b border-slate-200 px-4 py-3 md:px-6 md:py-4 sticky top-0 z-50 lg:relative shadow-sm ${isFullscreen ? 'hidden' : ''}`}>
+                <div className="max-w-[1800px] mx-auto flex items-center justify-between gap-3">
                     <button
                         onClick={() => navigate('/learnings?tab=documentation')}
-                        className="flex items-center gap-2 text-gray-600 hover:text-black font-bold text-sm md:text-base"
+                        className="flex items-center gap-2 text-slate-600 hover:text-slate-900 font-semibold text-sm md:text-base transition-colors"
                     >
                         <ArrowLeft className="w-4 h-4 md:w-5 md:h-5" strokeWidth={2.5} />
                         <span className="hidden sm:inline">Back to Learnings</span>
@@ -237,7 +237,7 @@ export default function DocumentationDetail() {
                     {/* Mobile Menu Button */}
                     <button
                         onClick={() => setShowMobileSidebar(!showMobileSidebar)}
-                        className="lg:hidden p-2 bg-black text-white rounded-lg border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]"
+                        className="lg:hidden p-2 bg-slate-900 text-white rounded-lg border border-slate-900 shadow-sm"
                     >
                         <Menu className="w-6 h-6" />
                     </button>
@@ -248,43 +248,43 @@ export default function DocumentationDetail() {
             <div className="flex-1 flex flex-col lg:flex-row lg:overflow-hidden relative">
                 {/* File Sidebar */}
                 <div className={`
-                    w-full lg:w-80 bg-white lg:border-r-4 border-black overflow-y-auto
+                    w-full lg:w-80 bg-white border-r border-slate-200 overflow-y-auto shadow-[6px_0_24px_rgba(15,23,42,0.06)]
                     lg:relative fixed inset-0 z-40
                     transform transition-transform duration-300 ease-in-out
                     ${showMobileSidebar ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
                 `}>
                     {/* Close Button - Mobile Only */}
-                    <div className="lg:hidden sticky top-0 bg-white border-b-4 border-black p-4 flex items-center justify-between z-10">
-                        <h3 className="font-black text-lg">Files</h3>
+                    <div className="lg:hidden sticky top-0 bg-white border-b border-slate-200 px-4 py-3 flex items-center justify-between z-10">
+                        <h3 className="font-bold text-lg text-slate-900">Files</h3>
                         <button
                             onClick={() => setShowMobileSidebar(false)}
-                            className="p-2 bg-black text-white rounded-lg border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]"
+                            className="p-2 bg-slate-900 text-white rounded-lg border border-slate-900 shadow-sm"
                         >
                             <X className="w-5 h-5" />
                         </button>
                     </div>
                     
-                    <div className="p-4 space-y-6">
+                    <div className="p-4 space-y-5">
                         {/* Document Info */}
-                        <div className="bg-blue-50 border-3 border-black rounded-xl p-4">
-                            <h2 className="text-2xl font-black mb-3">{formData.title}</h2>
+                        <div className="bg-slate-50 border border-slate-200 rounded-2xl p-4 shadow-sm">
+                            <h2 className="text-xl font-semibold tracking-tight text-slate-900 mb-3 leading-tight">{formData.title}</h2>
 
                             {formData.subject && (
                                 <div className="mb-3">
-                                    <span className="px-3 py-1 bg-blue-200 border-2 border-black rounded-lg text-sm font-bold">
+                                    <span className="inline-flex px-3 py-1 bg-slate-200 text-slate-800 border border-slate-300 rounded-full text-xs font-semibold uppercase tracking-wide">
                                         {formData.subject}
                                     </span>
                                 </div>
                             )}
 
                             {formData.description && (
-                                <p className="text-sm text-gray-700 mb-3 font-medium">{formData.description}</p>
+                                <p className="text-sm text-slate-600 mb-3 leading-6">{formData.description}</p>
                             )}
 
                             {formData.tags && (
                                 <div className="flex flex-wrap gap-2 mb-3">
                                     {formData.tags.split(',').map((tag, i) => (
-                                        <span key={i} className="px-2 py-1 text-xs bg-gray-100 border-2 border-black rounded font-bold">
+                                        <span key={i} className="px-2.5 py-1 text-[11px] bg-white border border-slate-200 text-slate-600 rounded-full font-medium">
                                             {tag.trim()}
                                         </span>
                                     ))}
@@ -292,7 +292,7 @@ export default function DocumentationDetail() {
                             )}
 
                             {(formData.date || formData.time) && (
-                                <div className="text-xs text-gray-600 font-medium space-y-1">
+                                <div className="text-xs text-slate-500 space-y-1">
                                     {formData.date && <div>Date: {formData.date}</div>}
                                     {formData.time && <div>Time: {formData.time}</div>}
                                 </div>
@@ -302,14 +302,14 @@ export default function DocumentationDetail() {
                         {/* Markdown Files */}
                         <div>
                             <div className="flex items-center gap-2 mb-2">
-                                <FileText className="w-4 h-4" strokeWidth={2.5} />
-                                <h3 className="font-black text-sm uppercase">Markdown</h3>
+                                <FileText className="w-4 h-4 text-slate-600" strokeWidth={2.5} />
+                                <h3 className="font-semibold text-xs uppercase tracking-[0.18em] text-slate-500">Markdown</h3>
                             </div>
                             <div className="space-y-1">
                                 {markdownFiles.map(file => (
                                     <div
                                         key={file.fileId}
-                                        className={`flex items-center justify-between p-2 rounded cursor-pointer ${currentFile?.fileId === file.fileId ? 'bg-blue-100 border-2 border-black' : 'hover:bg-gray-100'
+                                        className={`flex items-center justify-between px-3 py-2 rounded-lg cursor-pointer border transition-colors ${currentFile?.fileId === file.fileId ? 'bg-slate-900 border-slate-900 text-white shadow-sm' : 'bg-white border-transparent hover:border-slate-200 hover:bg-slate-50 text-slate-700'
                                             }`}
                                         onClick={() => loadFile(file)}
                                     >
@@ -317,7 +317,7 @@ export default function DocumentationDetail() {
                                     </div>
                                 ))}
                                 {markdownFiles.length === 0 && (
-                                    <p className="text-xs text-gray-500 p-2">No markdown files</p>
+                                    <p className="text-xs text-slate-500 p-2">No markdown files</p>
                                 )}
                             </div>
                         </div>
@@ -325,14 +325,14 @@ export default function DocumentationDetail() {
                         {/* Diagram Files */}
                         <div>
                             <div className="flex items-center gap-2 mb-2">
-                                <Pen className="w-4 h-4" strokeWidth={2.5} />
-                                <h3 className="font-black text-sm uppercase">Diagrams</h3>
+                                <Pen className="w-4 h-4 text-slate-600" strokeWidth={2.5} />
+                                <h3 className="font-semibold text-xs uppercase tracking-[0.18em] text-slate-500">Diagrams</h3>
                             </div>
                             <div className="space-y-1">
                                 {diagramFiles.map(file => (
                                     <div
                                         key={file.fileId}
-                                        className={`flex items-center justify-between p-2 rounded cursor-pointer ${currentFile?.fileId === file.fileId ? 'bg-green-100 border-2 border-black' : 'hover:bg-gray-100'
+                                        className={`flex items-center justify-between px-3 py-2 rounded-lg cursor-pointer border transition-colors ${currentFile?.fileId === file.fileId ? 'bg-slate-900 border-slate-900 text-white shadow-sm' : 'bg-white border-transparent hover:border-slate-200 hover:bg-slate-50 text-slate-700'
                                             }`}
                                         onClick={() => loadFile(file)}
                                     >
@@ -340,7 +340,7 @@ export default function DocumentationDetail() {
                                     </div>
                                 ))}
                                 {diagramFiles.length === 0 && (
-                                    <p className="text-xs text-gray-500 p-2">No diagram files</p>
+                                    <p className="text-xs text-slate-500 p-2">No diagram files</p>
                                 )}
                             </div>
                         </div>
@@ -348,8 +348,8 @@ export default function DocumentationDetail() {
                         {/* Attachments */}
                         <div>
                             <div className="flex items-center gap-2 mb-2">
-                                <Folder className="w-4 h-4" strokeWidth={2.5} />
-                                <h3 className="font-black text-sm uppercase">Attachments</h3>
+                                <Folder className="w-4 h-4 text-slate-600" strokeWidth={2.5} />
+                                <h3 className="font-semibold text-xs uppercase tracking-[0.18em] text-slate-500">Attachments</h3>
                             </div>
                             <div className="space-y-1">
                                 {attachmentFiles.map(file => (
@@ -358,14 +358,14 @@ export default function DocumentationDetail() {
                                         href={file.azureUrl}
                                         target="_blank"
                                         rel="noopener noreferrer"
-                                        className="flex items-center justify-between p-2 rounded hover:bg-gray-100 group"
+                                        className="flex items-center justify-between px-3 py-2 rounded-lg border border-transparent hover:border-slate-200 hover:bg-slate-50 group text-slate-700 transition-colors"
                                     >
                                         <span className="text-sm font-medium truncate flex-1">{file.name}</span>
-                                        <Download className="w-4 h-4 opacity-0 group-hover:opacity-100 transition" strokeWidth={2.5} />
+                                        <Download className="w-4 h-4 opacity-0 group-hover:opacity-100 transition text-slate-500" strokeWidth={2.5} />
                                     </a>
                                 ))}
                                 {attachmentFiles.length === 0 && (
-                                    <p className="text-xs text-gray-500 p-2">No attachments</p>
+                                    <p className="text-xs text-slate-500 p-2">No attachments</p>
                                 )}
                             </div>
                         </div>
@@ -383,26 +383,26 @@ export default function DocumentationDetail() {
                 {/* Content Area */}
                 <div className="w-full lg:flex-1 flex flex-col flex-1 lg:min-h-0 lg:overflow-hidden min-h-0">
                     {/* Title and Subject - Mobile Only */}
-                    <div className="lg:hidden bg-white border-b-4 border-black p-4">
-                        <div className="bg-blue-50 border-3 border-black rounded-xl p-4">
-                            <h2 className="text-xl font-black mb-3">{formData.title}</h2>
+                    <div className="lg:hidden bg-white border-b border-slate-200 p-4 shadow-sm">
+                        <div className="bg-slate-50 border border-slate-200 rounded-2xl p-4 shadow-sm">
+                            <h2 className="text-xl font-semibold tracking-tight text-slate-900 mb-3">{formData.title}</h2>
 
                             {formData.subject && (
                                 <div className="mb-3">
-                                    <span className="px-3 py-1 bg-blue-200 border-2 border-black rounded-lg text-sm font-bold">
+                                    <span className="inline-flex px-3 py-1 bg-slate-200 text-slate-800 border border-slate-300 rounded-full text-xs font-semibold uppercase tracking-wide">
                                         {formData.subject}
                                     </span>
                                 </div>
                             )}
 
                             {formData.description && (
-                                <p className="text-sm text-gray-700 mb-3 font-medium">{formData.description}</p>
+                                <p className="text-sm text-slate-600 mb-3 leading-6">{formData.description}</p>
                             )}
 
                             {formData.tags && (
                                 <div className="flex flex-wrap gap-2 mb-3">
                                     {formData.tags.split(',').map((tag, i) => (
-                                        <span key={i} className="px-2 py-1 text-xs bg-gray-100 border-2 border-black rounded font-bold">
+                                        <span key={i} className="px-2.5 py-1 text-[11px] bg-white border border-slate-200 text-slate-600 rounded-full font-medium">
                                             {tag.trim()}
                                         </span>
                                     ))}
@@ -410,7 +410,7 @@ export default function DocumentationDetail() {
                             )}
 
                             {(formData.date || formData.time) && (
-                                <div className="text-xs text-gray-600 font-medium space-y-1">
+                                <div className="text-xs text-slate-500 space-y-1">
                                     {formData.date && <div>Date: {formData.date}</div>}
                                     {formData.time && <div>Time: {formData.time}</div>}
                                 </div>
@@ -476,13 +476,13 @@ export default function DocumentationDetail() {
                             ) : (
                                 // Normal mode
                                 <>
-                                    <div className="flex items-center justify-between p-4 bg-white border-b-4 border-black">
-                                        <h2 className="font-black text-lg truncate flex-1 mr-2">{currentFile.name}</h2>
+                                    <div className="flex items-center justify-between px-4 py-3 bg-white border-b border-slate-200 shadow-sm">
+                                        <h2 className="font-semibold text-base md:text-lg truncate flex-1 mr-2 text-slate-900">{currentFile.name}</h2>
                                         {/* Fullscreen button for diagrams - available on all screens */}
                                         {activeTab === 'diagram' && (
                                             <button
                                                 onClick={() => setIsFullscreen(true)}
-                                                className="p-2 bg-black text-white rounded-lg border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:bg-gray-800 transition-colors flex-shrink-0"
+                                                className="p-2 bg-slate-900 text-white rounded-lg border border-slate-900 shadow-sm hover:bg-slate-800 transition-colors flex-shrink-0"
                                                 aria-label="Enter fullscreen"
                                             >
                                                 <Maximize2 className="w-5 h-5" />
@@ -498,7 +498,7 @@ export default function DocumentationDetail() {
                                         ) : (
                                             <>
                                                 {activeTab === 'markdown' && (
-                                                    <div className="reader-markdown w-full h-full overflow-auto p-6 bg-white" data-color-mode="light">
+                                                    <div className="reader-markdown w-full h-full overflow-auto px-5 py-6 md:px-8 md:py-10 bg-white" data-color-mode="light">
                                                         <ReactMarkdown
                                                             remarkPlugins={[remarkGfm, remarkMath]}
                                                             rehypePlugins={[rehypeKatex]}

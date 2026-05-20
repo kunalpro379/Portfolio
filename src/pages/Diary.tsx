@@ -408,19 +408,7 @@ export default function DiaryPage() {
     execCommand('insertHTML', '<hr />');
   }
 
-  function clearCurrentPage() {
-    const editor = activeSide === 'left' ? leftEditorRef.current : rightEditorRef.current;
-    const confirmMessage = activeSide === 'left'
-      ? 'Clear the left page for this date?'
-      : 'Clear the right page for this date?';
-
-    if (!window.confirm(confirmMessage)) return;
-
-    if (editor) {
-      editor.innerHTML = '';
-      updateContentFromEditor(activeSide);
-    }
-  }
+  function clearCurrentPage() {}
 
   function handleEditorInput(side: EditorSide) {
     updateContentFromEditor(side);

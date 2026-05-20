@@ -125,25 +125,22 @@ export default function TodoForm({ isOpen, onClose, onSubmit, initialData, mode 
   };
 
   return (
-    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-2 sm:p-4 overflow-hidden">
+    <div className="fixed inset-0 z-50 overflow-hidden">
+      <button
+        type="button"
+        aria-label="Close task drawer"
+        className="absolute inset-0 bg-slate-950/45 backdrop-blur-sm"
+        onClick={onClose}
+      />
       <style>{`
         .hide-scrollbar::-webkit-scrollbar { display: none; }
         .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
       `}</style>
-      <div 
-        className="bg-gradient-to-br from-[#FFF8E7] to-white border-[3px] border-black w-full max-w-2xl max-h-[95vh] sm:max-h-[90vh] overflow-y-auto shadow-[8px_8px_0px_0px_rgba(0,0,0,0.3)] hide-scrollbar"
-        style={{ 
-          borderRadius: '25px 28px 26px 29px',
-          transform: 'rotate(-0.5deg)'
-        }}
-      >
-        <form onSubmit={handleSubmit}>
+      <div className="absolute right-0 top-0 h-full w-full max-w-[760px] bg-white shadow-[-24px_0_60px_rgba(15,23,42,0.16)] border-l border-slate-200 flex flex-col hide-scrollbar">
+        <form onSubmit={handleSubmit} className="h-full flex flex-col">
           {/* Header */}
-          <div 
-            className="sticky top-0 bg-black border-b-[3px] border-black p-3 sm:p-5 flex items-center justify-between z-10"
-            style={{ borderRadius: '22px 25px 0 0' }}
-          >
-            <h2 className="text-lg sm:text-xl font-black text-white">
+          <div className="sticky top-0 bg-slate-50 border-b border-slate-200 p-3 sm:p-5 flex items-center justify-between z-10">
+            <h2 className="text-lg sm:text-xl font-semibold text-slate-900">
               {mode === 'create' ? 'Create New Task' : 'Edit Task'}
             </h2>
             <div className="flex items-center gap-2">
@@ -151,7 +148,7 @@ export default function TodoForm({ isOpen, onClose, onSubmit, initialData, mode 
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className="sm:hidden p-2 bg-white/20 hover:bg-white/30 rounded-md transition-all disabled:opacity-50"
+                className="sm:hidden p-2 bg-slate-900 text-white rounded-lg transition-colors disabled:opacity-50"
                 title="Save"
               >
                 {isSubmitting ? (
@@ -163,7 +160,7 @@ export default function TodoForm({ isOpen, onClose, onSubmit, initialData, mode 
               <button
                 type="button"
                 onClick={onClose}
-                className="p-1.5 sm:p-2 text-white hover:bg-[#FFF8E7] hover:text-black rounded-md transition-all border-2 border-white/30 hover:border-black"
+                className="p-1.5 sm:p-2 text-slate-500 hover:bg-slate-100 hover:text-slate-900 rounded-lg transition-colors border border-slate-200"
               >
                 <X size={18} strokeWidth={2} className="sm:w-5 sm:h-5" />
               </button>
@@ -171,7 +168,7 @@ export default function TodoForm({ isOpen, onClose, onSubmit, initialData, mode 
           </div>
 
           {/* Body */}
-          <div className="p-3 sm:p-6 space-y-4 sm:space-y-6">
+          <div className="flex-1 overflow-y-auto p-3 sm:p-6 space-y-4 sm:space-y-6 bg-white">
             {/* Topic Input */}
             <div>
               <label className="block text-xs sm:text-sm font-black text-black mb-2">
@@ -185,11 +182,10 @@ export default function TodoForm({ isOpen, onClose, onSubmit, initialData, mode 
                 className="w-full px-3 sm:px-4 py-2 sm:py-2.5 text-sm sm:text-base border-[3px] border-black bg-white focus:outline-none focus:shadow-[4px_4px_0px_0px_rgba(0,0,0,0.3)] transition-all font-medium"
                 style={{ borderRadius: '8px 10px 9px 11px' }}
                 required
-              />
-            </div>
-
-            {/* Content Text Editor */}
-            <div>
+                    </form>
+                  </div>
+                </div>
+              );
               <label className="block text-xs sm:text-sm font-black text-black mb-2">
                 Description
               </label>

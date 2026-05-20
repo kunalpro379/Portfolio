@@ -4,6 +4,7 @@ import mongoose from 'mongoose';
 import { BlobServiceClient } from '@azure/storage-blob';
 import GuideNote from '../models/GuideNote.js';
 import Password from '../models/Password.js';
+import dbConnection from '../config/database.js';
 import CONFIG from '../../config.shared.js';
 
 const router = express.Router();
@@ -105,12 +106,13 @@ router.post('/guides', async (req, res) => {
     console.log('Request body:', JSON.stringify(req.body, null, 2));
     console.log('Request headers:', req.headers);
     
-    // Check MongoDB connection
+    await dbConnection.connect();
+
     if (mongoose.connection.readyState !== 1) {
       console.error('MongoDB not connected. State:', mongoose.connection.readyState);
-      return res.status(503).json({ 
+      return res.status(503).json({
         message: 'Database not connected',
-        dbState: mongoose.connection.readyState 
+        dbState: mongoose.connection.readyState
       });
     }
     
@@ -173,12 +175,13 @@ router.get('/guides', async (req, res) => {
     console.log('=== GET ALL GUIDES REQUEST ===');
     console.log('MongoDB connection state:', mongoose.connection.readyState);
     
-    // Check MongoDB connection
+    await dbConnection.connect();
+
     if (mongoose.connection.readyState !== 1) {
       console.error('MongoDB not connected. State:', mongoose.connection.readyState);
-      return res.status(503).json({ 
+      return res.status(503).json({
         message: 'Database not connected',
-        dbState: mongoose.connection.readyState 
+        dbState: mongoose.connection.readyState
       });
     }
     

@@ -333,54 +333,79 @@ export default function GuideView() {
 
       {/* Password Modal */}
       {showPasswordModal && (
-        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-          <div className="bg-gradient-to-br from-stone-900 to-stone-800 border-2 border-white/20 rounded-2xl p-8 max-w-md w-full shadow-2xl">
-            <div className="flex items-center gap-4 mb-6">
-              <div className="w-12 h-12 bg-gradient-to-br from-amber-400/20 to-stone-400/20 border border-amber-400/30 rounded-xl flex items-center justify-center">
-                <Lock size={20} strokeWidth={2} className="text-amber-400" />
+        <div className="fixed inset-0 z-50">
+          <button
+            type="button"
+            aria-label="Close password drawer"
+            className="absolute inset-0 bg-slate-950/45 backdrop-blur-sm"
+            onClick={() => {
+              setShowPasswordModal(false);
+              setPassword('');
+              setPasswordError('');
+            }}
+          />
+          <div className="absolute right-0 top-0 h-full w-full max-w-[460px] bg-white shadow-[-24px_0_60px_rgba(15,23,42,0.16)] border-l border-slate-200 flex flex-col">
+            <div className="border-b border-slate-200 px-5 py-4 flex items-start justify-between gap-3 bg-slate-50">
+              <div className="flex items-center gap-3">
+                <div className="w-11 h-11 bg-slate-900 text-white rounded-lg flex items-center justify-center">
+                  <Lock size={18} strokeWidth={2} />
+                </div>
+                <div>
+                  <h3 className="text-lg font-semibold text-slate-900">Enter Password</h3>
+                  <p className="text-sm text-slate-500 font-normal">
+                    Password required to {mode === 'delete' ? 'delete' : 'edit'}
+                  </p>
+                </div>
               </div>
-              <div>
-                <h3 className="text-xl font-semibold text-white">Enter Password</h3>
-                <p className="text-sm text-stone-400 font-normal">
-                  Password required to {mode === 'delete' ? 'delete' : 'edit'}
-                </p>
-              </div>
-            </div>
-
-            <input
-              type="password"
-              value={password}
-              onChange={(e) => {
-                setPassword(e.target.value);
-                setPasswordError('');
-              }}
-              onKeyPress={(e) => e.key === 'Enter' && handlePasswordSubmit()}
-              placeholder="Enter password"
-              className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl font-normal text-white placeholder-stone-400 mb-2 focus:outline-none focus:ring-2 focus:ring-amber-400/50 focus:border-amber-400/50 transition-all"
-              autoFocus
-            />
-            
-            {passwordError && (
-              <p className="text-red-400 text-sm font-medium mb-4">{passwordError}</p>
-            )}
-
-            <div className="flex gap-3 mt-6">
               <button
+                type="button"
                 onClick={() => {
                   setShowPasswordModal(false);
                   setPassword('');
                   setPasswordError('');
                 }}
-                className="flex-1 px-5 py-3 bg-white/10 border border-white/20 text-white rounded-xl font-medium hover:bg-white/20 transition-all"
+                className="h-10 w-10 flex items-center justify-center rounded-lg border border-slate-200 text-slate-600 hover:bg-slate-100 hover:text-slate-900 transition-colors"
               >
-                Cancel
+                <X size={18} strokeWidth={2} />
               </button>
-              <button
-                onClick={handlePasswordSubmit}
-                className="flex-1 px-5 py-3 bg-amber-500 hover:bg-amber-600 text-white rounded-xl font-medium transition-all shadow-sm hover:shadow-md"
-              >
-                Submit
-              </button>
+            </div>
+
+            <div className="flex-1 overflow-y-auto p-5">
+              <input
+                type="password"
+                value={password}
+                onChange={(e) => {
+                  setPassword(e.target.value);
+                  setPasswordError('');
+                }}
+                onKeyPress={(e) => e.key === 'Enter' && handlePasswordSubmit()}
+                placeholder="Enter password"
+                className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl font-normal text-slate-900 placeholder-slate-400 mb-2 focus:outline-none focus:border-slate-400 focus:bg-white transition-colors"
+                autoFocus
+              />
+
+              {passwordError && (
+                <p className="text-red-500 text-sm font-medium mb-4">{passwordError}</p>
+              )}
+
+              <div className="flex gap-3 mt-6">
+                <button
+                  onClick={() => {
+                    setShowPasswordModal(false);
+                    setPassword('');
+                    setPasswordError('');
+                  }}
+                  className="flex-1 px-5 py-3 bg-white border border-slate-200 text-slate-700 rounded-xl font-medium hover:bg-slate-50 transition-colors"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={handlePasswordSubmit}
+                  className="flex-1 px-5 py-3 bg-slate-900 text-white rounded-xl font-medium hover:bg-slate-800 transition-colors shadow-sm"
+                >
+                  Submit
+                </button>
+              </div>
             </div>
           </div>
         </div>
@@ -388,50 +413,71 @@ export default function GuideView() {
 
       {/* Share Modal */}
       {showShareModal && (
-        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-          <div className="bg-gradient-to-br from-blue-900 to-blue-800 border-2 border-white/20 rounded-2xl p-8 max-w-md w-full shadow-2xl">
-            <div className="flex items-center gap-4 mb-6">
-              <div className="w-12 h-12 bg-gradient-to-br from-blue-400/20 to-blue-400/20 border border-blue-400/30 rounded-xl flex items-center justify-center">
-                <Share2 size={20} strokeWidth={2} className="text-blue-400" />
+        <div className="fixed inset-0 z-50">
+          <button
+            type="button"
+            aria-label="Close share drawer"
+            className="absolute inset-0 bg-slate-950/45 backdrop-blur-sm"
+            onClick={() => {
+              setShowShareModal(false);
+              setCopied(false);
+            }}
+          />
+          <div className="absolute right-0 top-0 h-full w-full max-w-[460px] bg-white shadow-[-24px_0_60px_rgba(15,23,42,0.16)] border-l border-slate-200 flex flex-col">
+            <div className="border-b border-slate-200 px-5 py-4 flex items-start justify-between gap-3 bg-slate-50">
+              <div className="flex items-center gap-3">
+                <div className="w-11 h-11 bg-slate-900 text-white rounded-lg flex items-center justify-center">
+                  <Share2 size={18} strokeWidth={2} />
+                </div>
+                <div>
+                  <h3 className="text-lg font-semibold text-slate-900">Share Link</h3>
+                  <p className="text-sm text-slate-500 font-normal">Copy this link to share</p>
+                </div>
               </div>
-              <div>
-                <h3 className="text-xl font-semibold text-white">Share Link</h3>
-                <p className="text-sm text-blue-200 font-normal">
-                  Copy this link to share
-                </p>
-              </div>
-            </div>
-
-            <div className="bg-white/10 border border-white/20 rounded-xl p-3 mb-4">
-              <p className="text-white text-sm font-mono break-all">{shareUrl}</p>
-            </div>
-
-            <div className="flex gap-3">
               <button
+                type="button"
                 onClick={() => {
                   setShowShareModal(false);
                   setCopied(false);
                 }}
-                className="flex-1 px-5 py-3 bg-white/10 border border-white/20 text-white rounded-xl font-medium hover:bg-white/20 transition-all"
+                className="h-10 w-10 flex items-center justify-center rounded-lg border border-slate-200 text-slate-600 hover:bg-slate-100 hover:text-slate-900 transition-colors"
               >
-                Close
+                <X size={18} strokeWidth={2} />
               </button>
-              <button
-                onClick={handleCopyShareLink}
-                className="flex-1 px-5 py-3 bg-blue-500 hover:bg-blue-600 text-white rounded-xl font-medium transition-all shadow-sm hover:shadow-md flex items-center justify-center gap-2"
-              >
-                {copied ? (
-                  <>
-                    <Check size={16} strokeWidth={2.5} />
-                    Copied!
-                  </>
-                ) : (
-                  <>
-                    <Copy size={16} strokeWidth={2.5} />
-                    Copy Link
-                  </>
-                )}
-              </button>
+            </div>
+
+            <div className="flex-1 overflow-y-auto p-5 space-y-4">
+              <div className="bg-slate-50 border border-slate-200 rounded-xl p-3">
+                <p className="text-slate-700 text-sm font-mono break-all">{shareUrl}</p>
+              </div>
+
+              <div className="flex gap-3">
+                <button
+                  onClick={() => {
+                    setShowShareModal(false);
+                    setCopied(false);
+                  }}
+                  className="flex-1 px-5 py-3 bg-white border border-slate-200 text-slate-700 rounded-xl font-medium hover:bg-slate-50 transition-colors"
+                >
+                  Close
+                </button>
+                <button
+                  onClick={handleCopyShareLink}
+                  className="flex-1 px-5 py-3 bg-slate-900 text-white rounded-xl font-medium transition-colors shadow-sm flex items-center justify-center gap-2"
+                >
+                  {copied ? (
+                    <>
+                      <Check size={16} strokeWidth={2.5} />
+                      Copied!
+                    </>
+                  ) : (
+                    <>
+                      <Copy size={16} strokeWidth={2.5} />
+                      Copy Link
+                    </>
+                  )}
+                </button>
+              </div>
             </div>
           </div>
         </div>

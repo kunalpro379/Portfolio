@@ -873,73 +873,73 @@ export default function LearningsPage() {
               </div>
               
               {/* Professional Navbar for Desktop */}
-              <nav className="flex items-center gap-0.5 lg:gap-1 bg-white border-3 border-black rounded-2xl p-1 lg:p-1.5 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+              <nav className="flex items-stretch gap-1 bg-white border-3 border-black rounded-none p-1 shadow-[3px_3px_0px_0px_rgba(0,0,0,1)]">
                 <button
                   onClick={() => changeTab('blogs')}
-                  className={`px-3 lg:px-6 py-2 lg:py-2.5 rounded-xl font-bold text-xs lg:text-sm transition-all border-r border-gray-300 ${
+                  className={`px-2.5 lg:px-4 py-1.5 lg:py-2 rounded-none font-bold text-xs lg:text-sm transition-all border-2 border-black ${
                     activeTab === 'blogs'
-                      ? 'bg-pink-400 text-white shadow-[2px_2px_0px_0px_rgba(0,0,0,0.3)]'
-                      : 'text-gray-700 hover:bg-gray-100'
+                      ? 'bg-pink-400 text-white shadow-[1px_1px_0px_0px_rgba(0,0,0,0.35)]'
+                      : 'bg-white text-gray-700 hover:bg-gray-50'
                   }`}
                 >
                   Blogs
                 </button>
                 <button
                   onClick={() => changeTab('documentation')}
-                  className={`px-3 lg:px-6 py-2 lg:py-2.5 rounded-xl font-bold text-xs lg:text-sm transition-all border-r border-gray-300 ${
+                  className={`px-2.5 lg:px-4 py-1.5 lg:py-2 rounded-none font-bold text-xs lg:text-sm transition-all border-2 border-black ${
                     activeTab === 'documentation'
-                      ? 'bg-blue-400 text-white shadow-[2px_2px_0px_0px_rgba(0,0,0,0.3)]'
-                      : 'text-gray-700 hover:bg-gray-100'
+                      ? 'bg-blue-400 text-white shadow-[1px_1px_0px_0px_rgba(0,0,0,0.35)]'
+                      : 'bg-white text-gray-700 hover:bg-gray-50'
                   }`}
                 >
                   Docs
                 </button>
                 <button
                   onClick={() => changeTab('guide')}
-                  className={`px-3 lg:px-6 py-2 lg:py-2.5 rounded-xl font-bold text-xs lg:text-sm transition-all border-r border-gray-300 ${
+                  className={`px-2.5 lg:px-4 py-1.5 lg:py-2 rounded-none font-bold text-xs lg:text-sm transition-all border-2 border-black ${
                     activeTab === 'guide'
-                      ? 'bg-yellow-400 text-white shadow-[2px_2px_0px_0px_rgba(0,0,0,0.3)]'
-                      : 'text-gray-700 hover:bg-gray-100'
+                      ? 'bg-yellow-400 text-white shadow-[1px_1px_0px_0px_rgba(0,0,0,0.35)]'
+                      : 'bg-white text-gray-700 hover:bg-gray-50'
                   }`}
                 >
                   Guide
                 </button>
                 <button
                   onClick={() => changeTab('files')}
-                  className={`px-3 lg:px-6 py-2 lg:py-2.5 rounded-xl font-bold text-xs lg:text-sm transition-all border-r border-gray-300 ${
+                  className={`px-2.5 lg:px-4 py-1.5 lg:py-2 rounded-none font-bold text-xs lg:text-sm transition-all border-2 border-black ${
                     activeTab === 'files'
-                      ? 'bg-cyan-400 text-white shadow-[2px_2px_0px_0px_rgba(0,0,0,0.3)]'
-                      : 'text-gray-700 hover:bg-gray-100'
+                      ? 'bg-cyan-400 text-white shadow-[1px_1px_0px_0px_rgba(0,0,0,0.35)]'
+                      : 'bg-white text-gray-700 hover:bg-gray-50'
                   }`}
                 >
                   Files
                 </button>
                 <button
                   onClick={() => changeTab('diary')}
-                  className={`px-3 lg:px-6 py-2 lg:py-2.5 rounded-xl font-bold text-xs lg:text-sm transition-all border-r border-gray-300 ${
+                  className={`px-2.5 lg:px-4 py-1.5 lg:py-2 rounded-none font-bold text-xs lg:text-sm transition-all border-2 border-black ${
                     activeTab === 'diary'
-                      ? 'bg-red-400 text-white shadow-[2px_2px_0px_0px_rgba(0,0,0,0.3)]'
-                      : 'text-gray-700 hover:bg-gray-100'
+                      ? 'bg-red-400 text-white shadow-[1px_1px_0px_0px_rgba(0,0,0,0.35)]'
+                      : 'bg-white text-gray-700 hover:bg-gray-50'
                   }`}
                 >
                   Diary
                 </button>
                 <button
                   onClick={() => changeTab('code')}
-                  className={`px-3 lg:px-6 py-2 lg:py-2.5 rounded-xl font-bold text-xs lg:text-sm transition-all border-r border-gray-300 ${
+                  className={`px-2.5 lg:px-4 py-1.5 lg:py-2 rounded-none font-bold text-xs lg:text-sm transition-all border-2 border-black ${
                     activeTab === 'code'
-                      ? 'bg-orange-400 text-white shadow-[2px_2px_0px_0px_rgba(0,0,0,0.3)]'
-                      : 'text-gray-700 hover:bg-gray-100'
+                      ? 'bg-orange-400 text-white shadow-[1px_1px_0px_0px_rgba(0,0,0,0.35)]'
+                      : 'bg-white text-gray-700 hover:bg-gray-50'
                   }`}
                 >
                   Code
                 </button>
                 <button
                   onClick={() => changeTab('diagrams')}
-                  className={`px-2 lg:px-5 py-2 lg:py-2.5 rounded-xl font-bold text-xs lg:text-sm transition-all border-r border-gray-300 ${
+                  className={`px-2 lg:px-4 py-1.5 lg:py-2 rounded-none font-bold text-xs lg:text-sm transition-all border-2 border-black ${
                     activeTab === 'diagrams'
-                      ? 'bg-purple-400 text-white shadow-[2px_2px_0px_0px_rgba(0,0,0,0.3)]'
-                      : 'text-gray-700 hover:bg-gray-100'
+                      ? 'bg-purple-400 text-white shadow-[1px_1px_0px_0px_rgba(0,0,0,0.35)]'
+                      : 'bg-white text-gray-700 hover:bg-gray-50'
                   }`}
                 >
                   <span className="hidden lg:inline">Architectures</span>
@@ -947,10 +947,10 @@ export default function LearningsPage() {
                 </button>
                 <button
                   onClick={() => changeTab('projects')}
-                  className={`px-3 lg:px-6 py-2 lg:py-2.5 rounded-xl font-bold text-xs lg:text-sm transition-all ${
+                  className={`px-2.5 lg:px-4 py-1.5 lg:py-2 rounded-none font-bold text-xs lg:text-sm transition-all border-2 border-black ${
                     activeTab === 'projects'
-                      ? 'bg-green-400 text-white shadow-[2px_2px_0px_0px_rgba(0,0,0,0.3)]'
-                      : 'text-gray-700 hover:bg-gray-100'
+                      ? 'bg-green-400 text-white shadow-[1px_1px_0px_0px_rgba(0,0,0,0.35)]'
+                      : 'bg-white text-gray-700 hover:bg-gray-50'
                   }`}
                 >
                   Projects
@@ -1013,7 +1013,7 @@ export default function LearningsPage() {
                         placeholder="Search documentation..."
                         value={docSearch}
                         onChange={(e) => setDocSearch(e.target.value)}
-                        className="w-full px-3 sm:px-4 py-2 sm:py-3 pl-10 sm:pl-12 bg-white/80 backdrop-blur-sm border-2 sm:border-3 border-black rounded-xl font-bold text-xs sm:text-sm focus:outline-none focus:ring-4 focus:ring-blue-300 transition-all shadow-[3px_3px_0px_0px_rgba(0,0,0,1)]"
+                        className="w-full px-3 sm:px-4 py-2 sm:py-2.5 pl-10 sm:pl-12 bg-white/80 backdrop-blur-sm border-2 sm:border-3 border-black rounded-none font-bold text-xs sm:text-sm focus:outline-none focus:ring-4 focus:ring-blue-300 transition-all shadow-[3px_3px_0px_0px_rgba(0,0,0,1)]"
                       />
                       <svg className="absolute left-3 sm:left-4 top-1/2 -translate-y-1/2 w-4 h-4 sm:w-5 sm:h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
@@ -1127,7 +1127,7 @@ export default function LearningsPage() {
                         placeholder="Search blogs..."
                         value={blogSearch}
                         onChange={(e) => setBlogSearch(e.target.value)}
-                        className="w-full px-3 sm:px-4 py-2 sm:py-3 pl-10 sm:pl-12 bg-white/80 backdrop-blur-sm border-2 sm:border-3 border-black rounded-xl font-bold text-xs sm:text-sm focus:outline-none focus:ring-4 focus:ring-pink-300 transition-all shadow-[3px_3px_0px_0px_rgba(0,0,0,1)]"
+                        className="w-full px-3 sm:px-4 py-2 sm:py-2.5 pl-10 sm:pl-12 bg-white/80 backdrop-blur-sm border-2 sm:border-3 border-black rounded-none font-bold text-xs sm:text-sm focus:outline-none focus:ring-4 focus:ring-pink-300 transition-all shadow-[3px_3px_0px_0px_rgba(0,0,0,1)]"
                       />
                       <svg className="absolute left-3 sm:left-4 top-1/2 -translate-y-1/2 w-4 h-4 sm:w-5 sm:h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
@@ -1232,7 +1232,7 @@ export default function LearningsPage() {
                         placeholder="Search projects..."
                         value={projectSearch}
                         onChange={(e) => setProjectSearch(e.target.value)}
-                        className="w-full px-3 sm:px-4 py-2 sm:py-3 pl-10 sm:pl-12 bg-white/80 backdrop-blur-sm border-2 sm:border-3 border-black rounded-xl font-bold text-xs sm:text-sm focus:outline-none focus:ring-4 focus:ring-green-300 transition-all shadow-[3px_3px_0px_0px_rgba(0,0,0,1)]"
+                        className="w-full px-3 sm:px-4 py-2 sm:py-2.5 pl-10 sm:pl-12 bg-white/80 backdrop-blur-sm border-2 sm:border-3 border-black rounded-none font-bold text-xs sm:text-sm focus:outline-none focus:ring-4 focus:ring-green-300 transition-all shadow-[3px_3px_0px_0px_rgba(0,0,0,1)]"
                       />
                       <svg className="absolute left-3 sm:left-4 top-1/2 -translate-y-1/2 w-4 h-4 sm:w-5 sm:h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
