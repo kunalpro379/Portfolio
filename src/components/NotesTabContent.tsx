@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { FolderOpen, Plus, ListTodo, Lock, Unlock, BookOpen, Trash2, Code2 } from 'lucide-react';
+import { FolderOpen, Plus, ListTodo, Lock, Unlock, BookOpen, Trash2, Code2, X } from 'lucide-react';
 import LoadingSpinner from './LoadingSpinner';
 import TodoCard from './TodoCard';
 import TodoForm from './TodoForm';

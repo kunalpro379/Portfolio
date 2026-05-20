@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { ArrowLeft, FileText, FolderOpen, Folder as FolderIcon, ChevronRight, ChevronDown, Menu, X, Download, ExternalLink } from 'lucide-react';
+import { ArrowLeft, FileText, FolderOpen, Folder as FolderIcon, ChevronLeft, ChevronRight, ChevronDown, Menu, X, Download, ExternalLink } from 'lucide-react';
 import { API_ENDPOINTS, API_BASE_URL } from '@/config/api';
 import PageShimmer from '@/components/PageShimmer';
 

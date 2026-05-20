@@ -85,15 +85,15 @@ export default function TitleEditor() {
       <div className="max-w-3xl mx-auto">
         <button
           onClick={() => navigate(`/learnings/guide/${guideId}`)}
-          className="flex items-center gap-2 text-gray-600 hover:text-black font-bold text-sm transition-all mb-6"
+          className="flex items-center gap-2 border-2 border-black bg-white px-4 py-2 text-gray-600 hover:text-black font-bold text-sm transition-all mb-6 shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:bg-gray-100 hover:-translate-x-[1px] hover:-translate-y-[1px] rounded-none"
         >
           <ArrowLeft className="w-5 h-5" strokeWidth={2.5} />
           Back to Guide
         </button>
 
-        <div className="bg-white border-4 border-black rounded-2xl p-8 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
+        <div className="bg-white border-2 border-black rounded-none p-8 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
           <div className="mb-8">
-            <h1 className="text-3xl font-black text-black mb-2" style={{ fontFamily: 'Comic Sans MS, cursive' }}>
+            <h1 className="text-3xl font-black text-black mb-2">
               {isEditMode ? 'Edit Title' : 'Create New Title'}
             </h1>
             {guide && (
@@ -113,7 +113,7 @@ export default function TitleEditor() {
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 placeholder="e.g., Introduction to TypeScript"
-                className="w-full px-4 py-3 border-3 border-black rounded-lg font-bold text-lg focus:outline-none focus:ring-4 focus:ring-yellow-300"
+                className="w-full px-4 py-3 border-2 border-black rounded-none font-bold text-lg focus:outline-none focus:ring-4 focus:ring-yellow-300"
               />
             </div>
 
@@ -126,21 +126,21 @@ export default function TitleEditor() {
                 onChange={(e) => setDescription(e.target.value)}
                 placeholder="Brief description of this title..."
                 rows={4}
-                className="w-full px-4 py-3 border-3 border-black rounded-lg font-medium focus:outline-none focus:ring-4 focus:ring-yellow-300 resize-none"
+                className="w-full px-4 py-3 border-2 border-black rounded-none font-medium focus:outline-none focus:ring-4 focus:ring-yellow-300 resize-none"
               />
             </div>
 
             <div className="flex gap-4 pt-4">
               <button
                 onClick={() => navigate(`/learnings/guide/${guideId}`)}
-                className="flex-1 px-6 py-3 bg-gray-200 border-3 border-black rounded-lg font-bold hover:bg-gray-300 transition-all"
+                className="flex-1 px-6 py-3 bg-gray-200 border-2 border-black rounded-none font-bold hover:bg-gray-300 transition-all"
               >
                 Cancel
               </button>
               <button
                 onClick={handleSave}
                 disabled={saving}
-                className="flex-1 flex items-center justify-center gap-2 px-6 py-3 bg-black text-white border-3 border-black rounded-lg font-bold hover:bg-gray-800 transition-all disabled:opacity-50 shadow-[3px_3px_0px_0px_rgba(0,0,0,1)]"
+                className="flex-1 flex items-center justify-center gap-2 px-6 py-3 bg-black text-white border-2 border-black rounded-none font-bold hover:bg-gray-800 transition-all disabled:opacity-50 shadow-[3px_3px_0px_0px_rgba(0,0,0,1)]"
               >
                 <Save size={20} strokeWidth={2.5} />
                 {saving ? 'Saving...' : 'Save Title'}
