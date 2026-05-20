@@ -113,14 +113,15 @@ export default function ExperienceSection() {
                       {/* Content Card with Artistic Border */}
                       <div className="relative group">
                         {/* Decorative corner elements */}
-                        <div className="absolute -top-2 -left-2 w-8 h-8 border-t-4 border-l-4 border-black rounded-tl-lg" />
-                        <div className="absolute -top-2 -right-2 w-8 h-8 border-t-4 border-r-4 border-black rounded-tr-lg" />
-                        <div className="absolute -bottom-2 -left-2 w-8 h-8 border-b-4 border-l-4 border-black rounded-bl-lg" />
-                        <div className="absolute -bottom-2 -right-2 w-8 h-8 border-b-4 border-r-4 border-black rounded-br-lg" />
+                        <div className="absolute -top-2 -left-2 w-8 h-8 border-t-4 border-l-4 border-black" />
+                        <div className="absolute -top-2 -right-2 w-8 h-8 border-t-4 border-r-4 border-black" />
+                        <div className="absolute -bottom-2 -left-2 w-8 h-8 border-b-4 border-l-4 border-black" />
+                        <div className="absolute -bottom-2 -right-2 w-8 h-8 border-b-4 border-r-4 border-black" />
                         
-                        <div className="bg-gradient-to-br from-white via-gray-50/30 to-white border-2 border-black/20 rounded-2xl p-6 md:p-8 shadow-lg hover:shadow-2xl transition-all duration-300 space-y-4">
+                        <div className="bg-white border-2 border-black/20 rounded-none p-6 md:p-8 shadow-[6px_6px_0px_0px_rgba(0,0,0,0.10)] hover:shadow-[10px_10px_0px_0px_rgba(0,0,0,0.12)] transition-all duration-300 space-y-4 relative overflow-hidden">
+                          <div className="absolute inset-x-0 top-0 h-1 bg-black/80" />
                           {/* Year Badge */}
-                          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-black text-white shadow-md">
+                          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-none border border-black bg-black text-white shadow-[3px_3px_0px_0px_rgba(0,0,0,0.18)]">
                             <Briefcase size={16} />
                             <span className="font-black text-sm uppercase tracking-wider">{exp.year}</span>
                           </div>
@@ -130,17 +131,17 @@ export default function ExperienceSection() {
                             <h3 className="text-2xl md:text-3xl font-black uppercase tracking-tight text-gray-900 mb-2">
                               {exp.title}
                             </h3>
-                            <div className="h-1 w-20 bg-gradient-to-r from-black to-transparent rounded-full" />
+                            <div className="h-1 w-20 bg-gradient-to-r from-black to-transparent" />
                           </div>
 
                           {/* Company */}
-                          <p className="text-black font-bold text-sm md:text-base uppercase tracking-wide">
+                          <p className="text-black font-bold text-sm md:text-base uppercase tracking-wide border-l-4 border-black pl-3">
                             {exp.company}
                           </p>
 
                           {/* Timeline */}
                           <p className="text-gray-500 text-xs md:text-sm font-semibold uppercase tracking-wider flex items-center gap-2">
-                            <span className="w-2 h-2 bg-black rounded-full" />
+                            <span className="w-2 h-2 bg-black" />
                             {exp.timeline}
                           </p>
 
@@ -149,7 +150,7 @@ export default function ExperienceSection() {
                             {exp.techStack.map((tech, techIdx) => (
                               <span
                                 key={techIdx}
-                                className="px-3 py-1.5 rounded-lg bg-gradient-to-r from-gray-100 to-gray-50 border-2 border-gray-300 text-gray-700 text-xs font-bold uppercase tracking-wide hover:border-black hover:text-black transition-all duration-200 shadow-sm"
+                                className="px-3 py-1.5 rounded-none bg-slate-100 border-2 border-slate-300 text-gray-700 text-xs font-bold uppercase tracking-wide hover:border-black hover:text-black transition-all duration-200 shadow-sm"
                               >
                                 {tech}
                               </span>
@@ -166,14 +167,12 @@ export default function ExperienceSection() {
 
                     {/* Description Side - Artistic Card */}
                     <div className={`w-full lg:w-[calc(50%-2rem)]`}>
-                      <div className="relative bg-white border-2 border-black/20 rounded-2xl p-6 md:p-8 hover:border-black hover:shadow-2xl transition-all duration-300 group h-full overflow-hidden">
-                        {/* Decorative background pattern */}
-                        <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-gray-100/50 to-transparent rounded-full blur-3xl group-hover:scale-150 transition-transform duration-500" />
-                        <div className="absolute bottom-0 left-0 w-24 h-24 bg-gradient-to-tr from-gray-100/50 to-transparent rounded-full blur-2xl group-hover:scale-150 transition-transform duration-500" />
+                      <div className="relative bg-white border-2 border-black/20 rounded-none p-6 md:p-8 hover:border-black hover:shadow-[10px_10px_0px_0px_rgba(0,0,0,0.12)] transition-all duration-300 group h-full overflow-hidden">
+                        <div className="absolute inset-y-0 left-0 w-2 bg-black/80" />
                         
                         <div className="relative z-10">
                           <div className="flex items-center gap-3 mb-4">
-                            <div className="w-1 h-8 bg-black rounded-full" />
+                            <div className="w-1 h-8 bg-black" />
                             <h4 className="text-lg md:text-xl font-black uppercase tracking-tight text-gray-900">
                               About the Role
                             </h4>
@@ -184,7 +183,7 @@ export default function ExperienceSection() {
                         </div>
 
                         {/* Hover effect border */}
-                        <div className="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"
+                        <div className="absolute inset-0 rounded-none opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"
                           style={{
                             background: 'linear-gradient(45deg, transparent 48%, rgba(0, 0, 0, 0.05) 50%, transparent 52%)',
                             backgroundSize: '20px 20px'

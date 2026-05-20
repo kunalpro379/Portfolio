@@ -1020,7 +1020,7 @@ export default function LearningsPage() {
                       doc.tags?.some(tag => tag.toLowerCase().includes(docSearch.toLowerCase()))
                     ).length === 0 ? (
                       <div className="col-span-full text-center py-12 sm:py-16">
-                        <div className="bg-gray-50/70 backdrop-blur-sm border border-gray-200 rounded-none p-6 sm:p-8 md:p-10 inline-block shadow-[0_12px_28px_rgba(15,23,42,0.06)]">
+                        <div className="bg-gray-50/70 backdrop-blur-sm border-2 border-black rounded-none p-6 sm:p-8 md:p-10 inline-block shadow-[0_12px_28px_rgba(15,23,42,0.06)]">
                           <BookOpen size={36} strokeWidth={2.5} className="sm:w-12 sm:h-12 mx-auto mb-3 text-blue-500" />
                           <p className="text-gray-600 text-sm sm:text-base font-bold">
                             {docSearch ? 'No documentation found' : 'No documentation yet'}
@@ -1038,12 +1038,12 @@ export default function LearningsPage() {
                         <div
                           key={doc.docId}
                           onClick={() => handleNavigate(`/learnings/documentation/${doc.docId}`)}
-                          className="relative aspect-[4/5] cursor-pointer group rounded-none sm:rounded-none md:rounded-2xl border border-gray-200 bg-white overflow-hidden hover:shadow-[0_12px_28px_rgba(15,23,42,0.08)] transition-all hover:-translate-y-1"
-                          style={{ borderRadius: 0 }}
+                          className="relative aspect-[4/5] cursor-pointer group rounded-none border-2 border-black bg-white overflow-hidden hover:shadow-[8px_8px_0px_0px_rgba(15,23,42,0.12)] transition-all hover:-translate-x-[1px] hover:-translate-y-[1px]"
                         >
+                          <div className="absolute inset-x-0 top-0 h-1 bg-blue-600" />
                           {/* Header with Cover Image or Icon - 40% height */}
                           {doc.coverImage ? (
-                            <div className="relative w-full h-[40%] border-b border-gray-200 overflow-hidden">
+                            <div className="relative w-full h-[40%] border-b-2 border-black overflow-hidden">
                               <img
                                 src={doc.coverImage}
                                 alt={doc.title}
@@ -1052,7 +1052,7 @@ export default function LearningsPage() {
                               />
                             </div>
                           ) : (
-                            <div className="relative w-full h-[40%] bg-gradient-to-br from-blue-500 to-blue-600 border-b border-gray-200 flex items-center justify-center">
+                            <div className="relative w-full h-[40%] bg-gradient-to-br from-blue-600 to-sky-700 border-b-2 border-black flex items-center justify-center">
                               <FileText size={32} strokeWidth={2} className="sm:w-12 sm:h-12 text-white/90" />
                             </div>
                           )}
@@ -1074,11 +1074,11 @@ export default function LearningsPage() {
                             {/* Footer - Badges and Date */}
                             <div className="mt-auto space-y-1 sm:space-y-1.5">
                               <div className="flex items-center gap-1 sm:gap-1.5 flex-wrap">
-                                <span className="px-1.5 sm:px-2 py-0.5 bg-blue-100 border border-gray-200 rounded-none text-[7px] sm:text-[9px] font-black uppercase tracking-wider">
+                                <span className="px-1.5 sm:px-2 py-0.5 bg-blue-100 border border-black rounded-none text-[7px] sm:text-[9px] font-black uppercase tracking-wider">
                                   {doc.subject}
                                 </span>
                                 {doc.isPublic && (
-                                  <span className="px-1.5 sm:px-2 py-0.5 bg-green-100 border border-gray-200 rounded-none text-[7px] sm:text-[9px] font-black uppercase tracking-wider">
+                                  <span className="px-1.5 sm:px-2 py-0.5 bg-green-100 border border-black rounded-none text-[7px] sm:text-[9px] font-black uppercase tracking-wider">
                                     Public
                                   </span>
                                 )}
@@ -1126,7 +1126,7 @@ export default function LearningsPage() {
                     </div>
                     <button
                       onClick={handleCreateBlog}
-                      className="px-4 sm:px-5 py-2 sm:py-3 bg-pink-500 text-white border-2 sm:border-3 border-black rounded-xl font-bold hover:bg-pink-600 transition-all shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] flex items-center justify-center gap-2 whitespace-nowrap text-xs sm:text-sm"
+                      className="px-4 sm:px-5 py-2 sm:py-3 bg-pink-500 text-white border-2 sm:border-3 border-black rounded-none font-bold hover:bg-pink-600 transition-all shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] flex items-center justify-center gap-2 whitespace-nowrap text-xs sm:text-sm"
                     >
                       <Plus size={14} strokeWidth={2.5} className="sm:w-4 sm:h-4" />
                       <span className="hidden xs:inline">Create Blog</span>
@@ -1141,7 +1141,7 @@ export default function LearningsPage() {
                       blog.subject.toLowerCase().includes(blogSearch.toLowerCase())
                     ).length === 0 ? (
                       <div className="col-span-full text-center py-12 sm:py-16">
-                        <div className="bg-gray-50/70 backdrop-blur-sm border-3 border-black rounded-2xl p-6 sm:p-8 md:p-10 inline-block shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]">
+                        <div className="bg-gray-50/70 backdrop-blur-sm border-2 border-black rounded-none p-6 sm:p-8 md:p-10 inline-block shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]">
                           <FileText size={36} strokeWidth={2.5} className="sm:w-12 sm:h-12 mx-auto mb-3 text-pink-500" />
                           <p className="text-gray-600 text-sm sm:text-base font-bold">
                             {blogSearch ? 'No blogs found' : 'No blogs yet'}
@@ -1158,12 +1158,12 @@ export default function LearningsPage() {
                         <div
                           key={blog.blogId}
                           onClick={() => handleNavigate(`/learnings/blogs/${blog.blogId}`)}
-                          className="relative aspect-[4/5] cursor-pointer group rounded-none sm:rounded-none md:rounded-2xl border border-gray-200 bg-white overflow-hidden hover:shadow-[0_12px_28px_rgba(15,23,42,0.08)] transition-all hover:-translate-y-1"
-                          style={{ borderRadius: 0 }}
+                          className="relative aspect-[4/5] cursor-pointer group rounded-none border-2 border-black bg-white overflow-hidden hover:shadow-[8px_8px_0px_0px_rgba(15,23,42,0.12)] transition-all hover:-translate-x-[1px] hover:-translate-y-[1px]"
                         >
+                          <div className="absolute inset-x-0 top-0 h-1 bg-pink-500" />
                           {/* Cover Image */}
                           {blog.coverImage && (
-                            <div className="relative w-full h-[40%] overflow-hidden border-b border-gray-200">
+                            <div className="relative w-full h-[40%] overflow-hidden border-b-2 border-black">
                               <img
                                 src={blog.coverImage}
                                 alt={blog.title}
@@ -1188,7 +1188,7 @@ export default function LearningsPage() {
                             {/* Footer - Subject Badge and Date */}
                             <div className="mt-auto space-y-1 sm:space-y-1.5">
                               <div className="flex items-center gap-1 sm:gap-1.5">
-                                <span className="px-1.5 sm:px-2 py-0.5 bg-gray-100 border border-gray-200 rounded-none text-[7px] sm:text-[9px] font-black uppercase tracking-wider">
+                                <span className="px-1.5 sm:px-2 py-0.5 bg-gray-100 border border-black rounded-none text-[7px] sm:text-[9px] font-black uppercase tracking-wider">
                                   {blog.subject}
                                 </span>
                               </div>
