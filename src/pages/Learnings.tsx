@@ -6,46 +6,46 @@ import ExcalidrawCanvas from "@/components/ExcalidrawCanvas";
 import LoadingSpinner from "@/components/LoadingSpinner";
 import NotesTabContent from "@/components/NotesTabContent";
 import GtaMumbaiMap from "@/components/GtaMumbaiMap";
-import DiaryPage from "@/pages/Diary";
-
-interface ProjectData {
-  size?: "big" | "small" | "large" | "medium"
+              <button
+                onClick={() => navigate('/')}
+                className="col-span-1 flex h-10 items-center justify-start gap-1.5 border-2 border-black bg-white px-2 text-xs sm:text-sm font-bold text-gray-600 transition-all shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:bg-gray-100 hover:-translate-x-[1px] hover:-translate-y-[1px]"
+              >
   title: string;
   tagline: string;
   badges: string[];
   footer: string;
   description: string;
   techStack: string;
-  cta?: Array<{ label: string; link: string; icon?: string }>;
-  image?: string;
-  titleColor?: "white" | "black";
+                className={`col-span-1 h-10 px-2 sm:px-3 border-2 border-black bg-white font-bold text-xs sm:text-sm transition-all shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] ${activeTab === 'blogs'
+                    ? 'bg-pink-600 text-white -translate-x-[1px] -translate-y-[1px]'
+                    : 'text-gray-700 hover:bg-pink-50 hover:-translate-x-[1px] hover:-translate-y-[1px]'
   descriptionColor?: "white" | "black";
   id?: string;
 }
 
 interface Blog {
   blogId: string;
-  title: string;
-  slug: string;
-  tagline: string;
+                className={`col-span-1 h-10 px-2 sm:px-3 border-2 border-black bg-white font-bold text-xs sm:text-sm transition-all shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] ${activeTab === 'documentation'
+                    ? 'bg-blue-600 text-white -translate-x-[1px] -translate-y-[1px]'
+                    : 'text-gray-700 hover:bg-blue-50 hover:-translate-x-[1px] hover:-translate-y-[1px]'
   subject: string;
   shortDescription: string;
   tags: string[];
   datetime: string;
   footer: string;
   coverImage: string;
-  blogLinks: Array<{ name: string; url: string }>;
-}
-
+                className={`col-span-1 h-10 px-2 sm:px-3 border-2 border-black bg-white font-bold text-xs sm:text-sm transition-all shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] ${activeTab === 'guide'
+                    ? 'bg-amber-500 text-white -translate-x-[1px] -translate-y-[1px]'
+                    : 'text-gray-700 hover:bg-amber-50 hover:-translate-x-[1px] hover:-translate-y-[1px]'
 interface Note {
   folderId: string;
   name: string;
   path: string;
   parentPath: string;
   createdAt: string;
-}
-
-interface CodeFolder {
+                className={`col-span-1 h-10 px-2 sm:px-3 border-2 border-black bg-white font-bold text-xs sm:text-sm transition-all shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] ${activeTab === 'files'
+                    ? 'bg-cyan-600 text-white -translate-x-[1px] -translate-y-[1px]'
+                    : 'text-gray-700 hover:bg-cyan-50 hover:-translate-x-[1px] hover:-translate-y-[1px]'
   folderId: string;
   name: string;
   path: string;
@@ -55,27 +55,27 @@ interface CodeFolder {
   description?: string;
 }
 
-interface Documentation {
-  docId: string;
-  title: string;
+                className={`h-10 px-2 sm:px-3 border-2 border-black bg-white font-bold text-xs sm:text-sm transition-all shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] ${activeTab === 'diary'
+                    ? 'bg-red-600 text-white -translate-x-[1px] -translate-y-[1px]'
+                    : 'text-gray-700 hover:bg-red-50 hover:-translate-x-[1px] hover:-translate-y-[1px]'
   subject: string;
   description: string;
   tags: string[];
   date: string;
   time: string;
   slug: string;
-  isPublic: boolean;
-  createdAt: string;
-  coverImage?: string;
+                className={`h-10 px-2 sm:px-3 border-2 border-black bg-white font-bold text-xs sm:text-sm transition-all shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] ${activeTab === 'code'
+                    ? 'bg-orange-600 text-white -translate-x-[1px] -translate-y-[1px]'
+                    : 'text-gray-700 hover:bg-orange-50 hover:-translate-x-[1px] hover:-translate-y-[1px]'
 }
 
 interface GitHubRepo {
   _id: string;
   name: string;
   owner: string;
-  fullName: string;
-  description: string;
-  url: string;
+                className={`h-10 px-2 sm:px-3 border-2 border-black bg-white font-bold text-xs sm:text-sm transition-all shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] ${activeTab === 'diagrams'
+                    ? 'bg-purple-600 text-white -translate-x-[1px] -translate-y-[1px]'
+                    : 'text-gray-700 hover:bg-purple-50 hover:-translate-x-[1px] hover:-translate-y-[1px]'
   defaultBranch: string;
   isPrivate: boolean;
   createdAt: string;
@@ -83,45 +83,45 @@ interface GitHubRepo {
 
 export default function LearningsPage() {
   const navigate = useNavigate();
-  const [searchParams, setSearchParams] = useSearchParams();
-  const tabFromUrl = searchParams.get('tab') || 'blogs';
-  const [activeTab, setActiveTab] = useState<'guide' | 'files' | 'diary' | 'dsa' | 'documentation' | 'blogs' | 'projects' | 'diagrams' | 'code'>(tabFromUrl as any);
+                className={`h-10 px-2 sm:px-3 border-2 border-black bg-white font-bold text-xs sm:text-sm transition-all shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] ${activeTab === 'projects'
+                    ? 'bg-green-600 text-white -translate-x-[1px] -translate-y-[1px]'
+                    : 'text-gray-700 hover:bg-green-50 hover:-translate-x-[1px] hover:-translate-y-[1px]'
 
   // State for API data
   const [projects, setProjects] = useState<ProjectData[]>([]);
   const [blogs, setBlogs] = useState<Blog[]>([]);
   const [notes, setNotes] = useState<Note[]>([]);
   const [documentation, setDocumentation] = useState<Documentation[]>([]);
-  const [diagrams, setDiagrams] = useState<any[]>([]);
+                className="h-10 px-2 sm:px-3 border-2 border-black bg-white font-bold text-xs sm:text-sm transition-all shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] text-gray-700 hover:bg-gray-100 hover:-translate-x-[1px] hover:-translate-y-[1px]"
   const [codeFiles, setCodeFiles] = useState<CodeFolder[]>([]);
   const [githubRepos, setGithubRepos] = useState<GitHubRepo[]>([]);
   const [dsaProjects, setDsaProjects] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [navigating, setNavigating] = useState(false);
+            <div className="grid grid-cols-5 gap-1.5 sm:gap-2">
   
   // Search states
-  const [blogSearch, setBlogSearch] = useState('');
-  const [docSearch, setDocSearch] = useState('');
-  const [projectSearch, setProjectSearch] = useState('');
+                className={`h-10 px-2 sm:px-3 border-2 border-black bg-white font-bold text-xs sm:text-sm transition-all shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] ${activeTab === 'diary'
+                    ? 'bg-red-600 text-white -translate-x-[1px] -translate-y-[1px]'
+                    : 'text-gray-700 hover:bg-red-50 hover:-translate-x-[1px] hover:-translate-y-[1px]'
   const [diagramSearch, setDiagramSearch] = useState('');
   const [todoSearch, setTodoSearch] = useState('');
   const [guideSearch, setGuideSearch] = useState('');
 
   // Canvas state
   const [activeCanvas, setActiveCanvas] = useState<string | null>(null);
-  const [activeViewerId, setActiveViewerId] = useState<string | null>(null);
-  const [canvasData, setCanvasData] = useState<any>(null);
-  const [viewOnly, setViewOnly] = useState(false);
+                className={`h-10 px-2 sm:px-3 border-2 border-black bg-white font-bold text-xs sm:text-sm transition-all shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] ${activeTab === 'code'
+                    ? 'bg-orange-600 text-white -translate-x-[1px] -translate-y-[1px]'
+                    : 'text-gray-700 hover:bg-orange-50 hover:-translate-x-[1px] hover:-translate-y-[1px]'
   const [showPasswordModal, setShowPasswordModal] = useState(false);
   const [diagramAuthenticated, setDiagramAuthenticated] = useState(false);
 
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [selectedCanvas, setSelectedCanvas] = useState<any>(null);
   const [password, setPassword] = useState('');
-  const [editPassword, setEditPassword] = useState<string | null>(null); // Store password for saving
-  const [newCanvasName, setNewCanvasName] = useState('');
-  const [newCanvasPublic, setNewCanvasPublic] = useState(false);
+                className={`h-10 px-2 sm:px-3 border-2 border-black bg-white font-bold text-xs sm:text-sm transition-all shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] ${activeTab === 'diagrams'
+                    ? 'bg-purple-600 text-white -translate-x-[1px] -translate-y-[1px]'
+                    : 'text-gray-700 hover:bg-purple-50 hover:-translate-x-[1px] hover:-translate-y-[1px]'
   const [showViewEditModal, setShowViewEditModal] = useState(false);
   const [createdCanvasId, setCreatedCanvasId] = useState<string | null>(null);
   const [showShareModal, setShowShareModal] = useState(false);
@@ -129,16 +129,16 @@ export default function LearningsPage() {
   const [isLoadingDiagram, setIsLoadingDiagram] = useState(false);
   const [showDeletePasswordModal, setShowDeletePasswordModal] = useState(false);
   const [deleteCanvasId, setDeleteCanvasId] = useState<string | null>(null);
-  const [deletePassword, setDeletePassword] = useState('');
-  
-  // Code folder creation modal state
+                className={`h-10 px-2 sm:px-3 border-2 border-black bg-white font-bold text-xs sm:text-sm transition-all shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] ${activeTab === 'projects'
+                    ? 'bg-green-600 text-white -translate-x-[1px] -translate-y-[1px]'
+                    : 'text-gray-700 hover:bg-green-50 hover:-translate-x-[1px] hover:-translate-y-[1px]'
   const [showCreateCodeFolderModal, setShowCreateCodeFolderModal] = useState(false);
   const [codeFolderName, setCodeFolderName] = useState('');
   const [codeFolderDescription, setCodeFolderDescription] = useState('');
   const [codeFolderLanguage, setCodeFolderLanguage] = useState('python');
   const [creatingCodeFolder, setCreatingCodeFolder] = useState(false);
   const [showMap, setShowMap] = useState(false);
-
+                className="h-10 px-2 sm:px-3 border-2 border-black bg-white font-bold text-xs sm:text-sm transition-all shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] text-gray-700 hover:bg-gray-100 hover:-translate-x-[1px] hover:-translate-y-[1px]"
   // Check for canvas parameter in URL
   const canvasIdFromUrl = searchParams.get('canvas');
   const viewerIdFromUrl = searchParams.get('viewer');
