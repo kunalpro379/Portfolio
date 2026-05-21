@@ -752,8 +752,8 @@ export default function LearningsPage() {
               <button
                 onClick={() => changeTab('blogs')}
                 className={`col-span-1 h-9 px-1.5 sm:px-2 border-2 border-black bg-white font-bold text-[11px] sm:text-xs transition-all shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] ${activeTab === 'blogs'
-                    ? 'bg-pink-600 text-white -translate-x-[1px] -translate-y-[1px]'
-                    : 'text-gray-700 hover:bg-pink-50 hover:-translate-x-[1px] hover:-translate-y-[1px]'
+                    ? 'bg-gradient-to-br from-fuchsia-700 via-pink-600 to-rose-500 text-white shadow-[4px_4px_0px_0px_rgba(88,28,135,0.5)] -translate-x-[2px] -translate-y-[2px]'
+                    : 'text-gray-700 hover:bg-pink-50 hover:text-pink-700 hover:-translate-x-[1px] hover:-translate-y-[1px]'
                   }`}
               >
                 Blogs
@@ -761,8 +761,8 @@ export default function LearningsPage() {
               <button
                 onClick={() => changeTab('documentation')}
                 className={`col-span-1 h-9 px-1.5 sm:px-2 border-2 border-black bg-white font-bold text-[11px] sm:text-xs transition-all shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] ${activeTab === 'documentation'
-                    ? 'bg-blue-600 text-white -translate-x-[1px] -translate-y-[1px]'
-                    : 'text-gray-700 hover:bg-blue-50 hover:-translate-x-[1px] hover:-translate-y-[1px]'
+                    ? 'bg-gradient-to-br from-sky-700 via-blue-600 to-indigo-600 text-white shadow-[4px_4px_0px_0px_rgba(30,64,175,0.45)] -translate-x-[2px] -translate-y-[2px]'
+                    : 'text-gray-700 hover:bg-blue-50 hover:text-blue-700 hover:-translate-x-[1px] hover:-translate-y-[1px]'
                   }`}
               >
                 Docs
@@ -770,8 +770,8 @@ export default function LearningsPage() {
               <button
                 onClick={() => changeTab('guide')}
                 className={`col-span-1 h-9 px-1.5 sm:px-2 border-2 border-black bg-white font-bold text-[11px] sm:text-xs transition-all shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] ${activeTab === 'guide'
-                    ? 'bg-amber-600 text-white -translate-x-[1px] -translate-y-[1px]'
-                    : 'text-gray-700 hover:bg-amber-50 hover:-translate-x-[1px] hover:-translate-y-[1px]'
+                    ? 'bg-gradient-to-br from-amber-700 via-orange-600 to-yellow-500 text-white shadow-[4px_4px_0px_0px_rgba(180,83,9,0.45)] -translate-x-[2px] -translate-y-[2px]'
+                    : 'text-gray-700 hover:bg-amber-50 hover:text-amber-700 hover:-translate-x-[1px] hover:-translate-y-[1px]'
                   }`}
               >
                 Guide
@@ -779,8 +779,8 @@ export default function LearningsPage() {
               <button
                 onClick={() => changeTab('files')}
                 className={`col-span-1 h-9 px-1.5 sm:px-2 border-2 border-black bg-white font-bold text-[11px] sm:text-xs transition-all shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] ${activeTab === 'files'
-                    ? 'bg-cyan-600 text-white -translate-x-[1px] -translate-y-[1px]'
-                    : 'text-gray-700 hover:bg-cyan-50 hover:-translate-x-[1px] hover:-translate-y-[1px]'
+                    ? 'bg-gradient-to-br from-cyan-700 via-teal-600 to-emerald-500 text-white shadow-[4px_4px_0px_0px_rgba(8,145,178,0.45)] -translate-x-[2px] -translate-y-[2px]'
+                    : 'text-gray-700 hover:bg-cyan-50 hover:text-cyan-700 hover:-translate-x-[1px] hover:-translate-y-[1px]'
                   }`}
               >
                 Files
@@ -791,8 +791,8 @@ export default function LearningsPage() {
               <button
                 onClick={() => changeTab('diary')}
                 className={`h-9 px-1.5 sm:px-2 border-2 border-black bg-white font-bold text-[11px] sm:text-xs transition-all shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] ${activeTab === 'diary'
-                    ? 'bg-red-600 text-white -translate-x-[1px] -translate-y-[1px]'
-                    : 'text-gray-700 hover:bg-red-50 hover:-translate-x-[1px] hover:-translate-y-[1px]'
+                    ? 'bg-gradient-to-br from-rose-700 via-red-600 to-pink-600 text-white shadow-[4px_4px_0px_0px_rgba(190,24,93,0.45)] -translate-x-[2px] -translate-y-[2px]'
+                    : 'text-gray-700 hover:bg-red-50 hover:text-red-700 hover:-translate-x-[1px] hover:-translate-y-[1px]'
                   }`}
               >
                 Diary
@@ -800,8 +800,8 @@ export default function LearningsPage() {
               <button
                 onClick={() => changeTab('code')}
                 className={`h-9 px-1.5 sm:px-2 border-2 border-black bg-white font-bold text-[11px] sm:text-xs transition-all shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] ${activeTab === 'code'
-                    ? 'bg-orange-600 text-white -translate-x-[1px] -translate-y-[1px]'
-                    : 'text-gray-700 hover:bg-orange-50 hover:-translate-x-[1px] hover:-translate-y-[1px]'
+                    ? 'bg-gradient-to-br from-orange-700 via-amber-600 to-yellow-500 text-white shadow-[4px_4px_0px_0px_rgba(194,65,12,0.45)] -translate-x-[2px] -translate-y-[2px]'
+                    : 'text-gray-700 hover:bg-orange-50 hover:text-orange-700 hover:-translate-x-[1px] hover:-translate-y-[1px]'
                   }`}
               >
                 Code
@@ -809,8 +809,8 @@ export default function LearningsPage() {
               <button
                 onClick={() => changeTab('diagrams')}
                 className={`h-9 px-1.5 sm:px-2 border-2 border-black bg-white font-bold text-[11px] sm:text-xs transition-all shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] ${activeTab === 'diagrams'
-                    ? 'bg-purple-600 text-white -translate-x-[1px] -translate-y-[1px]'
-                    : 'text-gray-700 hover:bg-purple-50 hover:-translate-x-[1px] hover:-translate-y-[1px]'
+                    ? 'bg-gradient-to-br from-violet-700 via-purple-600 to-indigo-600 text-white shadow-[4px_4px_0px_0px_rgba(109,40,217,0.45)] -translate-x-[2px] -translate-y-[2px]'
+                    : 'text-gray-700 hover:bg-purple-50 hover:text-purple-700 hover:-translate-x-[1px] hover:-translate-y-[1px]'
                   }`}
               >
                 <span className="hidden xs:inline">Architectures</span>
@@ -819,8 +819,8 @@ export default function LearningsPage() {
               <button
                 onClick={() => changeTab('projects')}
                 className={`h-9 px-1.5 sm:px-2 border-2 border-black bg-white font-bold text-[11px] sm:text-xs transition-all shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] ${activeTab === 'projects'
-                    ? 'bg-green-600 text-white -translate-x-[1px] -translate-y-[1px]'
-                    : 'text-gray-700 hover:bg-green-50 hover:-translate-x-[1px] hover:-translate-y-[1px]'
+                    ? 'bg-gradient-to-br from-emerald-700 via-green-600 to-lime-500 text-white shadow-[4px_4px_0px_0px_rgba(22,101,52,0.45)] -translate-x-[2px] -translate-y-[2px]'
+                    : 'text-gray-700 hover:bg-green-50 hover:text-green-700 hover:-translate-x-[1px] hover:-translate-y-[1px]'
                   }`}
               >
                 Projects
@@ -855,8 +855,8 @@ export default function LearningsPage() {
                   onClick={() => changeTab('blogs')}
                   className={`h-9 lg:h-10 min-w-[98px] lg:min-w-[112px] px-2.5 lg:px-3 border-2 border-black bg-white font-bold text-[11px] lg:text-xs transition-all shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] ${
                     activeTab === 'blogs'
-                      ? 'bg-pink-600 text-white -translate-x-[1px] -translate-y-[1px]'
-                      : 'text-gray-700 hover:bg-pink-50 hover:-translate-x-[1px] hover:-translate-y-[1px]'
+                        ? 'bg-gradient-to-br from-fuchsia-700 via-pink-600 to-rose-500 text-white shadow-[4px_4px_0px_0px_rgba(88,28,135,0.5)] -translate-x-[2px] -translate-y-[2px]'
+                        : 'text-gray-700 hover:bg-pink-50 hover:text-pink-700 hover:-translate-x-[1px] hover:-translate-y-[1px]'
                   }`}
                 >
                   Blogs
@@ -865,8 +865,8 @@ export default function LearningsPage() {
                   onClick={() => changeTab('documentation')}
                   className={`h-9 lg:h-10 min-w-[98px] lg:min-w-[112px] px-2.5 lg:px-3 border-2 border-black bg-white font-bold text-[11px] lg:text-xs transition-all shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] ${
                     activeTab === 'documentation'
-                      ? 'bg-blue-600 text-white -translate-x-[1px] -translate-y-[1px]'
-                      : 'text-gray-700 hover:bg-blue-50 hover:-translate-x-[1px] hover:-translate-y-[1px]'
+                        ? 'bg-gradient-to-br from-sky-700 via-blue-600 to-indigo-600 text-white shadow-[4px_4px_0px_0px_rgba(30,64,175,0.45)] -translate-x-[2px] -translate-y-[2px]'
+                        : 'text-gray-700 hover:bg-blue-50 hover:text-blue-700 hover:-translate-x-[1px] hover:-translate-y-[1px]'
                   }`}
                 >
                   Docs
@@ -875,8 +875,8 @@ export default function LearningsPage() {
                   onClick={() => changeTab('guide')}
                   className={`h-9 lg:h-10 min-w-[98px] lg:min-w-[112px] px-2.5 lg:px-3 border-2 border-black bg-white font-bold text-[11px] lg:text-xs transition-all shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] ${
                     activeTab === 'guide'
-                      ? 'bg-amber-600 text-white -translate-x-[1px] -translate-y-[1px]'
-                      : 'text-gray-700 hover:bg-yellow-50 hover:-translate-x-[1px] hover:-translate-y-[1px]'
+                        ? 'bg-gradient-to-br from-amber-700 via-orange-600 to-yellow-500 text-white shadow-[4px_4px_0px_0px_rgba(180,83,9,0.45)] -translate-x-[2px] -translate-y-[2px]'
+                        : 'text-gray-700 hover:bg-yellow-50 hover:text-amber-700 hover:-translate-x-[1px] hover:-translate-y-[1px]'
                   }`}
                 >
                   Guide
@@ -885,8 +885,8 @@ export default function LearningsPage() {
                   onClick={() => changeTab('files')}
                   className={`h-9 lg:h-10 min-w-[98px] lg:min-w-[112px] px-2.5 lg:px-3 border-2 border-black bg-white font-bold text-[11px] lg:text-xs transition-all shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] ${
                     activeTab === 'files'
-                      ? 'bg-cyan-600 text-white -translate-x-[1px] -translate-y-[1px]'
-                      : 'text-gray-700 hover:bg-cyan-50 hover:-translate-x-[1px] hover:-translate-y-[1px]'
+                        ? 'bg-gradient-to-br from-cyan-700 via-teal-600 to-emerald-500 text-white shadow-[4px_4px_0px_0px_rgba(8,145,178,0.45)] -translate-x-[2px] -translate-y-[2px]'
+                        : 'text-gray-700 hover:bg-cyan-50 hover:text-cyan-700 hover:-translate-x-[1px] hover:-translate-y-[1px]'
                   }`}
                 >
                   Files
@@ -895,8 +895,8 @@ export default function LearningsPage() {
                   onClick={() => changeTab('diary')}
                   className={`h-9 lg:h-10 min-w-[98px] lg:min-w-[112px] px-2.5 lg:px-3 border-2 border-black bg-white font-bold text-[11px] lg:text-xs transition-all shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] ${
                     activeTab === 'diary'
-                      ? 'bg-red-600 text-white -translate-x-[1px] -translate-y-[1px]'
-                      : 'text-gray-700 hover:bg-red-50 hover:-translate-x-[1px] hover:-translate-y-[1px]'
+                        ? 'bg-gradient-to-br from-rose-700 via-red-600 to-pink-600 text-white shadow-[4px_4px_0px_0px_rgba(190,24,93,0.45)] -translate-x-[2px] -translate-y-[2px]'
+                        : 'text-gray-700 hover:bg-red-50 hover:text-red-700 hover:-translate-x-[1px] hover:-translate-y-[1px]'
                   }`}
                 >
                   Diary
@@ -905,8 +905,8 @@ export default function LearningsPage() {
                   onClick={() => changeTab('code')}
                   className={`h-9 lg:h-10 min-w-[98px] lg:min-w-[112px] px-2.5 lg:px-3 border-2 border-black bg-white font-bold text-[11px] lg:text-xs transition-all shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] ${
                     activeTab === 'code'
-                      ? 'bg-orange-600 text-white -translate-x-[1px] -translate-y-[1px]'
-                      : 'text-gray-700 hover:bg-orange-50 hover:-translate-x-[1px] hover:-translate-y-[1px]'
+                        ? 'bg-gradient-to-br from-orange-700 via-amber-600 to-yellow-500 text-white shadow-[4px_4px_0px_0px_rgba(194,65,12,0.45)] -translate-x-[2px] -translate-y-[2px]'
+                        : 'text-gray-700 hover:bg-orange-50 hover:text-orange-700 hover:-translate-x-[1px] hover:-translate-y-[1px]'
                   }`}
                 >
                   Code
@@ -915,8 +915,8 @@ export default function LearningsPage() {
                   onClick={() => changeTab('diagrams')}
                   className={`h-9 lg:h-10 min-w-[98px] lg:min-w-[112px] px-2.5 lg:px-3 border-2 border-black bg-white font-bold text-[11px] lg:text-xs transition-all shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] ${
                     activeTab === 'diagrams'
-                      ? 'bg-purple-600 text-white -translate-x-[1px] -translate-y-[1px]'
-                      : 'text-gray-700 hover:bg-purple-50 hover:-translate-x-[1px] hover:-translate-y-[1px]'
+                        ? 'bg-gradient-to-br from-violet-700 via-purple-600 to-indigo-600 text-white shadow-[4px_4px_0px_0px_rgba(109,40,217,0.45)] -translate-x-[2px] -translate-y-[2px]'
+                        : 'text-gray-700 hover:bg-purple-50 hover:text-purple-700 hover:-translate-x-[1px] hover:-translate-y-[1px]'
                   }`}
                 >
                   <span className="hidden lg:inline">Architectures</span>
@@ -926,8 +926,8 @@ export default function LearningsPage() {
                   onClick={() => changeTab('projects')}
                   className={`h-9 lg:h-10 min-w-[98px] lg:min-w-[112px] px-2.5 lg:px-3 border-2 border-black bg-white font-bold text-[11px] lg:text-xs transition-all shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] ${
                     activeTab === 'projects'
-                      ? 'bg-green-600 text-white -translate-x-[1px] -translate-y-[1px]'
-                      : 'text-gray-700 hover:bg-green-50 hover:-translate-x-[1px] hover:-translate-y-[1px]'
+                        ? 'bg-gradient-to-br from-emerald-700 via-green-600 to-lime-500 text-white shadow-[4px_4px_0px_0px_rgba(22,101,52,0.45)] -translate-x-[2px] -translate-y-[2px]'
+                        : 'text-gray-700 hover:bg-green-50 hover:text-green-700 hover:-translate-x-[1px] hover:-translate-y-[1px]'
                   }`}
                 >
                   Projects
