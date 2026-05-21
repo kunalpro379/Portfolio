@@ -79,7 +79,7 @@ interface GitHubRepo {
 
 export default function LearningsPage() {
   const navigate = useNavigate();
-  const [searchParams] = useSearchParams();
+  const [searchParams, setSearchParams] = useSearchParams();
 
   const [activeTab, setActiveTab] = useState<'blogs' | 'documentation' | 'guide' | 'files' | 'diary' | 'code' | 'diagrams' | 'projects'>('blogs');
 
@@ -738,96 +738,92 @@ export default function LearningsPage() {
       {/* Fixed Header */}
       <div ref={headerRef} className="fixed top-0 left-0 right-0 bg-white/20 backdrop-blur-3xl border-b-4 border-black py-1.5 sm:py-2 md:py-2.5 px-2 sm:px-3 md:px-4 z-[200] shadow-lg flex-shrink-0" style={{ backdropFilter: 'blur(80px) saturate(200%)' }}>
         <div className="max-w-7xl mx-auto">
-          {/* Mobile Layout - Two Rows */}
-          <div className="block md:hidden space-y-2 sm:space-y-3">
-            <div className="grid grid-cols-5 gap-1.5 sm:gap-2">
+          {/* Mobile Layout - Single Scroll Row */}
+          <div className="block md:hidden overflow-x-auto pb-1">
+            <div className="flex min-w-max items-stretch gap-1.5">
               <button
                 onClick={() => navigate('/')}
-                className="col-span-1 flex h-9 items-center justify-start gap-1.5 border-2 border-black bg-white px-2 text-[11px] sm:text-xs font-bold text-gray-600 transition-all shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:bg-gray-100 hover:-translate-x-[1px] hover:-translate-y-[1px]"
+                className="flex-none min-w-[74px] h-9 flex items-center justify-center gap-1.5 border-2 border-black bg-white px-2 text-[11px] font-bold text-gray-700 transition-all shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:bg-gray-100 hover:-translate-x-[1px] hover:-translate-y-[1px]"
               >
-                <ArrowLeft className="w-3.5 h-3.5 sm:w-4 sm:h-4" strokeWidth={2.5} />
-                <span className="inline">Back</span>
+                <ArrowLeft className="w-3.5 h-3.5" strokeWidth={2.5} />
+                <span>Back</span>
               </button>
 
               <button
                 onClick={() => changeTab('blogs')}
-                className={`col-span-1 h-9 px-1.5 sm:px-2 border-2 border-black bg-white font-bold text-[11px] sm:text-xs transition-all shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] ${activeTab === 'blogs'
-                    ? 'bg-gradient-to-br from-fuchsia-700 via-pink-600 to-rose-500 text-white shadow-[4px_4px_0px_0px_rgba(88,28,135,0.5)] -translate-x-[2px] -translate-y-[2px]'
-                    : 'text-gray-700 hover:bg-pink-50 hover:text-pink-700 hover:-translate-x-[1px] hover:-translate-y-[1px]'
+                className={`flex-none min-w-[74px] h-9 px-2 border-2 border-black bg-white font-bold text-[11px] transition-all shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] ${activeTab === 'blogs'
+                    ? 'bg-gradient-to-br from-fuchsia-950 via-pink-900 to-rose-800 text-white shadow-[4px_4px_0px_0px_rgba(88,28,135,0.55)] -translate-x-[2px] -translate-y-[2px]'
+                    : 'text-gray-700 hover:bg-pink-50 hover:text-pink-800 hover:-translate-x-[1px] hover:-translate-y-[1px]'
                   }`}
               >
                 Blogs
               </button>
               <button
                 onClick={() => changeTab('documentation')}
-                className={`col-span-1 h-9 px-1.5 sm:px-2 border-2 border-black bg-white font-bold text-[11px] sm:text-xs transition-all shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] ${activeTab === 'documentation'
-                    ? 'bg-gradient-to-br from-sky-700 via-blue-600 to-indigo-600 text-white shadow-[4px_4px_0px_0px_rgba(30,64,175,0.45)] -translate-x-[2px] -translate-y-[2px]'
-                    : 'text-gray-700 hover:bg-blue-50 hover:text-blue-700 hover:-translate-x-[1px] hover:-translate-y-[1px]'
+                className={`flex-none min-w-[74px] h-9 px-2 border-2 border-black bg-white font-bold text-[11px] transition-all shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] ${activeTab === 'documentation'
+                    ? 'bg-gradient-to-br from-slate-950 via-blue-950 to-indigo-900 text-white shadow-[4px_4px_0px_0px_rgba(30,64,175,0.5)] -translate-x-[2px] -translate-y-[2px]'
+                    : 'text-gray-700 hover:bg-blue-50 hover:text-blue-800 hover:-translate-x-[1px] hover:-translate-y-[1px]'
                   }`}
               >
                 Docs
               </button>
               <button
                 onClick={() => changeTab('guide')}
-                className={`col-span-1 h-9 px-1.5 sm:px-2 border-2 border-black bg-white font-bold text-[11px] sm:text-xs transition-all shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] ${activeTab === 'guide'
-                    ? 'bg-gradient-to-br from-amber-700 via-orange-600 to-yellow-500 text-white shadow-[4px_4px_0px_0px_rgba(180,83,9,0.45)] -translate-x-[2px] -translate-y-[2px]'
-                    : 'text-gray-700 hover:bg-amber-50 hover:text-amber-700 hover:-translate-x-[1px] hover:-translate-y-[1px]'
+                className={`flex-none min-w-[74px] h-9 px-2 border-2 border-black bg-white font-bold text-[11px] transition-all shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] ${activeTab === 'guide'
+                    ? 'bg-gradient-to-br from-amber-950 via-orange-900 to-yellow-800 text-white shadow-[4px_4px_0px_0px_rgba(180,83,9,0.5)] -translate-x-[2px] -translate-y-[2px]'
+                    : 'text-gray-700 hover:bg-amber-50 hover:text-amber-800 hover:-translate-x-[1px] hover:-translate-y-[1px]'
                   }`}
               >
                 Guide
               </button>
               <button
                 onClick={() => changeTab('files')}
-                className={`col-span-1 h-9 px-1.5 sm:px-2 border-2 border-black bg-white font-bold text-[11px] sm:text-xs transition-all shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] ${activeTab === 'files'
-                    ? 'bg-gradient-to-br from-cyan-700 via-teal-600 to-emerald-500 text-white shadow-[4px_4px_0px_0px_rgba(8,145,178,0.45)] -translate-x-[2px] -translate-y-[2px]'
-                    : 'text-gray-700 hover:bg-cyan-50 hover:text-cyan-700 hover:-translate-x-[1px] hover:-translate-y-[1px]'
+                className={`flex-none min-w-[74px] h-9 px-2 border-2 border-black bg-white font-bold text-[11px] transition-all shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] ${activeTab === 'files'
+                    ? 'bg-gradient-to-br from-cyan-950 via-teal-900 to-emerald-800 text-white shadow-[4px_4px_0px_0px_rgba(8,145,178,0.5)] -translate-x-[2px] -translate-y-[2px]'
+                    : 'text-gray-700 hover:bg-cyan-50 hover:text-cyan-800 hover:-translate-x-[1px] hover:-translate-y-[1px]'
                   }`}
               >
                 Files
               </button>
-            </div>
-
-            <div className="grid grid-cols-5 gap-1.5 sm:gap-2">
               <button
                 onClick={() => changeTab('diary')}
-                className={`h-9 px-1.5 sm:px-2 border-2 border-black bg-white font-bold text-[11px] sm:text-xs transition-all shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] ${activeTab === 'diary'
-                    ? 'bg-gradient-to-br from-rose-700 via-red-600 to-pink-600 text-white shadow-[4px_4px_0px_0px_rgba(190,24,93,0.45)] -translate-x-[2px] -translate-y-[2px]'
-                    : 'text-gray-700 hover:bg-red-50 hover:text-red-700 hover:-translate-x-[1px] hover:-translate-y-[1px]'
+                className={`flex-none min-w-[74px] h-9 px-2 border-2 border-black bg-white font-bold text-[11px] transition-all shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] ${activeTab === 'diary'
+                    ? 'bg-gradient-to-br from-rose-950 via-red-900 to-pink-800 text-white shadow-[4px_4px_0px_0px_rgba(190,24,93,0.5)] -translate-x-[2px] -translate-y-[2px]'
+                    : 'text-gray-700 hover:bg-red-50 hover:text-red-800 hover:-translate-x-[1px] hover:-translate-y-[1px]'
                   }`}
               >
                 Diary
               </button>
               <button
                 onClick={() => changeTab('code')}
-                className={`h-9 px-1.5 sm:px-2 border-2 border-black bg-white font-bold text-[11px] sm:text-xs transition-all shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] ${activeTab === 'code'
-                    ? 'bg-gradient-to-br from-orange-700 via-amber-600 to-yellow-500 text-white shadow-[4px_4px_0px_0px_rgba(194,65,12,0.45)] -translate-x-[2px] -translate-y-[2px]'
-                    : 'text-gray-700 hover:bg-orange-50 hover:text-orange-700 hover:-translate-x-[1px] hover:-translate-y-[1px]'
+                className={`flex-none min-w-[74px] h-9 px-2 border-2 border-black bg-white font-bold text-[11px] transition-all shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] ${activeTab === 'code'
+                    ? 'bg-gradient-to-br from-orange-950 via-amber-900 to-yellow-800 text-white shadow-[4px_4px_0px_0px_rgba(194,65,12,0.5)] -translate-x-[2px] -translate-y-[2px]'
+                    : 'text-gray-700 hover:bg-orange-50 hover:text-orange-800 hover:-translate-x-[1px] hover:-translate-y-[1px]'
                   }`}
               >
                 Code
               </button>
               <button
                 onClick={() => changeTab('diagrams')}
-                className={`h-9 px-1.5 sm:px-2 border-2 border-black bg-white font-bold text-[11px] sm:text-xs transition-all shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] ${activeTab === 'diagrams'
-                    ? 'bg-gradient-to-br from-violet-700 via-purple-600 to-indigo-600 text-white shadow-[4px_4px_0px_0px_rgba(109,40,217,0.45)] -translate-x-[2px] -translate-y-[2px]'
-                    : 'text-gray-700 hover:bg-purple-50 hover:text-purple-700 hover:-translate-x-[1px] hover:-translate-y-[1px]'
+                className={`flex-none min-w-[74px] h-9 px-2 border-2 border-black bg-white font-bold text-[11px] transition-all shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] ${activeTab === 'diagrams'
+                    ? 'bg-gradient-to-br from-violet-950 via-purple-900 to-indigo-800 text-white shadow-[4px_4px_0px_0px_rgba(109,40,217,0.5)] -translate-x-[2px] -translate-y-[2px]'
+                    : 'text-gray-700 hover:bg-purple-50 hover:text-purple-800 hover:-translate-x-[1px] hover:-translate-y-[1px]'
                   }`}
               >
-                <span className="hidden xs:inline">Architectures</span>
-                <span className="xs:hidden">Arch</span>
+                Arch
               </button>
               <button
                 onClick={() => changeTab('projects')}
-                className={`h-9 px-1.5 sm:px-2 border-2 border-black bg-white font-bold text-[11px] sm:text-xs transition-all shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] ${activeTab === 'projects'
-                    ? 'bg-gradient-to-br from-emerald-700 via-green-600 to-lime-500 text-white shadow-[4px_4px_0px_0px_rgba(22,101,52,0.45)] -translate-x-[2px] -translate-y-[2px]'
-                    : 'text-gray-700 hover:bg-green-50 hover:text-green-700 hover:-translate-x-[1px] hover:-translate-y-[1px]'
+                className={`flex-none min-w-[74px] h-9 px-2 border-2 border-black bg-white font-bold text-[11px] transition-all shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] ${activeTab === 'projects'
+                    ? 'bg-gradient-to-br from-emerald-950 via-green-900 to-lime-800 text-white shadow-[4px_4px_0px_0px_rgba(22,101,52,0.5)] -translate-x-[2px] -translate-y-[2px]'
+                    : 'text-gray-700 hover:bg-green-50 hover:text-green-800 hover:-translate-x-[1px] hover:-translate-y-[1px]'
                   }`}
               >
                 Projects
               </button>
               <button
                 onClick={() => navigate('/')}
-                className="h-9 px-1.5 sm:px-2 border-2 border-black bg-white font-bold text-[11px] sm:text-xs transition-all shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] text-gray-700 hover:bg-gray-100 hover:-translate-x-[1px] hover:-translate-y-[1px]"
+                className="flex-none min-w-[74px] h-9 px-2 border-2 border-black bg-white font-bold text-[11px] transition-all shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] text-gray-700 hover:bg-gray-100 hover:-translate-x-[1px] hover:-translate-y-[1px]"
               >
                 Home
               </button>
