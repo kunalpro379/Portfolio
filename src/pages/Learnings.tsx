@@ -738,9 +738,9 @@ export default function LearningsPage() {
       {/* Fixed Header */}
       <div ref={headerRef} className="fixed top-0 left-0 right-0 bg-white/20 backdrop-blur-3xl border-b-4 border-black py-1.5 sm:py-2 md:py-2.5 px-2 sm:px-3 md:px-4 z-[200] shadow-lg flex-shrink-0" style={{ backdropFilter: 'blur(80px) saturate(200%)' }}>
         <div className="max-w-7xl mx-auto">
-          {/* Mobile Layout - Single Scroll Row */}
-          <div className="block md:hidden overflow-x-auto pb-1">
-            <div className="flex min-w-max items-stretch gap-1.5">
+          {/* Mobile Layout - Two-row wrap layout */}
+          <div className="block md:hidden pb-1">
+            <div className="flex flex-wrap items-stretch gap-1.5">
               <button
                 onClick={() => navigate('/')}
                 className="flex-none min-w-[74px] h-9 flex items-center justify-center gap-1.5 border-2 border-black bg-white px-2 text-[11px] font-bold text-gray-700 transition-all shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:bg-gray-100 hover:-translate-x-[1px] hover:-translate-y-[1px]"
