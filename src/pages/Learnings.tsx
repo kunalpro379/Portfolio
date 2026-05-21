@@ -6,6 +6,7 @@ import ExcalidrawCanvas from "@/components/ExcalidrawCanvas";
 import LoadingSpinner from "@/components/LoadingSpinner";
 import NotesTabContent from "@/components/NotesTabContent";
 import GtaMumbaiMap from "@/components/GtaMumbaiMap";
+import DiaryPage from './Diary';
 
 interface ProjectData {
   size?: "big" | "small" | "large" | "medium";
@@ -91,6 +92,7 @@ export default function LearningsPage() {
   const [codeFiles, setCodeFiles] = useState<CodeFolder[]>([]);
   const [githubRepos, setGithubRepos] = useState<GitHubRepo[]>([]);
   const [dsaProjects, setDsaProjects] = useState<any[]>([]);
+  const [diagrams, setDiagrams] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [navigating, setNavigating] = useState(false);
@@ -106,11 +108,15 @@ export default function LearningsPage() {
 
   // Canvas state
   const [activeCanvas, setActiveCanvas] = useState<string | null>(null);
+  const [activeViewerId, setActiveViewerId] = useState<string | null>(null);
+  const [canvasData, setCanvasData] = useState<any>(null);
+  const [viewOnly, setViewOnly] = useState(true);
   const [showPasswordModal, setShowPasswordModal] = useState(false);
   const [diagramAuthenticated, setDiagramAuthenticated] = useState(false);
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [selectedCanvas, setSelectedCanvas] = useState<any>(null);
   const [password, setPassword] = useState('');
+  const [editPassword, setEditPassword] = useState<string | null>(null);
   const [showViewEditModal, setShowViewEditModal] = useState(false);
   const [createdCanvasId, setCreatedCanvasId] = useState<string | null>(null);
   const [showShareModal, setShowShareModal] = useState(false);
@@ -118,11 +124,14 @@ export default function LearningsPage() {
   const [isLoadingDiagram, setIsLoadingDiagram] = useState(false);
   const [showDeletePasswordModal, setShowDeletePasswordModal] = useState(false);
   const [deleteCanvasId, setDeleteCanvasId] = useState<string | null>(null);
+  const [deletePassword, setDeletePassword] = useState('');
   const [showCreateCodeFolderModal, setShowCreateCodeFolderModal] = useState(false);
   const [codeFolderName, setCodeFolderName] = useState('');
   const [codeFolderDescription, setCodeFolderDescription] = useState('');
   const [codeFolderLanguage, setCodeFolderLanguage] = useState('python');
   const [creatingCodeFolder, setCreatingCodeFolder] = useState(false);
+  const [newCanvasName, setNewCanvasName] = useState('');
+  const [newCanvasPublic, setNewCanvasPublic] = useState(false);
   const [showMap, setShowMap] = useState(false);
 
   // Check for canvas parameter in URL
