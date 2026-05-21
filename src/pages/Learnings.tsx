@@ -93,6 +93,7 @@ export default function LearningsPage() {
   const [dsaProjects, setDsaProjects] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [navigating, setNavigating] = useState(false);
 
   // Search states
   const [projectSearch, setProjectSearch] = useState('');
