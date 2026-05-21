@@ -6,76 +6,72 @@ import ExcalidrawCanvas from "@/components/ExcalidrawCanvas";
 import LoadingSpinner from "@/components/LoadingSpinner";
 import NotesTabContent from "@/components/NotesTabContent";
 import GtaMumbaiMap from "@/components/GtaMumbaiMap";
-              <button
-                onClick={() => navigate('/')}
-                className="col-span-1 flex h-10 items-center justify-start gap-1.5 border-2 border-black bg-white px-2 text-xs sm:text-sm font-bold text-gray-600 transition-all shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:bg-gray-100 hover:-translate-x-[1px] hover:-translate-y-[1px]"
-              >
+
+interface ProjectData {
+  size?: "big" | "small" | "large" | "medium";
   title: string;
   tagline: string;
   badges: string[];
   footer: string;
   description: string;
   techStack: string;
-                className={`col-span-1 h-10 px-2 sm:px-3 border-2 border-black bg-white font-bold text-xs sm:text-sm transition-all shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] ${activeTab === 'blogs'
-                    ? 'bg-pink-600 text-white -translate-x-[1px] -translate-y-[1px]'
-                    : 'text-gray-700 hover:bg-pink-50 hover:-translate-x-[1px] hover:-translate-y-[1px]'
+  cta?: Array<{ label: string; link: string; icon?: string }>;
+  image?: string;
+  titleColor?: "white" | "black";
   descriptionColor?: "white" | "black";
   id?: string;
 }
 
 interface Blog {
   blogId: string;
-                className={`col-span-1 h-10 px-2 sm:px-3 border-2 border-black bg-white font-bold text-xs sm:text-sm transition-all shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] ${activeTab === 'documentation'
-                    ? 'bg-blue-600 text-white -translate-x-[1px] -translate-y-[1px]'
-                    : 'text-gray-700 hover:bg-blue-50 hover:-translate-x-[1px] hover:-translate-y-[1px]'
+  title: string;
+  slug: string;
+  tagline: string;
   subject: string;
   shortDescription: string;
   tags: string[];
   datetime: string;
   footer: string;
   coverImage: string;
-                className={`col-span-1 h-10 px-2 sm:px-3 border-2 border-black bg-white font-bold text-xs sm:text-sm transition-all shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] ${activeTab === 'guide'
-                    ? 'bg-amber-500 text-white -translate-x-[1px] -translate-y-[1px]'
-                    : 'text-gray-700 hover:bg-amber-50 hover:-translate-x-[1px] hover:-translate-y-[1px]'
+  blogLinks: Array<{ name: string; url: string }>;
+}
+
 interface Note {
   folderId: string;
   name: string;
   path: string;
   parentPath: string;
   createdAt: string;
-                className={`col-span-1 h-10 px-2 sm:px-3 border-2 border-black bg-white font-bold text-xs sm:text-sm transition-all shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] ${activeTab === 'files'
-                    ? 'bg-cyan-600 text-white -translate-x-[1px] -translate-y-[1px]'
-                    : 'text-gray-700 hover:bg-cyan-50 hover:-translate-x-[1px] hover:-translate-y-[1px]'
+}
+
+interface CodeFolder {
+  _id: string;
   folderId: string;
   name: string;
   path: string;
   parentPath: string;
   createdAt: string;
-  language?: string;
-  description?: string;
 }
 
-                className={`h-10 px-2 sm:px-3 border-2 border-black bg-white font-bold text-xs sm:text-sm transition-all shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] ${activeTab === 'diary'
-                    ? 'bg-red-600 text-white -translate-x-[1px] -translate-y-[1px]'
-                    : 'text-gray-700 hover:bg-red-50 hover:-translate-x-[1px] hover:-translate-y-[1px]'
+interface Documentation {
+  docId: string;
+  title: string;
   subject: string;
   description: string;
   tags: string[];
   date: string;
-  time: string;
-  slug: string;
-                className={`h-10 px-2 sm:px-3 border-2 border-black bg-white font-bold text-xs sm:text-sm transition-all shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] ${activeTab === 'code'
-                    ? 'bg-orange-600 text-white -translate-x-[1px] -translate-y-[1px]'
-                    : 'text-gray-700 hover:bg-orange-50 hover:-translate-x-[1px] hover:-translate-y-[1px]'
+  isPublic: boolean;
+  createdAt: string;
+  coverImage?: string;
 }
 
 interface GitHubRepo {
   _id: string;
   name: string;
   owner: string;
-                className={`h-10 px-2 sm:px-3 border-2 border-black bg-white font-bold text-xs sm:text-sm transition-all shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] ${activeTab === 'diagrams'
-                    ? 'bg-purple-600 text-white -translate-x-[1px] -translate-y-[1px]'
-                    : 'text-gray-700 hover:bg-purple-50 hover:-translate-x-[1px] hover:-translate-y-[1px]'
+  fullName: string;
+  description: string;
+  url: string;
   defaultBranch: string;
   isPrivate: boolean;
   createdAt: string;
@@ -83,45 +79,37 @@ interface GitHubRepo {
 
 export default function LearningsPage() {
   const navigate = useNavigate();
-                className={`h-10 px-2 sm:px-3 border-2 border-black bg-white font-bold text-xs sm:text-sm transition-all shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] ${activeTab === 'projects'
-                    ? 'bg-green-600 text-white -translate-x-[1px] -translate-y-[1px]'
-                    : 'text-gray-700 hover:bg-green-50 hover:-translate-x-[1px] hover:-translate-y-[1px]'
+  const [searchParams] = useSearchParams();
+
+  const [activeTab, setActiveTab] = useState<'blogs' | 'documentation' | 'guide' | 'files' | 'diary' | 'code' | 'diagrams' | 'projects'>('blogs');
 
   // State for API data
   const [projects, setProjects] = useState<ProjectData[]>([]);
   const [blogs, setBlogs] = useState<Blog[]>([]);
   const [notes, setNotes] = useState<Note[]>([]);
   const [documentation, setDocumentation] = useState<Documentation[]>([]);
-                className="h-10 px-2 sm:px-3 border-2 border-black bg-white font-bold text-xs sm:text-sm transition-all shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] text-gray-700 hover:bg-gray-100 hover:-translate-x-[1px] hover:-translate-y-[1px]"
   const [codeFiles, setCodeFiles] = useState<CodeFolder[]>([]);
   const [githubRepos, setGithubRepos] = useState<GitHubRepo[]>([]);
   const [dsaProjects, setDsaProjects] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-            <div className="grid grid-cols-5 gap-1.5 sm:gap-2">
-  
+
   // Search states
-                className={`h-10 px-2 sm:px-3 border-2 border-black bg-white font-bold text-xs sm:text-sm transition-all shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] ${activeTab === 'diary'
-                    ? 'bg-red-600 text-white -translate-x-[1px] -translate-y-[1px]'
-                    : 'text-gray-700 hover:bg-red-50 hover:-translate-x-[1px] hover:-translate-y-[1px]'
+  const [projectSearch, setProjectSearch] = useState('');
+  const [blogSearch, setBlogSearch] = useState('');
+  const [docSearch, setDocSearch] = useState('');
+  const [fileSearch, setFileSearch] = useState('');
   const [diagramSearch, setDiagramSearch] = useState('');
   const [todoSearch, setTodoSearch] = useState('');
   const [guideSearch, setGuideSearch] = useState('');
 
   // Canvas state
   const [activeCanvas, setActiveCanvas] = useState<string | null>(null);
-                className={`h-10 px-2 sm:px-3 border-2 border-black bg-white font-bold text-xs sm:text-sm transition-all shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] ${activeTab === 'code'
-                    ? 'bg-orange-600 text-white -translate-x-[1px] -translate-y-[1px]'
-                    : 'text-gray-700 hover:bg-orange-50 hover:-translate-x-[1px] hover:-translate-y-[1px]'
   const [showPasswordModal, setShowPasswordModal] = useState(false);
   const [diagramAuthenticated, setDiagramAuthenticated] = useState(false);
-
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [selectedCanvas, setSelectedCanvas] = useState<any>(null);
   const [password, setPassword] = useState('');
-                className={`h-10 px-2 sm:px-3 border-2 border-black bg-white font-bold text-xs sm:text-sm transition-all shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] ${activeTab === 'diagrams'
-                    ? 'bg-purple-600 text-white -translate-x-[1px] -translate-y-[1px]'
-                    : 'text-gray-700 hover:bg-purple-50 hover:-translate-x-[1px] hover:-translate-y-[1px]'
   const [showViewEditModal, setShowViewEditModal] = useState(false);
   const [createdCanvasId, setCreatedCanvasId] = useState<string | null>(null);
   const [showShareModal, setShowShareModal] = useState(false);
@@ -129,16 +117,13 @@ export default function LearningsPage() {
   const [isLoadingDiagram, setIsLoadingDiagram] = useState(false);
   const [showDeletePasswordModal, setShowDeletePasswordModal] = useState(false);
   const [deleteCanvasId, setDeleteCanvasId] = useState<string | null>(null);
-                className={`h-10 px-2 sm:px-3 border-2 border-black bg-white font-bold text-xs sm:text-sm transition-all shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] ${activeTab === 'projects'
-                    ? 'bg-green-600 text-white -translate-x-[1px] -translate-y-[1px]'
-                    : 'text-gray-700 hover:bg-green-50 hover:-translate-x-[1px] hover:-translate-y-[1px]'
   const [showCreateCodeFolderModal, setShowCreateCodeFolderModal] = useState(false);
   const [codeFolderName, setCodeFolderName] = useState('');
   const [codeFolderDescription, setCodeFolderDescription] = useState('');
   const [codeFolderLanguage, setCodeFolderLanguage] = useState('python');
   const [creatingCodeFolder, setCreatingCodeFolder] = useState(false);
   const [showMap, setShowMap] = useState(false);
-                className="h-10 px-2 sm:px-3 border-2 border-black bg-white font-bold text-xs sm:text-sm transition-all shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] text-gray-700 hover:bg-gray-100 hover:-translate-x-[1px] hover:-translate-y-[1px]"
+
   // Check for canvas parameter in URL
   const canvasIdFromUrl = searchParams.get('canvas');
   const viewerIdFromUrl = searchParams.get('viewer');
