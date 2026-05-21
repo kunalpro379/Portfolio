@@ -740,18 +740,18 @@ export default function LearningsPage() {
         <div className="max-w-7xl mx-auto">
           {/* Mobile Layout - Two-row wrap layout */}
           <div className="block md:hidden pb-1">
-            <div className="flex flex-wrap items-stretch gap-1.5">
+            <div className="grid grid-cols-5 gap-1">
               <button
                 onClick={() => navigate('/')}
-                className="flex-none min-w-[74px] h-9 flex items-center justify-center gap-1.5 border-2 border-black bg-white px-2 text-[11px] font-bold text-gray-700 transition-all shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:bg-gray-100 hover:-translate-x-[1px] hover:-translate-y-[1px]"
+                className="w-full min-w-0 h-8 flex items-center justify-center gap-1 border-2 border-black bg-white px-1.5 text-[9px] font-bold text-gray-700 transition-all shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:bg-gray-100 hover:-translate-x-[1px] hover:-translate-y-[1px]"
               >
-                <ArrowLeft className="w-3.5 h-3.5" strokeWidth={2.5} />
+                <ArrowLeft className="w-3 h-3" strokeWidth={2.5} />
                 <span>Back</span>
               </button>
 
               <button
                 onClick={() => changeTab('blogs')}
-                className={`flex-none min-w-[74px] h-9 px-2 border-2 border-black bg-white font-bold text-[11px] transition-all shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] ${activeTab === 'blogs'
+                className={`w-full min-w-0 h-8 px-1 border-2 border-black bg-white font-bold text-[9px] transition-all shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] ${activeTab === 'blogs'
                     ? 'bg-gradient-to-br from-fuchsia-950 via-pink-900 to-rose-800 text-white shadow-[4px_4px_0px_0px_rgba(88,28,135,0.55)] -translate-x-[2px] -translate-y-[2px]'
                     : 'text-gray-700 hover:bg-pink-50 hover:text-pink-800 hover:-translate-x-[1px] hover:-translate-y-[1px]'
                   }`}
@@ -760,7 +760,7 @@ export default function LearningsPage() {
               </button>
               <button
                 onClick={() => changeTab('documentation')}
-                className={`flex-none min-w-[74px] h-9 px-2 border-2 border-black bg-white font-bold text-[11px] transition-all shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] ${activeTab === 'documentation'
+                className={`w-full min-w-0 h-8 px-1 border-2 border-black bg-white font-bold text-[9px] transition-all shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] ${activeTab === 'documentation'
                     ? 'bg-gradient-to-br from-slate-950 via-blue-950 to-indigo-900 text-white shadow-[4px_4px_0px_0px_rgba(30,64,175,0.5)] -translate-x-[2px] -translate-y-[2px]'
                     : 'text-gray-700 hover:bg-blue-50 hover:text-blue-800 hover:-translate-x-[1px] hover:-translate-y-[1px]'
                   }`}
@@ -769,7 +769,7 @@ export default function LearningsPage() {
               </button>
               <button
                 onClick={() => changeTab('guide')}
-                className={`flex-none min-w-[74px] h-9 px-2 border-2 border-black bg-white font-bold text-[11px] transition-all shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] ${activeTab === 'guide'
+                className={`w-full min-w-0 h-8 px-1 border-2 border-black bg-white font-bold text-[9px] transition-all shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] ${activeTab === 'guide'
                     ? 'bg-gradient-to-br from-amber-950 via-orange-900 to-yellow-800 text-white shadow-[4px_4px_0px_0px_rgba(180,83,9,0.5)] -translate-x-[2px] -translate-y-[2px]'
                     : 'text-gray-700 hover:bg-amber-50 hover:text-amber-800 hover:-translate-x-[1px] hover:-translate-y-[1px]'
                   }`}
@@ -778,7 +778,7 @@ export default function LearningsPage() {
               </button>
               <button
                 onClick={() => changeTab('files')}
-                className={`flex-none min-w-[74px] h-9 px-2 border-2 border-black bg-white font-bold text-[11px] transition-all shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] ${activeTab === 'files'
+                className={`w-full min-w-0 h-8 px-1 border-2 border-black bg-white font-bold text-[9px] transition-all shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] ${activeTab === 'files'
                     ? 'bg-gradient-to-br from-cyan-950 via-teal-900 to-emerald-800 text-white shadow-[4px_4px_0px_0px_rgba(8,145,178,0.5)] -translate-x-[2px] -translate-y-[2px]'
                     : 'text-gray-700 hover:bg-cyan-50 hover:text-cyan-800 hover:-translate-x-[1px] hover:-translate-y-[1px]'
                   }`}
@@ -787,7 +787,7 @@ export default function LearningsPage() {
               </button>
               <button
                 onClick={() => changeTab('diary')}
-                className={`flex-none min-w-[74px] h-9 px-2 border-2 border-black bg-white font-bold text-[11px] transition-all shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] ${activeTab === 'diary'
+                className={`w-full min-w-0 h-8 px-1 border-2 border-black bg-white font-bold text-[9px] transition-all shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] ${activeTab === 'diary'
                     ? 'bg-gradient-to-br from-rose-950 via-red-900 to-pink-800 text-white shadow-[4px_4px_0px_0px_rgba(190,24,93,0.5)] -translate-x-[2px] -translate-y-[2px]'
                     : 'text-gray-700 hover:bg-red-50 hover:text-red-800 hover:-translate-x-[1px] hover:-translate-y-[1px]'
                   }`}
@@ -796,7 +796,7 @@ export default function LearningsPage() {
               </button>
               <button
                 onClick={() => changeTab('code')}
-                className={`flex-none min-w-[74px] h-9 px-2 border-2 border-black bg-white font-bold text-[11px] transition-all shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] ${activeTab === 'code'
+                className={`w-full min-w-0 h-8 px-1 border-2 border-black bg-white font-bold text-[9px] transition-all shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] ${activeTab === 'code'
                     ? 'bg-gradient-to-br from-orange-950 via-amber-900 to-yellow-800 text-white shadow-[4px_4px_0px_0px_rgba(194,65,12,0.5)] -translate-x-[2px] -translate-y-[2px]'
                     : 'text-gray-700 hover:bg-orange-50 hover:text-orange-800 hover:-translate-x-[1px] hover:-translate-y-[1px]'
                   }`}
@@ -805,7 +805,7 @@ export default function LearningsPage() {
               </button>
               <button
                 onClick={() => changeTab('diagrams')}
-                className={`flex-none min-w-[74px] h-9 px-2 border-2 border-black bg-white font-bold text-[11px] transition-all shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] ${activeTab === 'diagrams'
+                className={`w-full min-w-0 h-8 px-1 border-2 border-black bg-white font-bold text-[9px] transition-all shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] ${activeTab === 'diagrams'
                     ? 'bg-gradient-to-br from-violet-950 via-purple-900 to-indigo-800 text-white shadow-[4px_4px_0px_0px_rgba(109,40,217,0.5)] -translate-x-[2px] -translate-y-[2px]'
                     : 'text-gray-700 hover:bg-purple-50 hover:text-purple-800 hover:-translate-x-[1px] hover:-translate-y-[1px]'
                   }`}
@@ -814,7 +814,7 @@ export default function LearningsPage() {
               </button>
               <button
                 onClick={() => changeTab('projects')}
-                className={`flex-none min-w-[74px] h-9 px-2 border-2 border-black bg-white font-bold text-[11px] transition-all shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] ${activeTab === 'projects'
+                className={`w-full min-w-0 h-8 px-1 border-2 border-black bg-white font-bold text-[9px] transition-all shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] ${activeTab === 'projects'
                     ? 'bg-gradient-to-br from-emerald-950 via-green-900 to-lime-800 text-white shadow-[4px_4px_0px_0px_rgba(22,101,52,0.5)] -translate-x-[2px] -translate-y-[2px]'
                     : 'text-gray-700 hover:bg-green-50 hover:text-green-800 hover:-translate-x-[1px] hover:-translate-y-[1px]'
                   }`}
@@ -823,7 +823,7 @@ export default function LearningsPage() {
               </button>
               <button
                 onClick={() => navigate('/')}
-                className="flex-none min-w-[74px] h-9 px-2 border-2 border-black bg-white font-bold text-[11px] transition-all shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] text-gray-700 hover:bg-gray-100 hover:-translate-x-[1px] hover:-translate-y-[1px]"
+                className="w-full min-w-0 h-8 px-1 border-2 border-black bg-white font-bold text-[9px] transition-all shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] text-gray-700 hover:bg-gray-100 hover:-translate-x-[1px] hover:-translate-y-[1px]"
               >
                 Home
               </button>
