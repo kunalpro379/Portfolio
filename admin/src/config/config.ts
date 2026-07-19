@@ -52,6 +52,7 @@ const config = {
       blogCover: (id: string) => `${getApiBaseUrl()}/api/blogs/${id}/cover`,
       blogAssetByIndex: (id: string, index: number) => `${getApiBaseUrl()}/api/blogs/${id}/assets/${index}`,
       blogAssetName: (id: string, index: number) => `${getApiBaseUrl()}/api/blogs/${id}/assets/${index}/name`,
+      blogVisibility: (id: string) => `${getApiBaseUrl()}/api/blogs/${id}/visibility`,
       
       // Documentation
       documentation: `${getApiBaseUrl()}/api/documentation`,
